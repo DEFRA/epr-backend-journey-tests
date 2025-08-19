@@ -1,10 +1,11 @@
-import { browser, expect } from '@wdio/globals'
+import { expect } from '@wdio/globals'
 
 import HomePage from 'page-objects/home.page'
 
-describe('Home page', () => {
-  it('Should be on the "Home" page', async () => {
-    await HomePage.open()
-    await expect(browser).toHaveTitle('Home')
+describe('Health page', () => {
+  it('Should display success', async () => {
+    await HomePage.openLink('health')
+    const elem = await $('pre')
+    await expect(elem).toHaveText(expect.stringContaining('success'))
   })
 })
