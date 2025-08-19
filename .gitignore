@@ -1,0 +1,13 @@
+.DS_Store
+.npm/
+.vscode
+.idea
+.server
+node_modules
+npm-debug.log
+coverage
+.cache
+.png
+allure-report/
+allure-results/
+FAILED

@@ -1,0 +1,29 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+env:
+  AWS_REGION: eu-west-2
+  AWS_ACCOUNT_ID: "094954420758"
+
+jobs:
+  build:
+    if: github.run_number != 1
+    name: Build, version and publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Build the test suite
+        uses: DEFRA/cdp-build-action/build-test@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
