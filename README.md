@@ -36,21 +36,9 @@ Install application dependencies:
 npm install
 ```
 
-### Running local tests
-
-Start application you are testing on the url specified in `baseUrl` [wdio.local.conf.js](wdio.local.conf.js)
-
 ```bash
-npm run test:local
+npm run test
 ```
-
-### Debugging local tests
-
-```bash
-npm run test:local:debug
-```
-
-## Production
 
 ### Running the tests
 
@@ -85,12 +73,6 @@ Steps:
 By default, the provided workflow will run when triggered manually from GitHub or when triggered by another workflow.
 
 If you want to use the repository exclusively for running docker composed based test suites consider displaying the publish.yml workflow.
-
-## BrowserStack
-
-Two wdio configuration files are provided to help run the tests using BrowserStack in both a GitHub workflow (`wdio.github.browserstack.conf.js`) and from the CDP Portal (`wdio.browserstack.conf.js`).
-They can be run from npm using the `npm run test:browserstack` (for running via portal) and `npm run test:github:browserstack` (from GitHib runner).
-See the CDP Documentation for more details.
 
 ## Licence
 
