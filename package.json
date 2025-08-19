@@ -1,6 +1,6 @@
 {
-  "name": "cdp-node-env-test-suite-template",
-  "version": "0.1.0",
+  "name": "epr-backend-journey-tests",
+  "version": "0.0.0",
   "type": "module",
   "description": "",
   "engines": {
