@@ -5,13 +5,13 @@ import { BaseAPI } from '../apis/base-api.js'
 const baseAPI = new BaseAPI()
 
 Given('I have entered my accreditation details', function () {
-  this.details = {}
+  this.payload = {}
 })
 
 When('I submit the accreditation details', async function () {
   this.response = await baseAPI.post(
     '/v1/apply/accreditation',
-    JSON.stringify(this.details)
+    JSON.stringify(this.payload)
   )
 })
 
