@@ -1,6 +1,6 @@
 export default {
   paths: ['test/features/**/*.feature'],
-  require: ['test/step-definitions/*.js'],
+  require: ['test/step-definitions/*.js', 'test/support/*.js'],
   format: [
     'progress',
     'summary',
