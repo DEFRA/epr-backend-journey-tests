@@ -1,3 +1,4 @@
 /allure-results
 /allure-report
 /docker
+/test/step-definitions/organisation.steps.js

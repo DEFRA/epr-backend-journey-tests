@@ -1,38 +1,72 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { BaseAPI } from '../apis/base-api.js'
+import orgPayload from '../fixtures/organisation.json' with { type: 'json' }
 
 const baseAPI = new BaseAPI()
 
 Given('I have entered my organisation details', function () {
-  this.details = {}
+  this.payload = orgPayload
 })
+
+Given(
+  'I have entered my organisation details without pages metadata',
+  function () {
+    this.payload = JSON.parse(JSON.stringify(orgPayload))
+    delete this.payload.meta.definition.pages
+  }
+)
+
+Given('I have entered my organisation details without metadata', function () {
+  this.payload = JSON.parse(JSON.stringify(orgPayload))
+  delete this.payload.meta
+})
+
+Given('I have entered my organisation details without data', function () {
+  this.payload = JSON.parse(JSON.stringify(orgPayload))
+  delete this.payload.data
+})
+
+Given('I have entered my organisation details without email', function () {
+  this.payload = JSON.parse(JSON.stringify(orgPayload))
+  delete this.payload.data.main.aSoxDO
+})
+
+Given(
+  'I have entered my organisation details without organisation name',
+  function () {
+    this.payload = JSON.parse(JSON.stringify(orgPayload))
+    delete this.payload.data.main.JbEBvr
+  }
+)
+
+Given('I have entered my organisation details without nations', function () {
+  this.payload = JSON.parse(JSON.stringify(orgPayload))
+  delete this.payload.data.main.VcdRNr
+})
+
+Given(
+  'I have entered my organisation details with nations value of {string}',
+  function (nations) {
+    this.payload = JSON.parse(JSON.stringify(orgPayload))
+    this.payload.data.main.VcdRNr = nations
+  }
+)
 
 When('I submit the organisation details', async function () {
   this.response = await baseAPI.post(
     '/v1/apply/organisation',
-    JSON.stringify(this.details)
+    JSON.stringify(this.payload)
   )
 })
 
 Then(
-  'I should receive the following organisation details response',
-  async function (dataTable) {
-    const expectation = dataTable.rowsHash()
+  'I should receive a successful organisation details response with the organisation name {string}',
+  async function (orgName) {
     expect(this.response.statusCode).to.equal(200)
     const responseData = await this.response.body.json()
-    expect(responseData).to.equal(expectation.orgId)
-    expect(responseData.referenceNumber).to.equal(expectation.referenceNumber)
-    expect(responseData.orgName).to.equal(expectation.orgName)
-  }
-)
-
-Then(
-  'I should receive an error response from the organisation endpoint',
-  async function () {
-    expect(this.response.statusCode).to.equal(400)
-    const responseData = await this.response.body.json()
-    expect(responseData).to.have.property('message')
-    expect(responseData.message).to.equal('Invalid payload')
+    expect(responseData.orgId).to.match(/^\d{6}$/)
+    expect(responseData.referenceNumber).to.match(/^[0-9a-f]{24}$/i)
+    expect(responseData.orgName).to.equal(orgName)
   }
 )

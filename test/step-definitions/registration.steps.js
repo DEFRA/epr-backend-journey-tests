@@ -5,13 +5,13 @@ import { BaseAPI } from '../apis/base-api.js'
 const baseAPI = new BaseAPI()
 
 Given('I have entered my registration details', function () {
-  this.details = {}
+  this.payload = {}
 })
 
 When('I submit the registration details', async function () {
   this.response = await baseAPI.post(
     '/v1/apply/registration',
-    JSON.stringify(this.details)
+    JSON.stringify(this.payload)
   )
 })
 
