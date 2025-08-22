@@ -11,9 +11,9 @@ Feature: Organisation endpoint
   Scenario: Organisation endpoint returns an error if payload is not present
     Given I have not entered any details
     When I submit the organisation details
-    Then I should receive an error response
+    Then I should receive an error response from the organisation endpoint
 
   Scenario: Organisation endpoint returns an error if payload is not a valid object
     Given I have entered invalid details
     When I submit the organisation details
-    Then I should receive an error response
+    Then I should receive an error response from the organisation endpoint
