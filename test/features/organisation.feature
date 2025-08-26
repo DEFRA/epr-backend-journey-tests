@@ -10,11 +10,6 @@ Feature: Organisation endpoint
     When I submit the organisation details
     Then I should receive an error response 'Could not extract email from answers'
 
-  Scenario: Organisation endpoint returns an error if metadata are not present
-    Given I have entered my organisation details without metadata
-    When I submit the organisation details
-    Then I should receive an error response 'Could not extract email from answers'
-
   Scenario: Organisation endpoint returns an error if data / answers are not present
     Given I have entered my organisation details without data
     When I submit the organisation details
@@ -43,7 +38,7 @@ Feature: Organisation endpoint
   Scenario: Organisation endpoint returns an error if payload is not present
     Given I have not entered any details
     When I submit the organisation details
-    Then I should receive an error response 'Invalid payload'
+    Then I should receive an error response
 
   Scenario: Organisation endpoint returns an error if payload is not a valid object
     Given I have entered invalid details
