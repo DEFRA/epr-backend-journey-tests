@@ -17,11 +17,6 @@ Given(
   }
 )
 
-Given('I have entered my organisation details without metadata', function () {
-  this.payload = JSON.parse(JSON.stringify(orgPayload))
-  delete this.payload.meta
-})
-
 Given('I have entered my organisation details without data', function () {
   this.payload = JSON.parse(JSON.stringify(orgPayload))
   delete this.payload.data

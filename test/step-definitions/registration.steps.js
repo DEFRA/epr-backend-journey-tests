@@ -1,12 +1,55 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { BaseAPI } from '../apis/base-api.js'
+import regPayload from '../fixtures/registration.json' with { type: 'json' }
 
 const baseAPI = new BaseAPI()
 
 Given('I have entered my registration details', function () {
-  this.payload = {}
+  this.payload = regPayload
 })
+
+Given(
+  'I have entered my registration details without pages metadata',
+  function () {
+    this.payload = JSON.parse(JSON.stringify(regPayload))
+    delete this.payload.meta.definition.pages
+  }
+)
+
+Given('I have entered my registration details without data', function () {
+  this.payload = JSON.parse(JSON.stringify(regPayload))
+  delete this.payload.data
+})
+
+Given('I have entered my registration details without organisation ID', function () {
+  this.payload = JSON.parse(JSON.stringify(regPayload))
+  delete this.payload.data.main.QnSRcX
+})
+
+Given(
+  'I have entered my registration details without reference number',
+  function () {
+    this.payload = JSON.parse(JSON.stringify(regPayload))
+    delete this.payload.data.main.RIXIzA
+  }
+)
+
+Given(
+  'I have entered my registration details with orgId value of {string}',
+  function (orgId) {
+    this.payload = JSON.parse(JSON.stringify(regPayload))
+    this.payload.data.main.QnSRcX = orgId
+  }
+)
+
+Given(
+  "I have entered my registration details with reference number value of {string}",
+  function (refNo) {
+    this.payload = JSON.parse(JSON.stringify(regPayload))
+    this.payload.data.main.RIXIzA = refNo
+  }
+)
 
 When('I submit the registration details', async function () {
   this.response = await baseAPI.post(
@@ -16,8 +59,8 @@ When('I submit the registration details', async function () {
 })
 
 Then(
-  'I should receive the following registration details response',
+  'I should receive a registration resource created response',
   async function () {
-    expect(this.response.statusCode).to.equal(204)
+    expect(this.response.statusCode).to.equal(201)
   }
 )

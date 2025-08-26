@@ -2,3 +2,5 @@
 /allure-report
 /docker
 /test/step-definitions/organisation.steps.js
+/test/step-definitions/registration.steps.js
+/test/step-definitions/accreditation.steps.js
