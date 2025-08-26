@@ -17,10 +17,13 @@ Given(
   }
 )
 
-Given('I have entered my accreditation details without organisation ID', function () {
-  this.payload = JSON.parse(JSON.stringify(accPayload))
-  delete this.payload.data.main.Ooierc
-})
+Given(
+  'I have entered my accreditation details without organisation ID',
+  function () {
+    this.payload = JSON.parse(JSON.stringify(accPayload))
+    delete this.payload.data.main.Ooierc
+  }
+)
 
 Given(
   'I have entered my accreditation details without reference number',
@@ -39,13 +42,12 @@ Given(
 )
 
 Given(
-  "I have entered my accreditation details with reference number value of {string}",
+  'I have entered my accreditation details with reference number value of {string}',
   function (refNo) {
     this.payload = JSON.parse(JSON.stringify(accPayload))
     this.payload.data.main.MyWHms = refNo
   }
 )
-
 
 When('I submit the accreditation details', async function () {
   this.response = await baseAPI.post(

@@ -22,10 +22,13 @@ Given('I have entered my registration details without data', function () {
   delete this.payload.data
 })
 
-Given('I have entered my registration details without organisation ID', function () {
-  this.payload = JSON.parse(JSON.stringify(regPayload))
-  delete this.payload.data.main.QnSRcX
-})
+Given(
+  'I have entered my registration details without organisation ID',
+  function () {
+    this.payload = JSON.parse(JSON.stringify(regPayload))
+    delete this.payload.data.main.QnSRcX
+  }
+)
 
 Given(
   'I have entered my registration details without reference number',
@@ -44,7 +47,7 @@ Given(
 )
 
 Given(
-  "I have entered my registration details with reference number value of {string}",
+  'I have entered my registration details with reference number value of {string}',
   function (refNo) {
     this.payload = JSON.parse(JSON.stringify(regPayload))
     this.payload.data.main.RIXIzA = refNo
