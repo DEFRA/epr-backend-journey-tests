@@ -9,13 +9,6 @@ Given('I have entered invalid details', function () {
   this.payload = 'invalid-data'
 })
 
-Then('I should receive an error response', async function () {
-  expect(this.response.statusCode).to.equal(400)
-  const responseData = await this.response.body.json()
-  expect(responseData).to.have.property('message')
-  expect(responseData.message).to.equal('Invalid payload')
-})
-
 Then('I should receive an internal server error response', async function () {
   expect(this.response.statusCode).to.equal(500)
   const responseData = await this.response.body.json()
@@ -26,9 +19,9 @@ Then('I should receive an internal server error response', async function () {
 })
 
 Then(
-  'I should receive an error response {string}',
-  async function (errMessage) {
-    expect(this.response.statusCode).to.equal(400)
+  'I should receive a {int} error response {string}',
+  async function (code, errMessage) {
+    expect(this.response.statusCode).to.equal(code)
     const responseData = await this.response.body.json()
     expect(responseData).to.have.property('message')
     expect(responseData.message).to.equal(errMessage)
