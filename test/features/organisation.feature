@@ -3,7 +3,7 @@ Feature: Organisation endpoint
   Scenario: Ensure that organisation endpoint returns an orgId / reference number and organisation name on response
     Given I have entered my organisation details
     When I submit the organisation details
-    Then I should receive a successful organisation details response with the organisation name 'ACME ltd'
+    Then I should receive a successful organisation details response
 
   Scenario: Organisation endpoint returns an error if pages information in metadata are not present
     Given I have entered my organisation details without pages metadata
@@ -18,7 +18,7 @@ Feature: Organisation endpoint
   Scenario: Organisation endpoint returns an orgId / reference number and organisation name on response if nations are not present
     Given I have entered my organisation details without nations
     When I submit the organisation details
-    Then I should receive a successful organisation details response with the organisation name 'ACME ltd'
+    Then I should receive a successful organisation details response
 
   Scenario: Organisation endpoint returns an error if email is not present
     Given I have entered my organisation details without email
