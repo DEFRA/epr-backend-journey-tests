@@ -17,6 +17,7 @@
     "postinstall": "npm run setup:husky",
     "setup:husky": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module",
     "clean": "rm -rf allure-results && rm -rf allure-report",
+    "generatedata": "node ./data/data-generator.js",
     "test": "cucumber-js ; npm run report",
     "format": "prettier --write 'test/**/*.js' '**/*.{js,md,json,config.js}'",
     "format:check": "prettier --check 'test/**/*.js' '**/*.{js,md,json,config.js}'",
@@ -33,6 +34,9 @@
     "undici": "7.10.0"
   },
   "devDependencies": {
+    "@babel/core": "7.28.3",
+    "@babel/eslint-parser": "7.28.0",
+    "@babel/preset-env": "7.28.3",
     "@cucumber/cucumber": "11.3.0",
     "@cucumber/messages": "28.0.0",
     "@faker-js/faker": "9.9.0",

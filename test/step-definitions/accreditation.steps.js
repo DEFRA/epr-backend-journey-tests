@@ -1,90 +1,18 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { BaseAPI } from '../apis/base-api.js'
-import accPayload from '../fixtures/accreditation.json' with { type: 'json' }
-import { fakerEN_GB } from '@faker-js/faker'
+import { generateAccreditation } from '../support/generator.js'
 
 const baseAPI = new BaseAPI()
 
-const materials = [
-  'Aluminium (R4)',
-  'Fibre-based composite material (R3)',
-  'Glass (R5)',
-  'Paper or board (R3)',
-  'Plastic (R3)',
-  'Steel (R4)',
-  'Wood (R3)'
-]
-const tonnageBands = [
-  'Up to 500 tonnes',
-  'Up to 5,000 tonnes',
-  'Up to 10,000 tonnes',
-  'Over 10,000 tonnes'
-]
-
-function randomiseData(payload) {
-  payload = JSON.parse(JSON.stringify(payload))
-
-  let phoneNumber = fakerEN_GB.phone.number()
-  let fullName = fakerEN_GB.person.fullName()
-  let email = fakerEN_GB.internet.email()
-  let refNo = fakerEN_GB.database.mongodbObjectId()
-  let orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
-  let jobTitle = fakerEN_GB.person.jobTitle()
-
-  let fileId1 = fakerEN_GB.string.uuid()
-  let fileId2 = fakerEN_GB.string.uuid()
-
-  let reproPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  let priceSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  let businessSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  let commsPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  let developingNewMarketsPercentage = `${fakerEN_GB.number.int({ min: 1, max: 40 })}`
-  let developingNewUsesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 30 })}`
-  let otherCategoriesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 20 })}`
-
-  let materialIndex = Math.floor(Math.random() * materials.length)
-  let material = materials[materialIndex]
-  let tonnageBandIndex = Math.floor(Math.random() * tonnageBands.length)
-  let tonnageBand = tonnageBands[tonnageBandIndex]
-
-  payload.data.main.WGGxRc = fullName
-  payload.data.main.qeJOQY = email
-  payload.data.main.xyQDVo = phoneNumber
-  payload.data.main.NQtVfy = jobTitle
-  payload.data.main.MyWHms = refNo
-  payload.data.main.Ooierc = orgId
-  payload.data.main.qkCaCh = material
-  payload.data.main.XKWebf = tonnageBand
-
-  payload.data.main.yzvIcu = reproPercentage
-  payload.data.main.vjegvC = priceSupportPercentage
-  payload.data.main.gGuncQ = businessSupportPercentage
-  payload.data.main.jqvpTT = commsPercentage
-  payload.data.main.lACgrU = developingNewMarketsPercentage
-  payload.data.main.gBpCMU = developingNewUsesPercentage
-  payload.data.main.czCOzR = otherCategoriesPercentage
-
-  payload.data.repeaters.QkZUNV[0].jiMeVj = fullName
-  payload.data.repeaters.QkZUNV[0].eWxRYL = email
-  payload.data.repeaters.QkZUNV[0].NRkpFI = phoneNumber
-  payload.data.repeaters.QkZUNV[0].LUGryB = jobTitle
-  payload.data.files.TJTMtQ[0].fileId = fileId1
-  payload.data.files.TJTMtQ[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${fileId1}`
-  payload.data.files.zYxOlv[0].fileId = fileId2
-  payload.data.files.zYxOlv[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${fileId2}`
-
-  return payload
-}
-
 Given('I have entered my accreditation details', function () {
-  this.payload = randomiseData(accPayload)
+  this.payload = generateAccreditation()
 })
 
 Given(
   'I have entered my accreditation details without pages metadata',
   function () {
-    this.payload = randomiseData(accPayload)
+    this.payload = generateAccreditation()
     delete this.payload.meta.definition.pages
   }
 )
@@ -92,7 +20,7 @@ Given(
 Given(
   'I have entered my accreditation details without organisation ID',
   function () {
-    this.payload = randomiseData(accPayload)
+    this.payload = generateAccreditation()
     delete this.payload.data.main.Ooierc
   }
 )
@@ -100,7 +28,7 @@ Given(
 Given(
   'I have entered my accreditation details without reference number',
   function () {
-    this.payload = randomiseData(accPayload)
+    this.payload = generateAccreditation()
     delete this.payload.data.main.MyWHms
   }
 )
@@ -108,7 +36,7 @@ Given(
 Given(
   'I have entered my accreditation details with orgId value of {string}',
   function (orgId) {
-    this.payload = randomiseData(accPayload)
+    this.payload = generateAccreditation()
     this.payload.data.main.Ooierc = orgId
   }
 )
@@ -116,7 +44,7 @@ Given(
 Given(
   'I have entered my accreditation details with reference number value of {string}',
   function (refNo) {
-    this.payload = randomiseData(accPayload)
+    this.payload = generateAccreditation()
     this.payload.data.main.MyWHms = refNo
   }
 )

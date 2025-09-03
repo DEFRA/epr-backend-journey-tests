@@ -8,18 +8,24 @@ module.exports = {
     before: true,
     after: true
   },
-  extends: [
-    'standard',
-    'prettier',
-    'eslint:recommended'
-  ],
+  extends: ['standard', 'prettier', 'eslint:recommended'],
   overrides: [],
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 'latest'
+    requireConfigFile: false,
+    babelOptions: {
+      presets: ['@babel/preset-env']
+    }
   },
   plugins: ['prettier'],
   rules: {
     'prettier/prettier': 'error',
-    'no-console': 'error'
+    'no-console': 'error',
+    camelcase: [
+      'error',
+      {
+        allow: ['fakerEN_GB']
+      }
+    ]
   }
 }

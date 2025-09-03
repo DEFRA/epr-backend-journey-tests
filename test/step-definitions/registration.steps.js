@@ -1,121 +1,31 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { BaseAPI } from '../apis/base-api.js'
-import regPayload from '../fixtures/registration.json' with { type: 'json' }
-import { fakerEN_GB } from '@faker-js/faker'
+import { generateRegistration } from '../support/generator.js'
 
 const baseAPI = new BaseAPI()
 
-const materials = [
-  'Aluminium (R4)',
-  'Fibre-based composite material (R3)',
-  'Glass (R5)',
-  'Paper or board (R3)',
-  'Plastic (R3)',
-  'Steel (R4)',
-  'Wood (R3)'
-]
-
-const suppliers = [
-  'local council collections',
-  'direct from producer',
-  'material recovery facility'
-]
-
-const permitTypes = [
-  'Waste management licence or environmental permit',
-  'Installation permit or Pollution Prevention and Control (PPC) permit',
-  'Waste exemption'
-]
-
-function randomiseData(payload) {
-  payload = JSON.parse(JSON.stringify(payload))
-
-  let phoneNumber = fakerEN_GB.phone.number()
-  let fullName = fakerEN_GB.person.fullName()
-  let email = fakerEN_GB.internet.email()
-  let refNo = fakerEN_GB.database.mongodbObjectId()
-  let orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
-  let jobTitle = fakerEN_GB.person.jobTitle()
-
-  let fileId1 = fakerEN_GB.string.uuid()
-  let fileId2 = fakerEN_GB.string.uuid()
-
-  let materialIndex = Math.floor(Math.random() * materials.length)
-  let material = materials[materialIndex]
-  let suppIndex = Math.floor(Math.random() * suppliers.length)
-  let supplier = suppIndex[suppIndex]
-  let permitIndex = Math.floor(Math.random() * permitTypes.length)
-  let permitType = permitTypes[permitIndex]
-
-  let wasteRegNo = 'CBDU' + fakerEN_GB.number.int({ min: 100000, max: 999999 })
-  let permitNo = `${fakerEN_GB.number.int({ min: 1000000000, max: 9999999999 })}`
-  let port = fakerEN_GB.location.city()
-
-  let address =
-    fakerEN_GB.location.streetAddress() +
-    ',' +
-    fakerEN_GB.location.city() +
-    ',' +
-    fakerEN_GB.location.zipCode()
-
-  payload.data.main.CzNRVZ = fullName
-  payload.data.main.xpDUqn = email
-  payload.data.main.ZgTfLO = phoneNumber
-  payload.data.main.aSKIDS = jobTitle
-
-  payload.data.main.NOwTKr = fullName
-  payload.data.main.rYgNmR = email
-  payload.data.main.inueIm = phoneNumber
-  payload.data.main.MdZwoU = jobTitle
-
-  payload.data.main.RPiGkV = fullName
-  payload.data.main.eSxaKY = email
-  payload.data.main.AkoyKd = phoneNumber
-  payload.data.main.mGpVDA = jobTitle
-
-  payload.data.main.RIXIzA = refNo
-  payload.data.main.QnSRcX = orgId
-
-  payload.data.main.BeHQjA = material
-
-  payload.data.main.pGYoub = address
-  payload.data.main.fubWwR = wasteRegNo
-  payload.data.main.CACJrG = permitNo
-  payload.data.main.vsaLhJ = supplier
-  payload.data.main.QHJFhL = permitType
-
-  payload.data.repeaters.GzScMv[0].ZcjmuP = port
-
-  payload.data.files.qEZeYC[0].fileId = fileId1
-  payload.data.files.qEZeYC[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${fileId1}`
-  payload.data.files.uUWjUW[0].fileId = fileId2
-  payload.data.files.uUWjUW[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${fileId2}`
-
-  return payload
-}
-
 Given('I have entered my registration details', function () {
-  this.payload = randomiseData(regPayload)
+  this.payload = generateRegistration()
 })
 
 Given(
   'I have entered my registration details without pages metadata',
   function () {
-    this.payload = randomiseData(regPayload)
+    this.payload = generateRegistration()
     delete this.payload.meta.definition.pages
   }
 )
 
 Given('I have entered my registration details without data', function () {
-  this.payload = randomiseData(regPayload)
+  this.payload = generateRegistration()
   delete this.payload.data
 })
 
 Given(
   'I have entered my registration details without organisation ID',
   function () {
-    this.payload = randomiseData(regPayload)
+    this.payload = generateRegistration()
     delete this.payload.data.main.QnSRcX
   }
 )
@@ -123,7 +33,7 @@ Given(
 Given(
   'I have entered my registration details without reference number',
   function () {
-    this.payload = randomiseData(regPayload)
+    this.payload = generateRegistration()
     delete this.payload.data.main.RIXIzA
   }
 )
@@ -131,7 +41,7 @@ Given(
 Given(
   'I have entered my registration details with orgId value of {string}',
   function (orgId) {
-    this.payload = randomiseData(regPayload)
+    this.payload = generateRegistration()
     this.payload.data.main.QnSRcX = orgId
   }
 )
@@ -139,7 +49,7 @@ Given(
 Given(
   'I have entered my registration details with reference number value of {string}',
   function (refNo) {
-    this.payload = randomiseData(regPayload)
+    this.payload = generateRegistration()
     this.payload.data.main.RIXIzA = refNo
   }
 )
