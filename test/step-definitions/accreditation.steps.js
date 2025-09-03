@@ -25,28 +25,28 @@ const tonnageBands = [
 function randomiseData(payload) {
   payload = JSON.parse(JSON.stringify(payload))
 
-  let phoneNumber = fakerEN_GB.phone.number()
-  let fullName = fakerEN_GB.person.fullName()
-  let email = fakerEN_GB.internet.email()
-  let refNo = fakerEN_GB.database.mongodbObjectId()
-  let orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
-  let jobTitle = fakerEN_GB.person.jobTitle()
+  const phoneNumber = fakerEN_GB.phone.number()
+  const fullName = fakerEN_GB.person.fullName()
+  const email = fakerEN_GB.internet.email()
+  const refNo = fakerEN_GB.database.mongodbObjectId()
+  const orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
+  const jobTitle = fakerEN_GB.person.jobTitle()
 
-  let fileId1 = fakerEN_GB.string.uuid()
-  let fileId2 = fakerEN_GB.string.uuid()
+  const fileId1 = fakerEN_GB.string.uuid()
+  const fileId2 = fakerEN_GB.string.uuid()
 
-  let reproPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  let priceSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  let businessSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  let commsPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  let developingNewMarketsPercentage = `${fakerEN_GB.number.int({ min: 1, max: 40 })}`
-  let developingNewUsesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 30 })}`
-  let otherCategoriesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 20 })}`
+  const reproPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
+  const priceSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
+  const businessSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
+  const commsPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
+  const developingNewMarketsPercentage = `${fakerEN_GB.number.int({ min: 1, max: 40 })}`
+  const developingNewUsesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 30 })}`
+  const otherCategoriesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 20 })}`
 
-  let materialIndex = Math.floor(Math.random() * materials.length)
-  let material = materials[materialIndex]
-  let tonnageBandIndex = Math.floor(Math.random() * tonnageBands.length)
-  let tonnageBand = tonnageBands[tonnageBandIndex]
+  const materialIndex = Math.floor(Math.random() * materials.length)
+  const material = materials[materialIndex]
+  const tonnageBandIndex = Math.floor(Math.random() * tonnageBands.length)
+  const tonnageBand = tonnageBands[tonnageBandIndex]
 
   payload.data.main.WGGxRc = fullName
   payload.data.main.qeJOQY = email

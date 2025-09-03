@@ -31,28 +31,29 @@ const permitTypes = [
 function randomiseData(payload) {
   payload = JSON.parse(JSON.stringify(payload))
 
-  let phoneNumber = fakerEN_GB.phone.number()
-  let fullName = fakerEN_GB.person.fullName()
-  let email = fakerEN_GB.internet.email()
-  let refNo = fakerEN_GB.database.mongodbObjectId()
-  let orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
-  let jobTitle = fakerEN_GB.person.jobTitle()
+  const phoneNumber = fakerEN_GB.phone.number()
+  const fullName = fakerEN_GB.person.fullName()
+  const email = fakerEN_GB.internet.email()
+  const refNo = fakerEN_GB.database.mongodbObjectId()
+  const orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
+  const jobTitle = fakerEN_GB.person.jobTitle()
 
-  let fileId1 = fakerEN_GB.string.uuid()
-  let fileId2 = fakerEN_GB.string.uuid()
+  const fileId1 = fakerEN_GB.string.uuid()
+  const fileId2 = fakerEN_GB.string.uuid()
 
-  let materialIndex = Math.floor(Math.random() * materials.length)
-  let material = materials[materialIndex]
-  let suppIndex = Math.floor(Math.random() * suppliers.length)
-  let supplier = suppIndex[suppIndex]
-  let permitIndex = Math.floor(Math.random() * permitTypes.length)
-  let permitType = permitTypes[permitIndex]
+  const materialIndex = Math.floor(Math.random() * materials.length)
+  const material = materials[materialIndex]
+  const suppIndex = Math.floor(Math.random() * suppliers.length)
+  const supplier = suppIndex[suppIndex]
+  const permitIndex = Math.floor(Math.random() * permitTypes.length)
+  const permitType = permitTypes[permitIndex]
 
-  let wasteRegNo = 'CBDU' + fakerEN_GB.number.int({ min: 100000, max: 999999 })
-  let permitNo = `${fakerEN_GB.number.int({ min: 1000000000, max: 9999999999 })}`
-  let port = fakerEN_GB.location.city()
+  const wasteRegNo =
+    'CBDU' + fakerEN_GB.number.int({ min: 100000, max: 999999 })
+  const permitNo = `${fakerEN_GB.number.int({ min: 1000000000, max: 9999999999 })}`
+  const port = fakerEN_GB.location.city()
 
-  let address =
+  const address =
     fakerEN_GB.location.streetAddress() +
     ',' +
     fakerEN_GB.location.city() +

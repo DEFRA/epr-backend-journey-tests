@@ -12,23 +12,23 @@ const nations = ['England', 'Northern Ireland', 'Scotland', 'Wales']
 function randomiseData(payload) {
   payload = JSON.parse(JSON.stringify(payload))
 
-  let phoneNumber = fakerEN_GB.phone.number()
-  let fullName = fakerEN_GB.person.fullName()
-  let email = fakerEN_GB.internet.email()
-  let jobTitle = fakerEN_GB.person.jobTitle()
+  const phoneNumber = fakerEN_GB.phone.number()
+  const fullName = fakerEN_GB.person.fullName()
+  const email = fakerEN_GB.internet.email()
+  const jobTitle = fakerEN_GB.person.jobTitle()
 
-  let address =
+  const address =
     fakerEN_GB.location.streetAddress() +
     ',' +
     fakerEN_GB.location.city() +
     ',' +
     fakerEN_GB.location.zipCode()
 
-  let companyName = fakerEN_GB.company.name() + ' Limited'
+  const companyName = fakerEN_GB.company.name() + ' Limited'
 
-  let roleIndex = Math.floor(Math.random() * roles.length)
-  let role = roles[roleIndex]
-  let numberOfNations = Math.floor(Math.random() * nations.length) + 1
+  const roleIndex = Math.floor(Math.random() * roles.length)
+  const role = roles[roleIndex]
+  const numberOfNations = Math.floor(Math.random() * nations.length) + 1
 
   payload.data.main.BYtjnh = fullName
   payload.data.main.aSoxDO = email
