@@ -47,6 +47,16 @@ You can check the progress of the build under the actions section of this reposi
 
 The results of the test run are made available in the portal.
 
+### Running the data generator for epr-backend
+
+This only applies to local builds. You can generate 50 organisation details, registrations and accreditations (all linked together) in one go with this command:
+
+```
+npm run generatedata
+```
+
+This will create mock datasets for the 3 collections in the database. Only to be used for local development purposes.
+
 ## Requirements of CDP Environment Tests
 
 1. Your service builds as a docker container using the `.github/workflows/publish.yml`
