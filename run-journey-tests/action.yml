@@ -29,6 +29,14 @@ runs:
       run: |
         EPR_BACKEND=${{inputs.epr-backend}} \
         docker compose up --wait-timeout 300 -d --quiet-pull
+
+    - name: Check service status
+      shell: bash
+      run: |
+        echo "=== Testing Service Connectivity ==="
+        echo "Testing from runner to backend service..."
+        curl --fail --silent --connect-timeout 5 http://localhost:3001/health || (echo "❌ Cannot reach backend from runner!" && exit 1)
+
     - name: Run the tests
       shell: bash
       run: |

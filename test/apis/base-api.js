@@ -4,7 +4,7 @@ export class BaseAPI {
   constructor() {
     if (process.env.ENVIRONMENT) {
       if (process.env.ENVIRONMENT === 'github') {
-        this.baseUrl = 'http://epr-backend:3001'
+        this.baseUrl = 'http://localhost:3001'
       } else {
         this.baseUrl = `https://epr-backend.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`
       }
