@@ -30,6 +30,12 @@ runs:
         EPR_BACKEND=${{inputs.epr-backend}} \
         docker compose up --wait-timeout 300 -d --quiet-pull
 
+    - name: Wait for services to be ready
+      shell: bash
+      run: |
+        echo "Waiting for backend to be ready..."
+        timeout 180 bash -c 'until curl -f http://localhost:3001/health; do sleep 5; done'
+
     - name: Check service status
       shell: bash
       run: |
