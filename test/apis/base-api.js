@@ -2,9 +2,15 @@ import { request } from 'undici'
 
 export class BaseAPI {
   constructor() {
-    this.baseUrl = process.env.ENVIRONMENT
-      ? `https://epr-backend.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`
-      : 'http://localhost:3001'
+    if (process.env.ENVIRONMENT) {
+      if (process.env.ENVIRONMENT === 'github') {
+        this.baseUrl = 'http://0.0.0.0:3001'
+      } else {
+        this.baseUrl = `https://epr-backend.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`
+      }
+    } else {
+      this.baseUrl = 'http://localhost:3001'
+    }
     this.defaultHeaders = {}
   }
 

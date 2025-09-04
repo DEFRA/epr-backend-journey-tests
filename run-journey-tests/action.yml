@@ -15,6 +15,16 @@ runs:
     - uses: actions/checkout@v4
       with:
         repository: DEFRA/epr-backend-journey-tests
+        path: ./epr-backend-journey-tests
+
+    - name: Alternative checkout attempt (only if called from different repo)
+      if: github.repository != 'DEFRA/epr-backend-journey-tests'
+      run: |
+        rm -rf ./epr-backend-journey-tests
+        git clone https://github.com/DEFRA/epr-backend-journey-tests.git ./epr-backend-journey-tests
+        cd ./epr-backend-journey-tests
+        git checkout ${{ inputs.branch }} || echo "Using default branch"
+      shell: bash
 
     - uses: actions/setup-node@v4
       with:
@@ -23,18 +33,22 @@ runs:
     - name: Setup the tests
       run: npm i
       shell: bash
+      working-directory: ./epr-backend-journey-tests
 
     - name: Start docker compose
       shell: bash
+      working-directory: ./epr-backend-journey-tests
       run: |
         EPR_BACKEND=${{inputs.epr-backend}} \
         docker compose up --wait-timeout 300 -d --quiet-pull
     - name: Run the tests
       shell: bash
+      working-directory: ./epr-backend-journey-tests
       run: |
-        npm run test
+        npm run test:github
     - name: debug
       if: always()
+      working-directory: ./epr-backend-journey-tests
       run: |
         docker compose logs > logs.txt
         docker ps
@@ -51,3 +65,10 @@ runs:
       with:
         name: docker-compose-logs
         path: ./logs.txt
+    - name: Fail this step if FAILED file exists
+      if: always()
+      run: |
+        if [ -f "FAILED" ]; then
+          exit 1
+        fi
+      shell: bash
