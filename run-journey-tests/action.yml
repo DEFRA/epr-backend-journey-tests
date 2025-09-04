@@ -1,41 +1,41 @@
 name: Run Journey Tests on GitHub
 
 inputs:
-  example-node-backend:
+  epr-backend:
     required: false
     type: string
-  example-node-frontend:
+  branch:
     required: false
     type: string
+    default: main
 
 runs:
   using: 'composite'
   steps:
     - uses: actions/checkout@v4
       with:
-        repository: DEFRA/cdp-node-journey-test-suite-template
+        repository: DEFRA/epr-backend-journey-tests
 
     - name: Docker Login
       uses: DEFRA/cdp-build-action/docker-login@main
 
     - uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22
         cache: npm
     - name: Setup the tests
       run: npm i
       shell: bash
+
     - name: Start docker compose
       shell: bash
       run: |
-        CDP_EXAMPLE_NODE_FRONTEND=${{inputs.example-node-frontend}} \
-        CDP_EXAMPLE_NODE_BACKEND=${{inputs.example-node-backend}} \
+        EPR_BACKEND=${{inputs.epr-backend}} \
         docker compose up --wait-timeout 300 -d --quiet-pull
     - name: Run the tests
       shell: bash
       run: |
-        npm run test:github
-        npm run report
+        npm run test
     - name: debug
       if: always()
       run: |
