@@ -19,7 +19,6 @@
     "clean": "rm -rf allure-results && rm -rf allure-report",
     "generatedata": "node ./data/data-generator.js",
     "test": "cucumber-js ; npm run report",
-    "test:github": "ENVIRONMENT=github cucumber-js ; npm run report",
     "format": "prettier --write 'test/**/*.js' '**/*.{js,md,json,config.js}'",
     "format:check": "prettier --check 'test/**/*.js' '**/*.{js,md,json,config.js}'",
     "lint": "eslint .",
