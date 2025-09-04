@@ -16,9 +16,6 @@ runs:
       with:
         repository: DEFRA/epr-backend-journey-tests
 
-    - name: Docker Login
-      uses: DEFRA/cdp-build-action/docker-login@main
-
     - uses: actions/setup-node@v4
       with:
         node-version: 22
