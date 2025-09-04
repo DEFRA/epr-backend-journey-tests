@@ -93,7 +93,10 @@ export function generateOrganisation() {
 
   const phoneNumber = fakerEN_GB.phone.number()
   const fullName = fakerEN_GB.person.fullName()
-  const email = fakerEN_GB.internet.email()
+  const email = process.env.ENVIRONMENT
+    ? 'REEXServiceTeam@defra.gov.uk'
+    : fakerEN_GB.internet.email()
+
   const jobTitle = fakerEN_GB.person.jobTitle()
 
   const address =
