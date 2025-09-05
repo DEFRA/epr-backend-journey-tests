@@ -1,5 +1,10 @@
 import { Given, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
+import { DockerLogTester } from '../support/docker.js'
+
+const dockerLogTester = new DockerLogTester(
+  'epr-backend-journey-tests-epr-backend-1'
+)
 
 Given('I have not entered any details', function () {
   this.payload = null
@@ -25,5 +30,17 @@ Then(
     const responseData = await this.response.body.json()
     expect(responseData).to.have.property('message')
     expect(responseData.message).to.equal(errMessage)
+  }
+)
+
+Then(
+  'the following information appears in the log',
+  async function (dataTable) {
+    const logMessage = dataTable.rowsHash()
+    await dockerLogTester.assertLogs([
+      DockerLogTester.assertions.hasLogLevel(logMessage['Log Level']),
+      DockerLogTester.assertions.hasEventAction(logMessage['Event Action']),
+      DockerLogTester.assertions.hasMessage(logMessage.Message)
+    ])
   }
 )

@@ -24,11 +24,18 @@ Feature: Organisation endpoint
     Given I have entered my organisation details without email
     When I submit the organisation details
     Then I should receive a 422 error response 'Could not extract email from answers'
+    And the following information appears in the log
+     | Log Level    | WARN                                 |
+     | Message      | Could not extract email from answers |
 
   Scenario: Organisation endpoint returns an error if organisation name is not present
     Given I have entered my organisation details without organisation name
     When I submit the organisation details
     Then I should receive a 422 error response 'Could not extract organisation name from answers'
+    And the following information appears in the log
+      | Log Level    | WARN                                             |
+      | Event Action | response_failure                                 |
+      | Message      | Could not extract organisation name from answers |
 
   Scenario: Organisation endpoint returns an error if payload is not present
     Given I have not entered any details
