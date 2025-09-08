@@ -8,11 +8,10 @@ export class DockerLogTester {
     this.containerName = containerName
   }
 
-  // Get logs since test started or specific time
   async getLogs() {
     const utcTimestamp = new Date().toISOString().slice(0, 19)
 
-    const cmd = `docker logs ${this.containerName} --since ${utcTimestamp}`
+    const cmd = `docker logs ${this.containerName} --since ${utcTimestamp} --tail 200`
 
     try {
       const { stdout, stderr } = await execAsync(cmd)
@@ -20,6 +19,49 @@ export class DockerLogTester {
     } catch (error) {
       throw new Error(`Failed to get logs: ${error.message}`)
     }
+  }
+
+  async filterAuditLogsByTime(auditLogs, secondsBack = 5) {
+    const now = new Date()
+    const cutoffTime = new Date(now.getTime() - secondsBack * 1000)
+
+    return auditLogs.filter((log) => {
+      const logTime = new Date(log.time)
+      return logTime >= cutoffTime
+    })
+  }
+
+  async parseAuditLogs(logText, secondsBack = 5) {
+    const lines = logText.trim().split('\n')
+    const result = {
+      message: null,
+      auditLogs: []
+    }
+
+    lines.forEach((line) => {
+      const responseMatch = line.match(/\[response\]\s+(.+?)\s+\d+\s+\(\d+ms\)/)
+      if (responseMatch) {
+        result.message = `[response] ${responseMatch[1]}`
+        return
+      }
+
+      // Try to parse as JSON (audit logs)
+      try {
+        const parsed = JSON.parse(line)
+        if (parsed['log.level'] === 'audit') {
+          result.auditLogs.push(parsed)
+        }
+      } catch (e) {
+        // Not JSON or not an audit log, skip
+      }
+    })
+
+    result.auditLogs = await this.filterAuditLogsByTime(
+      result.auditLogs,
+      secondsBack
+    )
+
+    return result
   }
 
   parseLogs(logText) {
@@ -41,8 +83,6 @@ export class DockerLogTester {
       ) => new Date(`${date}T${timeStr}Z`).toISOString()
 
       const timestamp = timeToISO(ts)
-
-      // console.log(timeToISO("13:56:11.168"));
 
       results.push({
         timestamp,
@@ -91,6 +131,11 @@ export class DockerLogTester {
     return result
   }
 
+  async retrieveAuditLogs() {
+    const logs = await this.getLogs()
+    return this.parseAuditLogs(logs)
+  }
+
   // Wait for a specific log pattern to appear
   async waitForLog(pattern, options = {}) {
     const { timeout = 5000, interval = 1000 } = options
@@ -112,57 +157,5 @@ export class DockerLogTester {
     }
 
     throw new Error(`Log pattern not found within ${timeout}ms: ${pattern}`)
-  }
-
-  // Test log assertions
-  async assertLogs(assertions) {
-    const logs = await this.getLogs()
-
-    const now = new Date()
-    const cutoffTime = new Date(now.getTime() - 5000)
-
-    const logLines = this.parseLogs(logs).filter((item) => {
-      const itemTime = new Date(item.timestamp)
-      return itemTime >= cutoffTime
-    })
-
-    const results = assertions.map((assertion) => {
-      try {
-        const result = assertion(logLines)
-        return { passed: true, result }
-      } catch (error) {
-        return { passed: false, error: error.message }
-      }
-    })
-
-    const failed = results.filter((r) => !r.passed)
-    if (failed.length > 0) {
-      throw new Error(
-        `Log assertions failed:\n${failed.map((f) => f.error).join('\n')}`
-      )
-    }
-
-    return results
-  }
-
-  // Common assertion helpers
-  static assertions = {
-    hasLogLevel: (level) => (logs) => {
-      const found = logs.find((log) => log.logLevel === level.toUpperCase())
-      if (!found) throw new Error(`No ${level} logs found`)
-      return found
-    },
-
-    hasEventAction: (action) => (logs) => {
-      const found = logs.find((log) => log.body?.event?.action === action)
-      if (!found) throw new Error(`No logs with event.action: ${action}`)
-      return found
-    },
-
-    hasMessage: (expectedMessage) => (logs) => {
-      const found = logs.find((log) => log.body?.message === expectedMessage)
-      if (!found) throw new Error(`No logs with message: ${expectedMessage}`)
-      return found
-    }
   }
 }

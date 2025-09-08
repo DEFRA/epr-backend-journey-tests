@@ -4,6 +4,14 @@ Feature: Organisation endpoint
     Given I have entered my organisation details
     When I submit the organisation details
     Then I should receive a successful organisation details response
+    And the following information appears in the log
+      | Log Level    | INFO                               |
+      | Event Action | request_success                    |
+      | Message      | Stored organisation data for orgId |
+    And the following audit logs are present for '[response] post /v1/apply/organisation'
+      | Event Category | Event Action    | Context Keys                              | Count |
+      | database       | database_insert | orgId, orgName, referenceNumber           | 1     |
+      | email          | email_sent      | templateId, emailAddress, personalisation | 2     |
 
   Scenario: Organisation endpoint returns an error if pages information in metadata are not present
     Given I have entered my organisation details without pages metadata
@@ -26,6 +34,7 @@ Feature: Organisation endpoint
     Then I should receive a 422 error response 'Could not extract email from answers'
     And the following information appears in the log
      | Log Level    | WARN                                 |
+     | Event Action | response_failure                     |
      | Message      | Could not extract email from answers |
 
   Scenario: Organisation endpoint returns an error if organisation name is not present
@@ -41,6 +50,10 @@ Feature: Organisation endpoint
     Given I have not entered any details
     When I submit the organisation details
     Then I should receive a 400 error response 'Invalid payload'
+    And the following information appears in the log
+      | Log Level    | WARN             |
+      | Event Action | response_failure |
+      | Message      | Invalid payload  |
 
   Scenario: Organisation endpoint returns an error if payload is not a valid object
     Given I have entered invalid details
