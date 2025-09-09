@@ -127,16 +127,9 @@ services:
      retries: 3
    networks:
      - cdp-tenant
-   secrets:
-     - govuk_notify_api_key
 
 
 networks:
   cdp-tenant:
     driver: bridge
     name: cdp-tenant
-
-secrets:
-  govuk_notify_api_key:
-    environment: "GOVUK_NOTIFY_API_KEY"
-
