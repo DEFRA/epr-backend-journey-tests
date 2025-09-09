@@ -8,7 +8,7 @@ Feature: Organisation endpoint
       | Log Level    | INFO                               |
       | Event Action | request_success                    |
       | Message      | Stored organisation data for orgId |
-    And the following audit logs are present for '[response] post /v1/apply/organisation'
+    And the following audit logs are present
       | Event Category | Event Action    | Context Keys                              | Count |
       | database       | database_insert | orgId, orgName, referenceNumber           | 1     |
       | email          | email_sent      | templateId, emailAddress, personalisation | 2     |

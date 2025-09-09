@@ -8,7 +8,7 @@ const dockerLogTester = new DockerLogTester(
 
 Then(
   'the following information appears in the log',
-  { timeout: 30000 },
+  { timeout: 10000 },
   async function (dataTable) {
     if (process.env.WITH_LOGS) {
       const expectedLog = dataTable.rowsHash()
@@ -21,15 +21,15 @@ Then(
 )
 
 Then(
-  'the following audit logs are present for {string}',
-  { timeout: 30000 },
-  async function (message, dataTable) {
+  'the following audit logs are present',
+  { timeout: 10000 },
+  async function (dataTable) {
     if (process.env.WITH_LOGS) {
       const expectedLogs = dataTable.hashes()
       const actualLogs = await dockerLogTester.retrieveAuditLogs()
 
       for (const expectedLogRow of expectedLogs) {
-        const filtered = actualLogs.auditLogs.filter(
+        const filtered = actualLogs.filter(
           (log) =>
             log.event.category === expectedLogRow['Event Category'] &&
             log.event.action === expectedLogRow['Event Action'] &&

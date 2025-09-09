@@ -36,11 +36,31 @@ Install application dependencies:
 npm install
 ```
 
+### Running the tests locally
+
+Bring up the relevant Docker containers:
+
+```bash
+docker compose up -d
+```
+
+Run the tests:
+
 ```bash
 npm run test
 ```
 
-### Running the tests
+If you wish to test the logs or audit logs, run the following command:
+
+```bash
+npm run test:withLogs
+```
+
+By default the testing of logs is not enabled (And also not launched during the smoke test in Dev / Test). It is however enabled during PR builds.
+
+The testing of logs and audit logs also assumes that you have run the Docker compose command above as it relies on the Dockerised `epr-backend` service.
+
+### Running the tests on environments
 
 Tests are run from the CDP-Portal under the Test Suites section. Before any changes can be run, a new docker image must be built, this will happen automatically when a pull request is merged into the `main` branch.
 You can check the progress of the build under the actions section of this repository. Builds typically take around 1-2 minutes.
@@ -66,23 +86,6 @@ This will create mock datasets for the 3 collections in the database. Only to be
 2. The Dockerfile's entrypoint script should return exit code of 0 if the test suite passes or 1/>0 if it fails
 
 3. Test reports should be published to S3 using the script in `./bin/publish-tests.sh`
-
-## Running on GitHub
-
-Alternatively you can run the test suite as a GitHub workflow.
-Test runs on GitHub are not able to connect to the CDP Test environments. Instead, they run the tests agains a version of the services running in docker.
-A docker compose `compose.yml` is included as a starting point, which includes the databases (mongodb, redis) and infrastructure (localstack) pre-setup.
-
-Steps:
-
-1. Edit the compose.yml to include your services.
-2. Modify the scripts in docker/scripts to pre-populate the database, if required and create any localstack resources.
-3. Test the setup locally with `docker compose up` and `npm run test:github`
-4. Set up the workflow trigger in `.github/workflows/journey-tests`.
-
-By default, the provided workflow will run when triggered manually from GitHub or when triggered by another workflow.
-
-If you want to use the repository exclusively for running docker composed based test suites consider displaying the publish.yml workflow.
 
 ## Licence
 

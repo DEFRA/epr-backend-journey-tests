@@ -8,7 +8,7 @@ Feature: Registration endpoint
       | Log Level    | INFO                                |
       | Event Action | request_success                     |
       | Message      | Stored registration data for orgId  |
-    And the following audit logs are present for '[response] post /v1/apply/registration'
+    And the following audit logs are present
       | Event Category | Event Action    | Context Keys           | Count |
       | database       | database_insert | orgId, referenceNumber | 1     |
 
