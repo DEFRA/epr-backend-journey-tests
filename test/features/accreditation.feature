@@ -8,7 +8,7 @@ Feature: Accreditation endpoint
       | Log Level    | INFO                                |
       | Event Action | request_success                     |
       | Message      | Stored accreditation data for orgId |
-    And the following audit logs are present for '[response] post /v1/apply/accreditation'
+    And the following audit logs are present
       | Event Category | Event Action    | Context Keys           | Count |
       | database       | database_insert | orgId, referenceNumber | 1     |
 

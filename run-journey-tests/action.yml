@@ -46,7 +46,7 @@ runs:
     - name: Run the tests
       shell: bash
       run: |
-        npm run test
+        npm run test:withLogs
     - name: debug
       if: always()
       run: |

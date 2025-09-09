@@ -1,17 +1,25 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import crypto from 'crypto'
 
 const execAsync = promisify(exec)
+
+const logsBufferTime = 10
 
 export class DockerLogTester {
   constructor(containerName) {
     this.containerName = containerName
+    this.processedLogs = new Map()
+    this.processedAuditLogs = new Map()
   }
 
   async getLogs() {
-    const utcTimestamp = new Date().toISOString().slice(0, 19)
+    const now = new Date()
+    const utcTimestamp = new Date(now.getTime() - logsBufferTime * 1000)
+      .toISOString()
+      .slice(0, 19)
 
-    const cmd = `docker logs ${this.containerName} --since ${utcTimestamp}`
+    const cmd = `docker logs ${this.containerName} --since ${utcTimestamp}Z`
 
     try {
       const { stdout, stderr } = await execAsync(cmd)
@@ -21,9 +29,9 @@ export class DockerLogTester {
     }
   }
 
-  async filterAuditLogsByTime(auditLogs, secondsBack = 30) {
+  async filterAuditLogsByTime(auditLogs) {
     const now = new Date()
-    const cutoffTime = new Date(now.getTime() - secondsBack * 1000)
+    const cutoffTime = new Date(now.getTime() - logsBufferTime * 1000)
 
     return auditLogs.filter((log) => {
       const logTime = new Date(log.time)
@@ -31,37 +39,49 @@ export class DockerLogTester {
     })
   }
 
-  async parseAuditLogs(logText, secondsBack = 30) {
+  hashContext(context) {
+    const contextString = JSON.stringify(context, Object.keys(context).sort())
+    return crypto
+      .createHash('sha256')
+      .update(contextString)
+      .digest('hex')
+      .substring(0, 16)
+  }
+
+  generateLogKey(time, context) {
+    const contextHash = this.hashContext(context)
+    return `${time}_${contextHash}`
+  }
+
+  isAlreadyProcessed(auditLog) {
+    const key = this.generateLogKey(auditLog.time, auditLog.context)
+    return this.processedAuditLogs.has(key)
+  }
+
+  addToProcessed(auditLog) {
+    const key = this.generateLogKey(auditLog.time, auditLog.context)
+    this.processedAuditLogs.set(key, auditLog)
+  }
+
+  async parseAuditLogs(logText) {
     const lines = logText.trim().split('\n')
-    const result = {
-      message: null,
-      auditLogs: []
-    }
+    const auditLogs = []
 
     lines.forEach((line) => {
-      const responseMatch = line.match(/\[response\]\s+(.+?)\s+\d+\s+\(\d+ms\)/)
-      if (responseMatch) {
-        result.message = `[response] ${responseMatch[1]}`
-        return
-      }
-
-      // Try to parse as JSON (audit logs)
       try {
         const parsed = JSON.parse(line)
         if (parsed['log.level'] === 'audit') {
-          result.auditLogs.push(parsed)
+          if (!this.isAlreadyProcessed(parsed)) {
+            auditLogs.push(parsed)
+            this.addToProcessed(parsed)
+          }
         }
       } catch (e) {
         // Not JSON or not an audit log, skip
       }
     })
 
-    result.auditLogs = await this.filterAuditLogsByTime(
-      result.auditLogs,
-      secondsBack
-    )
-
-    return result
+    return await this.filterAuditLogsByTime(auditLogs)
   }
 
   parseLogs(logText) {
@@ -138,7 +158,7 @@ export class DockerLogTester {
 
   // Wait for a specific log pattern to appear
   async waitForLog(pattern, options = {}) {
-    const { timeout = 30000, interval = 1000 } = options
+    const { timeout = logsBufferTime * 1000, interval = 1000 } = options
     const startTime = Date.now()
 
     while (Date.now() - startTime < timeout) {
@@ -146,10 +166,14 @@ export class DockerLogTester {
       const logLines = this.parseLogs(logs)
 
       const found = logLines.find((log) => {
+        if (this.processedLogs.has(log.timestamp)) {
+          return false
+        }
         return log.body.message?.includes(pattern)
       })
 
       if (found) {
+        this.processedLogs.set(found.timestamp, found)
         return found
       }
 
