@@ -19,14 +19,23 @@ export class DockerLogTester {
       .toISOString()
       .slice(0, 19)
 
-    const cmd = `docker logs ${this.containerName} --since ${utcTimestamp}Z`
+    const primaryCmd = `docker logs ${this.containerName} --since ${utcTimestamp}Z`
+    const fallbackCmd = `docker logs 'epr-backend-epr-backend-1' --since ${utcTimestamp}Z`
 
-    try {
-      const { stdout, stderr } = await execAsync(cmd)
-      return stdout + stderr
-    } catch (error) {
-      throw new Error(`Failed to get logs: ${error.message}`)
+    const commands = [primaryCmd, fallbackCmd]
+    let lastError
+
+    for (const cmd of commands) {
+      try {
+        const { stdout, stderr } = await execAsync(cmd)
+        return stdout + stderr
+      } catch (error) {
+        this.containerName = 'epr-backend-epr-backend-1'
+        lastError = error
+      }
     }
+
+    throw new Error(`Failed to get logs: ${lastError.message}`)
   }
 
   async filterAuditLogsByTime(auditLogs) {
