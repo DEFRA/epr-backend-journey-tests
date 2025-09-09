@@ -31,4 +31,4 @@ jobs:
     name: Run Journey Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: DEFRA/epr-backend-journey-tests/run-journey-tests@main
+      - uses: DEFRA/epr-backend-journey-tests/run-journey-tests

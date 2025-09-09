@@ -14,7 +14,7 @@ runs:
   steps:
     - uses: actions/checkout@v4
       with:
-        repository: DEFRA/epr-backend-journey-tests@PAE-195-test-docker-logs
+        repository: DEFRA/epr-backend-journey-tests
 
     - uses: actions/setup-node@v4
       with:
