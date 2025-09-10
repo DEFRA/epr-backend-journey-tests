@@ -1,31 +1,35 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { BaseAPI } from '../apis/base-api.js'
-import { generateRegistration } from '../support/generator.js'
+import { Registration } from '../support/generator.js'
 
 const baseAPI = new BaseAPI()
 
 Given('I have entered my registration details', function () {
-  this.payload = generateRegistration()
+  this.registration = new Registration()
+  this.payload = this.registration.toPayload()
 })
 
 Given(
   'I have entered my registration details without pages metadata',
   function () {
-    this.payload = generateRegistration()
+    this.registration = new Registration()
+    this.payload = this.registration.toPayload()
     delete this.payload.meta.definition.pages
   }
 )
 
 Given('I have entered my registration details without data', function () {
-  this.payload = generateRegistration()
+  this.registration = new Registration()
+  this.payload = this.registration.toPayload()
   delete this.payload.data
 })
 
 Given(
   'I have entered my registration details without organisation ID',
   function () {
-    this.payload = generateRegistration()
+    this.registration = new Registration()
+    this.payload = this.registration.toPayload()
     delete this.payload.data.main.QnSRcX
   }
 )
@@ -33,7 +37,8 @@ Given(
 Given(
   'I have entered my registration details without reference number',
   function () {
-    this.payload = generateRegistration()
+    this.registration = new Registration()
+    this.payload = this.registration.toPayload()
     delete this.payload.data.main.RIXIzA
   }
 )
@@ -41,7 +46,8 @@ Given(
 Given(
   'I have entered my registration details with orgId value of {string}',
   function (orgId) {
-    this.payload = generateRegistration()
+    this.registration = new Registration()
+    this.payload = this.registration.toPayload()
     this.payload.data.main.QnSRcX = orgId
   }
 )
@@ -49,7 +55,8 @@ Given(
 Given(
   'I have entered my registration details with reference number value of {string}',
   function (refNo) {
-    this.payload = generateRegistration()
+    this.registration = new Registration()
+    this.payload = this.registration.toPayload()
     this.payload.data.main.RIXIzA = refNo
   }
 )

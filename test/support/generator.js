@@ -33,162 +33,173 @@ const permitTypes = [
 const roles = ['Reprocessor', 'Exporter', 'Reprocessor and exporter']
 const nations = ['England', 'Northern Ireland', 'Scotland', 'Wales']
 
-export function generateAccreditation() {
-  const payload = JSON.parse(JSON.stringify(accPayload))
+export class Accreditation {
+  constructor() {
+    this.phoneNumber = fakerEN_GB.phone.number()
+    this.fullName = fakerEN_GB.person.fullName()
+    this.email = fakerEN_GB.internet.email()
+    this.refNo = fakerEN_GB.database.mongodbObjectId()
+    this.orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
+    this.jobTitle = fakerEN_GB.person.jobTitle()
 
-  const phoneNumber = fakerEN_GB.phone.number()
-  const fullName = fakerEN_GB.person.fullName()
-  const email = fakerEN_GB.internet.email()
-  const refNo = fakerEN_GB.database.mongodbObjectId()
-  const orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
-  const jobTitle = fakerEN_GB.person.jobTitle()
+    this.fileId1 = fakerEN_GB.string.uuid()
+    this.fileId2 = fakerEN_GB.string.uuid()
 
-  const fileId1 = fakerEN_GB.string.uuid()
-  const fileId2 = fakerEN_GB.string.uuid()
+    this.reproPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
+    this.priceSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
+    this.businessSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
+    this.commsPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
+    this.developingNewMarketsPercentage = `${fakerEN_GB.number.int({ min: 1, max: 40 })}`
+    this.developingNewUsesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 30 })}`
+    this.otherCategoriesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 20 })}`
 
-  const reproPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  const priceSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  const businessSupportPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  const commsPercentage = `${fakerEN_GB.number.int({ min: 10, max: 100 })}`
-  const developingNewMarketsPercentage = `${fakerEN_GB.number.int({ min: 1, max: 40 })}`
-  const developingNewUsesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 30 })}`
-  const otherCategoriesPercentage = `${fakerEN_GB.number.int({ min: 1, max: 20 })}`
+    const materialIndex = Math.floor(Math.random() * materials.length)
+    this.material = materials[materialIndex]
+    const tonnageBandIndex = Math.floor(Math.random() * tonnageBands.length)
+    this.tonnageBand = tonnageBands[tonnageBandIndex]
+  }
 
-  const materialIndex = Math.floor(Math.random() * materials.length)
-  const material = materials[materialIndex]
-  const tonnageBandIndex = Math.floor(Math.random() * tonnageBands.length)
-  const tonnageBand = tonnageBands[tonnageBandIndex]
+  toPayload() {
+    const payload = JSON.parse(JSON.stringify(accPayload))
 
-  payload.data.main.WGGxRc = fullName
-  payload.data.main.qeJOQY = email
-  payload.data.main.xyQDVo = phoneNumber
-  payload.data.main.NQtVfy = jobTitle
-  payload.data.main.MyWHms = refNo
-  payload.data.main.Ooierc = orgId
-  payload.data.main.qkCaCh = material
-  payload.data.main.XKWebf = tonnageBand
+    payload.data.main.WGGxRc = this.fullName
+    payload.data.main.qeJOQY = this.email
+    payload.data.main.xyQDVo = this.phoneNumber
+    payload.data.main.NQtVfy = this.jobTitle
+    payload.data.main.MyWHms = this.refNo
+    payload.data.main.Ooierc = this.orgId
+    payload.data.main.qkCaCh = this.material
+    payload.data.main.XKWebf = this.tonnageBand
 
-  payload.data.main.yzvIcu = reproPercentage
-  payload.data.main.vjegvC = priceSupportPercentage
-  payload.data.main.gGuncQ = businessSupportPercentage
-  payload.data.main.jqvpTT = commsPercentage
-  payload.data.main.lACgrU = developingNewMarketsPercentage
-  payload.data.main.gBpCMU = developingNewUsesPercentage
-  payload.data.main.czCOzR = otherCategoriesPercentage
+    payload.data.main.yzvIcu = this.reproPercentage
+    payload.data.main.vjegvC = this.priceSupportPercentage
+    payload.data.main.gGuncQ = this.businessSupportPercentage
+    payload.data.main.jqvpTT = this.commsPercentage
+    payload.data.main.lACgrU = this.developingNewMarketsPercentage
+    payload.data.main.gBpCMU = this.developingNewUsesPercentage
+    payload.data.main.czCOzR = this.otherCategoriesPercentage
 
-  payload.data.repeaters.QkZUNV[0].jiMeVj = fullName
-  payload.data.repeaters.QkZUNV[0].eWxRYL = email
-  payload.data.repeaters.QkZUNV[0].NRkpFI = phoneNumber
-  payload.data.repeaters.QkZUNV[0].LUGryB = jobTitle
-  payload.data.files.TJTMtQ[0].fileId = fileId1
-  payload.data.files.TJTMtQ[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${fileId1}`
-  payload.data.files.zYxOlv[0].fileId = fileId2
-  payload.data.files.zYxOlv[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${fileId2}`
+    payload.data.repeaters.QkZUNV[0].jiMeVj = this.fullName
+    payload.data.repeaters.QkZUNV[0].eWxRYL = this.email
+    payload.data.repeaters.QkZUNV[0].NRkpFI = this.phoneNumber
+    payload.data.repeaters.QkZUNV[0].LUGryB = this.jobTitle
+    payload.data.files.TJTMtQ[0].fileId = this.fileId1
+    payload.data.files.TJTMtQ[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${this.fileId1}`
+    payload.data.files.zYxOlv[0].fileId = this.fileId2
+    payload.data.files.zYxOlv[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${this.fileId2}`
 
-  return payload
+    return payload
+  }
 }
 
-export function generateOrganisation() {
-  const payload = JSON.parse(JSON.stringify(orgPayload))
+export class Organisation {
+  constructor() {
+    this.phoneNumber = fakerEN_GB.phone.number()
+    this.fullName = fakerEN_GB.person.fullName()
+    this.email = process.env.ENVIRONMENT
+      ? 'REEXServiceTeam@defra.gov.uk'
+      : fakerEN_GB.internet.email()
 
-  const phoneNumber = fakerEN_GB.phone.number()
-  const fullName = fakerEN_GB.person.fullName()
-  const email = process.env.ENVIRONMENT
-    ? 'REEXServiceTeam@defra.gov.uk'
-    : fakerEN_GB.internet.email()
+    this.jobTitle = fakerEN_GB.person.jobTitle()
 
-  const jobTitle = fakerEN_GB.person.jobTitle()
+    this.address =
+      fakerEN_GB.location.streetAddress() +
+      ',' +
+      fakerEN_GB.location.city() +
+      ',' +
+      fakerEN_GB.location.zipCode()
 
-  const address =
-    fakerEN_GB.location.streetAddress() +
-    ',' +
-    fakerEN_GB.location.city() +
-    ',' +
-    fakerEN_GB.location.zipCode()
+    this.companyName = fakerEN_GB.company.name() + ' Limited'
 
-  const companyName = fakerEN_GB.company.name() + ' Limited'
+    const roleIndex = Math.floor(Math.random() * roles.length)
+    this.role = roles[roleIndex]
+    this.numberOfNations = Math.floor(Math.random() * nations.length) + 1
+  }
 
-  const roleIndex = Math.floor(Math.random() * roles.length)
-  const role = roles[roleIndex]
-  const numberOfNations = Math.floor(Math.random() * nations.length) + 1
+  toPayload() {
+    const payload = JSON.parse(JSON.stringify(orgPayload))
 
-  payload.data.main.BYtjnh = fullName
-  payload.data.main.aSoxDO = email
-  payload.data.main.aIFHXo = phoneNumber
-  payload.data.main.LyeSzH = jobTitle
-  payload.data.main.WVADkQ = role
-  payload.data.main.JbEBvr = companyName
-  payload.data.main.QdhMJS = companyName
-  payload.data.main.VcdRNr = nations.slice(0, numberOfNations).join(', ')
-  payload.data.main.VATjEi = address
+    payload.data.main.BYtjnh = this.fullName
+    payload.data.main.aSoxDO = this.email
+    payload.data.main.aIFHXo = this.phoneNumber
+    payload.data.main.LyeSzH = this.jobTitle
+    payload.data.main.WVADkQ = this.role
+    payload.data.main.JbEBvr = this.companyName
+    payload.data.main.QdhMJS = this.companyName
+    payload.data.main.VcdRNr = nations.slice(0, this.numberOfNations).join(', ')
+    payload.data.main.VATjEi = this.address
 
-  return payload
+    return payload
+  }
 }
 
-export function generateRegistration() {
-  const payload = JSON.parse(JSON.stringify(regPayload))
+export class Registration {
+  constructor() {
+    this.phoneNumber = fakerEN_GB.phone.number()
+    this.fullName = fakerEN_GB.person.fullName()
+    this.email = fakerEN_GB.internet.email()
+    this.refNo = fakerEN_GB.database.mongodbObjectId()
+    this.orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
+    this.jobTitle = fakerEN_GB.person.jobTitle()
 
-  const phoneNumber = fakerEN_GB.phone.number()
-  const fullName = fakerEN_GB.person.fullName()
-  const email = fakerEN_GB.internet.email()
-  const refNo = fakerEN_GB.database.mongodbObjectId()
-  const orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
-  const jobTitle = fakerEN_GB.person.jobTitle()
+    this.fileId1 = fakerEN_GB.string.uuid()
+    this.fileId2 = fakerEN_GB.string.uuid()
 
-  const fileId1 = fakerEN_GB.string.uuid()
-  const fileId2 = fakerEN_GB.string.uuid()
+    const materialIndex = Math.floor(Math.random() * materials.length)
+    this.material = materials[materialIndex]
+    const suppIndex = Math.floor(Math.random() * suppliers.length)
+    this.supplier = suppIndex[suppIndex]
+    const permitIndex = Math.floor(Math.random() * permitTypes.length)
+    this.permitType = permitTypes[permitIndex]
 
-  const materialIndex = Math.floor(Math.random() * materials.length)
-  const material = materials[materialIndex]
-  const suppIndex = Math.floor(Math.random() * suppliers.length)
-  const supplier = suppIndex[suppIndex]
-  const permitIndex = Math.floor(Math.random() * permitTypes.length)
-  const permitType = permitTypes[permitIndex]
+    this.wasteRegNo =
+      'CBDU' + fakerEN_GB.number.int({ min: 100000, max: 999999 })
+    this.permitNo = `${fakerEN_GB.number.int({ min: 1000000000, max: 9999999999 })}`
+    this.port = fakerEN_GB.location.city()
 
-  const wasteRegNo =
-    'CBDU' + fakerEN_GB.number.int({ min: 100000, max: 999999 })
-  const permitNo = `${fakerEN_GB.number.int({ min: 1000000000, max: 9999999999 })}`
-  const port = fakerEN_GB.location.city()
+    this.address =
+      fakerEN_GB.location.streetAddress() +
+      ',' +
+      fakerEN_GB.location.city() +
+      ',' +
+      fakerEN_GB.location.zipCode()
+  }
 
-  const address =
-    fakerEN_GB.location.streetAddress() +
-    ',' +
-    fakerEN_GB.location.city() +
-    ',' +
-    fakerEN_GB.location.zipCode()
+  toPayload() {
+    const payload = JSON.parse(JSON.stringify(regPayload))
+    payload.data.main.CzNRVZ = this.fullName
+    payload.data.main.xpDUqn = this.email
+    payload.data.main.ZgTfLO = this.phoneNumber
+    payload.data.main.aSKIDS = this.jobTitle
 
-  payload.data.main.CzNRVZ = fullName
-  payload.data.main.xpDUqn = email
-  payload.data.main.ZgTfLO = phoneNumber
-  payload.data.main.aSKIDS = jobTitle
+    payload.data.main.NOwTKr = this.fullName
+    payload.data.main.rYgNmR = this.email
+    payload.data.main.inueIm = this.phoneNumber
+    payload.data.main.MdZwoU = this.jobTitle
 
-  payload.data.main.NOwTKr = fullName
-  payload.data.main.rYgNmR = email
-  payload.data.main.inueIm = phoneNumber
-  payload.data.main.MdZwoU = jobTitle
+    payload.data.main.RPiGkV = this.fullName
+    payload.data.main.eSxaKY = this.email
+    payload.data.main.AkoyKd = this.phoneNumber
+    payload.data.main.mGpVDA = this.jobTitle
 
-  payload.data.main.RPiGkV = fullName
-  payload.data.main.eSxaKY = email
-  payload.data.main.AkoyKd = phoneNumber
-  payload.data.main.mGpVDA = jobTitle
+    payload.data.main.RIXIzA = this.refNo
+    payload.data.main.QnSRcX = this.orgId
 
-  payload.data.main.RIXIzA = refNo
-  payload.data.main.QnSRcX = orgId
+    payload.data.main.BeHQjA = this.material
 
-  payload.data.main.BeHQjA = material
+    payload.data.main.pGYoub = this.address
+    payload.data.main.fubWwR = this.wasteRegNo
+    payload.data.main.CACJrG = this.permitNo
+    payload.data.main.vsaLhJ = this.supplier
+    payload.data.main.QHJFhL = this.permitType
 
-  payload.data.main.pGYoub = address
-  payload.data.main.fubWwR = wasteRegNo
-  payload.data.main.CACJrG = permitNo
-  payload.data.main.vsaLhJ = supplier
-  payload.data.main.QHJFhL = permitType
+    payload.data.repeaters.GzScMv[0].ZcjmuP = this.port
 
-  payload.data.repeaters.GzScMv[0].ZcjmuP = port
+    payload.data.files.qEZeYC[0].fileId = this.fileId1
+    payload.data.files.qEZeYC[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${this.fileId1}`
+    payload.data.files.uUWjUW[0].fileId = this.fileId2
+    payload.data.files.uUWjUW[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${this.fileId2}`
 
-  payload.data.files.qEZeYC[0].fileId = fileId1
-  payload.data.files.qEZeYC[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${fileId1}`
-  payload.data.files.uUWjUW[0].fileId = fileId2
-  payload.data.files.uUWjUW[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${fileId2}`
-
-  return payload
+    return payload
+  }
 }

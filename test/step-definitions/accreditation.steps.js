@@ -1,18 +1,21 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { BaseAPI } from '../apis/base-api.js'
-import { generateAccreditation } from '../support/generator.js'
+import { Accreditation } from '../support/generator.js'
+import { dbClient } from '../support/hooks.js'
 
 const baseAPI = new BaseAPI()
 
 Given('I have entered my accreditation details', function () {
-  this.payload = generateAccreditation()
+  this.accreditation = new Accreditation()
+  this.payload = this.accreditation.toPayload()
 })
 
 Given(
   'I have entered my accreditation details without pages metadata',
   function () {
-    this.payload = generateAccreditation()
+    this.accreditation = new Accreditation()
+    this.payload = this.accreditation.toPayload()
     delete this.payload.meta.definition.pages
   }
 )
@@ -20,7 +23,8 @@ Given(
 Given(
   'I have entered my accreditation details without organisation ID',
   function () {
-    this.payload = generateAccreditation()
+    this.accreditation = new Accreditation()
+    this.payload = this.accreditation.toPayload()
     delete this.payload.data.main.Ooierc
   }
 )
@@ -28,7 +32,8 @@ Given(
 Given(
   'I have entered my accreditation details without reference number',
   function () {
-    this.payload = generateAccreditation()
+    this.accreditation = new Accreditation()
+    this.payload = this.accreditation.toPayload()
     delete this.payload.data.main.MyWHms
   }
 )
@@ -36,7 +41,8 @@ Given(
 Given(
   'I have entered my accreditation details with orgId value of {string}',
   function (orgId) {
-    this.payload = generateAccreditation()
+    this.accreditation = new Accreditation()
+    this.payload = this.accreditation.toPayload()
     this.payload.data.main.Ooierc = orgId
   }
 )
@@ -44,7 +50,8 @@ Given(
 Given(
   'I have entered my accreditation details with reference number value of {string}',
   function (refNo) {
-    this.payload = generateAccreditation()
+    this.accreditation = new Accreditation()
+    this.payload = this.accreditation.toPayload()
     this.payload.data.main.MyWHms = refNo
   }
 )
@@ -60,5 +67,51 @@ Then(
   'I should receive an accreditation resource created response',
   async function () {
     expect(this.response.statusCode).to.equal(201)
+  }
+)
+
+Then(
+  'I should see that an accreditation is created in the database',
+  async function () {
+    if (!process.env.ENVIRONMENT) {
+      const expectedRefNumber = this.payload.data.main.MyWHms
+      const expectedOrgId = this.payload.data.main.Ooierc
+      const accreditationCollection = dbClient.collection('accreditation')
+      const accreditation = await accreditationCollection.findOne({
+        referenceNumber: expectedRefNumber
+      })
+      expect(Object.keys(accreditation)).have.all.members([
+        '_id',
+        'answers',
+        'createdAt',
+        'orgId',
+        'rawSubmissionData',
+        'referenceNumber',
+        'schemaVersion'
+      ])
+      expect(accreditation.referenceNumber).to.equal(expectedRefNumber)
+      expect(accreditation.orgId).to.equal(parseInt(expectedOrgId))
+      expect(accreditation.schemaVersion).to.equal(1)
+      expect(accreditation.answers.length).to.equal(23)
+      expect(Object.keys(accreditation.rawSubmissionData).length).to.equal(2)
+      expect(accreditation.answers[1].value).to.equal(expectedOrgId)
+      expect(accreditation.answers[2].value).to.equal(expectedRefNumber)
+      expect(accreditation.answers[3].value).to.equal(
+        this.accreditation.material
+      )
+      expect(accreditation.answers[4].value).to.equal(
+        this.accreditation.tonnageBand
+      )
+      expect(accreditation.answers[19].value).to.equal(
+        this.accreditation.fullName
+      )
+      expect(accreditation.answers[20].value).to.equal(this.accreditation.email)
+      expect(accreditation.answers[21].value).to.equal(
+        this.accreditation.phoneNumber
+      )
+      expect(accreditation.answers[22].value).to.equal(
+        this.accreditation.jobTitle
+      )
+    }
   }
 )

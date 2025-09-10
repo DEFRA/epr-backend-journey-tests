@@ -1,42 +1,48 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { BaseAPI } from '../apis/base-api.js'
-import { generateOrganisation } from '../support/generator.js'
+import { Organisation } from '../support/generator.js'
 
 const baseAPI = new BaseAPI()
 
 Given('I have entered my organisation details', function () {
-  this.payload = generateOrganisation()
+  this.organisation = new Organisation()
+  this.payload = this.organisation.toPayload()
 })
 
 Given(
   'I have entered my organisation details without pages metadata',
   function () {
-    this.payload = generateOrganisation()
+    this.organisation = new Organisation()
+    this.payload = this.organisation.toPayload()
     delete this.payload.meta.definition.pages
   }
 )
 
 Given('I have entered my organisation details without data', function () {
-  this.payload = generateOrganisation()
+  this.organisation = new Organisation()
+  this.payload = this.organisation.toPayload()
   delete this.payload.data
 })
 
 Given('I have entered my organisation details without email', function () {
-  this.payload = generateOrganisation()
+  this.organisation = new Organisation()
+  this.payload = this.organisation.toPayload()
   delete this.payload.data.main.aSoxDO
 })
 
 Given(
   'I have entered my organisation details without organisation name',
   function () {
-    this.payload = generateOrganisation()
+    this.organisation = new Organisation()
+    this.payload = this.organisation.toPayload()
     delete this.payload.data.main.JbEBvr
   }
 )
 
 Given('I have entered my organisation details without nations', function () {
-  this.payload = generateOrganisation()
+  this.organisation = new Organisation()
+  this.payload = this.organisation.toPayload()
   delete this.payload.data.main.VcdRNr
 })
 

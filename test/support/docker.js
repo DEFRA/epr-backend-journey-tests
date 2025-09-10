@@ -1,6 +1,7 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import crypto from 'crypto'
+import { testStartTime } from './hooks.js'
 
 const execAsync = promisify(exec)
 
@@ -19,8 +20,17 @@ export class DockerLogTester {
       .toISOString()
       .slice(0, 19)
 
-    const primaryCmd = `docker logs ${this.containerName} --since ${utcTimestamp}Z`
-    const fallbackCmd = `docker logs 'epr-backend-epr-backend-1' --since ${utcTimestamp}Z`
+    // We take the latest timestamp between the test start time and the current time
+    // This is so to prevent an edge case where a test is re-run quickly between runs and we only care about the logs
+    // from the existing test start time
+    const latestTimestamp = new Date(
+      Math.max(new Date(testStartTime), new Date(utcTimestamp))
+    )
+      .toISOString()
+      .slice(0, 19)
+
+    const primaryCmd = `docker logs ${this.containerName} --since ${latestTimestamp}Z`
+    const fallbackCmd = `docker logs 'epr-backend-epr-backend-1' --since ${latestTimestamp}Z`
 
     const commands = [primaryCmd, fallbackCmd]
     let lastError
