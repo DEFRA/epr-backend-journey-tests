@@ -20,3 +20,8 @@ export class MongoConnector {
     }
   }
 }
+
+export class StubConnector {
+  async connect() {}
+  async disconnect() {}
+}

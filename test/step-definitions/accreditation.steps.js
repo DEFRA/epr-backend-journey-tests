@@ -93,7 +93,12 @@ Then(
       expect(accreditation.orgId).to.equal(parseInt(expectedOrgId))
       expect(accreditation.schemaVersion).to.equal(1)
       expect(accreditation.answers.length).to.equal(23)
-      expect(Object.keys(accreditation.rawSubmissionData).length).to.equal(2)
+      expect(JSON.stringify(accreditation.rawSubmissionData.meta)).to.equal(
+        JSON.stringify(this.payload.meta)
+      )
+      expect(JSON.stringify(accreditation.rawSubmissionData.data)).to.equal(
+        JSON.stringify(this.payload.data)
+      )
       expect(accreditation.answers[1].value).to.equal(expectedOrgId)
       expect(accreditation.answers[2].value).to.equal(expectedRefNumber)
       expect(accreditation.answers[3].value).to.equal(

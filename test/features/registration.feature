@@ -4,6 +4,7 @@ Feature: Registration endpoint
     Given I have entered my registration details
     When I submit the registration details
     Then I should receive a registration resource created response
+    And I should see that a registration is created in the database
     And the following information appears in the log
       | Log Level    | INFO                                |
       | Event Action | request_success                     |

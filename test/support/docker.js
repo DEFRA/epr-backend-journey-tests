@@ -16,7 +16,7 @@ export class DockerLogTester {
 
   async getLogs() {
     const now = new Date()
-    const utcTimestamp = new Date(now.getTime() - logsBufferTime * 1000)
+    const currentTimestamp = new Date(now.getTime() - logsBufferTime * 1000)
       .toISOString()
       .slice(0, 19)
 
@@ -24,7 +24,7 @@ export class DockerLogTester {
     // This is so to prevent an edge case where a test is re-run quickly between runs and we only care about the logs
     // from the existing test start time
     const latestTimestamp = new Date(
-      Math.max(new Date(testStartTime), new Date(utcTimestamp))
+      Math.max(new Date(testStartTime), new Date(currentTimestamp))
     )
       .toISOString()
       .slice(0, 19)
@@ -48,38 +48,14 @@ export class DockerLogTester {
     throw new Error(`Failed to get logs: ${lastError.message}`)
   }
 
-  async filterAuditLogsByTime(auditLogs) {
-    const now = new Date()
-    const cutoffTime = new Date(now.getTime() - logsBufferTime * 1000)
-
-    return auditLogs.filter((log) => {
-      const logTime = new Date(log.time)
-      return logTime >= cutoffTime
-    })
-  }
-
-  hashContext(context) {
+  generateLogKey(time, context) {
     const contextString = JSON.stringify(context, Object.keys(context).sort())
-    return crypto
+    const contextHash = crypto
       .createHash('sha256')
       .update(contextString)
       .digest('hex')
       .substring(0, 16)
-  }
-
-  generateLogKey(time, context) {
-    const contextHash = this.hashContext(context)
     return `${time}_${contextHash}`
-  }
-
-  isAlreadyProcessed(auditLog) {
-    const key = this.generateLogKey(auditLog.time, auditLog.context)
-    return this.processedAuditLogs.has(key)
-  }
-
-  addToProcessed(auditLog) {
-    const key = this.generateLogKey(auditLog.time, auditLog.context)
-    this.processedAuditLogs.set(key, auditLog)
   }
 
   async parseAuditLogs(logText) {
@@ -88,11 +64,15 @@ export class DockerLogTester {
 
     lines.forEach((line) => {
       try {
-        const parsed = JSON.parse(line)
-        if (parsed['log.level'] === 'audit') {
-          if (!this.isAlreadyProcessed(parsed)) {
-            auditLogs.push(parsed)
-            this.addToProcessed(parsed)
+        const parsedAuditLog = JSON.parse(line)
+        if (parsedAuditLog['log.level'] === 'audit') {
+          const key = this.generateLogKey(
+            parsedAuditLog.time,
+            parsedAuditLog.context
+          )
+          if (!this.processedAuditLogs.has(key)) {
+            auditLogs.push(parsedAuditLog)
+            this.processedAuditLogs.set(key, parsedAuditLog)
           }
         }
       } catch (e) {
@@ -100,11 +80,10 @@ export class DockerLogTester {
       }
     })
 
-    return await this.filterAuditLogsByTime(auditLogs)
+    return auditLogs
   }
 
   parseLogs(logText) {
-    // Regex to match the log entry
     const regex =
       /\[(\d{2}:\d{2}:\d{2}\.\d{3})\] (\w+) \(\d+\):\s*([\s\S]*?)(?=\n\[|$)/g
 
@@ -175,7 +154,6 @@ export class DockerLogTester {
     return this.parseAuditLogs(logs)
   }
 
-  // Wait for a specific log pattern to appear
   async waitForLog(pattern, options = {}) {
     const { timeout = logsBufferTime * 1000, interval = 1000 } = options
     const startTime = Date.now()

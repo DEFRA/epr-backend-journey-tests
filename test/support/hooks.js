@@ -1,7 +1,7 @@
 import { BeforeAll, AfterAll, After } from '@cucumber/cucumber'
 import { setGlobalDispatcher, Agent } from 'undici'
 import fs from 'node:fs'
-import { MongoConnector } from './db.js'
+import { StubConnector, MongoConnector } from './db.js'
 
 let agent
 let dbConnector
@@ -16,7 +16,9 @@ BeforeAll(async function () {
     bodyTimeout: 30000
   })
   setGlobalDispatcher(agent)
-  dbConnector = new MongoConnector()
+  dbConnector = process.env.ENVIRONMENT
+    ? new StubConnector()
+    : new MongoConnector()
   dbClient = await dbConnector.connect()
   testStartTime = new Date()
 })
