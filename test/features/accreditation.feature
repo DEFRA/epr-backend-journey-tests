@@ -4,6 +4,7 @@ Feature: Accreditation endpoint
     Given I have entered my accreditation details
     When I submit the accreditation details
     Then I should receive an accreditation resource created response
+    And I should see that an accreditation is created in the database
     And the following information appears in the log
       | Log Level    | INFO                                |
       | Event Action | request_success                     |

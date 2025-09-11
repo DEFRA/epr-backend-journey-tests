@@ -4,6 +4,7 @@ Feature: Organisation endpoint
     Given I have entered my organisation details
     When I submit the organisation details
     Then I should receive a successful organisation details response
+    And I should see that an organisation details is created in the database
     And the following information appears in the log
       | Log Level    | INFO                               |
       | Event Action | request_success                    |
