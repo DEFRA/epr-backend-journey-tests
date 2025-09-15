@@ -1,8 +1,10 @@
 import { request } from 'undici'
 
+let baseUrl
+
 export class BaseAPI {
   constructor() {
-    this.baseUrl = process.env.ENVIRONMENT
+    baseUrl = process.env.ENVIRONMENT
       ? `https://epr-backend.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`
       : 'http://localhost:3001'
     this.defaultHeaders = {}
@@ -13,7 +15,7 @@ export class BaseAPI {
       statusCode,
       headers: responseHeaders,
       body
-    } = await request(`${this.baseUrl}${endpoint}`, {
+    } = await request(`${baseUrl}${endpoint}`, {
       method: 'GET',
       headers: { ...this.defaultHeaders, ...headers }
     })
@@ -26,7 +28,7 @@ export class BaseAPI {
       statusCode,
       headers: responseHeaders,
       body
-    } = await request(`${this.baseUrl}${endpoint}`, {
+    } = await request(`${baseUrl}${endpoint}`, {
       method: 'POST',
       headers: instanceHeaders,
       body: data
@@ -34,3 +36,5 @@ export class BaseAPI {
     return { statusCode, responseHeaders, body }
   }
 }
+
+export { baseUrl }

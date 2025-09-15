@@ -1,10 +1,7 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { BaseAPI } from '../apis/base-api.js'
 import { Registration } from '../support/generator.js'
-import { dbClient } from '../support/hooks.js'
-
-const baseAPI = new BaseAPI()
+import { dbClient, baseAPI } from '../support/hooks.js'
 
 Given('I have entered my registration details', function () {
   this.registration = new Registration()

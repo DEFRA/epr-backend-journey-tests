@@ -1,30 +1,24 @@
 import { BeforeAll, AfterAll, After } from '@cucumber/cucumber'
-import { setGlobalDispatcher, Agent } from 'undici'
 import fs from 'node:fs'
 import { StubConnector, MongoConnector } from './db.js'
 
-let agent
+import { BaseAPI } from '../apis/base-api.js'
+
 let dbConnector
 let dbClient
 let testStartTime
+let baseAPI
 
 BeforeAll(async function () {
-  agent = new Agent({
-    connections: 10,
-    pipelining: 0,
-    headersTimeout: 30000,
-    bodyTimeout: 30000
-  })
-  setGlobalDispatcher(agent)
   dbConnector = process.env.ENVIRONMENT
     ? new StubConnector()
     : new MongoConnector()
   dbClient = await dbConnector.connect()
   testStartTime = new Date()
+  baseAPI = new BaseAPI()
 })
 
 AfterAll(async function () {
-  await agent.close()
   await dbConnector.disconnect()
 })
 
@@ -35,4 +29,4 @@ After(async function (scenario) {
   }
 })
 
-export { dbClient, testStartTime }
+export { dbClient, testStartTime, baseAPI }
