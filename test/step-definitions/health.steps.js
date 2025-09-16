@@ -1,8 +1,6 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { BaseAPI } from '../apis/base-api.js'
-
-const baseAPI = new BaseAPI()
+import { baseAPI } from '../support/hooks.js'
 
 Given('I have access to the EPR backend endpoint', function () {})
 
