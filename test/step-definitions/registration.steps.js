@@ -2,6 +2,7 @@ import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { Registration } from '../support/generator.js'
 import { dbClient, baseAPI } from '../support/hooks.js'
+import logger from '../support/logger.js'
 
 Given('I have entered my registration details', function () {
   this.registration = new Registration()
@@ -127,6 +128,15 @@ Then(
         this.registration.fullName
       )
       expect(registration.answers[13].value).to.equal(this.registration.email)
+    } else {
+      logger.warn(
+        {
+          // eslint-disable-next-line camelcase
+          step_definition:
+            'Then I should see that a registration is created in the database'
+        },
+        'Skipping registration database checks'
+      )
     }
   }
 )

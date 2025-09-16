@@ -33,6 +33,7 @@
     "allure-commandline": "2.32.0",
     "esm-module-alias": "2.2.1",
     "global-agent": "3.0.0",
+    "pino": "9.9.5",
     "undici": "7.10.0"
   },
   "devDependencies": {

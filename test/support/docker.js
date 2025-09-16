@@ -7,7 +7,7 @@ const execAsync = promisify(exec)
 
 const logsBufferTime = 10
 
-export class DockerLogTester {
+export class DockerLogParser {
   constructor(containerName) {
     this.containerName = containerName
     this.processedLogs = new Map()

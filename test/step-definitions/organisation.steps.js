@@ -2,6 +2,7 @@ import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { Organisation } from '../support/generator.js'
 import { dbClient, baseAPI } from '../support/hooks.js'
+import logger from '../support/logger.js'
 
 Given('I have entered my organisation details', function () {
   this.organisation = new Organisation()
@@ -98,6 +99,15 @@ Then(
       expect(organisation.answers[3].value).to.equal(this.organisation.email)
       expect(organisation.answers[4].value).to.equal(
         this.organisation.phoneNumber
+      )
+    } else {
+      logger.warn(
+        {
+          // eslint-disable-next-line camelcase
+          step_definition:
+            'Then I should see that an organisation details is created in the database'
+        },
+        'Skipping organisation details database checks'
       )
     }
   }
