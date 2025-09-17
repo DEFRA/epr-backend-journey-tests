@@ -77,6 +77,19 @@ npm run generatedata
 
 This will create mock datasets for the 3 collections in the database. Only to be used for local development purposes.
 
+## What is tested in this test suite
+
+| Test type               | Local / PR Checks | Dev environment | Test environment |
+| ----------------------- | ----------------- | --------------- | ---------------- |
+| Endpoint tests          | &check;           | &check;         | &check;          |
+| Mongo / database checks | &check;           | &#x2612;        | &#x2612;         |
+| Logging tests           | &check;           | &#x2612;        | &#x2612;         |
+| ZAP tests               | &check;           | &#x2612;        | &#x2612;         |
+| Email / Notify tests    | &#x2612;          | &#x2612;        | &check;          |
+| Slack non-prod tests    | &#x2612;          | &check;         | &check;          |
+
+For more information on the tests, please refer to the [Confluence page](https://eaflood.atlassian.net/wiki/spaces/MWR/pages/5912559719/EPR+RE+EX+Testing).
+
 ## Requirements of CDP Environment Tests
 
 1. Your service builds as a docker container using the `.github/workflows/publish.yml`

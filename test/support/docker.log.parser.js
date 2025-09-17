@@ -1,22 +1,24 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import crypto from 'crypto'
-import { testStartTime } from './hooks.js'
 
 const execAsync = promisify(exec)
 
-const logsBufferTime = 10
+const logsLookBackBufferTime = 10
 
-export class DockerLogTester {
+export class DockerLogParser {
   constructor(containerName) {
     this.containerName = containerName
     this.processedLogs = new Map()
     this.processedAuditLogs = new Map()
+    this.testStartTime = new Date()
   }
 
   async getLogs() {
     const now = new Date()
-    const currentTimestamp = new Date(now.getTime() - logsBufferTime * 1000)
+    const currentTimestamp = new Date(
+      now.getTime() - logsLookBackBufferTime * 1000
+    )
       .toISOString()
       .slice(0, 19)
 
@@ -24,7 +26,7 @@ export class DockerLogTester {
     // This is so to prevent an edge case where a test is re-run quickly between runs and we only care about the logs
     // from the existing test start time
     const latestTimestamp = new Date(
-      Math.max(new Date(testStartTime), new Date(currentTimestamp))
+      Math.max(new Date(this.testStartTime), new Date(currentTimestamp))
     )
       .toISOString()
       .slice(0, 19)
@@ -155,7 +157,7 @@ export class DockerLogTester {
   }
 
   async waitForLog(pattern, options = {}) {
-    const { timeout = logsBufferTime * 1000, interval = 1000 } = options
+    const { timeout = logsLookBackBufferTime * 1000, interval = 1000 } = options
     const startTime = Date.now()
 
     while (Date.now() - startTime < timeout) {

@@ -6,7 +6,6 @@ import { BaseAPI } from '../apis/base-api.js'
 
 let dbConnector
 let dbClient
-let testStartTime
 let baseAPI
 
 BeforeAll(async function () {
@@ -14,7 +13,6 @@ BeforeAll(async function () {
     ? new StubConnector()
     : new MongoConnector()
   dbClient = await dbConnector.connect()
-  testStartTime = new Date()
   baseAPI = new BaseAPI()
 })
 
@@ -29,4 +27,4 @@ After(async function (scenario) {
   }
 })
 
-export { dbClient, testStartTime, baseAPI }
+export { dbClient, baseAPI }

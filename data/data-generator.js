@@ -5,9 +5,10 @@ import {
   Registration
 } from '../test/support/generator.js'
 
+import logger from '../test/support/logger.js'
+
 async function generate() {
-  // eslint-disable-next-line no-console
-  console.log('Running data generator...')
+  logger.info('Running data generator...')
   const baseAPI = new BaseAPI()
 
   for (let i = 0; i < 50; i++) {
@@ -55,8 +56,7 @@ async function generate() {
     await new Promise((resolve) => setTimeout(resolve, 25))
   }
 
-  // eslint-disable-next-line no-console
-  console.log(
+  logger.info(
     'Successfully generated 50 organisation details, registrations and accreditations.'
   )
 }

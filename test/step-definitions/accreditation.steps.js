@@ -2,6 +2,7 @@ import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { Accreditation } from '../support/generator.js'
 import { dbClient, baseAPI } from '../support/hooks.js'
+import logger from '../support/logger.js'
 
 Given('I have entered my accreditation details', function () {
   this.accreditation = new Accreditation()
@@ -113,6 +114,15 @@ Then(
       )
       expect(accreditation.answers[22].value).to.equal(
         this.accreditation.jobTitle
+      )
+    } else {
+      logger.warn(
+        {
+          // eslint-disable-next-line camelcase
+          step_definition:
+            'Then I should see that an accreditation is created in the database'
+        },
+        'Skipping accreditation database checks'
       )
     }
   }

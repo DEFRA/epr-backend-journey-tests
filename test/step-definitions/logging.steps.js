@@ -1,8 +1,9 @@
 import { Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { DockerLogTester } from '../support/docker.js'
+import { DockerLogParser } from '../support/docker.log.parser.js'
+import logger from '../support/logger.js'
 
-const dockerLogTester = new DockerLogTester(
+const dockerLogParser = new DockerLogParser(
   'epr-backend-journey-tests-epr-backend-1'
 )
 
@@ -12,10 +13,18 @@ Then(
   async function (dataTable) {
     if (process.env.WITH_LOGS) {
       const expectedLog = dataTable.rowsHash()
-      const log = await dockerLogTester.waitForLog(expectedLog.Message)
+      const log = await dockerLogParser.waitForLog(expectedLog.Message)
       expect(log.logLevel).to.equal(expectedLog['Log Level'])
       expect(log.body?.event?.action).to.equal(expectedLog['Event Action'])
       expect(log.body?.message).to.contain(expectedLog.Message)
+    } else {
+      logger.warn(
+        {
+          // eslint-disable-next-line camelcase
+          step_definition: 'Then the following information appears in the log'
+        },
+        'Skipping docker logging tests'
+      )
     }
   }
 )
@@ -26,7 +35,7 @@ Then(
   async function (dataTable) {
     if (process.env.WITH_LOGS) {
       const expectedLogs = dataTable.hashes()
-      const actualLogs = await dockerLogTester.retrieveAuditLogs()
+      const actualLogs = await dockerLogParser.retrieveAuditLogs()
 
       for (const expectedLogRow of expectedLogs) {
         const filtered = actualLogs.filter(
@@ -38,6 +47,14 @@ Then(
         )
         expect(filtered.length).to.equal(parseInt(expectedLogRow.Count))
       }
+    } else {
+      logger.warn(
+        {
+          // eslint-disable-next-line camelcase
+          step_definition: 'Then the following audit logs are present'
+        },
+        'Skipping docker audit log tests'
+      )
     }
   }
 )
