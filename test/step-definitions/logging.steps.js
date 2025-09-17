@@ -1,6 +1,6 @@
 import { Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { DockerLogParser } from '../support/docker.js'
+import { DockerLogParser } from '../support/docker.log.parser.js'
 import logger from '../support/logger.js'
 
 const dockerLogParser = new DockerLogParser(
