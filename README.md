@@ -1,15 +1,17 @@
-epr-backend-journey-tests
+## epr-backend-journey-tests
 
-The template to create a service that runs WDIO tests against an environment.
+Test suite that runs a set of end to end tests against the [epr-backend](https://github.com/DEFRA/epr-backend) service.
+
+Also provides a data generator facility for local development purposes.
 
 - [Local](#local)
   - [Requirements](#requirements)
     - [Node.js](#nodejs)
   - [Setup](#setup)
   - [Running local tests](#running-local-tests)
-  - [Debugging local tests](#debugging-local-tests)
-- [Production](#production)
-  - [Debugging tests](#debugging-tests)
+  - [Running the tests on environments](#running-the-tests-on-environments)
+  - [Running the data generator for epr-backend](#running-the-data-generator-for-epr-backend)
+- [What is tested in this test suite](#what-is-tested-in-this-test-suite)
 - [Licence](#licence)
   - [About the licence](#about-the-licence)
 
@@ -36,7 +38,7 @@ Install application dependencies:
 npm install
 ```
 
-### Running the tests locally
+### Running local tests
 
 Bring up the relevant Docker containers:
 
@@ -56,7 +58,7 @@ If you wish to test the logs or audit logs, run the following command:
 npm run test:withLogs
 ```
 
-By default the testing of logs is not enabled (And also not launched during the smoke test in Dev / Test). It is however enabled during PR builds.
+By default, the testing of logs is not enabled (And also not launched during the smoke test in Dev / Test). It is however enabled during PR builds.
 
 The testing of logs and audit logs also assumes that you have run the Docker compose command above as it relies on the Dockerised `epr-backend` service.
 
@@ -89,16 +91,6 @@ This will create mock datasets for the 3 collections in the database. Only to be
 | Slack non-prod tests    | &#x2612;          | &check;         | &check;          |
 
 For more information on the tests, please refer to the [Confluence page](https://eaflood.atlassian.net/wiki/spaces/MWR/pages/5912559719/EPR+RE+EX+Testing).
-
-## Requirements of CDP Environment Tests
-
-1. Your service builds as a docker container using the `.github/workflows/publish.yml`
-   The workflow tags the docker images allowing the CDP Portal to identify how the container should be run on the platform.
-   It also ensures its published to the correct docker repository.
-
-2. The Dockerfile's entrypoint script should return exit code of 0 if the test suite passes or 1/>0 if it fails
-
-3. Test reports should be published to S3 using the script in `./bin/publish-tests.sh`
 
 ## Licence
 
