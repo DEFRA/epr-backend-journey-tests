@@ -86,7 +86,7 @@ This will create mock datasets for the 3 collections in the database. Only to be
 | Endpoint tests          | &check;           | &check;         | &check;          |
 | Mongo / database checks | &check;           | &#x2612;        | &#x2612;         |
 | Logging tests           | &check;           | &#x2612;        | &#x2612;         |
-| ZAP tests               | &check;           | &#x2612;        | &#x2612;         |
+| ZAP tests               | &check;           | &check;         | &check;          |
 | Email / Notify tests    | &#x2612;          | &#x2612;        | &check;          |
 | Slack non-prod tests    | &#x2612;          | &check;         | &check;          |
 
