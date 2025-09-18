@@ -31,23 +31,27 @@ export class DockerLogParser {
       .toISOString()
       .slice(0, 19)
 
-    const primaryCmd = `docker logs ${this.containerName} --since ${latestTimestamp}Z`
-    const fallbackCmd = `docker logs 'epr-backend-epr-backend-1' --since ${latestTimestamp}Z`
-
-    const commands = [primaryCmd, fallbackCmd]
     let lastError
 
-    for (const cmd of commands) {
+    try {
+      return await this.runDockerCommand(latestTimestamp)
+    } catch (error) {
       try {
-        const { stdout, stderr } = await execAsync(cmd)
-        return stdout + stderr
-      } catch (error) {
         this.containerName = 'epr-backend-epr-backend-1'
+        return await this.runDockerCommand(latestTimestamp)
+      } catch (error) {
         lastError = error
       }
     }
 
     throw new Error(`Failed to get logs: ${lastError.message}`)
+  }
+
+  runDockerCommand = async function (latestTimestamp) {
+    const { stdout, stderr } = await execAsync(
+      `docker logs ${this.containerName} --since ${latestTimestamp}Z`
+    )
+    return stdout + stderr
   }
 
   generateLogKey(time, context) {
