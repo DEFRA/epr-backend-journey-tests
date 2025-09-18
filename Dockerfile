@@ -1,8 +1,19 @@
+FROM zaproxy/zap-stable:latest AS zap-stage
+
 FROM node:22.13.1-slim
 
 ENV TZ="Europe/London"
 
 USER root
+
+# Copy ZAP from zap stage
+COPY --from=zap-stage /zap /zap
+COPY --from=zap-stage /home/zap/.ZAP /home/zap/.ZAP
+
+# Set up ZAP environment
+ENV ZAP_PATH=/zap
+ENV PATH=$ZAP_PATH:$PATH
+ENV ZAP_PORT=8080
 
 RUN apt-get update -qq \
     && apt-get install -qqy \
@@ -18,6 +29,8 @@ WORKDIR /app
 
 COPY . .
 RUN npm install
+
+EXPOSE 8080
 
 ENTRYPOINT [ "./entrypoint.sh" ]
 

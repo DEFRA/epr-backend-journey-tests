@@ -1,4 +1,3 @@
-@zap_tests
 Feature: Zap scanner tests
 
   Scenario: Ensure that organisation endpoint does not return any alerts after Zap scan
