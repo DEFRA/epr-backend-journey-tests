@@ -1,5 +1,8 @@
 FROM zaproxy/zap-stable:latest AS zap-stage
 
+RUN zap.sh -cmd -addoninstall ascanrules
+RUN zap.sh -cmd -addoninstall pscanrules
+
 FROM node:22.13.1-slim
 
 ENV TZ="Europe/London"
