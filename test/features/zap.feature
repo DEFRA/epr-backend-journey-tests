@@ -1,19 +1,14 @@
-Feature: Zap scanner tests
+Feature: ZAP scanner tests
 
-  Scenario: Ensure that organisation endpoint does not return any alerts after Zap scan
-    Given I have access to the EPR backend endpoint
-    When I request the Zap spider scan to '/v1/apply/organisation'
-    And I request the Zap active scan to '/v1/apply/organisation'
-    Then I should receive no alerts from the Zap report
+  Scenario Outline: Ensure that the <EndpointName> endpoint does not return any alerts after ZAP scan
+    Given the ZAP spider scan is run for the following
+      | Url    | <Url>    |
+      | Method | <Method> |
+    When I request the ZAP active scan
+    Then I should receive no alerts from the ZAP report
 
-  Scenario: Ensure that accreditation endpoint does not return any alerts after Zap scan
-    Given I have access to the EPR backend endpoint
-    When I request the Zap spider scan to '/v1/apply/accreditation'
-    And I request the Zap active scan to '/v1/apply/accreditation'
-    Then I should receive no alerts from the Zap report
-
-  Scenario: Ensure that registration endpoint does not return any alerts after Zap scan
-    Given I have access to the EPR backend endpoint
-    When I request the Zap spider scan to '/v1/apply/registration'
-    And I request the Zap active scan to '/v1/apply/registration'
-    Then I should receive no alerts from the Zap report
+  Examples:
+    | EndpointName  | Url                     | Method |
+    | organisation  | /v1/apply/organisation  | POST   |
+    | accreditation | /v1/apply/accreditation | POST   |
+    | registration  | /v1/apply/registration  | POST   |

@@ -24,8 +24,8 @@ export class ZAPClient {
     return JSON.parse(await body.text())
   }
 
-  async runAction(action, url) {
-    const response = await this.zapRequest(`${action}/action/scan`, { url })
+  async runAction(action, params) {
+    const response = await this.zapRequest(`${action}/action/scan`, params)
     const scanId = response.scan
     let attempts = 0
     let status = await this.zapRequest(`${action}/view/status`, { scanId })
@@ -40,12 +40,12 @@ export class ZAPClient {
     return scanId
   }
 
-  async runSpider(url) {
-    return this.runAction('spider', url)
+  async runSpider(params) {
+    return this.runAction('spider', params)
   }
 
-  async runActiveScan(url) {
-    return this.runAction('ascan', url)
+  async runActiveScan(params) {
+    return this.runAction('ascan', params)
   }
 
   async generateReport() {
