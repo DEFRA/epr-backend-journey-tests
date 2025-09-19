@@ -25,14 +25,12 @@ RUN apk update\
     bash \
     openjdk17-jdk
 
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-    && unzip awscliv2.zip \
-    && ./aws/install
+RUN apk add --no-cache aws-cli
 
 WORKDIR /app
 
 COPY . .
-RUN npm install
+RUN npm install --ignore-scripts
 
 EXPOSE 8080
 
