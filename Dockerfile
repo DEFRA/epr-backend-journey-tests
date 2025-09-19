@@ -32,7 +32,7 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
 WORKDIR /app
 
 COPY . .
-RUN npm install
+RUN npm install --ignore-scripts
 
 EXPOSE 8080
 
