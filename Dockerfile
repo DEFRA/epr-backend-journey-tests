@@ -3,7 +3,7 @@ FROM zaproxy/zap-stable:latest AS zap-stage
 RUN zap.sh -cmd -addoninstall ascanrules
 RUN zap.sh -cmd -addoninstall pscanrules
 
-FROM node:22.13.1-slim
+FROM node:22.19.0-alpine3.22
 
 ENV TZ="Europe/London"
 
@@ -18,11 +18,12 @@ ENV ZAP_PATH=/zap
 ENV PATH=$ZAP_PATH:$PATH
 ENV ZAP_PORT=8080
 
-RUN apt-get update -qq \
-    && apt-get install -qqy \
+RUN apk update\
+    && apk add \
     curl \
     zip \
-    openjdk-17-jre-headless
+    bash \
+    openjdk17-jdk
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
     && unzip awscliv2.zip \
