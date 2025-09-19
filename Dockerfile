@@ -3,7 +3,7 @@ FROM zaproxy/zap-stable:latest AS zap-stage
 RUN zap.sh -cmd -addoninstall ascanrules
 RUN zap.sh -cmd -addoninstall pscanrules
 
-FROM node:22.13.1-slim
+FROM node:22.19.0-alpine3.22
 
 ENV TZ="Europe/London"
 
