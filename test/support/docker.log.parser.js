@@ -1,6 +1,7 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import crypto from 'crypto'
+import config from '../config/config.js'
 
 const execAsync = promisify(exec)
 
@@ -37,7 +38,7 @@ export class DockerLogParser {
       return await this.runDockerCommand(latestTimestamp)
     } catch (error) {
       try {
-        this.containerName = 'epr-backend-epr-backend-1'
+        this.containerName = config.dockerLogParser.fallbackContainerName
         return await this.runDockerCommand(latestTimestamp)
       } catch (error) {
         lastError = error
