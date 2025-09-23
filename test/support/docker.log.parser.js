@@ -1,15 +1,15 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import crypto from 'crypto'
-import config from '../config/config.js'
 
 const execAsync = promisify(exec)
 
 const logsLookBackBufferTime = 10
 
 export class DockerLogParser {
-  constructor(containerName) {
+  constructor(containerName, fallbackContainerName) {
     this.containerName = containerName
+    this.fallbackContainerName = fallbackContainerName
     this.processedLogs = new Map()
     this.processedAuditLogs = new Map()
     this.testStartTime = new Date()
@@ -38,7 +38,7 @@ export class DockerLogParser {
       return await this.runDockerCommand(latestTimestamp)
     } catch (error) {
       try {
-        this.containerName = config.dockerLogParser.fallbackContainerName
+        this.containerName = this.fallbackContainerName
         return await this.runDockerCommand(latestTimestamp)
       } catch (error) {
         lastError = error

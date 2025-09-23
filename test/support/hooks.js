@@ -11,10 +11,10 @@ let dbClient
 let baseAPI
 
 BeforeAll(async function () {
-  dbConnector = config.database.connector
+  dbConnector = config.dbConnector
   dbClient = await dbConnector.connect()
   baseAPI = new BaseAPI()
-  agent = config.undici.agent
+  agent = config.undiciAgent
   setGlobalDispatcher(agent)
 })
 

@@ -53,13 +53,11 @@ Run the tests:
 npm run test
 ```
 
-If you wish to test the logs or audit logs, run the following command:
+If you run the `epr-backend` service as a standalone service (not via Docker Compose) and you wish to test without the logs or audit logs, run the following command:
 
 ```bash
-npm run test:withLogs
+WITHOUT_LOGS=true npm run test
 ```
-
-By default, the testing of logs is not enabled (And also not launched during the smoke test in Dev / Test). It is however enabled during PR builds.
 
 The testing of logs and audit logs also assumes that you have run the Docker compose command above as it relies on the Dockerised `epr-backend` service.
 

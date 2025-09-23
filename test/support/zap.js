@@ -1,10 +1,8 @@
 import { request } from 'undici'
-
-const ZAP_API = 'http://localhost:8080'
-const ZAP_KEY = 'zap-api-key'
+import config from '../config/config.js'
 
 export class ZAPClient {
-  constructor(baseUrl = ZAP_API, apiKey = ZAP_KEY) {
+  constructor(baseUrl = config.zap.uri, apiKey = config.zap.key) {
     this.baseUrl = baseUrl
     this.apiKey = apiKey
   }

@@ -5,7 +5,7 @@ let baseUrl
 
 export class BaseAPI {
   constructor() {
-    baseUrl = config.api.baseUrl
+    baseUrl = config.apiUri
     this.defaultHeaders = {}
   }
 
