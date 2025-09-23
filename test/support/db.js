@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb'
+import config from '../config/config.js'
 
 export class MongoConnector {
   constructor() {
@@ -7,7 +8,7 @@ export class MongoConnector {
   }
 
   async connect() {
-    const uri = 'mongodb://localhost:27017/epr-backend'
+    const uri = config.mongoUri
     this.client = new MongoClient(uri)
     await this.client.connect()
     this.db = this.client.db()
