@@ -6,6 +6,10 @@ import {
 } from '../test/support/generator.js'
 
 import logger from '../test/support/logger.js'
+import config from '../test/config/config.js'
+import { setGlobalDispatcher } from 'undici'
+
+setGlobalDispatcher(config.undiciAgent)
 
 async function generate() {
   logger.info('Running data generator...')

@@ -9,6 +9,7 @@ Also provides a data generator facility for local development purposes.
     - [Node.js](#nodejs)
   - [Setup](#setup)
   - [Running local tests](#running-local-tests)
+  - [Running with Proxy](#running-with-proxy)
   - [Running the tests on environments](#running-the-tests-on-environments)
   - [Running the data generator for epr-backend](#running-the-data-generator-for-epr-backend)
 - [What is tested in this test suite](#what-is-tested-in-this-test-suite)
@@ -52,15 +53,39 @@ Run the tests:
 npm run test
 ```
 
-If you wish to test the logs or audit logs, run the following command:
+If you run the `epr-backend` service as a standalone service (not via Docker Compose) and you wish to test without the logs or audit logs, run the following command:
 
 ```bash
-npm run test:withLogs
+WITHOUT_LOGS=true npm run test
 ```
 
-By default, the testing of logs is not enabled (And also not launched during the smoke test in Dev / Test). It is however enabled during PR builds.
-
 The testing of logs and audit logs also assumes that you have run the Docker compose command above as it relies on the Dockerised `epr-backend` service.
+
+### Running with Proxy
+
+By default, Proxy is disabled. To enable it, you first need a Proxy server running. You can use MITM Proxy via this Docker container command:
+
+```
+docker run --rm -it --network host -p 7777:7777 -p 127.0.0.1:8081:8081  mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --listen-port 7777
+```
+
+You can now monitor the proxy traffic via http://localhost:8081/ (Use the token on the console output from the Docker command above)
+
+If you wish to use a port number other than 8081 for MITM Proxy (Web), you can pass in the following option at the end of the docker command (e.g. port 8082):
+
+```
+--web-port 8082
+```
+
+Now, you can run the tests with the following command:
+
+```
+WITH_PROXY=true npm run test
+```
+
+Alternatively, you can also use Postman as a Proxy client. For more information, please refer to the [Postman Docs](https://learning.postman.com/docs/sending-requests/capturing-request-data/capture-with-proxy/).
+
+The default Proxy port is 7777. You can change it by modifying the value in `test/config/config.js` under the ProxyAgent configuration.
 
 ### Running the tests on environments
 

@@ -2,16 +2,18 @@ import { Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { DockerLogParser } from '../support/docker.log.parser.js'
 import logger from '../support/logger.js'
+import config from '../config/config.js'
 
 const dockerLogParser = new DockerLogParser(
-  'epr-backend-journey-tests-epr-backend-1'
+  config.dockerLogParser.containerName,
+  config.dockerLogParser.fallbackContainerName
 )
 
 Then(
   'the following information appears in the log',
   { timeout: 10000 },
   async function (dataTable) {
-    if (process.env.WITH_LOGS) {
+    if (config.testLogs) {
       const expectedLog = dataTable.rowsHash()
       const log = await dockerLogParser.waitForLog(expectedLog.Message)
       expect(log.logLevel).to.equal(expectedLog['Log Level'])
@@ -33,7 +35,7 @@ Then(
   'the following audit logs are present',
   { timeout: 10000 },
   async function (dataTable) {
-    if (process.env.WITH_LOGS) {
+    if (config.testLogs) {
       const expectedLogs = dataTable.hashes()
       const actualLogs = await dockerLogParser.retrieveAuditLogs()
 

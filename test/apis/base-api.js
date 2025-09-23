@@ -1,12 +1,11 @@
 import { request } from 'undici'
+import config from '../config/config.js'
 
 let baseUrl
 
 export class BaseAPI {
   constructor() {
-    baseUrl = process.env.ENVIRONMENT
-      ? `https://epr-backend.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`
-      : 'http://localhost:3001'
+    baseUrl = config.apiUri
     this.defaultHeaders = {}
   }
 
