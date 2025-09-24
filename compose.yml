@@ -4,6 +4,7 @@
 #   - mongodb
 #   - redis
 #   - localstack (s3, sqs, sns)
+
 #
 # Both mongo and localstack have init scripts included for setting up resources
 # on startup. These scripts are in docker/scripts.
