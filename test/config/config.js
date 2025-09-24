@@ -1,12 +1,30 @@
 import { MongoConnector, StubConnector } from '../support/db.js'
 import { Agent, ProxyAgent } from 'undici'
 
+const environment = process.env.ENVIRONMENT
+const withProxy = process.env.WITH_PROXY
+const withoutLogs = process.env.WITHOUT_LOGS
+
+if (environment === 'prod') {
+  throw new Error(
+    'The test suite is not meant to be run against the prod Environment!'
+  )
+}
+
 const api = {
   local: 'http://localhost:3001',
-  env: `https://epr-backend.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`
+  env: `https://epr-backend.${environment}.cdp-int.defra.cloud`
 }
 
 const proxy = new ProxyAgent({
+  uri: 'http://localhost:7777',
+  proxyTunnel: !!environment,
+  requestTls: {
+    rejectUnauthorized: false
+  }
+})
+
+const zapProxyAgent = new ProxyAgent({
   uri: 'http://localhost:7777',
   proxyTunnel: false
 })
@@ -35,10 +53,11 @@ const dockerLogParser = {
 
 const mongoUri = 'mongodb://localhost:27017/epr-backend'
 
-const testLogs = !process.env.WITHOUT_LOGS
-const undiciAgent = !process.env.WITH_PROXY ? agent : proxy
-const dbConnector = !process.env.ENVIRONMENT ? database.mongo : database.stub
-const apiUri = !process.env.ENVIRONMENT ? api.local : api.env
+const testLogs = !withoutLogs && !environment
+const globalUndiciAgent = !withProxy ? agent : proxy
+const zapAgent = !withProxy ? agent : zapProxyAgent
+const dbConnector = !environment ? database.mongo : database.stub
+const apiUri = !environment ? api.local : api.env
 
 export default {
   dbConnector,
@@ -47,5 +66,6 @@ export default {
   testLogs,
   dockerLogParser,
   zap,
-  undiciAgent
+  zapAgent,
+  undiciAgent: globalUndiciAgent
 }

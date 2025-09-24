@@ -15,7 +15,9 @@ export class ZAPClient {
       url.searchParams.append(key, value)
     })
 
-    const { statusCode, body } = await request(url.toString())
+    const { statusCode, body } = await request(url.toString(), {
+      dispatcher: config.zapAgent
+    })
     if (statusCode !== 200) {
       throw new Error(`ZAP API error: ${statusCode}`)
     }

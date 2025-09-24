@@ -11,6 +11,7 @@ Also provides a data generator facility for local development purposes.
   - [Running local tests](#running-local-tests)
   - [Running with Proxy](#running-with-proxy)
   - [Running the tests on environments](#running-the-tests-on-environments)
+  - [Running the tests against environments locally](#running-the-tests-against-environments-locally)
   - [Running the data generator for epr-backend](#running-the-data-generator-for-epr-backend)
 - [What is tested in this test suite](#what-is-tested-in-this-test-suite)
 - [Licence](#licence)
@@ -93,6 +94,30 @@ Tests are run from the CDP-Portal under the Test Suites section. Before any chan
 You can check the progress of the build under the actions section of this repository. Builds typically take around 1-2 minutes.
 
 The results of the test run are made available in the portal.
+
+### Running the tests against environments locally
+
+You can also run the tests against environments locally. This can be achieved by supplying the ENVIRONMENT variable.
+
+Ensure ZAP docker container is running and the proxy of your choice is running.
+
+```
+docker compose up -d zap
+```
+
+Then, to run the tests against the `dev` environment:
+
+```
+ENVIRONMENT=dev npm run test
+```
+
+If you want to run the tests with proxy against the `dev` environment, you can do so by supplying the following:
+
+```
+WITH_PROXY=true ENVIRONMENT=dev npm run test
+```
+
+Note that the database checks and logging tests will not run against the `dev` environment as they rely on the local Docker services.
 
 ### Running the data generator for epr-backend
 
