@@ -103,7 +103,6 @@ Then(
     } else {
       logger.warn(
         {
-          // eslint-disable-next-line camelcase
           step_definition:
             'Then I should see that an organisation details is created in the database'
         },

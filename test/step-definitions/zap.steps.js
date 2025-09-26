@@ -33,10 +33,8 @@ Then(
     if (report.site[0].alerts.length > 0) {
       report.site[0].alerts.forEach((alert) => {
         logger.error({
-          // eslint-disable-next-line camelcase
           step_definition:
             'Then I should receive no alerts from the ZAP report',
-          // eslint-disable-next-line camelcase
           zap_alert: alert
         })
       })

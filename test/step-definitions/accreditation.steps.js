@@ -118,7 +118,6 @@ Then(
     } else {
       logger.warn(
         {
-          // eslint-disable-next-line camelcase
           step_definition:
             'Then I should see that an accreditation is created in the database'
         },

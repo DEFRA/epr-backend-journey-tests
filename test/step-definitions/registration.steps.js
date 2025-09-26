@@ -131,7 +131,6 @@ Then(
     } else {
       logger.warn(
         {
-          // eslint-disable-next-line camelcase
           step_definition:
             'Then I should see that a registration is created in the database'
         },
