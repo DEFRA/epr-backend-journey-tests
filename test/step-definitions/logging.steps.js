@@ -22,7 +22,6 @@ Then(
     } else {
       logger.warn(
         {
-          // eslint-disable-next-line camelcase
           step_definition: 'Then the following information appears in the log'
         },
         'Skipping docker logging tests'
@@ -52,7 +51,6 @@ Then(
     } else {
       logger.warn(
         {
-          // eslint-disable-next-line camelcase
           step_definition: 'Then the following audit logs are present'
         },
         'Skipping docker audit log tests'
