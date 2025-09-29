@@ -60,6 +60,16 @@ Given(
   }
 )
 
+Given(
+  'I have entered my registration details with orgId {string} and reference number value of {string}',
+  function (orgId, refNo) {
+    this.registration = new Registration()
+    this.registration.orgId = orgId
+    this.registration.refNo = refNo
+    this.payload = this.registration.toPayload()
+  }
+)
+
 When('I submit the registration details', async function () {
   this.response = await baseAPI.post(
     '/v1/apply/registration',

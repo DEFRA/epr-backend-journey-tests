@@ -54,6 +54,16 @@ Given(
   }
 )
 
+Given(
+  'I have entered my accreditation details with orgId {string} and reference number value of {string}',
+  function (orgId, refNo) {
+    this.accreditation = new Accreditation()
+    this.accreditation.orgId = orgId
+    this.accreditation.refNo = refNo
+    this.payload = this.accreditation.toPayload()
+  }
+)
+
 When('I submit the accreditation details', async function () {
   this.response = await baseAPI.post(
     '/v1/apply/accreditation',

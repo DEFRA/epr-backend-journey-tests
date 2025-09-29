@@ -162,12 +162,14 @@ export class DockerLogParser {
   }
 
   async waitForLog(pattern, options = {}) {
-    const { timeout = logsLookBackBufferTime * 1000, interval = 1000 } = options
+    const { timeout = 5 * 1000, interval = 1000 } = options
     const startTime = Date.now()
+
+    let logLines = []
 
     while (Date.now() - startTime < timeout) {
       const logs = await this.getLogs()
-      const logLines = this.parseLogs(logs)
+      logLines = this.parseLogs(logs)
 
       const found = logLines.find((log) => {
         if (this.processedLogs.has(log.timestamp)) {
@@ -178,12 +180,12 @@ export class DockerLogParser {
 
       if (found) {
         this.processedLogs.set(found.timestamp, found)
-        return found
+        return [found]
       }
 
       await new Promise((resolve) => setTimeout(resolve, interval))
     }
 
-    throw new Error(`Log pattern not found within ${timeout}ms: ${pattern}`)
+    return logLines
   }
 }

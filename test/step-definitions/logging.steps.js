@@ -15,10 +15,25 @@ Then(
   async function (dataTable) {
     if (config.testLogs) {
       const expectedLog = dataTable.rowsHash()
-      const log = await dockerLogParser.waitForLog(expectedLog.Message)
-      expect(log.logLevel).to.equal(expectedLog['Log Level'])
-      expect(log.body?.event?.action).to.equal(expectedLog['Event Action'])
-      expect(log.body?.message).to.contain(expectedLog.Message)
+      const logs = await dockerLogParser.waitForLog(expectedLog.Message)
+      if (logs.length > 1) {
+        expect.fail(`No log found for the following expected log message: ${expectedLog.Message} \n Actual logs:
+                    ${logs
+                      .filter(
+                        (log) =>
+                          log.logLevel === expectedLog['Log Level'] &&
+                          log.body.message != null
+                      )
+                      .map((filtered) => filtered.body?.message)
+                      .join(',')}`)
+      } else {
+        const actualLog = logs[0]
+        expect(actualLog.logLevel).to.equal(expectedLog['Log Level'])
+        expect(actualLog.body?.event?.action).to.equal(
+          expectedLog['Event Action']
+        )
+        expect(actualLog.body?.message).to.contain(expectedLog.Message)
+      }
     } else {
       logger.warn(
         {
