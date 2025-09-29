@@ -48,13 +48,13 @@ Feature: Registration endpoint
     Then I should receive a 422 error response 'Could not extract referenceNumber from answers'
 
   Scenario: Registration endpoint returns an error if reference number is an invalid value and does not meet schema validation
-    Given I have entered my registration details with reference number value of '50000'
+    Given I have entered my registration details with orgId '500123' and reference number value of '50000'
     When I submit the registration details
     Then I should receive an internal server error response
     And the following information appears in the log
       | Log Level    | ERROR                             |
       | Event Action | response_failure                  |
-      | Message      | Failure on /v1/apply/registration |
+      | Message      | Failure on /v1/apply/registration for orgId: 500123 and referenceNumber: 50000, mongo validation failures: referenceNumber - 'referenceNumber' must be a string and is required |
 
   Scenario: Registration endpoint returns an error if payload is not present
     Given I have not entered any details
