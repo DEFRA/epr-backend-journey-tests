@@ -42,7 +42,7 @@
     "@cucumber/messages": "29.0.1",
     "@faker-js/faker": "10.0.0",
     "allure-cucumberjs": "3.4.1",
-    "chai": "6.0.1",
+    "chai": "6.2.0",
     "eslint": "9.36.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
