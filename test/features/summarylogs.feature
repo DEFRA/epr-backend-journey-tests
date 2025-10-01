@@ -1,14 +1,23 @@
+@summarylogs
 Feature: Summary Logs validate endpoint
 
   Scenario: Ensure that Summary Logs validate endpoint returns a response
     Given I have entered my summary log validation
     When I submit the summary log validation
     Then I should receive a summary log validating response
+    And the following information appears in the log
+      | Log Level    | INFO                                                                                                           |
+      | Event Action | request_success                                                                                                |
+      | Message      | Initiating file validation for test-bucket/test-key with fileId: test-file-id and filename: test-filename.xlsx |
 
   Scenario: Summary Logs validate endpoint returns an error if s3Key is not present
     Given I have entered my summary log validation without s3Key
     When I submit the summary log validation
     Then I should receive a 422 error response 's3Key is missing in body.data'
+    And the following information appears in the log
+      | Log Level    | WARN                          |
+      | Event Action | response_failure              |
+      | Message      | s3Key is missing in body.data |
 
   Scenario: Summary Logs validate endpoint returns an error if s3Bucket is not present
     Given I have entered my summary log validation without s3Bucket

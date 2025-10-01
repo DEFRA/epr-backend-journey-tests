@@ -62,6 +62,20 @@ WITHOUT_LOGS=true npm run test
 
 The testing of logs and audit logs also assumes that you have run the Docker compose command above as it relies on the Dockerised `epr-backend` service.
 
+### Running tests with tags
+
+For example, if you want to run accreditation tests, you can invoke:
+
+```bash
+npm run test:tagged @accreditation
+```
+
+To run with report, you can invoke:
+
+```bash
+npm run test:tagged @accreditation && npm run report
+```
+
 ### Running with Proxy
 
 By default, Proxy is disabled. To enable it, you first need a Proxy server running. You can use MITM Proxy via this Docker container command:
