@@ -203,3 +203,14 @@ export class Registration {
     return payload
   }
 }
+
+export class SummaryLog {
+  toPayload() {
+    return {
+      s3Bucket: 'test-bucket',
+      s3Key: 'test-key',
+      fileId: 'test-file-id',
+      filename: 'test-filename.xlsx'
+    }
+  }
+}
