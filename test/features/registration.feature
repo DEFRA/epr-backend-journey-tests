@@ -1,3 +1,4 @@
+@registration
 Feature: Registration endpoint
 
   Scenario: Ensure that registration endpoint returns a response

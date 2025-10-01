@@ -1,3 +1,4 @@
+@organisation
 Feature: Organisation endpoint
 
   Scenario: Ensure that organisation endpoint returns an orgId / reference number and organisation name on response

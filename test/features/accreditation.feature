@@ -1,3 +1,4 @@
+@accreditation
 Feature: Accreditation endpoint
 
   Scenario: Ensure that accreditation endpoint returns a created response when payload is stored into database
