@@ -33,14 +33,14 @@ Feature: Accreditation endpoint
       | Event Action | response_failure                     |
       | Message      | Could not extract orgId from answers |
 
-  Scenario: Accreditation endpoint returns an internal server error if Organisation ID number does not meet schema validation
+  Scenario: Accreditation endpoint returns a validation error if Organisation ID number does not meet minimum value
     Given I have entered my accreditation details with orgId '5000' and reference number value of 'abcdef123456fedcba654321'
     When I submit the accreditation details
-    Then I should receive an internal server error response
+    Then I should receive a 422 error response 'orgId: 5000, referenceNumber: abcdef123456fedcba654321 - Organisation ID must be at least 500000'
     And the following information appears in the log
-      | Log Level    | ERROR                              |
-      | Event Action | response_failure                   |
-      | Message      | Failure on /v1/apply/accreditation for orgId: 5000 and referenceNumber: abcdef123456fedcba654321, mongo validation failures: orgId - 'orgId' must be a positive integer above 500000 and is required |
+      | Log Level    | WARN                                                                                                    |
+      | Event Action | response_failure                                                                                        |
+      | Message      | orgId: 5000, referenceNumber: abcdef123456fedcba654321 - Organisation ID must be at least 500000        |
 
   Scenario: Accreditation endpoint returns an error if reference number is not present
     Given I have entered my accreditation details without reference number

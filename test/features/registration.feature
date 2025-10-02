@@ -38,10 +38,14 @@ Feature: Registration endpoint
       | Event Action | response_failure                     |
       | Message      | Could not extract orgId from answers |
 
-  Scenario: Registration endpoint returns an internal server error if Organisation ID number does not meet does not meet schema validation
-    Given I have entered my registration details with orgId value of '5000'
+  Scenario: Registration endpoint returns a validation error if Organisation ID number does not meet minimum value
+    Given I have entered my registration details with orgId '5000' and reference number value of 'abcd1234ef567890abcd1234'
     When I submit the registration details
-    Then I should receive an internal server error response
+    Then I should receive a 422 error response 'orgId: 5000, referenceNumber: abcd1234ef567890abcd1234 - Organisation ID must be at least 500000'
+    And the following information appears in the log
+      | Log Level    | WARN                                                                                                   |
+      | Event Action | response_failure                                                                                       |
+      | Message      | orgId: 5000, referenceNumber: abcd1234ef567890abcd1234 - Organisation ID must be at least 500000       |
 
   Scenario: Registration endpoint returns an error if reference number is not present
     Given I have entered my registration details without reference number
