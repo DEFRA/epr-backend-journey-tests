@@ -17,22 +17,22 @@ Then(
       const expectedLog = dataTable.rowsHash()
       const logs = await dockerLogParser.waitForLog(expectedLog.Message)
       if (logs.length > 1) {
-        expect.fail(`No log found for the following expected log message: ${expectedLog.Message} \n Actual logs:
-                    ${logs
-                      .filter(
-                        (log) =>
-                          log.logLevel === expectedLog['Log Level'] &&
-                          log.body.message != null
-                      )
-                      .map((filtered) => filtered.body?.message)
-                      .join(',')}`)
+        const actualLogs = logs
+          .filter(
+            (log) =>
+              log['log.level'] === expectedLog['Log Level'] &&
+              log.message != null
+          )
+          .map((filtered) => filtered.message)
+          .join('\n')
+        expect.fail(
+          `No log found for the following expected log message: ${expectedLog.Message} \n Actual logs: ${actualLogs}`
+        )
       } else {
         const actualLog = logs[0]
-        expect(actualLog.logLevel).to.equal(expectedLog['Log Level'])
-        expect(actualLog.body?.event?.action).to.equal(
-          expectedLog['Event Action']
-        )
-        expect(actualLog.body?.message).to.contain(expectedLog.Message)
+        expect(actualLog['log.level']).to.equal(expectedLog['Log Level'])
+        expect(actualLog.event?.action).to.equal(expectedLog['Event Action'])
+        expect(actualLog.message).to.contain(expectedLog.Message)
       }
     } else {
       logger.warn(

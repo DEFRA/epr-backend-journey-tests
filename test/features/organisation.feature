@@ -7,7 +7,7 @@ Feature: Organisation endpoint
     Then I should receive a successful organisation details response
     And I should see that an organisation details is created in the database
     And the following information appears in the log
-      | Log Level    | INFO                               |
+      | Log Level    | info                               |
       | Event Action | request_success                    |
       | Message      | Stored organisation data for orgId |
     And the following audit logs are present
@@ -35,7 +35,7 @@ Feature: Organisation endpoint
     When I submit the organisation details
     Then I should receive a 422 error response 'Could not extract email from answers'
     And the following information appears in the log
-     | Log Level    | WARN                                 |
+     | Log Level    | warn                                 |
      | Event Action | response_failure                     |
      | Message      | Could not extract email from answers |
 
@@ -44,7 +44,7 @@ Feature: Organisation endpoint
     When I submit the organisation details
     Then I should receive a 422 error response 'Could not extract organisation name from answers'
     And the following information appears in the log
-      | Log Level    | WARN                                             |
+      | Log Level    | warn                                             |
       | Event Action | response_failure                                 |
       | Message      | Could not extract organisation name from answers |
 
@@ -53,7 +53,7 @@ Feature: Organisation endpoint
     When I submit the organisation details
     Then I should receive a 400 error response 'Invalid payload'
     And the following information appears in the log
-      | Log Level    | WARN             |
+      | Log Level    | warn             |
       | Event Action | response_failure |
       | Message      | Invalid payload  |
 

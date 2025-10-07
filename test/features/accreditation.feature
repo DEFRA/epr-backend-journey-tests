@@ -7,7 +7,7 @@ Feature: Accreditation endpoint
     Then I should receive an accreditation resource created response
     And I should see that an accreditation is created in the database
     And the following information appears in the log
-      | Log Level    | INFO                                |
+      | Log Level    | info                                |
       | Event Action | request_success                     |
       | Message      | Stored accreditation data for orgId |
     And the following audit logs are present
@@ -29,7 +29,7 @@ Feature: Accreditation endpoint
     When I submit the accreditation details
     Then I should receive a 422 error response 'Could not extract orgId from answers'
     And the following information appears in the log
-      | Log Level    | WARN                                 |
+      | Log Level    | warn                                 |
       | Event Action | response_failure                     |
       | Message      | Could not extract orgId from answers |
 
@@ -38,7 +38,7 @@ Feature: Accreditation endpoint
     When I submit the accreditation details
     Then I should receive a 422 error response 'Organisation ID must be at least 500000'
     And the following information appears in the log
-      | Log Level    | WARN                                                                                             |
+      | Log Level    | warn                                                                                             |
       | Event Action | response_failure                                                                                 |
       | Message      | orgId: 5000, referenceNumber: abcdef123456fedcba654321 - Organisation ID must be at least 500000 |
 
@@ -47,7 +47,7 @@ Feature: Accreditation endpoint
     When I submit the accreditation details
     Then I should receive a 422 error response 'Could not extract referenceNumber from answers'
     And the following information appears in the log
-      | Log Level    | WARN                                           |
+      | Log Level    | warn                                           |
       | Event Action | response_failure                               |
       | Message      | Could not extract referenceNumber from answers |
 
@@ -61,7 +61,7 @@ Feature: Accreditation endpoint
     When I submit the accreditation details
     Then I should receive a 400 error response 'Invalid payload'
     And the following information appears in the log
-      | Log Level    | WARN             |
+      | Log Level    | warn             |
       | Event Action | response_failure |
       | Message      | Invalid payload  |
 

@@ -6,7 +6,7 @@ Feature: Summary Logs validate endpoint
     When I submit the summary log validation
     Then I should receive a summary log validating response
     And the following information appears in the log
-      | Log Level    | INFO                                                                                                           |
+      | Log Level    | info                                                                                                           |
       | Event Action | request_success                                                                                                |
       | Message      | Initiating file validation for test-bucket/test-key with fileId: test-file-id and filename: test-filename.xlsx |
 
@@ -15,7 +15,7 @@ Feature: Summary Logs validate endpoint
     When I submit the summary log validation
     Then I should receive a 422 error response 's3Key is missing in body.data'
     And the following information appears in the log
-      | Log Level    | WARN                          |
+      | Log Level    | warn                          |
       | Event Action | response_failure              |
       | Message      | s3Key is missing in body.data |
 
@@ -39,7 +39,7 @@ Feature: Summary Logs validate endpoint
     When I submit the summary log validation
     Then I should receive a 400 error response 'Invalid payload'
     And the following information appears in the log
-      | Log Level    | WARN             |
+      | Log Level    | warn             |
       | Event Action | response_failure |
       | Message      | Invalid payload  |
 
