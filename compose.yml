@@ -91,6 +91,7 @@ services:
      GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
      AUDIT_ENABLED: true
      FEATURE_FLAG_SUMMARY_LOGS: true
+     LOG_FORMAT: ecs
    ports:
      - '3001:3001'
    depends_on:

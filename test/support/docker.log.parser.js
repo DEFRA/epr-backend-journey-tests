@@ -4,7 +4,7 @@ import crypto from 'crypto'
 
 const execAsync = promisify(exec)
 
-const logsLookBackBufferTime = 10
+const logsLookBackBufferTime = 5
 
 export class DockerLogParser {
   constructor(containerName, fallbackContainerName) {
@@ -90,70 +90,22 @@ export class DockerLogParser {
     return auditLogs
   }
 
-  parseLogs(logText) {
-    const regex =
-      /\[(\d{2}:\d{2}:\d{2}\.\d{3})\] (\w+) \(\d+\):\s*([\s\S]*?)(?=\n\[|$)/g
+  parseJsonLogs(logText) {
+    const lines = logText.trim().split('\n')
+    const logs = []
 
-    const results = []
-    let match
-
-    while ((match = regex.exec(logText)) !== null) {
-      const [, ts, logLevel, bodyText] = match
-
-      const parsedBody = this.parseLogBody(bodyText.trim())
-
-      const timeToISO = (
-        timeStr,
-        date = new Date().toISOString().split('T')[0]
-      ) => new Date(`${date}T${timeStr}Z`).toISOString()
-
-      const timestamp = timeToISO(ts)
-
-      results.push({
-        timestamp,
-        logLevel,
-        body: parsedBody
-      })
-    }
-
-    return results
-  }
-
-  parseLogBody(bodyText) {
-    const result = {}
-
-    // Regex to match key-value pairs
-    // Matches: key: "string" OR key: { JSON object } OR key: [ JSON array ]
-    const kvRegex =
-      /(\w+):\s*(?:"([^"]*)"|\{([\s\S]*?)\}(?=\s*\w+:|$)|\[([\s\S]*?)\](?=\s*\w+:|$))/g
-
-    let match
-    while ((match = kvRegex.exec(bodyText)) !== null) {
-      const [, key, stringValue, objectValue, arrayValue] = match
-
-      if (stringValue !== undefined) {
-        // Handle string values
-        result[key] = stringValue
-      } else if (objectValue !== undefined) {
-        // Handle JSON objects
-        try {
-          const jsonString = `{${objectValue}}`
-          result[key] = JSON.parse(jsonString)
-        } catch (error) {
-          result[key] = `{${objectValue}}`
+    lines.forEach((line) => {
+      try {
+        const parsedLog = JSON.parse(line)
+        if (parsedLog['log.level'] !== 'audit') {
+          logs.push(parsedLog)
         }
-      } else if (arrayValue !== undefined) {
-        // Handle JSON arrays
-        try {
-          const jsonString = `[${arrayValue}]`
-          result[key] = JSON.parse(jsonString)
-        } catch (error) {
-          result[key] = `[${arrayValue}]`
-        }
+      } catch (e) {
+        // Not JSON or not an audit log, skip
       }
-    }
+    })
 
-    return result
+    return logs
   }
 
   async retrieveAuditLogs() {
@@ -162,24 +114,26 @@ export class DockerLogParser {
   }
 
   async waitForLog(pattern, options = {}) {
-    const { timeout = 5 * 1000, interval = 1000 } = options
+    const { timeout = logsLookBackBufferTime * 1000, interval = 1000 } = options
     const startTime = Date.now()
 
     let logLines = []
 
     while (Date.now() - startTime < timeout) {
       const logs = await this.getLogs()
-      logLines = this.parseLogs(logs)
+      logLines = this.parseJsonLogs(logs)
 
       const found = logLines.find((log) => {
-        if (this.processedLogs.has(log.timestamp)) {
+        const key = this.generateLogKey(log['@timestamp'], log.message)
+        if (this.processedLogs.has(key)) {
           return false
         }
-        return log.body.message?.includes(pattern)
+        return log.message?.includes(pattern)
       })
 
       if (found) {
-        this.processedLogs.set(found.timestamp, found)
+        const key = this.generateLogKey(found['@timestamp'], found.message)
+        this.processedLogs.set(key, found)
         return [found]
       }
 

@@ -7,7 +7,7 @@ Feature: Registration endpoint
     Then I should receive a registration resource created response
     And I should see that a registration is created in the database
     And the following information appears in the log
-      | Log Level    | INFO                                |
+      | Log Level    | info                                |
       | Event Action | request_success                     |
       | Message      | Stored registration data for orgId  |
     And the following audit logs are present
@@ -34,7 +34,7 @@ Feature: Registration endpoint
     When I submit the registration details
     Then I should receive a 422 error response 'Could not extract orgId from answers'
     And the following information appears in the log
-      | Log Level    | WARN                                 |
+      | Log Level    | warn                                 |
       | Event Action | response_failure                     |
       | Message      | Could not extract orgId from answers |
 
@@ -43,7 +43,7 @@ Feature: Registration endpoint
     When I submit the registration details
     Then I should receive a 422 error response 'Organisation ID must be at least 500000'
     And the following information appears in the log
-      | Log Level    | WARN                                                                                            |
+      | Log Level    | warn                                                                                            |
       | Event Action | response_failure                                                                                |
       | Message      | orgId: 5000, referenceNumber: abcd1234ef567890abcd1234 - Organisation ID must be at least 500000 |
 
@@ -57,7 +57,7 @@ Feature: Registration endpoint
     When I submit the registration details
     Then I should receive an internal server error response
     And the following information appears in the log
-      | Log Level    | ERROR                             |
+      | Log Level    | error                             |
       | Event Action | response_failure                  |
       | Message      | Failure on /v1/apply/registration for orgId: 500123 and referenceNumber: 50000, mongo validation failures: referenceNumber - 'referenceNumber' must be a string and is required |
 
@@ -66,7 +66,7 @@ Feature: Registration endpoint
     When I submit the registration details
     Then I should receive a 400 error response 'Invalid payload'
     And the following information appears in the log
-      | Log Level    | WARN             |
+      | Log Level    | warn             |
       | Event Action | response_failure |
       | Message      | Invalid payload  |
 
