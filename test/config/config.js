@@ -16,6 +16,11 @@ const api = {
   env: `https://epr-backend.${environment}.cdp-int.defra.cloud`
 }
 
+const zapTargetApi = {
+  local: 'http://epr-backend:3001',
+  env: `https://epr-backend.${environment}.cdp-int.defra.cloud`
+}
+
 const proxy = new ProxyAgent({
   uri: 'http://localhost:7777',
   proxyTunnel: !!environment,
@@ -58,11 +63,13 @@ const globalUndiciAgent = !withProxy ? agent : proxy
 const zapAgent = !withProxy ? agent : zapProxyAgent
 const dbConnector = !environment ? database.mongo : database.stub
 const apiUri = !environment ? api.local : api.env
+const zapTargetApiUri = !environment ? zapTargetApi.local : zapTargetApi.env
 
 export default {
   dbConnector,
   mongoUri,
   apiUri,
+  zapTargetApiUri,
   testLogs,
   dockerLogParser,
   zap,
