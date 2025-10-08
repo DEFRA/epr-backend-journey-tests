@@ -3,6 +3,7 @@ import { Agent, ProxyAgent } from 'undici'
 
 const environment = process.env.ENVIRONMENT
 const withProxy = process.env.WITH_PROXY
+const withExternalProxy = process.env.WITH_EXTERNAL_PROXY
 const withoutLogs = process.env.WITHOUT_LOGS
 
 if (environment === 'prod') {
@@ -12,7 +13,7 @@ if (environment === 'prod') {
 }
 
 const api = {
-  local: 'http://localhost:3001',
+  local: withProxy ? 'http://epr-backend:3001' : 'http://localhost:3001',
   env: `https://epr-backend.${environment}.cdp-int.defra.cloud`
 }
 
@@ -47,7 +48,7 @@ const agent = new Agent({
 })
 
 const zap = {
-  uri: 'http://localhost:8080',
+  uri: withProxy ? 'http://zap:8080' : 'http://localhost:8080',
   key: 'zap-api-key'
 }
 
@@ -59,8 +60,8 @@ const dockerLogParser = {
 const mongoUri = 'mongodb://localhost:27017/epr-backend'
 
 const testLogs = !withoutLogs && !environment
-const globalUndiciAgent = !withProxy ? agent : proxy
-const zapAgent = !withProxy ? agent : zapProxyAgent
+const globalUndiciAgent = !withProxy && !withExternalProxy ? agent : proxy
+const zapAgent = !withProxy && !withExternalProxy ? agent : zapProxyAgent
 const dbConnector = !environment ? database.mongo : database.stub
 const apiUri = !environment ? api.local : api.env
 const zapTargetApiUri = !environment ? zapTargetApi.local : zapTargetApi.env

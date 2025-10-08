@@ -81,7 +81,7 @@ npm run test:tagged @accreditation && npm run report
 By default, Proxy is disabled. To enable it, you first need a Proxy server running. You can use MITM Proxy via this Docker container command:
 
 ```
-docker run --rm -it --network host -p 7777:7777 -p 127.0.0.1:8081:8081  mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --listen-port 7777
+docker run --rm -it --name mitm-proxy --network cdp-tenant -p 7777:7777 -p 127.0.0.1:8081:8081  mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --listen-port 7777
 ```
 
 You can now monitor the proxy traffic via http://localhost:8081/ (Use the token on the console output from the Docker command above)
@@ -98,7 +98,15 @@ Now, you can run the tests with the following command:
 WITH_PROXY=true npm run test
 ```
 
-Alternatively, you can also use Postman as a Proxy client. For more information, please refer to the [Postman Docs](https://learning.postman.com/docs/sending-requests/capturing-request-data/capture-with-proxy/).
+### Running with a non Docker based Proxy
+
+Alternatively, you can also use a non Docker based Proxy client such as Postman. For more information, please refer to the [Postman Docs](https://learning.postman.com/docs/sending-requests/capturing-request-data/capture-with-proxy/).
+
+To run a non Docker based Proxy client, you need to use the following command:
+
+```
+WITH_EXTERNAL_PROXY=true npm run test
+```
 
 The default Proxy port is 7777. You can change it by modifying the value in `test/config/config.js` under the ProxyAgent configuration.
 
