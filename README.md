@@ -80,8 +80,11 @@ npm run test:tagged @accreditation && npm run report
 
 By default, Proxy is disabled. To enable it, you first need a Proxy server running. You can use MITM Proxy via this Docker container command:
 
-```
-docker run --rm -it --network host -p 7777:7777 -p 127.0.0.1:8081:8081  mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --listen-port 7777
+```sh
+docker run --rm -it --network host -p 7777:7777 -p 127.0.0.1:8081:8081 mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --listen-port 7777
+
+# or on macOS
+docker run --rm -it -p 7777:7777 -p 8081:8081 mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --listen-port 7777 --set block_global=false
 ```
 
 You can now monitor the proxy traffic via http://localhost:8081/ (Use the token on the console output from the Docker command above)

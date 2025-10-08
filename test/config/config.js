@@ -1,5 +1,5 @@
-import { MongoConnector, StubConnector } from '../support/db.js'
 import { Agent, ProxyAgent } from 'undici'
+import { MongoConnector, StubConnector } from '../support/db.js'
 
 const environment = process.env.ENVIRONMENT
 const withProxy = process.env.WITH_PROXY
@@ -29,11 +29,6 @@ const proxy = new ProxyAgent({
   }
 })
 
-const zapProxyAgent = new ProxyAgent({
-  uri: 'http://localhost:7777',
-  proxyTunnel: false
-})
-
 const database = {
   stub: new StubConnector(),
   mongo: new MongoConnector()
@@ -60,7 +55,7 @@ const mongoUri = 'mongodb://localhost:27017/epr-backend'
 
 const testLogs = !withoutLogs && !environment
 const globalUndiciAgent = !withProxy ? agent : proxy
-const zapAgent = !withProxy ? agent : zapProxyAgent
+const zapAgent = agent
 const dbConnector = !environment ? database.mongo : database.stub
 const apiUri = !environment ? api.local : api.env
 const zapTargetApiUri = !environment ? zapTargetApi.local : zapTargetApi.env
