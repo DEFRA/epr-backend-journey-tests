@@ -1,7 +1,7 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { ZAPClient } from '../support/zap.js'
-import { baseUrl } from '../apis/base-api.js'
+import config from '../config/config.js'
 import logger from '../support/logger.js'
 
 const zapClient = new ZAPClient()
@@ -13,7 +13,7 @@ Given(
     const dataTableRows = dataTable.rowsHash()
     const url = dataTableRows.Url
     const method = dataTableRows.Method
-    this.params = { url: baseUrl + url }
+    this.params = { url: config.zapTargetApiUri + url }
     if (method === 'POST') {
       this.params.postData = {}
     }

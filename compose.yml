@@ -114,7 +114,8 @@ services:
       - ./zap-reports:/zap/wrk:rw
     ports:
       - "8080:8080"
-    network_mode: host
+    networks:
+      - cdp-tenant
 
 networks:
   cdp-tenant:
