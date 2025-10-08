@@ -37,13 +37,6 @@ runs:
         timeout 180 bash -c 'until curl -f http://localhost:3001/health; do sleep 5; done'
         timeout 180 bash -c 'until curl -f http://localhost:8080/JSON/core/view/version?apikey=zap-api-key; do sleep 5; done'
 
-    - name: Check service status
-      shell: bash
-      run: |
-        echo "=== Testing Service Connectivity ==="
-        echo "Testing from runner to backend service..."
-        curl --fail --silent --connect-timeout 5 http://localhost:3001/health || (echo "Cannot reach backend from runner!" && exit 1)
-
     - name: Run the tests
       shell: bash
       run: |
