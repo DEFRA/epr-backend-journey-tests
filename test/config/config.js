@@ -53,8 +53,7 @@ const zap = {
 }
 
 const dockerLogParser = {
-  containerName: 'epr-backend-journey-tests-epr-backend-1',
-  fallbackContainerName: 'epr-backend-epr-backend-1'
+  containerName: 'epr-backend-journey-tests-epr-backend-1'
 }
 
 const mongoUri = 'mongodb://localhost:27017/epr-backend'

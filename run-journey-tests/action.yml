@@ -8,13 +8,20 @@ inputs:
     required: false
     type: string
     default: main
+  journey-test-pr:
+    required: false
+    type: string
+    default: false
 
 runs:
   using: 'composite'
   steps:
-    - uses: actions/checkout@v5
+    - name: Checkout repository if not called by Journey Test PR
+      if: inputs.journey-test-pr == 'false'
+      uses: actions/checkout@v5
       with:
         repository: DEFRA/epr-backend-journey-tests
+        ref: ${{inputs.branch}}
 
     - uses: actions/setup-node@v5
       with:
