@@ -2,6 +2,7 @@ import { Given, Then, When } from '@cucumber/cucumber'
 import { baseAPI } from '../support/hooks.js'
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
+import { fakerEN_GB } from '@faker-js/faker'
 
 Given('I have entered my summary log validation', function () {
   this.summaryLog = new SummaryLog()
@@ -33,8 +34,8 @@ Given('I have entered my summary log validation without s3Key', function () {
 })
 
 When('I submit the summary log validation', async function () {
-  const refNo = '68dc06020897dff9191b1354'
-  const orgId = '500000'
+  const refNo = fakerEN_GB.database.mongodbObjectId()
+  const orgId = fakerEN_GB.number.bigInt({ min: 500000, max: 999999 })
   this.response = await baseAPI.post(
     `/v1/organisation/${orgId}/registration/${refNo}/summary-logs/validate`,
     JSON.stringify(this.payload)
