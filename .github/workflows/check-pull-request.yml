@@ -73,4 +73,11 @@ jobs:
     name: Run Journey Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: DEFRA/epr-backend-journey-tests/run-journey-tests@main
+      - name: Checkout journey-tests repo
+        uses: actions/checkout@v5
+
+      - name: Run journey tests
+        uses: ./run-journey-tests
+        with:
+          branch: ${{ github.head_ref }}
+          journey-test-pr: true

@@ -7,9 +7,8 @@ const execAsync = promisify(exec)
 const logsLookBackBufferTime = 5
 
 export class DockerLogParser {
-  constructor(containerName, fallbackContainerName) {
+  constructor(containerName) {
     this.containerName = containerName
-    this.fallbackContainerName = fallbackContainerName
     this.processedLogs = new Map()
     this.processedAuditLogs = new Map()
     this.testStartTime = new Date()
@@ -32,20 +31,11 @@ export class DockerLogParser {
       .toISOString()
       .slice(0, 19)
 
-    let lastError
-
     try {
       return await this.runDockerCommand(latestTimestamp)
     } catch (error) {
-      try {
-        this.containerName = this.fallbackContainerName
-        return await this.runDockerCommand(latestTimestamp)
-      } catch (error) {
-        lastError = error
-      }
+      throw new Error(`Failed to get logs: ${error.message}`)
     }
-
-    throw new Error(`Failed to get logs: ${lastError.message}`)
   }
 
   runDockerCommand = async function (latestTimestamp) {

@@ -5,8 +5,7 @@ import logger from '../support/logger.js'
 import config from '../config/config.js'
 
 const dockerLogParser = new DockerLogParser(
-  config.dockerLogParser.containerName,
-  config.dockerLogParser.fallbackContainerName
+  config.dockerLogParser.containerName
 )
 
 Then(
