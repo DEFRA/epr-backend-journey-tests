@@ -100,31 +100,52 @@ Then(
       expect(accreditation.referenceNumber).to.equal(expectedRefNumber)
       expect(accreditation.orgId).to.equal(parseInt(expectedOrgId))
       expect(accreditation.schemaVersion).to.equal(1)
-      expect(accreditation.answers.length).to.equal(23)
+      expect(accreditation.answers.length).to.equal(25)
       expect(JSON.stringify(accreditation.rawSubmissionData.meta)).to.equal(
         JSON.stringify(this.payload.meta)
       )
       expect(JSON.stringify(accreditation.rawSubmissionData.data)).to.equal(
         JSON.stringify(this.payload.data)
       )
-      expect(accreditation.answers[1].value).to.equal(expectedOrgId)
-      expect(accreditation.answers[2].value).to.equal(expectedRefNumber)
-      expect(accreditation.answers[3].value).to.equal(
-        this.accreditation.material
-      )
-      expect(accreditation.answers[4].value).to.equal(
-        this.accreditation.tonnageBand
-      )
-      expect(accreditation.answers[19].value).to.equal(
-        this.accreditation.fullName
-      )
-      expect(accreditation.answers[20].value).to.equal(this.accreditation.email)
-      expect(accreditation.answers[21].value).to.equal(
-        this.accreditation.phoneNumber
-      )
-      expect(accreditation.answers[22].value).to.equal(
-        this.accreditation.jobTitle
-      )
+      expect(
+        accreditation.answers.find(
+          (a) => a.shortDescription === 'Organisation ID'
+        ).value
+      ).to.equal(expectedOrgId)
+      expect(
+        accreditation.answers.find(
+          (a) => a.shortDescription === 'System Reference'
+        ).value
+      ).to.equal(expectedRefNumber)
+      expect(
+        accreditation.answers.find(
+          (a) => a.shortDescription === 'Packaging waste category to accredit'
+        ).value
+      ).to.equal(this.accreditation.material)
+      expect(
+        accreditation.answers.find((a) => a.shortDescription === 'Tonnage band')
+          .value
+      ).to.equal(this.accreditation.tonnageBand)
+      expect(
+        accreditation.answers.find(
+          (a) => a.shortDescription === 'Submitter name'
+        ).value
+      ).to.equal(this.accreditation.fullName)
+      expect(
+        accreditation.answers.find(
+          (a) => a.shortDescription === 'Submitter email address'
+        ).value
+      ).to.equal(this.accreditation.email)
+      expect(
+        accreditation.answers.find(
+          (a) => a.shortDescription === 'Submitter telephone number'
+        ).value
+      ).to.equal(this.accreditation.phoneNumber)
+      expect(
+        accreditation.answers.find(
+          (a) => a.shortDescription === 'Submitter job title'
+        ).value
+      ).to.equal(this.accreditation.jobTitle)
     } else {
       logger.warn(
         {

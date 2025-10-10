@@ -126,6 +126,7 @@ export class Organisation {
     payload.data.main.WVADkQ = this.role
     payload.data.main.JbEBvr = this.companyName
     payload.data.main.QdhMJS = this.companyName
+    payload.data.main.RUKDyH = this.companyName
     payload.data.main.VcdRNr = nations.slice(0, this.numberOfNations).join(', ')
     payload.data.main.VATjEi = this.address
 
@@ -155,7 +156,6 @@ export class Registration {
     this.wasteRegNo =
       'CBDU' + fakerEN_GB.number.int({ min: 100000, max: 999999 })
     this.permitNo = `${fakerEN_GB.number.int({ min: 1000000000, max: 9999999999 })}`
-    this.port = fakerEN_GB.location.city()
 
     this.address =
       fakerEN_GB.location.streetAddress() +
@@ -192,8 +192,6 @@ export class Registration {
     payload.data.main.CACJrG = this.permitNo
     payload.data.main.vsaLhJ = this.supplier
     payload.data.main.QHJFhL = this.permitType
-
-    payload.data.repeaters.GzScMv[0].ZcjmuP = this.port
 
     payload.data.files.qEZeYC[0].fileId = this.fileId1
     payload.data.files.qEZeYC[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${this.fileId1}`

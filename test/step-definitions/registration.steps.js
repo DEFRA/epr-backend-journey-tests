@@ -106,38 +106,78 @@ Then(
       expect(registration.referenceNumber).to.equal(expectedRefNumber)
       expect(registration.orgId).to.equal(parseInt(expectedOrgId))
       expect(registration.schemaVersion).to.equal(1)
-      expect(registration.answers.length).to.equal(20)
+      expect(registration.answers.length).to.equal(23)
       expect(JSON.stringify(registration.rawSubmissionData.meta)).to.equal(
         JSON.stringify(this.payload.meta)
       )
       expect(JSON.stringify(registration.rawSubmissionData.data)).to.equal(
         JSON.stringify(this.payload.data)
       )
-      expect(registration.answers[1].value).to.equal(expectedOrgId)
-      expect(registration.answers[2].value).to.equal(expectedRefNumber)
-      expect(registration.answers[3].value).to.equal(this.registration.fullName)
-      expect(registration.answers[4].value).to.equal(this.registration.email)
-      expect(registration.answers[5].value).to.equal(
-        this.registration.phoneNumber
-      )
-      expect(registration.answers[6].value).to.equal(this.registration.jobTitle)
-      expect(registration.answers[7].value).to.equal(this.registration.address)
-      expect(registration.answers[8].value).to.equal(
-        this.registration.wasteRegNo
-      )
-      expect(registration.answers[9].value).to.equal(
-        this.registration.permitType
-      )
-      expect(registration.answers[10].value).to.equal(
-        this.registration.permitNo
-      )
-      expect(registration.answers[11].value).to.equal(
-        this.registration.material
-      )
-      expect(registration.answers[12].value).to.equal(
-        this.registration.fullName
-      )
-      expect(registration.answers[13].value).to.equal(this.registration.email)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'Organisation ID'
+        ).value
+      ).to.equal(expectedOrgId)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'System Reference'
+        ).value
+      ).to.equal(expectedRefNumber)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'App contact name'
+        ).value
+      ).to.equal(this.registration.fullName)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'Submitter name'
+        ).value
+      ).to.equal(this.registration.fullName)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'Submitter email address'
+        ).value
+      ).to.equal(this.registration.email)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'App contact email address'
+        ).value
+      ).to.equal(this.registration.email)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'App contact telephone number'
+        ).value
+      ).to.equal(this.registration.phoneNumber)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'App contact job title'
+        ).value
+      ).to.equal(this.registration.jobTitle)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'Address to serve notices'
+        ).value
+      ).to.equal(this.registration.address)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'Carrier, broker or dealer number'
+        ).value
+      ).to.equal(this.registration.wasteRegNo)
+      expect(
+        registration.answers.find((a) => a.shortDescription === 'Permit type')
+          .value
+      ).to.equal(this.registration.permitType)
+      expect(
+        registration.answers.find(
+          (a) => a.shortDescription === 'WML or Permit number'
+        ).value
+      ).to.equal(this.registration.permitNo)
+      expect(
+        registration.answers.find(
+          (a) =>
+            a.shortDescription === 'Packaging waste category to be registered'
+        ).value
+      ).to.equal(this.registration.material)
     } else {
       logger.warn(
         {
