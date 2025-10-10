@@ -35,6 +35,7 @@ Given(
   function () {
     this.organisation = new Organisation()
     this.payload = this.organisation.toPayload()
+    delete this.payload.data.main.RUKDyH
     delete this.payload.data.main.JbEBvr
   }
 )
@@ -87,19 +88,34 @@ Then(
       expect(organisation.orgName).to.equal(expectedOrgName)
       expect(organisation.orgId).to.equal(parseInt(expectedOrgId))
       expect(organisation.schemaVersion).to.equal(1)
-      expect(organisation.answers.length).to.equal(13)
+      expect(organisation.email).to.equal(this.organisation.email)
+      expect(organisation.answers.length).to.equal(16)
       expect(JSON.stringify(organisation.rawSubmissionData.meta)).to.equal(
         JSON.stringify(this.payload.meta)
       )
       expect(JSON.stringify(organisation.rawSubmissionData.data)).to.equal(
         JSON.stringify(this.payload.data)
       )
-      expect(organisation.answers[1].value).to.equal(this.organisation.role)
-      expect(organisation.answers[2].value).to.equal(this.organisation.fullName)
-      expect(organisation.answers[3].value).to.equal(this.organisation.email)
-      expect(organisation.answers[4].value).to.equal(
-        this.organisation.phoneNumber
-      )
+      expect(
+        organisation.answers.find(
+          (a) => a.shortDescription === 'Currently operational?'
+        ).value
+      ).to.equal(this.organisation.role)
+      expect(
+        organisation.answers.find(
+          (a) => a.shortDescription === 'Submitter name'
+        ).value
+      ).to.equal(this.organisation.fullName)
+      expect(
+        organisation.answers.find(
+          (a) => a.shortDescription === 'Submitter email address'
+        ).value
+      ).to.equal(this.organisation.email)
+      expect(
+        organisation.answers.find(
+          (a) => a.shortDescription === 'Submitter telephone number'
+        ).value
+      ).to.equal(this.organisation.phoneNumber)
     } else {
       logger.warn(
         {

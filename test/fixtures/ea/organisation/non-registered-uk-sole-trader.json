@@ -1,8 +1,8 @@
 {
   "meta": {
     "schemaVersion": "1",
-    "timestamp": "2025-10-08T16:13:16.313Z",
-    "referenceNumber": "C77-4CB-ED2",
+    "timestamp": "2025-10-08T16:25:35.824Z",
+    "referenceNumber": "CEA-66D-A2B",
     "definition": {
       "name": "Demo for pEPR - Extended Producer Responsibilities: provide your organisation details (EA)",
       "engine": "V2",
@@ -1283,18 +1283,23 @@
   "data": {
     "main": {
       "FAxvwq": "false",
-      "WVADkQ": "Reprocessor and exporter",
+      "WVADkQ": "Reprocessor",
       "VcdRNr": "England,Scotland",
-      "hNTczg": "true",
-      "RUKDyH": "Green Recycling Solutions Ltd",
-      "XcvvZV": "Green",
-      "VZLTnn": "AC012345",
-      "GNVlAd": "Unit 15, Innovation Park,Technology Way,Manchester,Greater Manchester,M1 5JG",
-      "hnwFjT": "A limited liability partnership",
+      "hNTczg": "false",
+      "lEnwLd": "true",
+      "JbEBvr": "British Beverage Distributors Ltd",
+      "QdhMJS": "British Beverage Distributors Ltd",
+      "VATjEi": "45 High Street,,Birmingham,B2 4AA",
+      "uNBiGz": "An individual",
       "BYtjnh": "James Patterson",
       "aSoxDO": "reexserviceteam@defra.gov.uk",
-      "aIFHXo": "0121 496 8574",
-      "LyeSzH": "Sustainability Director"
+      "aIFHXo": "020 7946 0123",
+      "LyeSzH": "Sustainability Director",
+      "DmOeEY": "false",
+      "JiSlkT": "Joe Hamiliton",
+      "urKjHd": "reexserviceteam@defra.gov.uk",
+      "YXSHOs": "0123456789",
+      "bCwGVt": "Director"
     },
     "repeaters": {},
     "files": {}

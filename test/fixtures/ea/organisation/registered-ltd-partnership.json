@@ -1,8 +1,8 @@
 {
   "meta": {
     "schemaVersion": "1",
-    "timestamp": "2025-10-08T16:13:16.313Z",
-    "referenceNumber": "C77-4CB-ED2",
+    "timestamp": "2025-10-08T16:14:15.390Z",
+    "referenceNumber": "CCB-20A-38D",
     "definition": {
       "name": "Demo for pEPR - Extended Producer Responsibilities: provide your organisation details (EA)",
       "engine": "V2",
@@ -1283,20 +1283,30 @@
   "data": {
     "main": {
       "FAxvwq": "false",
-      "WVADkQ": "Reprocessor and exporter",
-      "VcdRNr": "England,Scotland",
+      "WVADkQ": "Exporter",
       "hNTczg": "true",
       "RUKDyH": "Green Recycling Solutions Ltd",
       "XcvvZV": "Green",
-      "VZLTnn": "AC012345",
-      "GNVlAd": "Unit 15, Innovation Park,Technology Way,Manchester,Greater Manchester,M1 5JG",
-      "hnwFjT": "A limited liability partnership",
+      "VZLTnn": "01234567",
+      "GNVlAd": "Unit 15, Innovation Park,Manchester,M1 5JG",
+      "hnwFjT": "A limited partnership",
       "BYtjnh": "James Patterson",
       "aSoxDO": "reexserviceteam@defra.gov.uk",
-      "aIFHXo": "0121 496 8574",
+      "aIFHXo": "020 7946 0123",
       "LyeSzH": "Sustainability Director"
     },
-    "repeaters": {},
+    "repeaters": {
+      "CZFqEV": [
+        {
+          "RXPSft": "Victor",
+          "PEWtSm": "Company partner"
+        },
+        {
+          "RXPSft": "DHL Supply Chain UK Ltd",
+          "PEWtSm": "Company partner"
+        }
+      ]
+    },
     "files": {}
   }
 }
