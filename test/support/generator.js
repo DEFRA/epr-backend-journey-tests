@@ -1,8 +1,12 @@
-import { fakerEN_GB } from '@faker-js/faker'
+import { fakerEN_GB, fakerFR } from '@faker-js/faker'
 
 import accPayload from '../fixtures/accreditation.json' with { type: 'json' }
+import accReprocessorPayload from '../fixtures/ea/accreditation/reprocessor-paper.json' with { type: 'json' }
 import orgPayload from '../fixtures/organisation.json' with { type: 'json' }
+import orgUkSoleTraderPayload from '../fixtures/ea/organisation/non-registered-uk-sole-trader.json' with { type: 'json' }
+import nonRegOutsideUkAddressPayload from '../fixtures/ea/organisation/non-registered-outside-uk-address.json' with { type: 'json' }
 import regPayload from '../fixtures/registration.json' with { type: 'json' }
+import regAllMaterialsPayload from '../fixtures/ea/registration/reprocessor-all-materials.json' with { type: 'json' }
 
 const materials = [
   'Aluminium (R4)',
@@ -57,6 +61,41 @@ export class Accreditation {
     this.material = materials[materialIndex]
     const tonnageBandIndex = Math.floor(Math.random() * tonnageBands.length)
     this.tonnageBand = tonnageBands[tonnageBandIndex]
+  }
+
+  toReprocessorPayload() {
+    const payload = JSON.parse(JSON.stringify(accReprocessorPayload))
+
+    payload.data.main.PcYDad = this.fullName
+    payload.data.main.ANtYzb = this.email
+    payload.data.main.wQSslf = this.phoneNumber
+    payload.data.main.UKfLjM = this.jobTitle
+    payload.data.main.kiwNtq = this.refNo
+    payload.data.main.BQWXPN = this.orgId
+    payload.data.main.xBWNGE = this.tonnageBand
+
+    payload.data.main.gYejUO = this.reproPercentage
+    payload.data.main.WvPjhV = this.priceSupportPercentage
+    payload.data.main.xydTTp = this.businessSupportPercentage
+    payload.data.main.XKcgiV = this.commsPercentage
+    payload.data.main.eAhuYs = this.developingNewMarketsPercentage
+    payload.data.main.tJvMrh = this.developingNewUsesPercentage
+    payload.data.main.LuybKn = this.otherCategoriesPercentage
+
+    payload.data.repeaters.kaaxig[0].aGZJEm = this.fullName
+    payload.data.repeaters.kaaxig[0].oVQfjw = this.email
+    payload.data.repeaters.kaaxig[0].qDGstU = this.phoneNumber
+    payload.data.repeaters.kaaxig[0].QVIiRa = this.jobTitle
+
+    payload.data.repeaters.kaaxig[1].aGZJEm = fakerEN_GB.person.fullName()
+    payload.data.repeaters.kaaxig[1].oVQfjw = fakerEN_GB.internet.email()
+    payload.data.repeaters.kaaxig[1].qDGstU = fakerEN_GB.phone.number()
+    payload.data.repeaters.kaaxig[1].QVIiRa = fakerEN_GB.person.jobTitle()
+
+    payload.data.files.zJwuYH[0].fileId = this.fileId1
+    payload.data.files.zJwuYH[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${this.fileId1}`
+
+    return payload
   }
 
   toPayload() {
@@ -116,6 +155,71 @@ export class Organisation {
     this.numberOfNations = Math.floor(Math.random() * nations.length) + 1
   }
 
+  toNonRegisteredOutsideUKAddressPayload() {
+    const payload = JSON.parse(JSON.stringify(nonRegOutsideUkAddressPayload))
+
+    this.foreignCity = fakerFR.location.zipCode()
+    this.foreignCity = fakerFR.location.zipCode()
+    this.foreignAddress = fakerFR.location.streetAddress()
+
+    payload.data.main.JiSlkT = fakerEN_GB.person.fullName()
+    payload.data.main.BYtjnh = this.fullName
+    payload.data.main.aSoxDO = this.email
+    payload.data.main.aIFHXo = this.phoneNumber
+    payload.data.main.LyeSzH = this.jobTitle
+    payload.data.main.WVADkQ = this.role
+    payload.data.main.WkWBWB = this.companyName
+    payload.data.main.xsDMEE = this.companyName
+    payload.data.main.VcdRNr = nations.slice(0, this.numberOfNations).join(', ')
+    payload.data.main.yhEOvK = this.foreignAddress
+    payload.data.main.TUmXzj = this.foreignCity
+    payload.data.main.PdFoDo = 'France'
+    payload.data.main.oyAQgP = this.foreignCity
+    payload.data.main.pAzIoG = fakerFR.location.zipCode()
+
+    return payload
+  }
+
+  toNonRegisteredUKSoleTraderPayload() {
+    const payload = JSON.parse(JSON.stringify(orgUkSoleTraderPayload))
+
+    payload.data.main.JiSlkT = fakerEN_GB.person.fullName()
+    payload.data.main.BYtjnh = this.fullName
+    payload.data.main.aSoxDO = this.email
+    payload.data.main.urKjHd = this.email
+    payload.data.main.aIFHXo = this.phoneNumber
+    payload.data.main.YXSHOs = fakerEN_GB.phone.number()
+    payload.data.main.bCwGVt = this.jobTitle
+    payload.data.main.WVADkQ = this.role
+    payload.data.main.JbEBvr = this.companyName
+    payload.data.main.QdhMJS = this.companyName
+    payload.data.main.RUKDyH = this.companyName
+    payload.data.main.VcdRNr = nations.slice(0, this.numberOfNations).join(', ')
+    payload.data.main.VATjEi = this.address
+
+    return payload
+  }
+
+  toWithPartnershipPayload() {
+    const payload = this.toPayload()
+    payload.data.main.hnwFjT = 'A limited partnership'
+
+    payload.data.repeaters = {
+      CZFqEV: [
+        {
+          RXPSft: fakerEN_GB.person.firstName(),
+          PEWtSm: 'Company partner'
+        },
+        {
+          RXPSft: fakerEN_GB.person.firstName(),
+          PEWtSm: 'Company partner'
+        }
+      ]
+    }
+
+    return payload
+  }
+
   toPayload() {
     const payload = JSON.parse(JSON.stringify(orgPayload))
 
@@ -126,6 +230,7 @@ export class Organisation {
     payload.data.main.WVADkQ = this.role
     payload.data.main.JbEBvr = this.companyName
     payload.data.main.QdhMJS = this.companyName
+    payload.data.main.RUKDyH = this.companyName
     payload.data.main.VcdRNr = nations.slice(0, this.numberOfNations).join(', ')
     payload.data.main.VATjEi = this.address
 
@@ -141,6 +246,7 @@ export class Registration {
     this.refNo = fakerEN_GB.database.mongodbObjectId()
     this.orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
     this.jobTitle = fakerEN_GB.person.jobTitle()
+    this.companyName = fakerEN_GB.company.name() + ' Limited'
 
     this.fileId1 = fakerEN_GB.string.uuid()
     this.fileId2 = fakerEN_GB.string.uuid()
@@ -155,7 +261,6 @@ export class Registration {
     this.wasteRegNo =
       'CBDU' + fakerEN_GB.number.int({ min: 100000, max: 999999 })
     this.permitNo = `${fakerEN_GB.number.int({ min: 1000000000, max: 9999999999 })}`
-    this.port = fakerEN_GB.location.city()
 
     this.address =
       fakerEN_GB.location.streetAddress() +
@@ -165,8 +270,56 @@ export class Registration {
       fakerEN_GB.location.zipCode()
   }
 
+  toAllMaterialsPayload() {
+    const payload = JSON.parse(JSON.stringify(regAllMaterialsPayload))
+
+    payload.data.main.DDVUrr = this.companyName
+
+    payload.data.main.jSlhCJ = this.fullName
+    payload.data.main.WOnymw = this.email
+    payload.data.main.lScMYi = this.phoneNumber
+    payload.data.main.lnBYQc = this.jobTitle
+
+    payload.data.main.eKdnWs = this.fullName
+    payload.data.main.CJvZOT = this.email
+    payload.data.main.yRKTUh = this.phoneNumber
+    payload.data.main.TwIrTO = this.jobTitle
+
+    payload.data.main.LnSGUi = this.fullName
+    payload.data.main.pPrfJB = this.email
+    payload.data.main.aCYymT = this.phoneNumber
+    payload.data.main.DxFVqx = this.jobTitle
+
+    payload.data.main.Laiblc = this.address
+    payload.data.main.xinNGX =
+      'TQ ' +
+      fakerEN_GB.number.int({ min: 111, max: 500 }) +
+      ' ' +
+      fakerEN_GB.number.int({ min: 500, max: 999 })
+
+    payload.data.main.VHfukU =
+      fakerEN_GB.location.streetAddress() +
+      ',' +
+      fakerEN_GB.location.city() +
+      ',' +
+      fakerEN_GB.location.zipCode()
+
+    payload.data.main.DAcLmf = this.refNo
+    payload.data.main.rJMICz = this.orgId
+
+    payload.data.main.ruHJsg = this.wasteRegNo
+    payload.data.main.xMSsbm = 'EPR/AB' + this.permitNo + 'A001'
+
+    payload.data.files.xddzIW[0].fileId = this.fileId1
+    payload.data.files.xddzIW[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${this.fileId1}`
+    return payload
+  }
+
   toPayload() {
     const payload = JSON.parse(JSON.stringify(regPayload))
+
+    payload.data.main.VIxUne = this.companyName
+
     payload.data.main.CzNRVZ = this.fullName
     payload.data.main.xpDUqn = this.email
     payload.data.main.ZgTfLO = this.phoneNumber
@@ -192,8 +345,6 @@ export class Registration {
     payload.data.main.CACJrG = this.permitNo
     payload.data.main.vsaLhJ = this.supplier
     payload.data.main.QHJFhL = this.permitType
-
-    payload.data.repeaters.GzScMv[0].ZcjmuP = this.port
 
     payload.data.files.qEZeYC[0].fileId = this.fileId1
     payload.data.files.qEZeYC[0].userDownloadLink = `https://forms-designer.test.cdp-int.defra.cloud/file-download/${this.fileId1}`

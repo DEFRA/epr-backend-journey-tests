@@ -18,9 +18,20 @@ async function generate() {
   for (let i = 0; i < 50; i++) {
     const organisation = new Organisation()
 
+    let organisationPayload = organisation.toPayload()
+
+    if (i % 5 === 0) {
+      organisationPayload =
+        organisation.toNonRegisteredOutsideUKAddressPayload()
+    } else if (i % 3 === 0) {
+      organisationPayload = organisation.toWithPartnershipPayload()
+    } else if (i % 2 === 0) {
+      organisationPayload = organisation.toNonRegisteredUKSoleTraderPayload()
+    }
+
     const orgResponse = await baseAPI.post(
       '/v1/apply/organisation',
-      JSON.stringify(organisation.toPayload())
+      JSON.stringify(organisationPayload)
     )
 
     const responseData = await orgResponse.body.json()
@@ -36,10 +47,13 @@ async function generate() {
     registration.refNo = referenceNumber
     registration.orgId = orgId
 
-    baseAPI.post(
-      '/v1/apply/registration',
-      JSON.stringify(registration.toPayload())
-    )
+    let registrationPayload = registration.toPayload()
+
+    if (i % 2 === 0) {
+      registrationPayload = registration.toAllMaterialsPayload()
+    }
+
+    baseAPI.post('/v1/apply/registration', JSON.stringify(registrationPayload))
 
     const accreditation = new Accreditation()
 
@@ -51,9 +65,15 @@ async function generate() {
     accreditation.orgId = orgId
     accreditation.material = registration.material
 
+    let accreditationPayload = accreditation.toPayload()
+
+    if (i % 2 === 0) {
+      accreditationPayload = accreditation.toReprocessorPayload()
+    }
+
     baseAPI.post(
       '/v1/apply/accreditation',
-      JSON.stringify(accreditation.toPayload())
+      JSON.stringify(accreditationPayload)
     )
 
     // Delay by 25ms to avoid collision of orgId in org payload
