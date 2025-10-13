@@ -5,6 +5,7 @@ const environment = process.env.ENVIRONMENT
 const withProxy = process.env.WITH_PROXY
 const withExternalProxy = process.env.WITH_EXTERNAL_PROXY
 const withoutLogs = process.env.WITHOUT_LOGS
+const xApiKey = process.env.X_API_KEY
 
 if (environment === 'prod') {
   throw new Error(
@@ -14,7 +15,8 @@ if (environment === 'prod') {
 
 const api = {
   local: withProxy ? 'http://epr-backend:3001' : 'http://localhost:3001',
-  env: `https://epr-backend.${environment}.cdp-int.defra.cloud`
+  env: `https://epr-backend.${environment}.cdp-int.defra.cloud`,
+  headers: xApiKey ? { 'x-api-key': xApiKey } : {}
 }
 
 const zapTargetApi = {
@@ -74,5 +76,6 @@ export default {
   dockerLogParser,
   zap,
   zapAgent,
-  undiciAgent: globalUndiciAgent
+  undiciAgent: globalUndiciAgent,
+  apiHeaders: api.headers
 }
