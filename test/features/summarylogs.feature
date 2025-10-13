@@ -3,12 +3,16 @@ Feature: Summary Logs validate endpoint
 
   Scenario: Ensure that Summary Logs validate endpoint returns a response
     Given I have entered my summary log validation
+      | S3 Bucket | test-bucket         |
+      | S3 Key    | test-key            |
+      | fileId    | test-file-id        |
+      | filename  | test-filename.xlsx  |
     When I submit the summary log validation
     Then I should receive a summary log validating response
     And the following information appears in the log
-      | Log Level    | info                                                                                             |
-      | Event Action | request_success                                                                                  |
-      | Message      | Initiating file validation for {s3Bucket}/{s3Key} with fileId: {fileId} and filename: {filename} |
+      | Log Level    | info                                                                                                           |
+      | Event Action | request_success                                                                                                |
+      | Message      | Initiating file validation for test-bucket/test-key with fileId: test-file-id and filename: test-filename.xlsx |
 
   Scenario: Summary Logs validate endpoint returns an error if s3Key is not present
     Given I have entered my summary log validation without s3Key

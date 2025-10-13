@@ -3,9 +3,29 @@ import { baseAPI } from '../support/hooks.js'
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
 
-Given('I have entered my summary log validation', function () {
+Given('I have entered my summary log validation', function (dataTable) {
   this.summaryLog = new SummaryLog()
   this.payload = this.summaryLog.toPayload()
+
+  if (dataTable) {
+    const data = dataTable.rowsHash()
+    if (data['S3 Bucket']) {
+      this.payload.s3Bucket = data['S3 Bucket']
+      this.summaryLog.s3Bucket = data['S3 Bucket']
+    }
+    if (data['S3 Key']) {
+      this.payload.s3Key = data['S3 Key']
+      this.summaryLog.s3Key = data['S3 Key']
+    }
+    if (data.fileId) {
+      this.payload.fileId = data.fileId
+      this.summaryLog.fileId = data.fileId
+    }
+    if (data.filename) {
+      this.payload.filename = data.filename
+      this.summaryLog.filename = data.filename
+    }
+  }
 })
 
 Given('I have entered my summary log validation without filename', function () {
