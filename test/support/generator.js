@@ -205,12 +205,22 @@ export class Registration {
 }
 
 export class SummaryLog {
+  constructor() {
+    this.summaryLogId = fakerEN_GB.string.uuid()
+    this.fileId = fakerEN_GB.string.uuid()
+    this.filename = `summary-log-${fakerEN_GB.string.alphanumeric(8)}.xlsx`
+    this.orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
+    this.refNo = fakerEN_GB.database.mongodbObjectId()
+    this.s3Bucket = 'test-bucket'
+    this.s3Key = `uploads/${fakerEN_GB.string.alphanumeric(16)}/${this.filename}`
+  }
+
   toPayload() {
     return {
-      s3Bucket: 'test-bucket',
-      s3Key: 'test-key',
-      fileId: 'test-file-id',
-      filename: 'test-filename.xlsx'
+      s3Bucket: this.s3Bucket,
+      s3Key: this.s3Key,
+      fileId: this.fileId,
+      filename: this.filename
     }
   }
 }
