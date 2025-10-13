@@ -3,6 +3,10 @@ Feature: Summary Logs validate endpoint
 
   Scenario: Ensure that Summary Logs validate endpoint returns a response
     Given I have entered my summary log validation
+      | S3 Bucket | test-bucket         |
+      | S3 Key    | test-key            |
+      | fileId    | test-file-id        |
+      | filename  | test-filename.xlsx  |
     When I submit the summary log validation
     Then I should receive a summary log validating response
     And the following information appears in the log
