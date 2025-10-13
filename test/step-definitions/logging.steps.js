@@ -8,32 +8,13 @@ const dockerLogParser = new DockerLogParser(
   config.dockerLogParser.containerName
 )
 
-const interpolateMessage = (message, context) => {
-  return message.replace(/\{(\w+)\}/g, (match, key) => {
-    if (context.summaryLog?.[key] !== undefined) {
-      return context.summaryLog[key]
-    }
-    if (context.registration?.[key] !== undefined) {
-      return context.registration[key]
-    }
-    if (context.accreditation?.[key] !== undefined) {
-      return context.accreditation[key]
-    }
-    if (context.organisation?.[key] !== undefined) {
-      return context.organisation[key]
-    }
-    return match
-  })
-}
-
 Then(
   'the following information appears in the log',
   { timeout: 10000 },
   async function (dataTable) {
     if (config.testLogs) {
       const expectedLog = dataTable.rowsHash()
-      const interpolatedMessage = interpolateMessage(expectedLog.Message, this)
-      const logs = await dockerLogParser.waitForLog(interpolatedMessage)
+      const logs = await dockerLogParser.waitForLog(expectedLog.Message)
       if (logs.length > 1) {
         const actualLogs = logs
           .filter(
@@ -44,13 +25,13 @@ Then(
           .map((filtered) => filtered.message)
           .join('\n')
         expect.fail(
-          `No log found for the following expected log message: ${interpolatedMessage} \n Actual logs: ${actualLogs}`
+          `No log found for the following expected log message: ${expectedLog.Message} \n Actual logs: ${actualLogs}`
         )
       } else {
         const actualLog = logs[0]
         expect(actualLog['log.level']).to.equal(expectedLog['Log Level'])
         expect(actualLog.event?.action).to.equal(expectedLog['Event Action'])
-        expect(actualLog.message).to.contain(interpolatedMessage)
+        expect(actualLog.message).to.contain(expectedLog.Message)
       }
     } else {
       logger.warn(
