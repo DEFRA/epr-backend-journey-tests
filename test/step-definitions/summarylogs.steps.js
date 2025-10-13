@@ -66,12 +66,6 @@ When('I submit the summary log upload completed', async function () {
 Then(
   'I should receive a summary log upload accepted response',
   async function () {
-    if (this.response.statusCode !== 202) {
-      const responseBody = await this.response.body.text()
-      throw new Error(
-        `Expected 202 but got ${this.response.statusCode}. Response: ${responseBody}`
-      )
-    }
     expect(this.response.statusCode).to.equal(202)
   }
 )
