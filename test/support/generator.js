@@ -205,12 +205,30 @@ export class Registration {
 }
 
 export class SummaryLog {
+  constructor() {
+    this.summaryLogId = fakerEN_GB.database.mongodbObjectId()
+  }
+
   toPayload() {
     return {
       s3Bucket: 'test-bucket',
       s3Key: 'test-key',
       fileId: 'test-file-id',
       filename: 'test-filename.xlsx'
+    }
+  }
+
+  toUploadCompletedPayload(dataTableHash) {
+    return {
+      form: {
+        file: {
+          fileId: dataTableHash.fileId,
+          filename: dataTableHash.filename,
+          fileStatus: dataTableHash.status,
+          s3Bucket: dataTableHash.s3Bucket,
+          s3Key: dataTableHash.s3Key
+        }
+      }
     }
   }
 }

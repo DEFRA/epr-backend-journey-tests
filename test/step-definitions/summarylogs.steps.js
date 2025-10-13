@@ -46,3 +46,32 @@ Then('I should receive a summary log validating response', async function () {
   this.responseData = await this.response.body.json()
   expect(this.responseData.status).to.equal('validating')
 })
+
+Given('I have the following summary log upload data', function (dataTable) {
+  this.summaryLog = new SummaryLog()
+  this.uploadData = dataTable.rowsHash()
+  this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
+})
+
+When('I submit the summary log upload completed', async function () {
+  const refNo = '68dc06020897dff9191b1354'
+  const orgId = '500000'
+  const summaryLogId = this.summaryLog.summaryLogId
+  this.response = await baseAPI.post(
+    `/v1/organisations/${orgId}/registrations/${refNo}/summary-logs/${summaryLogId}/upload-completed`,
+    JSON.stringify(this.payload)
+  )
+})
+
+Then(
+  'I should receive a summary log upload accepted response',
+  async function () {
+    if (this.response.statusCode !== 202) {
+      const responseBody = await this.response.body.text()
+      throw new Error(
+        `Expected 202 but got ${this.response.statusCode}. Response: ${responseBody}`
+      )
+    }
+    expect(this.response.statusCode).to.equal(202)
+  }
+)
