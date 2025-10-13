@@ -207,12 +207,15 @@ export class Registration {
 export class SummaryLog {
   constructor() {
     this.summaryLogId = fakerEN_GB.string.uuid()
-    this.fileId = fakerEN_GB.string.uuid()
-    this.filename = `summary-log-${fakerEN_GB.string.alphanumeric(8)}.xlsx`
     this.orgId = '500000'
     this.refNo = '68dc06020897dff9191b1354'
-    this.s3Bucket = 'test-bucket'
-    this.s3Key = `uploads/${fakerEN_GB.string.alphanumeric(16)}/${this.filename}`
+  }
+
+  setFileData(s3Bucket, s3Key, fileId, filename) {
+    this.s3Bucket = s3Bucket
+    this.s3Key = s3Key
+    this.fileId = fileId
+    this.filename = filename
   }
 
   toPayload() {

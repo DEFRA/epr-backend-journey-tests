@@ -3,54 +3,36 @@ import { baseAPI } from '../support/hooks.js'
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
 
+const setupSummaryLogWithDefaults = (context) => {
+  context.summaryLog = new SummaryLog()
+  context.summaryLog.setFileData(
+    'test-bucket',
+    'test-key',
+    'test-file-id',
+    'test-filename.xlsx'
+  )
+}
+
 Given('I have entered my summary log validation', function (dataTable) {
   this.summaryLog = new SummaryLog()
+  const data = dataTable.rowsHash()
+  this.summaryLog.setFileData(
+    data['S3 Bucket'],
+    data['S3 Key'],
+    data.fileId,
+    data.filename
+  )
   this.payload = this.summaryLog.toPayload()
+})
 
-  if (dataTable) {
-    const data = dataTable.rowsHash()
-    if (data['S3 Bucket']) {
-      this.payload.s3Bucket = data['S3 Bucket']
-      this.summaryLog.s3Bucket = data['S3 Bucket']
-    }
-    if (data['S3 Key']) {
-      this.payload.s3Key = data['S3 Key']
-      this.summaryLog.s3Key = data['S3 Key']
-    }
-    if (data.fileId) {
-      this.payload.fileId = data.fileId
-      this.summaryLog.fileId = data.fileId
-    }
-    if (data.filename) {
-      this.payload.filename = data.filename
-      this.summaryLog.filename = data.filename
-    }
+Given(
+  'I have entered my summary log validation without {word}',
+  function (field) {
+    setupSummaryLogWithDefaults(this)
+    this.payload = this.summaryLog.toPayload()
+    delete this.payload[field]
   }
-})
-
-Given('I have entered my summary log validation without filename', function () {
-  this.summaryLog = new SummaryLog()
-  this.payload = this.summaryLog.toPayload()
-  delete this.payload.filename
-})
-
-Given('I have entered my summary log validation without fileId', function () {
-  this.summaryLog = new SummaryLog()
-  this.payload = this.summaryLog.toPayload()
-  delete this.payload.fileId
-})
-
-Given('I have entered my summary log validation without s3Bucket', function () {
-  this.summaryLog = new SummaryLog()
-  this.payload = this.summaryLog.toPayload()
-  delete this.payload.s3Bucket
-})
-
-Given('I have entered my summary log validation without s3Key', function () {
-  this.summaryLog = new SummaryLog()
-  this.payload = this.summaryLog.toPayload()
-  delete this.payload.s3Key
-})
+)
 
 When('I submit the summary log validation', async function () {
   this.response = await baseAPI.post(
