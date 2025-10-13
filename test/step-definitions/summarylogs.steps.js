@@ -33,10 +33,8 @@ Given('I have entered my summary log validation without s3Key', function () {
 })
 
 When('I submit the summary log validation', async function () {
-  const refNo = '68dc06020897dff9191b1354'
-  const orgId = '500000'
   this.response = await baseAPI.post(
-    `/v1/organisation/${orgId}/registration/${refNo}/summary-logs/validate`,
+    `/v1/organisation/${this.summaryLog.orgId}/registration/${this.summaryLog.refNo}/summary-logs/validate`,
     JSON.stringify(this.payload)
   )
 })

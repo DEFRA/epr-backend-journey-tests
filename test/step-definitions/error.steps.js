@@ -1,11 +1,14 @@
 import { Given, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
+import { SummaryLog } from '../support/generator.js'
 
 Given('I have not entered any details', function () {
+  this.summaryLog = new SummaryLog()
   this.payload = null
 })
 
 Given('I have entered invalid details', function () {
+  this.summaryLog = new SummaryLog()
   this.payload = 'invalid-data'
 })
 

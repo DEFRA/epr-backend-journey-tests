@@ -209,8 +209,8 @@ export class SummaryLog {
     this.summaryLogId = fakerEN_GB.string.uuid()
     this.fileId = fakerEN_GB.string.uuid()
     this.filename = `summary-log-${fakerEN_GB.string.alphanumeric(8)}.xlsx`
-    this.orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
-    this.refNo = fakerEN_GB.database.mongodbObjectId()
+    this.orgId = '500000'
+    this.refNo = '68dc06020897dff9191b1354'
     this.s3Bucket = 'test-bucket'
     this.s3Key = `uploads/${fakerEN_GB.string.alphanumeric(16)}/${this.filename}`
   }
