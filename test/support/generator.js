@@ -381,7 +381,7 @@ export class SummaryLog {
   toUploadCompletedPayload(dataTableHash) {
     return {
       form: {
-        file: {
+        summaryLogUpload: {
           fileId: dataTableHash.fileId,
           filename: dataTableHash.filename,
           fileStatus: dataTableHash.status,
