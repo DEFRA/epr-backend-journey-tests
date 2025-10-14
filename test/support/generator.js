@@ -377,4 +377,18 @@ export class SummaryLog {
       filename: this.filename
     }
   }
+
+  toUploadCompletedPayload(dataTableHash) {
+    return {
+      form: {
+        file: {
+          fileId: dataTableHash.fileId,
+          filename: dataTableHash.filename,
+          fileStatus: dataTableHash.status,
+          s3Bucket: dataTableHash.s3Bucket,
+          s3Key: dataTableHash.s3Key
+        }
+      }
+    }
+  }
 }

@@ -51,3 +51,17 @@ Feature: Summary Logs validate endpoint
     Given I have entered invalid details
     When I submit the summary log validation
     Then I should receive a 400 error response 'Invalid payload'
+
+  Scenario: Summary Logs upload-completed endpoint processes successfully with all required fields
+    Given I have the following summary log upload data
+      | s3Bucket | test-upload-bucket  |
+      | s3Key    | test-upload-key     |
+      | fileId   | test-upload-file-id |
+      | filename | test-upload.xlsx    |
+      | status   | complete            |
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    And the following information appears in the log
+      | Log Level    | info                                                                                                                                                                             |
+      | Event Action | request_success                                                                                                                                                                  |
+      | Message      | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=complete, s3Bucket=test-upload-bucket, s3Key=test-upload-key |
