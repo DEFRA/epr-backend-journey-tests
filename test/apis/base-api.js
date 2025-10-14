@@ -6,7 +6,7 @@ let baseUrl
 export class BaseAPI {
   constructor() {
     baseUrl = config.apiUri
-    this.defaultHeaders = {}
+    this.defaultHeaders = config.apiHeaders
   }
 
   async get(endpoint, headers = {}) {

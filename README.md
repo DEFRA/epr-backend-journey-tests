@@ -119,7 +119,9 @@ The results of the test run are made available in the portal.
 
 ### Running the tests against environments locally
 
-You can also run the tests against environments locally. This can be achieved by supplying the ENVIRONMENT variable.
+You can also run the tests against environments locally. This can be achieved by supplying both the `ENVIRONMENT` and `X_API_KEY` variables.
+
+First, you will need to generate your `X_API_KEY` to use. Follow the [CDP README](https://portal.cdp-int.defra.cloud/documentation/how-to/developer-api-key.md) for more information.
 
 Ensure ZAP docker container is running and the proxy of your choice is running.
 
@@ -127,16 +129,16 @@ Ensure ZAP docker container is running and the proxy of your choice is running.
 docker compose up -d zap
 ```
 
-Then, to run the tests against the `dev` environment:
+Then, to run the tests against the `dev` environment (Where `<api_key>` = the generated key from the CDP README above):
 
 ```
-ENVIRONMENT=dev npm run test
+X_API_KEY=<api_key> ENVIRONMENT=dev npm run test
 ```
 
 If you want to run the tests with proxy against the `dev` environment, you can do so by supplying the following:
 
 ```
-WITH_PROXY=true ENVIRONMENT=dev npm run test
+WITH_PROXY=true X_API_KEY=<api_key> ENVIRONMENT=dev npm run test
 ```
 
 Note that the database checks and logging tests will not run against the `dev` environment as they rely on the local Docker services.
