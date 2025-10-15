@@ -17,6 +17,13 @@ Feature: Summary Logs upload-completed endpoint
       | info      | start_success   | Summary log validation worker started [{{summaryLogId}}]              |
       | info      | process_success | Summary log validation status updated [{{summaryLogId}}] to [invalid] |
       | info      | process_success | Summary log validation worker completed [{{summaryLogId}}]            |
+    And I should see that a summary log is created in the database with the following values
+      | s3Bucket   | test-upload-bucket  |
+      | s3Key      | test-upload-key     |
+      | fileId     | test-upload-file-id |
+      | filename   | test-upload.xlsx    |
+      | fileStatus | complete            |
+      | status     | invalid             |
 
   Scenario: Summary Logs upload-completed endpoint processes with rejected status with all required fields
     Given I have the following summary log upload data
@@ -30,6 +37,12 @@ Feature: Summary Logs upload-completed endpoint
     And the following messages appear in the log
       | Log Level | Event Action    | Message                                                                                                                      |
       | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=rejected |
+    And I should see that a rejected summary log is created in the database with the following values
+      | fileId        | test-upload-file-id |
+      | filename      | test-upload.xlsx    |
+      | fileStatus    | rejected            |
+      | status        | rejected            |
+      | failureReason | Something went wrong with your file upload. Please try again.|
 
   Scenario Outline: Summary Logs upload-completed endpoint valid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data

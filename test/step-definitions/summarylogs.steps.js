@@ -1,7 +1,8 @@
 import { Given, Then, When } from '@cucumber/cucumber'
-import { baseAPI } from '../support/hooks.js'
+import { baseAPI, dbClient } from '../support/hooks.js'
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
+import logger from '../support/logger.js'
 
 const setupSummaryLogWithDefaults = (context) => {
   context.summaryLog = new SummaryLog()
@@ -70,5 +71,62 @@ Then(
   'I should receive a summary log upload accepted response',
   async function () {
     expect(this.response.statusCode).to.equal(202)
+  }
+)
+
+Then(
+  'I should see that a summary log is created in the database with the following values',
+  async function (dataTable) {
+    if (!process.env.ENVIRONMENT) {
+      const expectedSummaryLog = dataTable.rowsHash()
+      const summaryLogCollection = dbClient.collection('summary-logs')
+      const summaryLog = await summaryLogCollection.findOne({
+        _id: this.summaryLog.summaryLogId
+      })
+      expect(summaryLog._id).to.equal(this.summaryLog.summaryLogId)
+      expect(summaryLog.file.id).to.equal(expectedSummaryLog.fileId)
+      expect(summaryLog.file.name).to.equal(expectedSummaryLog.filename)
+      expect(summaryLog.file.status).to.equal(expectedSummaryLog.fileStatus)
+      expect(summaryLog.file.s3.key).to.equal(expectedSummaryLog.s3Key)
+      expect(summaryLog.file.s3.bucket).to.equal(expectedSummaryLog.s3Bucket)
+      expect(summaryLog.status).to.equal(expectedSummaryLog.status)
+    } else {
+      logger.warn(
+        {
+          step_definition:
+            'Then I should see that a summary log is created in the database with the following values'
+        },
+        'Skipping summary log database checks'
+      )
+    }
+  }
+)
+
+Then(
+  'I should see that a rejected summary log is created in the database with the following values',
+  async function (dataTable) {
+    if (!process.env.ENVIRONMENT) {
+      const expectedSummaryLog = dataTable.rowsHash()
+      const summaryLogCollection = dbClient.collection('summary-logs')
+      const summaryLog = await summaryLogCollection.findOne({
+        _id: this.summaryLog.summaryLogId
+      })
+      expect(summaryLog._id).to.equal(this.summaryLog.summaryLogId)
+      expect(summaryLog.file.id).to.equal(expectedSummaryLog.fileId)
+      expect(summaryLog.file.name).to.equal(expectedSummaryLog.filename)
+      expect(summaryLog.file.status).to.equal(expectedSummaryLog.fileStatus)
+      expect(summaryLog.status).to.equal(expectedSummaryLog.status)
+      expect(summaryLog.failureReason).to.equal(
+        expectedSummaryLog.failureReason
+      )
+    } else {
+      logger.warn(
+        {
+          step_definition:
+            'Then I should see that a rejected summary log is created in the database with the following values'
+        },
+        'Skipping summary log database checks'
+      )
+    }
   }
 )
