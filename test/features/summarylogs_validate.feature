@@ -1,3 +1,4 @@
+@summarylogs_validate
 @summarylogs
 Feature: Summary Logs validate endpoint
 
@@ -9,19 +10,17 @@ Feature: Summary Logs validate endpoint
       | filename  | test-filename.xlsx  |
     When I submit the summary log validation
     Then I should receive a summary log validating response
-    And the following information appears in the log
-      | Log Level    | info                                                                                                           |
-      | Event Action | request_success                                                                                                |
-      | Message      | Initiating file validation for test-bucket/test-key with fileId: test-file-id and filename: test-filename.xlsx |
+    And the following messages appear in the log
+      | Log Level | Event Action    | Message                                                                                                        |
+      | info      | request_success | Initiating file validation for test-bucket/test-key with fileId: test-file-id and filename: test-filename.xlsx |
 
   Scenario: Summary Logs validate endpoint returns an error if s3Key is not present
     Given I have entered my summary log validation without s3Key
     When I submit the summary log validation
     Then I should receive a 422 error response 's3Key is missing in body.data'
-    And the following information appears in the log
-      | Log Level    | warn                          |
-      | Event Action | response_failure              |
-      | Message      | s3Key is missing in body.data |
+    And the following messages appear in the log
+      | Log Level | Event Action    | Message                       |
+      | warn      | response_failure | 3Key is missing in body.data |
 
   Scenario: Summary Logs validate endpoint returns an error if s3Bucket is not present
     Given I have entered my summary log validation without s3Bucket
@@ -42,26 +41,12 @@ Feature: Summary Logs validate endpoint
     Given I have not entered any details
     When I submit the summary log validation
     Then I should receive a 400 error response 'Invalid payload'
-    And the following information appears in the log
-      | Log Level    | warn             |
-      | Event Action | response_failure |
-      | Message      | Invalid payload  |
+    And the following messages appear in the log
+      | Log Level | Event Action     | Message         |
+      | warn      | response_failure | Invalid payload |
 
   Scenario: Summary Logs validate endpoint returns an error if payload is not a valid object
     Given I have entered invalid details
     When I submit the summary log validation
     Then I should receive a 400 error response 'Invalid payload'
 
-  Scenario: Summary Logs upload-completed endpoint processes successfully with all required fields
-    Given I have the following summary log upload data
-      | s3Bucket | test-upload-bucket  |
-      | s3Key    | test-upload-key     |
-      | fileId   | test-upload-file-id |
-      | filename | test-upload.xlsx    |
-      | status   | complete            |
-    When I submit the summary log upload completed
-    Then I should receive a summary log upload accepted response
-    And the following information appears in the log
-      | Log Level    | info                                                                                                                                                                             |
-      | Event Action | request_success                                                                                                                                                                  |
-      | Message      | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=complete, s3Bucket=test-upload-bucket, s3Key=test-upload-key |

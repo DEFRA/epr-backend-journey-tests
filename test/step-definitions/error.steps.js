@@ -1,6 +1,7 @@
 import { Given, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { SummaryLog } from '../support/generator.js'
+import { interpolator } from '../support/hooks.js'
 
 const setupSummaryLog = (context) => {
   context.summaryLog = new SummaryLog()
@@ -37,6 +38,8 @@ Then(
     expect(this.response.statusCode).to.equal(code)
     const responseData = await this.response.body.json()
     expect(responseData).to.have.property('message')
-    expect(responseData.message).to.equal(errMessage)
+    expect(responseData.message).to.equal(
+      interpolator.interpolate(this, errMessage)
+    )
   }
 )
