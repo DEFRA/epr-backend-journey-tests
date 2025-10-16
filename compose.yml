@@ -2,8 +2,8 @@
 # Docker Compose file for starting up the service for testing in GitHub workflow
 # This template provides comparable infrastructure to the real environment.
 #   - mongodb
-#   - redis
 #   - localstack (s3, sqs, sns)
+#   - zap
 #
 # Both mongo and localstack have init scripts included for setting up resources
 # on startup. These scripts are in docker/scripts.
@@ -61,19 +61,6 @@ services:
       retries: 3
     networks:
       - cdp-tenant
-  ################################################################################
-  redis:
-    image: redis:7
-    restart: always
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'PING']
-      interval: 5s
-      start_period: 2s
-      retries: 5
-    ports:
-      - '6379:6379'
-    networks:
-       - cdp-tenant
   ################################################################################
   epr-backend:
    image: defradigital/epr-backend:${EPR_BACKEND:-latest}
