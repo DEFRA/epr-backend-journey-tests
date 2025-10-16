@@ -1,7 +1,8 @@
 import { Given, Then, When } from '@cucumber/cucumber'
-import { baseAPI } from '../support/hooks.js'
+import { baseAPI, dbClient } from '../support/hooks.js'
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
+import logger from '../support/logger.js'
 
 const setupSummaryLogWithDefaults = (context) => {
   context.summaryLog = new SummaryLog()
@@ -53,12 +54,15 @@ Given('I have the following summary log upload data', function (dataTable) {
   this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
 })
 
+When('the summary log upload data is updated', function (dataTable) {
+  this.uploadData = dataTable.rowsHash()
+  this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
+})
+
 When('I submit the summary log upload completed', async function () {
-  const refNo = '68dc06020897dff9191b1354'
-  const orgId = '500000'
   const summaryLogId = this.summaryLog.summaryLogId
   this.response = await baseAPI.post(
-    `/v1/organisations/${orgId}/registrations/${refNo}/summary-logs/${summaryLogId}/upload-completed`,
+    `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.refNo}/summary-logs/${summaryLogId}/upload-completed`,
     JSON.stringify(this.payload)
   )
 })
@@ -67,5 +71,44 @@ Then(
   'I should receive a summary log upload accepted response',
   async function () {
     expect(this.response.statusCode).to.equal(202)
+  }
+)
+
+Then(
+  'I should see that a summary log is created in the database with the following values',
+  async function (dataTable) {
+    if (!process.env.ENVIRONMENT) {
+      const expectedSummaryLog = dataTable.rowsHash()
+      const summaryLogCollection = dbClient.collection('summary-logs')
+      const summaryLog = await summaryLogCollection.findOne({
+        _id: this.summaryLog.summaryLogId
+      })
+      expect(summaryLog._id).to.equal(this.summaryLog.summaryLogId)
+      expect(summaryLog.file.id).to.equal(expectedSummaryLog.fileId)
+      expect(summaryLog.file.name).to.equal(expectedSummaryLog.filename)
+      expect(summaryLog.file.status).to.equal(expectedSummaryLog.fileStatus)
+      expect(summaryLog.status).to.equal(expectedSummaryLog.status)
+      switch (expectedSummaryLog.fileStatus) {
+        case 'complete':
+          expect(summaryLog.file.s3.key).to.equal(expectedSummaryLog.s3Key)
+          expect(summaryLog.file.s3.bucket).to.equal(
+            expectedSummaryLog.s3Bucket
+          )
+          break
+        case 'rejected':
+          expect(summaryLog.failureReason).to.equal(
+            expectedSummaryLog.failureReason
+          )
+          break
+      }
+    } else {
+      logger.warn(
+        {
+          step_definition:
+            'Then I should see that a summary log is created in the database with the following values'
+        },
+        'Skipping summary log database checks'
+      )
+    }
   }
 )

@@ -4,16 +4,19 @@ import config from '../config/config.js'
 
 import { BaseAPI } from '../apis/base-api.js'
 import { setGlobalDispatcher } from 'undici'
+import { Interpolator } from './interpolator.js'
 
 let agent
 let dbConnector
 let dbClient
 let baseAPI
+let interpolator
 
 BeforeAll(async function () {
   dbConnector = config.dbConnector
   dbClient = await dbConnector.connect()
   baseAPI = new BaseAPI()
+  interpolator = new Interpolator()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
 })
@@ -30,4 +33,4 @@ After(async function (scenario) {
   }
 })
 
-export { dbClient, baseAPI }
+export { dbClient, baseAPI, interpolator }

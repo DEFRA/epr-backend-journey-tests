@@ -356,10 +356,13 @@ export class Registration {
 }
 
 export class SummaryLog {
-  constructor() {
+  constructor(
+    orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`,
+    refNo = fakerEN_GB.database.mongodbObjectId()
+  ) {
     this.summaryLogId = fakerEN_GB.string.uuid()
-    this.orgId = '500000'
-    this.refNo = '68dc06020897dff9191b1354'
+    this.orgId = orgId
+    this.refNo = refNo
   }
 
   setFileData(s3Bucket, s3Key, fileId, filename) {
