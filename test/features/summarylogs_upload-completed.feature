@@ -103,6 +103,9 @@ Feature: Summary Logs upload-completed endpoint
       | status   | <ToTransition>      |
     And I submit the summary log upload completed
     Then I should receive a 409 error response 'Cannot transition summary log from <FromTransitionLog> to <ToTransitionLog>'
+    And the following messages appear in the log
+      | Log Level | Event Action     | Message                                                                    |
+      | error     | response_failure | Cannot transition summary log from <FromTransitionLog> to <ToTransitionLog> |
 
     Examples:
       | FromTransition | ToTransition | FromTransitionLog | ToTransitionLog |
