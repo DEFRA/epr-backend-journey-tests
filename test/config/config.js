@@ -16,6 +16,7 @@ if (environment === 'prod') {
 const api = {
   local: withProxy ? 'http://epr-backend:3001' : 'http://localhost:3001',
   env: `https://epr-backend.${environment}.cdp-int.defra.cloud`,
+  envFromLocal: `https://ephemeral-protected.api.${environment}.cdp-int.defra.cloud/epr-backend`,
   headers: xApiKey ? { 'x-api-key': xApiKey } : {}
 }
 
@@ -64,7 +65,16 @@ const testLogs = !withoutLogs && !environment
 const globalUndiciAgent = !withProxy && !withExternalProxy ? agent : proxy
 const zapAgent = !withProxy && !withExternalProxy ? agent : zapProxyAgent
 const dbConnector = !environment ? database.mongo : database.stub
-const apiUri = !environment ? api.local : api.env
+let apiUri
+
+if (!environment) {
+  apiUri = api.local
+} else if (xApiKey) {
+  apiUri = api.envFromLocal
+} else {
+  apiUri = api.env
+}
+
 const zapTargetApiUri = !environment ? zapTargetApi.local : zapTargetApi.env
 
 export default {
