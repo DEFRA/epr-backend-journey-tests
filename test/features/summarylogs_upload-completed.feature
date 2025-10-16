@@ -1,5 +1,4 @@
-@summarylogs_upload_completed
-@summarylogs
+@summarylogs_upload_completed @summarylogs
 Feature: Summary Logs upload-completed endpoint
 
   Scenario: Summary Logs upload-completed endpoint processes successfully with all required fields
@@ -12,11 +11,11 @@ Feature: Summary Logs upload-completed endpoint
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                               |
+      | Log Level | Event Action    | Message                                                                                                                                                                          |
       | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=complete, s3Bucket=test-upload-bucket, s3Key=test-upload-key |
-      | info      | start_success   | Summary log validation worker started [{{summaryLogId}}]              |
-      | info      | process_success | Summary log validation status updated [{{summaryLogId}}] to [invalid] |
-      | info      | process_success | Summary log validation worker completed [{{summaryLogId}}]            |
+      | info      | start_success   | Summary log validation worker started [{{summaryLogId}}]                                                                                                                         |
+      | info      | process_success | Summary log validation status updated [{{summaryLogId}}] to [invalid]                                                                                                            |
+      | info      | process_success | Summary log validation worker completed [{{summaryLogId}}]                                                                                                                       |
     And I should see that a summary log is created in the database with the following values
       | s3Bucket   | test-upload-bucket  |
       | s3Key      | test-upload-key     |
@@ -56,11 +55,11 @@ Feature: Summary Logs upload-completed endpoint
       | Log Level | Event Action    | Message                                                                                                                      |
       | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=rejected |
     And I should see that a summary log is created in the database with the following values
-      | fileId        | test-upload-file-id |
-      | filename      | test-upload.xlsx    |
-      | fileStatus    | rejected            |
-      | status        | rejected            |
-      | failureReason | Something went wrong with your file upload. Please try again.|
+      | fileId        | test-upload-file-id                                           |
+      | filename      | test-upload.xlsx                                              |
+      | fileStatus    | rejected                                                      |
+      | status        | rejected                                                      |
+      | failureReason | Something went wrong with your file upload. Please try again. |
 
   Scenario Outline: Summary Logs upload-completed endpoint valid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data
@@ -104,7 +103,7 @@ Feature: Summary Logs upload-completed endpoint
     And I submit the summary log upload completed
     Then I should receive a 409 error response 'Cannot transition summary log from <FromTransitionLog> to <ToTransitionLog>'
     And the following messages appear in the log
-      | Log Level | Event Action     | Message                                                                    |
+      | Log Level | Event Action     | Message                                                                     |
       | error     | response_failure | Cannot transition summary log from <FromTransitionLog> to <ToTransitionLog> |
 
     Examples:
@@ -115,4 +114,3 @@ Feature: Summary Logs upload-completed endpoint
       | rejected       | pending      | rejected          | preprocessing   |
       | rejected       | rejected     | rejected          | rejected        |
       | complete       | complete     | validating        | validating      |
-
