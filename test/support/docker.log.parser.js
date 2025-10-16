@@ -4,7 +4,8 @@ import crypto from 'crypto'
 
 const execAsync = promisify(exec)
 
-const logsLookBackBufferTime = 5
+const logsLookBackInSeconds = 3
+const logLinesLimit = 20
 
 export class DockerLogParser {
   constructor(containerName) {
@@ -17,7 +18,7 @@ export class DockerLogParser {
   async getLogs() {
     const now = new Date()
     const currentTimestamp = new Date(
-      now.getTime() - logsLookBackBufferTime * 1000
+      now.getTime() - logsLookBackInSeconds * 1000
     )
       .toISOString()
       .slice(0, 19)
@@ -40,7 +41,7 @@ export class DockerLogParser {
 
   runDockerCommand = async function (latestTimestamp) {
     const { stdout, stderr } = await execAsync(
-      `docker logs ${this.containerName} --since ${latestTimestamp}Z`
+      `docker logs ${this.containerName} -n ${logLinesLimit} --since ${latestTimestamp}Z`
     )
     return stdout + stderr
   }
@@ -104,7 +105,7 @@ export class DockerLogParser {
   }
 
   async waitForLog(pattern, options = {}) {
-    const { timeout = logsLookBackBufferTime * 1000, interval = 1000 } = options
+    const { timeout = logsLookBackInSeconds * 1000, interval = 250 } = options
     const startTime = Date.now()
 
     let logLines = []

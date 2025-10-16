@@ -25,6 +25,24 @@ Feature: Summary Logs upload-completed endpoint
       | fileStatus | complete            |
       | status     | invalid             |
 
+  Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
+    Given I have the following summary log upload data
+      | s3Bucket | test-upload-bucket  |
+      | s3Key    | test-upload-key     |
+      | fileId   | test-upload-file-id |
+      | filename | test-upload.xlsx    |
+      | status   | pending             |
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    And the following messages appear in the log
+      | Log Level | Event Action    | Message                                                                                                                     |
+      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=pending |
+    And I should see that a summary log is created in the database with the following values
+      | fileId     | test-upload-file-id |
+      | filename   | test-upload.xlsx    |
+      | fileStatus | pending             |
+      | status     | preprocessing       |
+
   Scenario: Summary Logs upload-completed endpoint processes with rejected status with all required fields
     Given I have the following summary log upload data
       | s3Bucket | test-upload-bucket  |
@@ -37,7 +55,7 @@ Feature: Summary Logs upload-completed endpoint
     And the following messages appear in the log
       | Log Level | Event Action    | Message                                                                                                                      |
       | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=rejected |
-    And I should see that a rejected summary log is created in the database with the following values
+    And I should see that a summary log is created in the database with the following values
       | fileId        | test-upload-file-id |
       | filename      | test-upload.xlsx    |
       | fileStatus    | rejected            |
