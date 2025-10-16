@@ -102,7 +102,7 @@ Feature: Summary Logs upload-completed endpoint
       | filename | test-upload.xlsx    |
       | status   | <ToTransition>      |
     And I submit the summary log upload completed
-    Then I should receive a 409 error response 'Cannot transition summary log {{summaryLogId}} from <FromTransitionLog> to <ToTransitionLog>'
+    Then I should receive a 409 error response 'Cannot transition summary log from <FromTransitionLog> to <ToTransitionLog>'
 
     Examples:
       | FromTransition | ToTransition | FromTransitionLog | ToTransitionLog |
