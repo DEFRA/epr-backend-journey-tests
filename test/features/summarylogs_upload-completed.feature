@@ -13,8 +13,8 @@ Feature: Summary Logs upload-completed endpoint
     And the following messages appear in the log
       | Log Level | Event Action    | Message                                                                                                                                                                          |
       | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=complete, s3Bucket=test-upload-bucket, s3Key=test-upload-key |
-      | info      | start_success   | Summary log validation worker started [{{summaryLogId}}]                                                                                                                         |
-      | info      | process_success | Summary log validation status updated [{{summaryLogId}}] to [invalid]                                                                                                            |
+      | info      | start_success   | Summary log validation worker started: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx                                                      |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=invalid                                                        |
       | info      | process_success | Summary log validation worker completed [{{summaryLogId}}]                                                                                                                       |
     And I should see that a summary log is created in the database with the following values
       | s3Bucket   | test-upload-bucket  |
