@@ -5,6 +5,16 @@ export class ZAPClient {
   constructor(baseUrl = config.zap.uri, apiKey = config.zap.key) {
     this.baseUrl = baseUrl
     this.apiKey = apiKey
+    this.scanners = []
+    this.getScanners()
+  }
+
+  async getScanners() {
+    const scannerList = await this.zapRequest('ascan/view/scanners')
+    this.scanners = scannerList.scanners.map((scanner) => ({
+      id: scanner.id,
+      name: scanner.name
+    }))
   }
 
   async zapRequest(endpoint, params = {}, urlPrefix = 'JSON') {
@@ -30,8 +40,8 @@ export class ZAPClient {
     let attempts = 0
     let status = await this.zapRequest(`${action}/view/status`, { scanId })
     let progress = parseInt(status.status)
-    while (progress < 100 && attempts < 5) {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+    while (progress < 100 && attempts < 50) {
+      await new Promise((resolve) => setTimeout(resolve, 100))
       status = await this.zapRequest(`${action}/view/status`, { scanId })
       progress = parseInt(status.status)
       attempts++
@@ -40,11 +50,39 @@ export class ZAPClient {
     return scanId
   }
 
+  async enableAllScanners() {
+    return this.zapRequest('ascan/action/enableAllScanners')
+  }
+
   async runSpider(params) {
     return this.runAction('spider', params)
   }
 
+  async runPartialActiveScan(params) {
+    // Refer to zap-scan-rules.txt in the resources folder for more scanner rules
+    const scannersToEnable = [
+      'Buffer Overflow',
+      'Format String Error',
+      'CRLF Injection',
+      'Cross Site Scripting (Persistent) - Prime',
+      'Cross Site Scripting (Persistent) - Spider',
+      'GET for POST'
+    ]
+    const scannerIds = this.scanners
+      .filter((item) => scannersToEnable.includes(item.name))
+      .map((item) => item.id)
+      .join(',')
+
+    await this.zapRequest('ascan/action/disableAllScanners')
+    await this.zapRequest('ascan/action/enableScanners', {
+      ids: scannerIds
+    })
+    params.recurse = false
+    return this.runAction('ascan', params)
+  }
+
   async runActiveScan(params) {
+    params.recurse = false
     return this.runAction('ascan', params)
   }
 

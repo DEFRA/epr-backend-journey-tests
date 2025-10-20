@@ -1,10 +1,14 @@
-import { Given, When, Then } from '@cucumber/cucumber'
+import { Given, When, Then, BeforeAll } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { ZAPClient } from '../support/zap.js'
 import config from '../config/config.js'
 import logger from '../support/logger.js'
 
 const zapClient = new ZAPClient()
+
+BeforeAll(async function () {
+  await zapClient.enableAllScanners()
+})
 
 Given(
   'the ZAP spider scan is run for the following',
@@ -24,6 +28,14 @@ Given(
 When('I request the ZAP active scan', { timeout: 30000 }, async function () {
   await zapClient.runActiveScan(this.params)
 })
+
+When(
+  'I request the partial ZAP active scan',
+  { timeout: 30000 },
+  async function () {
+    await zapClient.runPartialActiveScan(this.params)
+  }
+)
 
 Then(
   'I should receive no alerts from the ZAP report',
