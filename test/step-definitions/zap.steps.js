@@ -21,9 +21,21 @@ Given(
   }
 )
 
-When('I request the ZAP active scan', { timeout: 30000 }, async function () {
-  await zapClient.runActiveScan(this.params)
-})
+When(
+  'I request the full ZAP active scan',
+  { timeout: 30000 },
+  async function () {
+    await zapClient.runFullActiveScan(this.params)
+  }
+)
+
+When(
+  'I request the partial ZAP active scan',
+  { timeout: 30000 },
+  async function () {
+    await zapClient.runPartialActiveScan(this.params)
+  }
+)
 
 Then(
   'I should receive no alerts from the ZAP report',
