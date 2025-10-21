@@ -6,6 +6,8 @@ export class ZAPClient {
     this.baseUrl = baseUrl
     this.apiKey = apiKey
     this.scanners = []
+    this.partialScanActive = false
+    this.fullScanActive = false
     this.getScanners()
   }
 
@@ -50,35 +52,47 @@ export class ZAPClient {
     return scanId
   }
 
-  async enableAllScanners() {
-    return this.zapRequest('ascan/action/enableAllScanners')
-  }
-
   async runSpider(params) {
     return this.runAction('spider', params)
   }
 
   async runPartialActiveScan(params) {
-    // Refer to zap-scan-rules.txt in the resources folder for more scanner rules
-    const scannersToEnable = [
-      'Buffer Overflow',
-      'Format String Error',
-      'CRLF Injection',
-      'Cross Site Scripting (Persistent) - Prime',
-      'Cross Site Scripting (Persistent) - Spider',
-      'GET for POST'
-    ]
-    const scannerIds = this.scanners
-      .filter((item) => scannersToEnable.includes(item.name))
-      .map((item) => item.id)
-      .join(',')
+    if (!this.partialScanActive) {
+      // Refer to zap-scan-rules.txt in the resources folder for more scanner rules
+      const scannersToEnable = [
+        'Buffer Overflow',
+        'Format String Error',
+        'CRLF Injection',
+        'Cross Site Scripting (Reflected)',
+        'Cross Site Scripting (Persistent)',
+        'Cross Site Scripting (Persistent) - Prime',
+        'Cross Site Scripting (Persistent) - Spider',
+        'External Redirect',
+        'GET for POST',
+        'Heartbleed OpenSSL Vulnerability',
+        'XPath Injection'
+      ]
+      const scannerIds = this.scanners
+        .filter((item) => scannersToEnable.includes(item.name))
+        .map((item) => item.id)
+        .join(',')
+      await this.zapRequest('ascan/action/disableAllScanners')
+      await this.zapRequest('ascan/action/enableScanners', {
+        ids: scannerIds
+      })
+    }
+    this.partialScanActive = true
+    this.fullScanActive = false
+    return this.runActiveScan(params)
+  }
 
-    await this.zapRequest('ascan/action/disableAllScanners')
-    await this.zapRequest('ascan/action/enableScanners', {
-      ids: scannerIds
-    })
-    params.recurse = false
-    return this.runAction('ascan', params)
+  async runFullActiveScan(params) {
+    if (!this.fullScanActive) {
+      await this.zapRequest('ascan/action/enableAllScanners')
+    }
+    this.partialScanActive = false
+    this.fullScanActive = true
+    return this.runActiveScan(params)
   }
 
   async runActiveScan(params) {

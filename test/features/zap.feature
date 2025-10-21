@@ -5,7 +5,7 @@ Feature: ZAP scanner tests
     Given the ZAP spider scan is run for the following
       | Url         | /        |
       | Method      | GET      |
-    When I request the ZAP active scan
+    When I request the full ZAP active scan
     Then I should receive no alerts from the ZAP report
 
   Scenario Outline: Ensure that the <EndpointName> endpoint does not return any alerts after a partial ZAP scan
@@ -22,3 +22,4 @@ Feature: ZAP scanner tests
     | registration                 | /v1/apply/registration                                                                  | POST   |
     | summary log validate         | /v1/organisation/12345/registration/abcdef/summary-logs/validate                        | POST   |
     | summary log upload completed | /v1/organisation/12345/registration/abcdef/summary-logs/aaaa-bbbb-cccc/upload-completed | POST   |
+    | organisations                | /v1/organisations/                                                                      | GET    |
