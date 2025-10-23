@@ -42,15 +42,11 @@ Then(
   { timeout: 30000 },
   async function () {
     const report = await zapClient.generateReport()
-    if (report.site[0].alerts.length > 0) {
-      report.site[0].alerts.forEach((alert) => {
-        logger.error({
-          step_definition:
-            'Then I should receive no alerts from the ZAP report',
-          zap_alert: alert
-        })
-      })
-    }
+    logger.info({
+      // eslint-disable-next-line camelcase
+      zap_report: report,
+      step_definition: 'Then I should receive no alerts from the ZAP report'
+    })
     // eslint-disable-next-line no-unused-expressions
     expect(
       report.site[0].alerts,
