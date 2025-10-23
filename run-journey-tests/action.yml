@@ -1,17 +1,15 @@
 name: Run Journey Tests on GitHub
+description: Run epr-backend journey tests
 
 inputs:
   epr-backend:
-    required: false
-    type: string
+    description: commit hash of epr-backend
   branch:
-    required: false
-    type: string
+    description: branch in this repo
     default: main
   journey-test-pr:
-    required: false
-    type: string
-    default: false
+    description: is this action being called from a pr in this repo?
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -25,16 +23,17 @@ runs:
 
     - uses: actions/setup-node@v5
       with:
-        node-version: 22
+        node-version-file: .nvmrc
         cache: npm
-    - name: Setup the tests
+
+    - name: Install
       run: npm i
       shell: bash
 
     - name: Start docker compose
       shell: bash
       run: |
-        EPR_BACKEND=${{inputs.epr-backend}} \
+        EPR_BACKEND=${{ inputs.epr-backend }} \
         docker compose up --wait-timeout 300 -d --quiet-pull
 
     - name: Wait for services to be ready
@@ -48,24 +47,28 @@ runs:
       shell: bash
       run: |
         npm run test
+
     - name: debug
       if: always()
       run: |
         docker compose logs > logs.txt
         docker ps
       shell: bash
+
     - name: Upload allure report
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: allure-report
         path: ./allure-report
+
     - name: Upload docker compose logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: docker-compose-logs
         path: ./logs.txt
+
     - name: Fail this step if FAILED file exists
       if: always()
       run: |
