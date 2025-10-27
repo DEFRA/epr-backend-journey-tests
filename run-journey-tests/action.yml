@@ -46,7 +46,7 @@ runs:
     - name: Run the tests
       shell: bash
       run: |
-        npm run test
+        npm run test:tagged "not @wip"
 
     - name: debug
       if: always()

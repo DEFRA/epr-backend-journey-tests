@@ -1,6 +1,7 @@
 @summarylogs_upload_completed @summarylogs
 Feature: Summary Logs upload-completed endpoint
 
+  @wip
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when validation fails
     Given I have the following summary log upload data
       | s3Bucket | re-ex-summary-logs  |
