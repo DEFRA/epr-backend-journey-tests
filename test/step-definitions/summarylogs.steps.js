@@ -37,7 +37,7 @@ Given(
 
 When('I submit the summary log validation', async function () {
   this.response = await baseAPI.post(
-    `/v1/organisation/${this.summaryLog.orgId}/registration/${this.summaryLog.refNo}/summary-logs/validate`,
+    `/v1/organisation/${this.summaryLog.orgId}/registration/${this.summaryLog.regId}/summary-logs/validate`,
     JSON.stringify(this.payload)
   )
 })
@@ -54,6 +54,17 @@ Given('I have the following summary log upload data', function (dataTable) {
   this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
 })
 
+Given(
+  'the organisation and registration details I have the following summary log upload data',
+  function (dataTable) {
+    this.summaryLog = new SummaryLog()
+    this.summaryLog.orgId = '6507f1f77bcf86cd79943921'
+    this.summaryLog.regId = '6507f1f77bcf86cd79943922'
+    this.uploadData = dataTable.rowsHash()
+    this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
+  }
+)
+
 When('the summary log upload data is updated', function (dataTable) {
   this.uploadData = dataTable.rowsHash()
   this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
@@ -62,7 +73,7 @@ When('the summary log upload data is updated', function (dataTable) {
 When('I submit the summary log upload completed', async function () {
   const summaryLogId = this.summaryLog.summaryLogId
   this.response = await baseAPI.post(
-    `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.refNo}/summary-logs/${summaryLogId}/upload-completed`,
+    `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/upload-completed`,
     JSON.stringify(this.payload)
   )
 })

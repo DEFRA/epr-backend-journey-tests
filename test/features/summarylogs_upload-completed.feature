@@ -2,8 +2,8 @@
 Feature: Summary Logs upload-completed endpoint
 
   @wip
-  Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when validation fails
-    Given I have the following summary log upload data
+  Scenario: Summary Logs upload-completed endpoint accepts upload and marks as valid when summary log validation passes
+    Given the organisation and registration details I have the following summary log upload data
       | s3Bucket | re-ex-summary-logs  |
       | s3Key    | test-upload-key     |
       | fileId   | test-upload-file-id |
@@ -14,16 +14,40 @@ Feature: Summary Logs upload-completed endpoint
     And the following messages appear in the log
       | Log Level | Event Action    | Message                                                                                                                                                                          |
       | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=test-upload-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx                                                      |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx                                                               |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=invalid                                                        |
+      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx                                                             |
+      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx                                                                 |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=validated                                                      |
     And I should see that a summary log is created in the database with the following values
       | s3Bucket   | re-ex-summary-logs  |
       | s3Key      | test-upload-key     |
       | fileId     | test-upload-file-id |
       | filename   | test-upload.xlsx    |
       | fileStatus | complete            |
-      | status     | invalid             |
+      | status     | validated           |
+
+  @wip
+  Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when summary log validation fails
+    Given I have the following summary log upload data
+      | s3Bucket | re-ex-summary-logs       |
+      | s3Key    | invalid-test-upload-key  |
+      | fileId   | test-upload-file-id      |
+      | filename | invalid-test-upload.xlsx |
+      | status   | complete                 |
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    And the following messages appear in the log
+      | Log Level | Event Action    | Message                                                                                                                                                                                          |
+      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=invalid-test-upload-key |
+      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx                                                                     |
+      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx                                                                         |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx, status=invalid                                                                |
+    And I should see that a summary log is created in the database with the following values
+      | s3Bucket   | re-ex-summary-logs       |
+      | s3Key      | invalid-test-upload-key  |
+      | fileId     | test-upload-file-id      |
+      | filename   | invalid-test-upload.xlsx |
+      | fileStatus | complete                 |
+      | status     | invalid                  |
 
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
     Given I have the following summary log upload data
