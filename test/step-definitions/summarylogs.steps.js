@@ -58,8 +58,8 @@ Given(
   'the organisation and registration details I have the following summary log upload data',
   function (dataTable) {
     this.summaryLog = new SummaryLog()
-    this.summaryLog.orgId = '6507f1f77bcf86cd79943921'
-    this.summaryLog.regId = '6507f1f77bcf86cd79943922'
+    this.summaryLog.orgId = '6507f1f77bcf86cd79943911'
+    this.summaryLog.regId = '6507f1f77bcf86cd79943912'
     this.uploadData = dataTable.rowsHash()
     this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
   }
