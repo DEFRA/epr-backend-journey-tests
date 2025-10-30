@@ -55,7 +55,7 @@ Given('I have the following summary log upload data', function (dataTable) {
 })
 
 Given(
-  'the organisation and registration details I have the following summary log upload data',
+  'I have the following summary log upload data with a valid organisation and registration details',
   function (dataTable) {
     this.summaryLog = new SummaryLog()
     this.summaryLog.orgId = '6507f1f77bcf86cd79943911'
