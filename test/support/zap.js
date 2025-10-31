@@ -22,6 +22,11 @@ export class ZAPClient {
   async zapRequest(endpoint, params = {}, urlPrefix = 'JSON') {
     const url = new URL(`/${urlPrefix}/${endpoint}`, this.baseUrl)
     url.searchParams.append('apikey', this.apiKey)
+    url.searchParams.append('description', 'ZAP Scanner Header')
+    url.searchParams.append('enabled', 'true')
+    url.searchParams.append('matchType', 'REQ_HEADER')
+    url.searchParams.append('matchString', '')
+    url.searchParams.append('replacement', 'X-Scanner-Source: ZAP')
 
     Object.entries(params).forEach(([key, value]) => {
       url.searchParams.append(key, value)
