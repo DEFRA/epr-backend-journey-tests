@@ -9,6 +9,10 @@ export class Interpolator {
         context.summaryLog.summaryLogId
       )
     }
+    if (expectedMessage.includes('{{version}}') && context.version) {
+      expectedMessage = expectedMessage.replace('{{version}}', context.version)
+    }
+
     return expectedMessage
   }
 }
