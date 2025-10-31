@@ -7,6 +7,7 @@ import orgUkSoleTraderPayload from '../fixtures/ea/organisation/non-registered-u
 import nonRegOutsideUkAddressPayload from '../fixtures/ea/organisation/non-registered-outside-uk-address.json' with { type: 'json' }
 import regPayload from '../fixtures/registration.json' with { type: 'json' }
 import regAllMaterialsPayload from '../fixtures/ea/registration/reprocessor-all-materials.json' with { type: 'json' }
+import organisationsPayload from '../fixtures/sample-organisation-1.json' with { type: 'json' }
 
 const materials = [
   'Aluminium (R4)',
@@ -392,6 +393,28 @@ export class SummaryLog {
           s3Key: dataTableHash.s3Key
         }
       }
+    }
+  }
+}
+
+export class Organisations {
+  toDefaultPayload(dataTableHash) {
+    return {
+      version: Number(dataTableHash.version),
+      updateFragment: organisationsPayload
+    }
+  }
+
+  toPayload(dataTableHash) {
+    let updateFragment = {}
+    try {
+      updateFragment = JSON.parse(dataTableHash.updateFragment)
+    } catch (error) {
+      updateFragment = dataTableHash.updateFragment
+    }
+    return {
+      version: Number(dataTableHash.version),
+      updateFragment
     }
   }
 }

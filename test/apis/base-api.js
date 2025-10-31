@@ -34,6 +34,20 @@ export class BaseAPI {
     })
     return { statusCode, responseHeaders, body }
   }
+
+  async put(endpoint, data, headers = {}) {
+    const instanceHeaders = { ...this.defaultHeaders, ...headers }
+    const {
+      statusCode,
+      headers: responseHeaders,
+      body
+    } = await request(`${baseUrl}${endpoint}`, {
+      method: 'PUT',
+      headers: instanceHeaders,
+      body: data
+    })
+    return { statusCode, responseHeaders, body }
+  }
 }
 
 export { baseUrl }
