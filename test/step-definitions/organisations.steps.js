@@ -53,7 +53,7 @@ Then('I should receive a valid organisations response', async function () {
 Then(
   'I should receive a successful update organisations response',
   async function () {
-    expect(this.response.statusCode).to.equal(204)
+    expect(this.response.statusCode).to.equal(200)
   }
 )
 
