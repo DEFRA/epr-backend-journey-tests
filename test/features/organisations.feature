@@ -18,16 +18,16 @@ Feature: Organisations endpoint
     | updateFragment | string |
     Then I should receive a 400 error response 'Payload must include an updateFragment object'
 
-  Scenario: Organisations PUT endpoint returns an error response when updateFragment is an empty object
+  Scenario: Organisations PUT endpoint returns an error response when version is wrong
     Given I have access to the get organisations endpoint
     When I request the organisations with id '6507f1f77bcf86cd79943901'
     Then I should receive a valid organisations response for '6507f1f77bcf86cd79943901'
 
     Given I have access to the put organisations endpoint
     When I update the organisations with id '6507f1f77bcf86cd79943901' with the following payload
-    | version        | 1              |
+    | version        | 0              |
     | updateFragment | sample-fixture |
-    Then I should receive a 409 error response 'Version conflict: attempted to update with version 1 but current version is {{version}}'
+    Then I should receive a 409 error response 'Version conflict: attempted to update with version 0 but current version is {{version}}'
 
   Scenario: Organisations PUT endpoint returns a response when the correct payload is used
     Given I have access to the get organisations endpoint
