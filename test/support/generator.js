@@ -229,8 +229,6 @@ export class Organisation {
     payload.data.main.aIFHXo = this.phoneNumber
     payload.data.main.LyeSzH = this.jobTitle
     payload.data.main.WVADkQ = this.role
-    payload.data.main.JbEBvr = this.companyName
-    payload.data.main.QdhMJS = this.companyName
     payload.data.main.RUKDyH = this.companyName
     payload.data.main.VcdRNr = nations.slice(0, this.numberOfNations).join(', ')
     payload.data.main.VATjEi = this.address
