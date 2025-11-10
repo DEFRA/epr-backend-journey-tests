@@ -36,7 +36,6 @@ Given(
     this.organisation = new Organisation()
     this.payload = this.organisation.toPayload()
     delete this.payload.data.main.RUKDyH
-    delete this.payload.data.main.JbEBvr
   }
 )
 
@@ -60,7 +59,7 @@ Then(
     this.responseData = await this.response.body.json()
     expect(this.responseData.orgId).to.match(/^\d{6}$/)
     expect(this.responseData.referenceNumber).to.match(/^[0-9a-f]{24}$/i)
-    expect(this.responseData.orgName).to.equal(this.payload.data.main.JbEBvr)
+    expect(this.responseData.orgName).to.equal(this.payload.data.main.RUKDyH)
   }
 )
 
@@ -89,7 +88,7 @@ Then(
       expect(organisation.orgId).to.equal(parseInt(expectedOrgId))
       expect(organisation.schemaVersion).to.equal(1)
       expect(organisation.email).to.equal(this.organisation.email)
-      expect(organisation.answers.length).to.equal(16)
+      expect(organisation.answers.length).to.equal(14)
       expect(JSON.stringify(organisation.rawSubmissionData.meta)).to.equal(
         JSON.stringify(this.payload.meta)
       )
