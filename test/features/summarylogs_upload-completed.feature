@@ -1,7 +1,7 @@
 @summarylogs_upload_completed @summarylogs
 Feature: Summary Logs upload-completed endpoint
 
-  @wipa
+  @wip
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as valid when summary log validation passes
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs  |
