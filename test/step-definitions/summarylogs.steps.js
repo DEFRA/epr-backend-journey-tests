@@ -34,10 +34,30 @@ When('I submit the summary log upload completed', async function () {
   )
 })
 
+When('I check for the summary log status', async function () {
+  const summaryLogId = this.summaryLog.summaryLogId
+  this.response = await baseAPI.get(
+    `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
+  )
+})
+
 Then(
   'I should receive a summary log upload accepted response',
   async function () {
     expect(this.response.statusCode).to.equal(202)
+  }
+)
+
+Then(
+  'I should see the following summary log response',
+  async function (dataTable) {
+    this.expectedResults = dataTable.rowsHash()
+    expect(this.response.statusCode).to.equal(200)
+    this.responseData = await this.response.body.json()
+    expect(this.responseData.status).to.equal(this.expectedResults.status)
+    expect(this.responseData.failureReason).to.equal(
+      this.expectedResults.failureReason
+    )
   }
 )
 
@@ -57,9 +77,8 @@ Then(
       expect(summaryLog.status).to.equal(expectedSummaryLog.status)
       switch (expectedSummaryLog.fileStatus) {
         case 'complete':
-          expect(summaryLog.file.s3.key).to.equal(expectedSummaryLog.s3Key)
-          expect(summaryLog.file.s3.bucket).to.equal(
-            expectedSummaryLog.s3Bucket
+          expect(summaryLog.file.uri).to.equal(
+            `s3://${expectedSummaryLog.s3Bucket}/${expectedSummaryLog.s3Key}`
           )
           break
         case 'rejected':
