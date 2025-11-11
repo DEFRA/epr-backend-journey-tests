@@ -48,6 +48,10 @@ Feature: Summary Logs upload-completed endpoint
       | filename   | invalid-test-upload.xlsx |
       | fileStatus | complete                 |
       | status     | invalid                  |
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status        | invalid                                           |
+      | failureReason | Invalid meta field 'PROCESSING_TYPE': is required |
 
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
     Given I have the following summary log upload data
