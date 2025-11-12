@@ -53,11 +53,15 @@ Then(
   async function (dataTable) {
     this.expectedResults = dataTable.rowsHash()
     expect(this.response.statusCode).to.equal(200)
-    this.responseData = await this.response.body.json()
-    expect(this.responseData.status).to.equal(this.expectedResults.status)
-    expect(this.responseData.failureReason).to.equal(
-      this.expectedResults.failureReason
-    )
+
+    // Only check the status in local runs as environment runs will not have the file uploaded to S3
+    if (!process.env.ENVIRONMENT) {
+      this.responseData = await this.response.body.json()
+      expect(this.responseData.status).to.equal(this.expectedResults.status)
+      expect(this.responseData.failureReason).to.equal(
+        this.expectedResults.failureReason
+      )
+    }
   }
 )
 
