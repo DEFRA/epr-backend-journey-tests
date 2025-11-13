@@ -1,4 +1,4 @@
-@summarylogs_upload_completed @summarylogs @wip
+@summarylogs_upload_completed @summarylogs
 Feature: Summary Logs upload-completed endpoint
 
   @wip
