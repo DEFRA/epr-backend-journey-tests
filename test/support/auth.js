@@ -2,7 +2,7 @@ import config from '../config/config.js'
 import { request } from 'undici'
 
 export class AuthClient {
-  constructor(baseUrl = config.auth.uri) {
+  constructor(baseUrl = config.authUri) {
     this.baseUrl = baseUrl
     this.defaultHeaders = config.apiHeaders
   }
