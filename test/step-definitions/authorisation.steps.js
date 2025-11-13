@@ -9,6 +9,6 @@ Given('I am logged in as a service maintainer', async function () {
 
 Given('I am logged in as a non-service maintainer', async function () {
   const clientId = 'clientId'
-  const username = 'nrw@test.gov.uk'
+  const username = 'customer@test.gov.uk'
   await authClient.signToken(clientId, username)
 })
