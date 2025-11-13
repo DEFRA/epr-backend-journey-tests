@@ -74,6 +74,9 @@ services:
      FEATURE_FLAG_SUMMARY_LOGS: true
      FEATURE_FLAG_ORGANISATIONS: true
      LOG_FORMAT: ecs
+     ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
+     ADMIN_UI_ENTRA_CLIENT_ID: clientId
+     SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
    ports:
      - '3001:3001'
    depends_on:
@@ -86,6 +89,20 @@ services:
      retries: 3
    networks:
      - cdp-tenant
+
+  epr-re-ex-entra-stub:
+    image: defradigital/epr-re-ex-entra-stub:latest
+    ports:
+      - 3010:3010
+    environment:
+      STUB_INTERNAL_URL: http://epr-re-ex-entra-stub:3010
+    healthcheck:
+      test: [ "CMD", "curl", "http://localhost:3010/health" ]
+      interval: 3s
+      start_period: 2s
+      retries: 3
+    networks:
+      - cdp-tenant
 
   zap:
     image: zaproxy/zap-stable:latest

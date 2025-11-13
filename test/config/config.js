@@ -55,6 +55,10 @@ const zap = {
   key: 'zap-api-key'
 }
 
+const auth = {
+  uri: withProxy ? 'http://epr-re-ex-entra-stub:3010' : 'http://localhost:3010'
+}
+
 const dockerLogParser = {
   containerName: 'epr-backend-journey-tests-epr-backend-1'
 }
@@ -85,6 +89,7 @@ export default {
   testLogs,
   dockerLogParser,
   zap,
+  auth,
   zapAgent,
   undiciAgent: globalUndiciAgent,
   apiHeaders: api.headers
