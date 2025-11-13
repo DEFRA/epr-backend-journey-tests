@@ -16,14 +16,18 @@ Feature: Summary Logs upload-completed endpoint
       | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=test-upload-key |
       | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx                                                             |
       | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx                                                                 |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=validated                                                      |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=invalid                                                        |
     And I should see that a summary log is created in the database with the following values
       | s3Bucket   | re-ex-summary-logs  |
       | s3Key      | test-upload-key     |
       | fileId     | test-upload-file-id |
       | filename   | test-upload.xlsx    |
       | fileStatus | complete            |
-      | status     | validated           |
+      | status     | invalid             |
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status        | invalid                                                                                  |
+      | failureReason | Invalid summary log: accreditation number provided but registration has no accreditation |
 
   @wip
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when summary log validation fails
