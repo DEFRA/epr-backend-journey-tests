@@ -56,7 +56,10 @@ const zap = {
 }
 
 const auth = {
-  uri: withProxy ? 'http://epr-re-ex-entra-stub:3010' : 'http://localhost:3010'
+  local: withProxy
+    ? 'http://epr-re-ex-entra-stub:3010'
+    : 'http://localhost:3010',
+  env: `https://epr-re-ex-entra-stub.${environment}.cdp-int.defra.cloud`
 }
 
 const dockerLogParser = {
@@ -70,13 +73,17 @@ const globalUndiciAgent = !withProxy && !withExternalProxy ? agent : proxy
 const zapAgent = !withProxy && !withExternalProxy ? agent : zapProxyAgent
 const dbConnector = !environment ? database.mongo : database.stub
 let apiUri
+let authUri
 
 if (!environment) {
   apiUri = api.local
+  authUri = auth.local
 } else if (xApiKey) {
   apiUri = api.envFromLocal
+  authUri = auth.env
 } else {
   apiUri = api.env
+  authUri = auth.env
 }
 
 const zapTargetApiUri = !environment ? zapTargetApi.local : zapTargetApi.env
@@ -89,7 +96,7 @@ export default {
   testLogs,
   dockerLogParser,
   zap,
-  auth,
+  authUri,
   zapAgent,
   undiciAgent: globalUndiciAgent,
   apiHeaders: api.headers
