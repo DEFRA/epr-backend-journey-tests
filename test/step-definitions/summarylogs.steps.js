@@ -69,25 +69,33 @@ Then(
   'I should see the following summary log validation failures',
   async function (dataTable) {
     // Only check the status in local runs as environment runs will not have the file uploaded to S3
-    if (!process.env.ENVIRONMENT) {
-      const expectedResults = dataTable.hashes()
-      expect(this.responseData.validation.failures.length).to.equal(
-        expectedResults.length
+    if (process.env.ENVIRONMENT) {
+      logger.warn(
+        {
+          step_definition:
+            'Then I should see the following summary log validation failures'
+        },
+        'Skipping summary log validation failure checks'
+      )
+      return
+    }
+
+    const expectedResults = dataTable.hashes()
+    expect(this.responseData.validation.failures.length).to.equal(
+      expectedResults.length
+    )
+
+    for (const expectedResult of expectedResults) {
+      const matchingFailure = this.responseData.validation.failures.find(
+        (failure) =>
+          failure.code === expectedResult['Code'] &&
+          failure.location.field === expectedResult['Location Field']
       )
 
-      for (const expectedResult of expectedResults) {
-        const filtered = this.responseData.validation.failures.filter(
-          (failure) =>
-            failure.code === expectedResult['Code'] &&
-            failure.location.field === expectedResult['Location Field']
+      if (!matchingFailure) {
+        expect.fail(
+          `Expected validation failures Code: ${expectedResult['Code']} and Location Field: ${expectedResult['Location Field']}, but no failures found with those values. Actual validation values found: ${JSON.stringify(this.responseData.validation)}`
         )
-        if (filtered.length === 0) {
-          expect.fail(
-            `Expected validation failures Code: ${expectedResult['Code']} and Location Field: ${expectedResult['Location Field']}, but no failures found with those values. Actual validation values found: ${JSON.stringify(
-              this.responseData.validation
-            )}`
-          )
-        }
       }
     }
   }
