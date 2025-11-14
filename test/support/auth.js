@@ -7,16 +7,12 @@ export class AuthClient {
     this.defaultHeaders = config.apiHeaders
   }
 
-  async signToken(clientId, username) {
+  async generateToken(payload, suffix) {
     const instanceHeaders = { ...this.defaultHeaders }
-    const payload = {
-      clientId,
-      username
-    }
-    const response = await request(`${this.baseUrl}/sign`, {
+    const response = await request(`${this.baseUrl}${suffix}`, {
       method: 'POST',
       headers: instanceHeaders,
-      body: JSON.stringify(payload)
+      body: payload
     })
     const responseJson = await response.body.json()
     this.accessToken = responseJson.access_token

@@ -59,7 +59,19 @@ const auth = {
   local: withProxy
     ? 'http://epr-re-ex-entra-stub:3010'
     : 'http://localhost:3010',
-  env: `https://epr-re-ex-entra-stub.${environment}.cdp-int.defra.cloud`
+  env:
+    environment === 'test'
+      ? 'https://login.microsoftonline.com/6f504113-6b64-43f2-ade9-242e05780007/oauth2/v2.0/token'
+      : `https://epr-re-ex-entra-stub.${environment}.cdp-int.defra.cloud`,
+  // Below configuration only applies for "Test" environment
+  clientSecret: process.env.AUTH_CLIENT_SECRET,
+  clientId: 'bd06da51-53f6-46d0-a9f0-ac562864c887',
+  username: process.env.AUTH_USERNAME,
+  password: process.env.AUTH_PASSWORD,
+  nonServiceUsername: process.env.NON_SERVICE_AUTH_USERNAME,
+  nonServicePassword: process.env.NON_SERVICE_PASSWORD,
+  scope: 'api://bd06da51-53f6-46d0-a9f0-ac562864c887/.default',
+  grantType: 'password'
 }
 
 const dockerLogParser = {
@@ -97,6 +109,7 @@ export default {
   dockerLogParser,
   zap,
   authUri,
+  auth,
   zapAgent,
   undiciAgent: globalUndiciAgent,
   apiHeaders: api.headers
