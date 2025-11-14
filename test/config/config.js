@@ -25,13 +25,17 @@ const zapTargetApi = {
   env: `https://epr-backend.${environment}.cdp-int.defra.cloud`
 }
 
-const proxy = new ProxyAgent({
-  uri: 'http://localhost:7777',
-  proxyTunnel: !!environment,
-  requestTls: {
-    rejectUnauthorized: false
-  }
-})
+const proxy = process.env.HTTP_PROXY
+  ? new ProxyAgent({
+      uri: process.env.HTTP_PROXY
+    })
+  : new ProxyAgent({
+      uri: 'http://localhost:7777',
+      proxyTunnel: !!environment,
+      requestTls: {
+        rejectUnauthorized: false
+      }
+    })
 
 const zapProxyAgent = new ProxyAgent({
   uri: 'http://localhost:7777',
@@ -81,7 +85,8 @@ const dockerLogParser = {
 const mongoUri = 'mongodb://localhost:27017/epr-backend'
 
 const testLogs = !withoutLogs && !environment
-const globalUndiciAgent = !withProxy && !withExternalProxy ? agent : proxy
+const globalUndiciAgent =
+  !withProxy && !withExternalProxy && environment !== 'test' ? agent : proxy
 const zapAgent = !withProxy && !withExternalProxy ? agent : zapProxyAgent
 const dbConnector = !environment ? database.mongo : database.stub
 let apiUri
