@@ -51,16 +51,52 @@ Then(
 Then(
   'I should see the following summary log response',
   async function (dataTable) {
-    this.expectedResults = dataTable.rowsHash()
+    const expectedResults = dataTable.rowsHash()
     expect(this.response.statusCode).to.equal(200)
 
     // Only check the status in local runs as environment runs will not have the file uploaded to S3
     if (!process.env.ENVIRONMENT) {
       this.responseData = await this.response.body.json()
-      expect(this.responseData.status).to.equal(this.expectedResults.status)
+      expect(this.responseData.status).to.equal(expectedResults.status)
       expect(this.responseData.failureReason).to.equal(
-        this.expectedResults.failureReason
+        expectedResults.failureReason
       )
+    }
+  }
+)
+
+Then(
+  'I should see the following summary log validation failures',
+  async function (dataTable) {
+    // Only check the status in local runs as environment runs will not have the file uploaded to S3
+    if (process.env.ENVIRONMENT) {
+      logger.warn(
+        {
+          step_definition:
+            'Then I should see the following summary log validation failures'
+        },
+        'Skipping summary log validation failure checks'
+      )
+      return
+    }
+
+    const expectedResults = dataTable.hashes()
+    expect(this.responseData.validation.failures.length).to.equal(
+      expectedResults.length
+    )
+
+    for (const expectedResult of expectedResults) {
+      const matchingFailure = this.responseData.validation.failures.find(
+        (failure) =>
+          failure.code === expectedResult['Code'] &&
+          failure.location.field === expectedResult['Location Field']
+      )
+
+      if (!matchingFailure) {
+        expect.fail(
+          `Expected validation failures Code: ${expectedResult['Code']} and Location Field: ${expectedResult['Location Field']}, but no failures found with those values. Actual validation values found: ${JSON.stringify(this.responseData.validation)}`
+        )
+      }
     }
   }
 )

@@ -26,8 +26,8 @@ Feature: Summary Logs upload-completed endpoint
       | status     | invalid             |
     When I check for the summary log status
     Then I should see the following summary log response
-      | status        | invalid                                                                                  |
-      | failureReason | Invalid summary log: accreditation number provided but registration has no accreditation |
+      | status        | invalid                                                      |
+      | failureReason | Invalid summary log: registration has no registration number |
 
   @wip
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when summary log validation fails
@@ -56,6 +56,12 @@ Feature: Summary Logs upload-completed endpoint
     Then I should see the following summary log response
       | status        | invalid                                           |
       | failureReason | Invalid meta field 'PROCESSING_TYPE': is required |
+    And I should see the following summary log validation failures
+      | Code               | Location Field   |
+      | INVALID_META_FIELD | PROCESSING_TYPE  |
+      | INVALID_META_FIELD | TEMPLATE_VERSION |
+      | INVALID_META_FIELD | MATERIAL         |
+      | INVALID_META_FIELD | REGISTRATION     |
 
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
     Given I have the following summary log upload data
