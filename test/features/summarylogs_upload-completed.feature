@@ -4,30 +4,29 @@ Feature: Summary Logs upload-completed endpoint
   @wip
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as valid when summary log validation passes
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs  |
-      | s3Key    | test-upload-key     |
-      | fileId   | test-upload-file-id |
-      | filename | test-upload.xlsx    |
-      | status   | complete            |
+      | s3Bucket | re-ex-summary-logs        |
+      | s3Key    | valid-summary-log-key     |
+      | fileId   | valid-summary-log-file-id |
+      | filename | valid-summary-log.xlsx    |
+      | status   | complete                  |
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                          |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=test-upload-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx                                                             |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx                                                                 |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=invalid                                                        |
+      | Log Level | Event Action    | Message                                                                                                                                                                                            |
+      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-file-id, filename=valid-summary-log.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=valid-summary-log-key |
+      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-file-id, filename=valid-summary-log.xlsx                                                                   |
+      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-file-id, filename=valid-summary-log.xlsx                                                                       |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-file-id, filename=valid-summary-log.xlsx, status=validated                                                            |
     And I should see that a summary log is created in the database with the following values
-      | s3Bucket   | re-ex-summary-logs  |
-      | s3Key      | test-upload-key     |
-      | fileId     | test-upload-file-id |
-      | filename   | test-upload.xlsx    |
-      | fileStatus | complete            |
-      | status     | invalid             |
+      | s3Bucket   | re-ex-summary-logs        |
+      | s3Key      | valid-summary-log-key     |
+      | fileId     | valid-summary-log-file-id |
+      | filename   | valid-summary-log.xlsx    |
+      | fileStatus | complete                  |
+      | status     | validated                 |
     When I check for the summary log status
     Then I should see the following summary log response
-      | status        | invalid                                                      |
-      | failureReason | Invalid summary log: registration has no registration number |
+      | status  | validated  |
 
   @wip
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when summary log validation fails

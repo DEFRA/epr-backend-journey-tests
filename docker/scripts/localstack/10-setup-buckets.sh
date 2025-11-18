@@ -19,6 +19,12 @@ aws s3api put-object \
 
 aws s3api put-object \
   --bucket re-ex-summary-logs \
+  --key valid-summary-log-key \
+  --body /etc/localstack/init/ready.d/valid-summary-log.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
   --key invalid-test-upload-key \
   --body /etc/localstack/init/ready.d/invalid-test-upload.xlsx \
   --endpoint-url=http://localhost:4566 \

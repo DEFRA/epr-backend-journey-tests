@@ -6,6 +6,7 @@ import { BaseAPI } from '../apis/base-api.js'
 import { setGlobalDispatcher } from 'undici'
 import { Interpolator } from './interpolator.js'
 import { AuthClient } from '../support/auth.js'
+import { ObjectId } from 'mongodb'
 
 let agent
 let dbConnector
@@ -13,6 +14,20 @@ let dbClient
 let authClient
 let baseAPI
 let interpolator
+
+//TODO: Remove this method once we get a working validated payload
+async function setupValidatedPayload() {
+  if (!process.env.ENVIRONMENT) {
+    const collection = dbClient.collection('epr-organisations')
+    const data = JSON.parse(
+      fs.readFileSync('./test/fixtures/validated-payload.json', 'utf8')
+    )
+
+    await collection.replaceOne({ _id: new ObjectId(data.id) }, data, {
+      upsert: true
+    })
+  }
+}
 
 BeforeAll(async function () {
   dbConnector = config.dbConnector
@@ -22,6 +37,8 @@ BeforeAll(async function () {
   interpolator = new Interpolator()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
+
+  await setupValidatedPayload()
 })
 
 AfterAll(async function () {
