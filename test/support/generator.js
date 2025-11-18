@@ -8,6 +8,7 @@ import nonRegOutsideUkAddressPayload from '../fixtures/ea/organisation/non-regis
 import regPayload from '../fixtures/registration.json' with { type: 'json' }
 import regAllMaterialsPayload from '../fixtures/ea/registration/reprocessor-all-materials.json' with { type: 'json' }
 import organisationsPayload from '../fixtures/sample-organisation-1.json' with { type: 'json' }
+import validatedPayload from '../fixtures/validated-payload.json' with { type: 'json' }
 
 const materials = [
   'Aluminium (R4)',
@@ -400,6 +401,13 @@ export class Organisations {
     return {
       version: Number(dataTableHash.version),
       updateFragment: organisationsPayload
+    }
+  }
+
+  toValidatedPayload(payload) {
+    return {
+      version: Number(payload.version),
+      updateFragment: validatedPayload
     }
   }
 

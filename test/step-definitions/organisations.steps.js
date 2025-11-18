@@ -43,6 +43,8 @@ When(
 
     if (this.payload.updateFragment === 'sample-fixture') {
       this.payload = this.organisations.toDefaultPayload(this.payload)
+    } else if (this.payload.updateFragment === 'validated-fixture') {
+      this.payload = this.organisations.toValidatedPayload(this.payload)
     } else {
       this.payload = this.organisations.toPayload(this.payload)
     }
