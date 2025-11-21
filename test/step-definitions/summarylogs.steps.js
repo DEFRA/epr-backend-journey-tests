@@ -41,6 +41,26 @@ When('I check for the summary log status', async function () {
   )
 })
 
+When('I submit the uploaded summary log', async function () {
+  const summaryLogId = this.summaryLog.summaryLogId
+  this.response = await baseAPI.post(
+    `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/submit`
+  )
+})
+
+Then('the summary log submission succeeds', async function () {
+  if (!process.env.ENVIRONMENT) {
+    expect(this.response.statusCode).to.equal(200)
+  } else {
+    logger.warn(
+      {
+        step_definition: 'Then the summary log submission succeeds'
+      },
+      'Skipping summary log submission checks'
+    )
+  }
+})
+
 Then(
   'I should receive a summary log upload accepted response',
   async function () {
@@ -134,6 +154,48 @@ Then(
             'Then I should see that a summary log is created in the database with the following values'
         },
         'Skipping summary log database checks'
+      )
+    }
+  }
+)
+
+Then(
+  'I should see that a waste record is created in the database with the following values',
+  async function (dataTable) {
+    if (!process.env.ENVIRONMENT) {
+      // const expectedWasteRecords = dataTable.rowsHash()
+      const wasteRecordsCollection = dbClient.collection('waste-records')
+      const wasteRecords = await wasteRecordsCollection
+        .find({
+          organisationId: '6507f1f77bcf86cd79943911'
+        })
+        .toArray()
+
+      const expectedWasteRecords = dataTable.hashes()
+      expect(wasteRecords.length).to.equal(expectedWasteRecords.length)
+
+      for (const expectedWasteRecord of expectedWasteRecords) {
+        const matchingRecord = wasteRecords.find(
+          (record) =>
+            record.organisationId === expectedWasteRecord.OrganisationId &&
+            record.registrationId === expectedWasteRecord.RegistrationId &&
+            record.rowId === parseInt(expectedWasteRecord.RowId) &&
+            record.type === expectedWasteRecord.Type
+        )
+
+        if (!matchingRecord) {
+          expect.fail(
+            `Expected record: ${JSON.stringify(expectedWasteRecord)}, but no records found with those values. Actual records found: ${JSON.stringify(wasteRecords)}`
+          )
+        }
+      }
+    } else {
+      logger.warn(
+        {
+          step_definition:
+            'Then I should see that a waste record is created in the database with the following values'
+        },
+        'Skipping waste record database checks'
       )
     }
   }

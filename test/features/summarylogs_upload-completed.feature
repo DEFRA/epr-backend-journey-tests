@@ -2,31 +2,64 @@
 Feature: Summary Logs upload-completed endpoint
 
   @wip
-  Scenario: Summary Logs upload-completed endpoint accepts upload and marks as valid when summary log validation passes
+  Scenario: Summary Logs uploads and creates a Waste Record
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs        |
-      | s3Key    | valid-summary-log-key     |
-      | fileId   | valid-summary-log-file-id |
-      | filename | valid-summary-log.xlsx    |
-      | status   | complete                  |
+      | s3Bucket | re-ex-summary-logs              |
+      | s3Key    | valid-summary-log-input-key     |
+      | fileId   | valid-summary-log-input-file-id |
+      | filename | valid-summary-log-input.xlsx    |
+      | status   | complete                        |
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                                            |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-file-id, filename=valid-summary-log.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=valid-summary-log-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-file-id, filename=valid-summary-log.xlsx                                                                   |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-file-id, filename=valid-summary-log.xlsx                                                                       |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-file-id, filename=valid-summary-log.xlsx, status=validated                                                            |
+      | Log Level | Event Action    | Message                                                                                                                                                                                                              |
+      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-file-id, filename=valid-summary-log-input.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=valid-summary-log-input-key |
+      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-file-id, filename=valid-summary-log-input.xlsx                                                                         |
+      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-file-id, filename=valid-summary-log-input.xlsx                                                                             |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-file-id, filename=valid-summary-log-input.xlsx, status=validated                                                                  |
     And I should see that a summary log is created in the database with the following values
-      | s3Bucket   | re-ex-summary-logs        |
-      | s3Key      | valid-summary-log-key     |
-      | fileId     | valid-summary-log-file-id |
-      | filename   | valid-summary-log.xlsx    |
-      | fileStatus | complete                  |
-      | status     | validated                 |
+      | s3Bucket   | re-ex-summary-logs              |
+      | s3Key      | valid-summary-log-input-key     |
+      | fileId     | valid-summary-log-input-file-id |
+      | filename   | valid-summary-log-input.xlsx    |
+      | fileStatus | complete                        |
+      | status     | validated                       |
     When I check for the summary log status
     Then I should see the following summary log response
       | status  | validated  |
+    When I submit the uploaded summary log
+    Then the summary log submission succeeds
+    And the following messages appear in the log
+      | Log Level | Message                                              |
+      | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
+    And I should see that a waste record is created in the database with the following values
+      | OrganisationId           | RegistrationId           | RowId | Type     |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1000  | received |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1001  | received |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1002  | received |
+
+  @wip
+  Scenario: Summary Logs uploads and fails validation for removed row
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket | re-ex-summary-logs                |
+      | s3Key    | valid-summary-log-input-2-key     |
+      | fileId   | valid-summary-log-input-2-file-id |
+      | filename | valid-summary-log-input-2.xlsx    |
+      | status   | complete                          |
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    And the following messages appear in the log
+      | Log Level | Event Action    | Message                                                                                                                                                                                                                    |
+      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=valid-summary-log-input-2-key |
+      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx                                                                           |
+      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx                                                                               |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx, status=invalid                                                                      |
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status        | invalid                                                                                                                                    |
+      | failureReason | Row '1002' from a previous summary log submission cannot be removed. All previously submitted rows must be included in subsequent uploads. |
+    When I submit the uploaded summary log
+    Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   @wip
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when summary log validation fails
@@ -56,11 +89,11 @@ Feature: Summary Logs upload-completed endpoint
       | status        | invalid                                           |
       | failureReason | Invalid meta field 'PROCESSING_TYPE': is required |
     And I should see the following summary log validation failures
-      | Code               | Location Field   |
-      | INVALID_META_FIELD | PROCESSING_TYPE  |
-      | INVALID_META_FIELD | TEMPLATE_VERSION |
-      | INVALID_META_FIELD | MATERIAL         |
-      | INVALID_META_FIELD | REGISTRATION     |
+      | Code               | Location Field      |
+      | INVALID_META_FIELD | PROCESSING_TYPE     |
+      | INVALID_META_FIELD | TEMPLATE_VERSION    |
+      | INVALID_META_FIELD | MATERIAL            |
+      | INVALID_META_FIELD | REGISTRATION_NUMBER |
 
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
     Given I have the following summary log upload data
