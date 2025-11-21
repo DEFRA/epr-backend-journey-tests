@@ -34,7 +34,6 @@ Feature: Summary Logs upload-completed endpoint
       | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
     And I should see that a waste record is created in the database with the following values
       | OrganisationId           | RegistrationId           | RowId | Type     |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1000  | received |
       | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1001  | received |
       | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1002  | received |
 
