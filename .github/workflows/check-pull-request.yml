@@ -57,7 +57,7 @@ jobs:
     needs: pr-prep
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Test code and Create Test Coverage Reports
         uses: actions/setup-node@v6
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout journey-tests repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Run journey tests
         uses: ./run-journey-tests
