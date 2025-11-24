@@ -36,8 +36,68 @@ When('I submit the summary log upload completed', async function () {
 
 When('I check for the summary log status', async function () {
   const summaryLogId = this.summaryLog.summaryLogId
-  this.response = await baseAPI.get(
-    `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
+  const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
+
+  // Transient statuses that indicate processing is still in progress
+  const transientStatuses = ['preprocessing', 'validating']
+  const timeout = 10000 // 10 seconds
+  const interval = 500 // 500ms between polls
+  const startTime = Date.now()
+
+  while (Date.now() - startTime < timeout) {
+    this.response = await baseAPI.get(url)
+
+    // If the response is not 200, stop polling and return the error response
+    if (this.response.statusCode !== 200) {
+      return
+    }
+
+    // Parse response to check status
+    const responseData = await this.response.body.json()
+    const currentStatus = responseData.status
+
+    // If status is stable (not transient), we're done
+    if (!transientStatuses.includes(currentStatus)) {
+      logger.info(
+        {
+          summaryLogId,
+          status: currentStatus,
+          elapsedMs: Date.now() - startTime
+        },
+        'Summary log validation completed'
+      )
+      // Store response data for later assertions since body can only be read once
+      this.responseData = responseData
+      return
+    }
+
+    // Status is still transient, wait before polling again
+    logger.debug(
+      {
+        summaryLogId,
+        status: currentStatus,
+        elapsedMs: Date.now() - startTime
+      },
+      'Summary log validation in progress, waiting...'
+    )
+
+    await new Promise((resolve) => setTimeout(resolve, interval))
+  }
+
+  // Timeout reached - make one final request and store the response
+  this.response = await baseAPI.get(url)
+  if (this.response.statusCode === 200) {
+    this.responseData = await this.response.body.json()
+  }
+
+  logger.warn(
+    {
+      summaryLogId,
+      timeout,
+      status: this.responseData?.status,
+      elapsedMs: Date.now() - startTime
+    },
+    'Timeout waiting for summary log validation to complete'
   )
 })
 
@@ -76,7 +136,10 @@ Then(
 
     // Only check the status in local runs as environment runs will not have the file uploaded to S3
     if (!process.env.ENVIRONMENT) {
-      this.responseData = await this.response.body.json()
+      // responseData is already parsed in the status check step
+      if (!this.responseData) {
+        this.responseData = await this.response.body.json()
+      }
       expect(this.responseData.status).to.equal(expectedResults.status)
       expect(this.responseData.failureReason).to.equal(
         expectedResults.failureReason
