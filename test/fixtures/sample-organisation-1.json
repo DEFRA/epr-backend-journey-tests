@@ -147,6 +147,7 @@
       "orgName": "ACME ltd",
       "formSubmissionTime": "2025-08-21T19:34:44.944Z",
       "material": "plastic",
+      "glassRecyclingProcess": null,
       "wasteProcessingType": "exporter",
       "cbduNumber": "CBDU123456",
       "approvedPersons": [
@@ -201,6 +202,7 @@
         "postcode": "SW2A 0AA"
       },
       "material": "glass",
+      "glassRecyclingProcess": ["glass_re_melt"],
       "wasteProcessingType": "reprocessor",
       "prnIssuance": {
         "tonnageBand": "over_10000",
@@ -216,6 +218,36 @@
           {
             "usageDescription": "New reprocessing infrastructure and maintaining existing infrastructure",
             "detailedExplanation": "Investing on buying to machine to separate glass from waste",
+            "percentIncomeSpent": 20
+          },
+          {
+            "usageDescription": "Price support for buying packaging waste or selling recycled packaging waste",
+            "detailedExplanation": "Supporting waste suppliers",
+            "percentIncomeSpent": 10
+          },
+          {
+            "usageDescription": "Support for business collections",
+            "detailedExplanation": "Collection infrastructure",
+            "percentIncomeSpent": 15
+          },
+          {
+            "usageDescription": "Communications, including information campaigns",
+            "detailedExplanation": "Public awareness campaigns",
+            "percentIncomeSpent": 5
+          },
+          {
+            "usageDescription": "Developing new markets for products made from recycled packaging waste",
+            "detailedExplanation": "Market research and development",
+            "percentIncomeSpent": 10
+          },
+          {
+            "usageDescription": "Developing new uses for recycled packaging waste",
+            "detailedExplanation": "R&D for new applications",
+            "percentIncomeSpent": 20
+          },
+          {
+            "usageDescription": "Activities or investment not covered by the other categories",
+            "detailedExplanation": "General operational improvements",
             "percentIncomeSpent": 20
           }
         ]
@@ -249,6 +281,7 @@
         "postcode": "SW2A 0AA"
       },
       "material": "glass",
+      "glassRecyclingProcess": ["glass_re_melt"],
       "wasteProcessingType": "reprocessor",
       "prnIssuance": {
         "tonnageBand": "over_10000",
@@ -264,6 +297,36 @@
           {
             "usageDescription": "New reprocessing infrastructure and maintaining existing infrastructure",
             "detailedExplanation": "Investing on buying to machine to separate glass from waste",
+            "percentIncomeSpent": 20
+          },
+          {
+            "usageDescription": "Price support for buying packaging waste or selling recycled packaging waste",
+            "detailedExplanation": "Supporting waste suppliers",
+            "percentIncomeSpent": 10
+          },
+          {
+            "usageDescription": "Support for business collections",
+            "detailedExplanation": "Collection infrastructure",
+            "percentIncomeSpent": 15
+          },
+          {
+            "usageDescription": "Communications, including information campaigns",
+            "detailedExplanation": "Public awareness campaigns",
+            "percentIncomeSpent": 5
+          },
+          {
+            "usageDescription": "Developing new markets for products made from recycled packaging waste",
+            "detailedExplanation": "Market research and development",
+            "percentIncomeSpent": 10
+          },
+          {
+            "usageDescription": "Developing new uses for recycled packaging waste",
+            "detailedExplanation": "R&D for new applications",
+            "percentIncomeSpent": 20
+          },
+          {
+            "usageDescription": "Activities or investment not covered by the other categories",
+            "detailedExplanation": "General operational improvements",
             "percentIncomeSpent": 20
           }
         ]
@@ -293,6 +356,7 @@
       "submittedToRegulator": "ea",
       "orgName": "ACME ltd",
       "material": "plastic",
+      "glassRecyclingProcess": null,
       "wasteProcessingType": "exporter",
       "prnIssuance": {
         "tonnageBand": "up_to_500",
@@ -306,9 +370,39 @@
         ],
         "incomeBusinessPlan": [
           {
-            "usageDescription": "New vehicle to transport",
+            "usageDescription": "New reprocessing infrastructure and maintaining existing infrastructure",
             "detailedExplanation": "Expand export capabilities",
             "percentIncomeSpent": 10
+          },
+          {
+            "usageDescription": "Price support for buying packaging waste or selling recycled packaging waste",
+            "detailedExplanation": "Price support",
+            "percentIncomeSpent": 10
+          },
+          {
+            "usageDescription": "Support for business collections",
+            "detailedExplanation": "Collection support",
+            "percentIncomeSpent": 10
+          },
+          {
+            "usageDescription": "Communications, including information campaigns",
+            "detailedExplanation": "Communications",
+            "percentIncomeSpent": 10
+          },
+          {
+            "usageDescription": "Developing new markets for products made from recycled packaging waste",
+            "detailedExplanation": "Market development",
+            "percentIncomeSpent": 20
+          },
+          {
+            "usageDescription": "Developing new uses for recycled packaging waste",
+            "detailedExplanation": "New uses",
+            "percentIncomeSpent": 20
+          },
+          {
+            "usageDescription": "Activities or investment not covered by the other categories",
+            "detailedExplanation": "Other activities",
+            "percentIncomeSpent": 20
           }
         ]
       },
