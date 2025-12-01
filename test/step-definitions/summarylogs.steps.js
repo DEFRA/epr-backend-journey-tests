@@ -223,10 +223,9 @@ Then(
 )
 
 Then(
-  'I should see that a waste record is created in the database with the following values',
+  'I should see that waste records are created in the database with the following values',
   async function (dataTable) {
     if (!process.env.ENVIRONMENT) {
-      // const expectedWasteRecords = dataTable.rowsHash()
       const wasteRecordsCollection = dbClient.collection('waste-records')
       const wasteRecords = await wasteRecordsCollection
         .find({
@@ -251,12 +250,21 @@ Then(
             `Expected record: ${JSON.stringify(expectedWasteRecord)}, but no records found with those values. Actual records found: ${JSON.stringify(wasteRecords)}`
           )
         }
+
+        const sameTimestamp = wasteRecords.every(
+          (obj) =>
+            obj.versions[0].createdAt === wasteRecords[0].versions[0].createdAt
+        )
+        expect(sameTimestamp).to.equal(
+          true,
+          'All waste records created on the same upload should have the same timestamp'
+        )
       }
     } else {
       logger.warn(
         {
           step_definition:
-            'Then I should see that a waste record is created in the database with the following values'
+            'Then I should see that waste records are created in the database with the following values'
         },
         'Skipping waste record database checks'
       )
