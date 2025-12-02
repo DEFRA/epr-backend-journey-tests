@@ -34,6 +34,22 @@ When('I submit the summary log upload completed', async function () {
   )
 })
 
+When('I initiate the summary log upload', async function () {
+  this.initiatePayload = {
+    redirectUrl: 'https://redirect/summary-log-upload-redirect'
+  }
+  this.response = await baseAPI.post(
+    `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
+    JSON.stringify(this.initiatePayload)
+  )
+})
+
+Then('the summary log upload initiation succeeds', async function () {
+  expect(this.response.statusCode).to.equal(201)
+  this.responseData = await this.response.body.json()
+  this.summaryLog.summaryLogId = this.responseData.summaryLogId
+})
+
 When('I check for the summary log status', async function () {
   const summaryLogId = this.summaryLog.summaryLogId
   const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
