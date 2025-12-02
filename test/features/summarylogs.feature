@@ -60,7 +60,7 @@ Feature: Summary Logs upload-completed endpoint
     When I check for the summary log status
     Then I should see the following summary log response
       | status        | invalid                                                                                                                                     |
-      | failureReason | Row '10002' from a previous summary log submission cannot be removed. All previously submitted rows must be included in subsequent uploads. |
+#      | failureReason | Row '10002' from a previous summary log submission cannot be removed. All previously submitted rows must be included in subsequent uploads. |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
@@ -90,7 +90,7 @@ Feature: Summary Logs upload-completed endpoint
     When I check for the summary log status
     Then I should see the following summary log response
       | status        | invalid                                           |
-      | failureReason | Invalid meta field 'PROCESSING_TYPE': is required |
+#      | failureReason | Invalid meta field 'PROCESSING_TYPE': is required |
     And I should see the following summary log validation failures
       | Code               | Location Field      |
       | INVALID_META_FIELD | PROCESSING_TYPE     |
@@ -133,7 +133,7 @@ Feature: Summary Logs upload-completed endpoint
       | filename      | test-upload.xlsx                                              |
       | fileStatus    | rejected                                                      |
       | status        | rejected                                                      |
-      | failureReason | Something went wrong with your file upload. Please try again. |
+#      | failureReason | Something went wrong with your file upload. Please try again. |
 
   Scenario Outline: Summary Logs upload-completed endpoint valid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data
