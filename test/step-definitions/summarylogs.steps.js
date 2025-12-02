@@ -36,7 +36,7 @@ When('I submit the summary log upload completed', async function () {
 
 When('I initiate the summary log upload', async function () {
   this.initiatePayload = {
-    redirectUrl: 'https://example.com/summary-log-upload-redirect'
+    redirectUrl: 'https://redirect/summary-log-upload-redirect'
   }
   this.response = await baseAPI.post(
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
