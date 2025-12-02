@@ -76,6 +76,8 @@ services:
      ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
      ADMIN_UI_ENTRA_CLIENT_ID: clientId
      SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
+     CDP_UPLOADER_URL: http://cdp-uploader:7337
+     APP_BASE_URL: http://epr-backend:3001
    ports:
      - '3001:3001'
    depends_on:
@@ -102,6 +104,50 @@ services:
       retries: 3
     networks:
       - cdp-tenant
+
+  ################################################################################
+  redis:
+    image: redis:7.2.11-alpine3.21
+    ports:
+      - '6379:6379'
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 5s
+      start_period: 2s
+      retries: 5
+    networks:
+      - cdp-tenant
+
+  cdp-uploader:
+    image: defradigital/cdp-uploader:${CDP_UPLOADER_VERSION:-latest}
+    ports:
+      - '7337:7337'
+    links:
+      - 'localstack:localstack'
+      - 'redis:redis'
+    depends_on:
+      localstack:
+        condition: service_healthy
+    env_file:
+      - 'docker/config/aws.env'
+    environment:
+      VIRTUAL_HOST: ~^uploader\..*\.sslip\.io
+      VIRTUAL_PATH: /
+      VIRTUAL_PORT: 7337
+      PORT: 7337
+      NODE_ENV: development
+      REDIS_HOST: redis
+      USE_SINGLE_INSTANCE_CACHE: true
+      MOCK_VIRUS_SCAN_ENABLED: true
+      MOCK_VIRUS_RESULT_DELAY: 3
+      SQS_ENDPOINT: http://localstack:4566
+      S3_ENDPOINT: http://localstack:4566
+      CONSUMER_BUCKETS: re-ex-summary-logs
+    networks:
+      - cdp-tenant
+
+  ################################################################################
 
   zap:
     image: zaproxy/zap-stable:latest

@@ -9,6 +9,8 @@ Feature: Summary Logs upload-completed endpoint
       | fileId   | valid-summary-log-input-file-id |
       | filename | valid-summary-log-input.xlsx    |
       | status   | complete                        |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the following messages appear in the log
