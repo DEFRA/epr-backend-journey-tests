@@ -33,9 +33,9 @@ Feature: Summary Logs upload-completed endpoint
       | Log Level | Message                                              |
       | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
     And I should see that waste records are created in the database with the following values
-      | OrganisationId           | RegistrationId           | RowId | Type     |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1001  | received |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1002  | received |
+      | OrganisationId           | RegistrationId           | RowId  | Type     |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 10001  | received |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 10002  | received |
 
   @wip
   Scenario: Summary Logs uploads and fails validation for removed row
@@ -55,8 +55,8 @@ Feature: Summary Logs upload-completed endpoint
       | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx, status=invalid                                                                      |
     When I check for the summary log status
     Then I should see the following summary log response
-      | status        | invalid                                                                                                                                    |
-      | failureReason | Row '1002' from a previous summary log submission cannot be removed. All previously submitted rows must be included in subsequent uploads. |
+      | status        | invalid                                                                                                                                     |
+      | failureReason | Row '10002' from a previous summary log submission cannot be removed. All previously submitted rows must be included in subsequent uploads. |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
