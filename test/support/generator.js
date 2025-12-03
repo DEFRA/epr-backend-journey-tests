@@ -137,7 +137,7 @@ export class Organisation {
     this.phoneNumber = fakerEN_GB.phone.number()
     this.fullName = fakerEN_GB.person.fullName()
     this.email = process.env.ENVIRONMENT
-      ? 'REEXServiceTeam@defra.gov.uk'
+      ? process.env.EMAIL_ADDRESS
       : fakerEN_GB.internet.email()
 
     this.jobTitle = fakerEN_GB.person.jobTitle()
