@@ -1,5 +1,5 @@
-@summarylogs_upload_completed @summarylogs
-Feature: Summary Logs upload-completed endpoint
+@summarylogs
+Feature: Summary Logs endpoint
 
   @wip
   Scenario: Summary Logs uploads and creates a Waste Record
@@ -59,8 +59,11 @@ Feature: Summary Logs upload-completed endpoint
       | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx, status=invalid                                                                      |
     When I check for the summary log status
     Then I should see the following summary log response
-      | status        | invalid                                                                                                                                     |
-#      | failureReason | Row '10002' from a previous summary log submission cannot be removed. All previously submitted rows must be included in subsequent uploads. |
+      | status | invalid |
+    And I should see the following summary log validation failures
+      | Code                   | Location Sheet | Location Table                  | Location Row ID |
+      | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 10002           |
+
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
@@ -89,14 +92,13 @@ Feature: Summary Logs upload-completed endpoint
       | status     | invalid                  |
     When I check for the summary log status
     Then I should see the following summary log response
-      | status        | invalid                                           |
-#      | failureReason | Invalid meta field 'PROCESSING_TYPE': is required |
+      | status   | invalid  |
     And I should see the following summary log validation failures
-      | Code               | Location Field      |
-      | INVALID_META_FIELD | PROCESSING_TYPE     |
-      | INVALID_META_FIELD | TEMPLATE_VERSION    |
-      | INVALID_META_FIELD | MATERIAL            |
-      | INVALID_META_FIELD | REGISTRATION_NUMBER |
+      | Code                      | Location Field      |
+      | PROCESSING_TYPE_REQUIRED  | PROCESSING_TYPE     |
+      | TEMPLATE_VERSION_REQUIRED | TEMPLATE_VERSION    |
+      | MATERIAL_REQUIRED         | MATERIAL            |
+      | REGISTRATION_REQUIRED     | REGISTRATION_NUMBER |
 
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
     Given I have the following summary log upload data
@@ -129,11 +131,11 @@ Feature: Summary Logs upload-completed endpoint
       | Log Level | Event Action    | Message                                                                                                                      |
       | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=test-upload.xlsx, status=rejected |
     And I should see that a summary log is created in the database with the following values
-      | fileId        | test-upload-file-id                                           |
-      | filename      | test-upload.xlsx                                              |
-      | fileStatus    | rejected                                                      |
-      | status        | rejected                                                      |
-#      | failureReason | Something went wrong with your file upload. Please try again. |
+      | fileId            | test-upload-file-id |
+      | filename          | test-upload.xlsx    |
+      | fileStatus        | rejected            |
+      | status            | rejected            |
+      | validationFailure | FILE_REJECTED       |
 
   Scenario Outline: Summary Logs upload-completed endpoint valid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data

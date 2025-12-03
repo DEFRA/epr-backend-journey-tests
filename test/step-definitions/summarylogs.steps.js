@@ -157,10 +157,6 @@ Then(
         this.responseData = await this.response.body.json()
       }
       expect(this.responseData.status).to.equal(expectedResults.status)
-      // FIXME: Assert failureReason via validation
-      // expect(this.responseData.failureReason).to.equal(
-      //   expectedResults.failureReason
-      // )
     }
   }
 )
@@ -192,9 +188,28 @@ Then(
           failure.location.field === expectedResult['Location Field']
       )
 
+      this.responseData.validation.failures.find((failure) => {
+        const checks = [
+          ['Code', 'code'],
+          ['Location Field', 'location.field'],
+          ['Location Sheet', 'location.sheet'],
+          ['Location Table', 'location.table'],
+          ['Location Row ID', 'location.rowId']
+        ]
+
+        return checks.every(([expectedKey, actual]) => {
+          if (expectedResult[expectedKey] === undefined) return true
+
+          const actualValue = actual.includes('.')
+            ? actual.split('.').reduce((obj, key) => obj?.[key], failure)
+            : failure[actual]
+          return actualValue === expectedResult[expectedKey]
+        })
+      })
+
       if (!matchingFailure) {
         expect.fail(
-          `Expected validation failures Code: ${expectedResult['Code']} and Location Field: ${expectedResult['Location Field']}, but no failures found with those values. Actual validation values found: ${JSON.stringify(this.responseData.validation)}`
+          `Expected validation ${JSON.stringify(expectedResult)} but no failures found with those values. Actual validation values found: ${JSON.stringify(this.responseData.validation)}`
         )
       }
     }
@@ -221,12 +236,11 @@ Then(
             `s3://${expectedSummaryLog.s3Bucket}/${expectedSummaryLog.s3Key}`
           )
           break
-        // FIXME: Assert failure somewhere else?
-        // case 'rejected':
-        //   expect(summaryLog.failureReason).to.equal(
-        //     expectedSummaryLog.failureReason
-        //   )
-        //   break
+        case 'rejected':
+          expect(summaryLog.validation.failures[0].code).to.equal(
+            expectedSummaryLog.validationFailure
+          )
+          break
       }
     } else {
       logger.warn(
