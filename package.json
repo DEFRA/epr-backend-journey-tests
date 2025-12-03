@@ -51,6 +51,6 @@
     "husky": "9.1.7",
     "mongodb": "7.0.0",
     "neostandard": "0.12.2",
-    "prettier": "3.7.2"
+    "prettier": "3.7.3"
   }
 }
