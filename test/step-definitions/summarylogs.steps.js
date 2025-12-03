@@ -183,33 +183,91 @@ Then(
 
     for (const expectedResult of expectedResults) {
       const matchingFailure = this.responseData.validation.failures.find(
-        (failure) =>
-          failure.code === expectedResult['Code'] &&
-          failure.location.field === expectedResult['Location Field']
+        (failure) => {
+          const checks = [
+            ['Code', 'code'],
+            ['Location Field', 'location.field'],
+            ['Location Sheet', 'location.sheet'],
+            ['Location Table', 'location.table'],
+            ['Location Row ID', 'location.rowId'],
+            ['Actual', 'actual']
+          ]
+
+          return checks.every(([expectedKey, actual]) => {
+            if (expectedResult[expectedKey] === undefined) return true
+
+            const actualValue = actual.includes('.')
+              ? actual.split('.').reduce((obj, key) => obj?.[key], failure)
+              : failure[actual]
+            return `${actualValue}` === expectedResult[expectedKey]
+          })
+        }
       )
 
-      this.responseData.validation.failures.find((failure) => {
+      if (!matchingFailure) {
+        expect.fail(
+          `Expected validation ${JSON.stringify(expectedResult)} but no failures found with those values. Actual validation values found: ${JSON.stringify(this.responseData.validation)}`
+        )
+      }
+    }
+  }
+)
+
+Then(
+  'I should see the following summary log validation concerns for table {string}, row {int} and sheet {string}',
+  async function (expectedTable, expectedRow, expectedSheet, dataTable) {
+    // Only check the status in local runs as environment runs will not have the file uploaded to S3
+    if (process.env.ENVIRONMENT) {
+      logger.warn(
+        {
+          step_definition:
+            'Then I should see the following summary log validation concerns'
+        },
+        'Skipping summary log validation concerns checks'
+      )
+      return
+    }
+
+    const expectedResults = dataTable.hashes()
+    // eslint-disable-next-line no-unused-expressions
+    expect(this.responseData.validation.concerns[expectedTable]).to.not.be
+      .undefined
+
+    for (const expectedResult of expectedResults) {
+      const matchingRow = this.responseData.validation.concerns[
+        expectedTable
+      ].rows.find((actualRow) => {
+        return expectedRow === actualRow.row
+      })
+
+      if (matchingRow.length === 0) {
+        expect.fail(
+          `Expected row ${expectedRow} but no row found with those values. Actual row values found: ${JSON.stringify(this.responseData.validation.concerns[expectedTable].rows.map((actualRow) => actualRow.row))}`
+        )
+      }
+
+      const matchingConcern = matchingRow.issues.find((issue) => {
         const checks = [
+          ['Type', 'type'],
           ['Code', 'code'],
-          ['Location Field', 'location.field'],
-          ['Location Sheet', 'location.sheet'],
-          ['Location Table', 'location.table'],
-          ['Location Row ID', 'location.rowId']
+          ['Header', 'header'],
+          ['Column', 'column'],
+          ['Actual', 'actual']
         ]
 
         return checks.every(([expectedKey, actual]) => {
           if (expectedResult[expectedKey] === undefined) return true
 
           const actualValue = actual.includes('.')
-            ? actual.split('.').reduce((obj, key) => obj?.[key], failure)
-            : failure[actual]
+            ? actual.split('.').reduce((obj, key) => obj?.[key], issue)
+            : issue[actual]
           return actualValue === expectedResult[expectedKey]
         })
       })
 
-      if (!matchingFailure) {
+      if (!matchingConcern) {
         expect.fail(
-          `Expected validation ${JSON.stringify(expectedResult)} but no failures found with those values. Actual validation values found: ${JSON.stringify(this.responseData.validation)}`
+          `Expected validation ${JSON.stringify(expectedResult)} but no concerns found with those values. Actual validation concern values found: ${JSON.stringify(this.responseData.validation.concerns)}`
         )
       }
     }
