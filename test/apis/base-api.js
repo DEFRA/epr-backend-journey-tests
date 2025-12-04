@@ -22,27 +22,25 @@ export class BaseAPI {
   }
 
   async post(endpoint, data, headers = {}) {
-    const instanceHeaders = { ...this.defaultHeaders, ...headers }
-    const {
-      statusCode,
-      headers: responseHeaders,
-      body
-    } = await request(`${baseUrl}${endpoint}`, {
-      method: 'POST',
-      headers: instanceHeaders,
-      body: data
-    })
-    return { statusCode, responseHeaders, body }
+    return await this.#call('POST', endpoint, data, headers)
   }
 
   async put(endpoint, data, headers = {}) {
+    return await this.#call('PUT', endpoint, data, headers)
+  }
+
+  async patch(endpoint, data, headers = {}) {
+    return await this.#call('PATCH', endpoint, data, headers)
+  }
+
+  async #call(method, endpoint, data, headers) {
     const instanceHeaders = { ...this.defaultHeaders, ...headers }
     const {
       statusCode,
       headers: responseHeaders,
       body
     } = await request(`${baseUrl}${endpoint}`, {
-      method: 'PUT',
+      method,
       headers: instanceHeaders,
       body: data
     })
