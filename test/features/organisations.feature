@@ -43,6 +43,11 @@ Feature: Organisations endpoint
     When I update the organisations with id '6507f1f77bcf86cd79943901' with the following payload
       | updateFragment | {} |
     Then I should receive a successful update organisations response
+    When I request the organisations with id '6507f1f77bcf86cd79943901'
+    Then I should receive a valid organisations response for '6507f1f77bcf86cd79943901'
+    And I should see the following users in the organisations response
+      | Full Name      | Email                         | Is Initial User | Roles         |
+      | Luke Skywalker | anakin.skywalker@starwars.com | true            | standard_user |
 
   Scenario: Organisations PUT endpoint returns a not found response when organisation id is not found
     Given I am logged in as a service maintainer

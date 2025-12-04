@@ -75,3 +75,27 @@ Then(
     expect(this.responseData.id).to.equal(id)
   }
 )
+
+Then(
+  'I should see the following users in the organisations response',
+  async function (dataTable) {
+    const expectedResults = dataTable.hashes()
+    for (const expectedResult of expectedResults) {
+      const matchingRow = this.responseData.users.find((row) => {
+        return (
+          row.fullName === expectedResult['Full Name'] &&
+          row.email === expectedResult.Email &&
+          row.isInitialUser ===
+            (expectedResult['Is Initial User'] === 'true') &&
+          row.roles.join(',') === expectedResult.Roles
+        )
+      })
+
+      if (!matchingRow) {
+        expect.fail(
+          `Expected user ${JSON.stringify(expectedResult)} but no user found with those values. Actual users values found: ${JSON.stringify(this.responseData.users)}`
+        )
+      }
+    }
+  }
+)

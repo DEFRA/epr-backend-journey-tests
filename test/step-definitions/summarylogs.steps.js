@@ -3,12 +3,23 @@ import { baseAPI, dbClient } from '../support/hooks.js'
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
 import logger from '../support/logger.js'
+import fs from 'node:fs'
 
 Given('I have the following summary log upload data', function (dataTable) {
   this.summaryLog = new SummaryLog()
   this.uploadData = dataTable.rowsHash()
   this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
 })
+
+Given(
+  'I update the organisations data for id {string} with the following payload {string}',
+  function (orgId, pathToFile) {
+    if (!process.env.ENVIRONMENT) {
+      const data = JSON.parse(fs.readFileSync(pathToFile, 'utf8'))
+      baseAPI.patch(`/v1/dev/organisations/${orgId}`, JSON.stringify(data))
+    }
+  }
+)
 
 Given(
   'I have the following summary log upload data with a valid organisation and registration details',
