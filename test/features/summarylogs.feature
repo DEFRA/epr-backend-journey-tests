@@ -98,6 +98,28 @@ Feature: Summary Logs endpoint
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   @wip
+  Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Table name and cannot be submitted
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket | re-ex-summary-logs         |
+      | s3Key    | invalid-table-name-key     |
+      | fileId   | invalid-table-name-file-id |
+      | filename | invalid-table-name.xlsx    |
+      | status   | complete                   |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | invalid |
+    And I should see the following summary log validation failures
+      | Code               | Location Sheet                 | Location Table |
+      | TABLE_UNRECOGNISED | Received (sections 1, 2 and 3) | INVALID_TABLE  |
+
+    When I submit the uploaded summary log
+    Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+
+  @wip
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when summary log validation fails
     Given I have the following summary log upload data
       | s3Bucket | re-ex-summary-logs       |
