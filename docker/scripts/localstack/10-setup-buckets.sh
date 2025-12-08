@@ -41,3 +41,9 @@ aws s3api put-object \
   --body /etc/localstack/init/ready.d/invalid-row-id.xlsx \
   --endpoint-url=http://localhost:4566 \
 
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key invalid-table-name-key \
+  --body /etc/localstack/init/ready.d/invalid-table-name.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
