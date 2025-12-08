@@ -205,6 +205,7 @@ Then(
             ['Location Sheet', 'location.sheet'],
             ['Location Table', 'location.table'],
             ['Location Row ID', 'location.rowId'],
+            ['Location Row', 'location.row'],
             ['Actual', 'actual']
           ]
 

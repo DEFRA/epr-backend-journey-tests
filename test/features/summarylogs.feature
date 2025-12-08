@@ -2,7 +2,7 @@
 Feature: Summary Logs endpoint
 
   @wip
-  Scenario: Summary Logs uploads (With Validation concerns) and creates a Waste Record
+  Scenario: Summary Logs uploads and creates a Waste Record
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs              |
@@ -31,8 +31,8 @@ Feature: Summary Logs endpoint
     Then I should see the following summary log response
       | status  | validated  |
     And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 10 and sheet "Received (sections 1, 2 and 3)"
-      | Type  | Code           | Header   | Column | Actual    |
-      | error | INVALID_FORMAT | EWC_CODE | F      | 01 03 05* |
+      | Type  | Code           | Header   | Column |
+      | error | FIELD_REQUIRED | EWC_CODE | F      |
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds
@@ -40,10 +40,10 @@ Feature: Summary Logs endpoint
       | Log Level | Message                                              |
       | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
     And I should see that waste records are created in the database with the following values
-      | OrganisationId           | RegistrationId           | RowId  | Type     |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 10001  | received |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 10002  | received |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 10003  | received |
+      | OrganisationId           | RegistrationId           | RowId | Type     |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1001  | received |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1002  | received |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1003  | received |
 
   @wip
   Scenario: Summary Logs uploads and fails validation for removed row on second upload
@@ -68,9 +68,37 @@ Feature: Summary Logs endpoint
       | status | invalid |
     And I should see the following summary log validation failures
       | Code                   | Location Sheet | Location Table                  | Location Row ID |
-      | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 10002           |
-      | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 10003           |
+      | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 1002            |
+      | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 1003            |
 
+    When I submit the uploaded summary log
+    Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+
+  @wip
+  Scenario: Summary Logs uploads (Reprocessor Output) and fails validation for product tonnage
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket | re-ex-summary-logs             |
+      | s3Key    | reprocessor-output-invalid-tonnage-key     |
+      | fileId   | reprocessor-output-invalid-tonnage-file-id |
+      | filename | reprocessor-output-invalid-tonnage.xlsx    |
+      | status   | complete                       |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+
+    And the following messages appear in the log
+      | Log Level | Event Action    | Message                                                                                                                                                                                                                                               |
+      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-tonnage-file-id, filename=reprocessor-output-invalid-tonnage.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=reprocessor-output-invalid-tonnage-key |
+      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-tonnage-file-id, filename=reprocessor-output-invalid-tonnage.xlsx                                                                                    |
+      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-tonnage-file-id, filename=reprocessor-output-invalid-tonnage.xlsx                                                                                        |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-tonnage-file-id, filename=reprocessor-output-invalid-tonnage.xlsx, status=invalid                                                                               |
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | invalid |
+    And I should see the following summary log validation failures
+      | Code               | Location Sheet           | Location Table    | Location Row |
+      | VALUE_OUT_OF_RANGE | Reprocessed (section 4)  | REPROCESSED_LOADS | 8            |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
@@ -91,8 +119,9 @@ Feature: Summary Logs endpoint
       | status | invalid |
     And I should see the following summary log validation failures
       | Code               | Location Sheet                 | Location Table                  | Actual |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 1001   |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 1002   |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 101    |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 102    |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 103    |
 
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'

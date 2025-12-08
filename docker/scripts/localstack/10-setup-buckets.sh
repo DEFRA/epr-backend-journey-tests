@@ -47,3 +47,9 @@ aws s3api put-object \
   --body /etc/localstack/init/ready.d/invalid-table-name.xlsx \
   --endpoint-url=http://localhost:4566 \
 
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key reprocessor-output-invalid-tonnage-key \
+  --body /etc/localstack/init/ready.d/reprocessor-output-invalid-tonnage.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
