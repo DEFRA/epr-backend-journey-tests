@@ -4,6 +4,7 @@ import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
 import logger from '../support/logger.js'
 import fs from 'node:fs'
+import { Dates } from '../support/dates.js'
 
 Given('I have the following summary log upload data', function (dataTable) {
   this.summaryLog = new SummaryLog()
@@ -13,10 +14,23 @@ Given('I have the following summary log upload data', function (dataTable) {
 
 Given(
   'I update the organisations data for id {string} with the following payload {string}',
-  function (orgId, pathToFile) {
+  async function (orgId, pathToFile) {
     if (!process.env.ENVIRONMENT) {
       const data = JSON.parse(fs.readFileSync(pathToFile, 'utf8'))
-      baseAPI.patch(`/v1/dev/organisations/${orgId}`, JSON.stringify(data))
+      const dates = new Dates()
+      dates.updateValidDates(data)
+
+      this.response = await baseAPI.patch(
+        `/v1/dev/organisations/${orgId}`,
+        JSON.stringify(data)
+      )
+    } else {
+      logger.warn(
+        {
+          step_definition: `Given I update the organisations data for id ${orgId} with the following payload ${pathToFile}`
+        },
+        'Skipping organisations data update'
+      )
     }
   }
 )
@@ -53,6 +67,19 @@ When('I initiate the summary log upload', async function () {
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
     JSON.stringify(this.initiatePayload)
   )
+})
+
+Then('the organisations data update succeeds', async function () {
+  if (!process.env.ENVIRONMENT) {
+    expect(this.response.statusCode).to.equal(200)
+  } else {
+    logger.warn(
+      {
+        step_definition: 'Then the organisations data update succeeds'
+      },
+      'Skipping organisations data update checks'
+    )
+  }
 })
 
 Then('the summary log upload initiation succeeds', async function () {
@@ -205,6 +232,7 @@ Then(
             ['Location Sheet', 'location.sheet'],
             ['Location Table', 'location.table'],
             ['Location Row ID', 'location.rowId'],
+            ['Location Row', 'location.row'],
             ['Actual', 'actual']
           ]
 
@@ -255,7 +283,7 @@ Then(
         return expectedRow === actualRow.row
       })
 
-      if (matchingRow.length === 0) {
+      if (!matchingRow || matchingRow.length === 0) {
         expect.fail(
           `Expected row ${expectedRow} but no row found with those values. Actual row values found: ${JSON.stringify(this.responseData.validation.concerns[expectedTable].rows.map((actualRow) => actualRow.row))}`
         )
