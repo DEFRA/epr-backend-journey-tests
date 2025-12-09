@@ -2,7 +2,7 @@
 Feature: Summary Logs endpoint
 
   @wip
-  Scenario: Summary Logs uploads and creates a Waste Record
+  Scenario: Summary Logs uploads (With Validation concerns) and creates a Waste Record
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs              |
