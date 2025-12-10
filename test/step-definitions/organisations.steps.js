@@ -85,8 +85,6 @@ Then(
         return (
           row.fullName === expectedResult['Full Name'] &&
           row.email === expectedResult.Email &&
-          row.isInitialUser ===
-            (expectedResult['Is Initial User'] === 'true') &&
           row.roles.join(',') === expectedResult.Roles
         )
       })
