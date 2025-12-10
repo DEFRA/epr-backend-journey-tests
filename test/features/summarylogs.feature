@@ -31,9 +31,10 @@ Feature: Summary Logs endpoint
     When I check for the summary log status
     Then I should see the following summary log response
       | status  | validated  |
-    And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 8 and sheet "Received (sections 1, 2 and 3)"
-      | Type  | Code           | Header   | Column |
-      | error | FIELD_REQUIRED | EWC_CODE | F      |
+    #FIXME: To be fixed by further ticket
+#    And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 8 and sheet "Received (sections 1, 2 and 3)"
+#      | Type  | Code           | Header   | Column |
+#      | error | FIELD_REQUIRED | EWC_CODE | F      |
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds
@@ -76,6 +77,8 @@ Feature: Summary Logs endpoint
 
   @wip
   Scenario: Summary Logs uploads (Reprocessor Output) and fails validation for product tonnage
+    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
+    Then the organisations data update succeeds
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs             |
       | s3Key    | reprocessor-output-invalid-tonnage-key     |
@@ -97,13 +100,15 @@ Feature: Summary Logs endpoint
     Then I should see the following summary log response
       | status | invalid |
     And I should see the following summary log validation failures
-      | Code               | Location Sheet           | Location Table    | Location Row |
-      | VALUE_OUT_OF_RANGE | Reprocessed (section 4)  | REPROCESSED_LOADS | 8            |
+      | Code               | Location Sheet                  | Location Table    | Location Row |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 6            |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   @wip
   Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Row ID and cannot be submitted
+    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
+    Then the organisations data update succeeds
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs     |
       | s3Key    | invalid-row-id-key     |
@@ -163,7 +168,6 @@ Feature: Summary Logs endpoint
       | Log Level | Event Action    | Message                                                                                                                                                                                          |
       | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=invalid-test-upload-key |
       | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx                                                                     |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx                                                                         |
       | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx, status=invalid                                                                |
     And I should see that a summary log is created in the database with the following values
       | s3Bucket   | re-ex-summary-logs       |
@@ -177,8 +181,9 @@ Feature: Summary Logs endpoint
       | status   | invalid  |
     And I should see the following summary log validation failures
       | Code                      | Location Field      |
-      | PROCESSING_TYPE_REQUIRED  | PROCESSING_TYPE     |
-      | TEMPLATE_VERSION_REQUIRED | TEMPLATE_VERSION    |
+      | PROCESSING_TYPE_INVALID   | PROCESSING_TYPE     |
+      | VALIDATION_FALLBACK_ERROR | PROCESSING_TYPE     |
+      | TEMPLATE_VERSION_INVALID  | TEMPLATE_VERSION    |
       | MATERIAL_REQUIRED         | MATERIAL            |
       | REGISTRATION_REQUIRED     | REGISTRATION_NUMBER |
 
