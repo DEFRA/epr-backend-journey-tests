@@ -103,6 +103,7 @@ Feature: Summary Logs endpoint
       | Code               | Location Sheet                 | Location Table                  | Location Row | Location Header                  | Actual     |
       | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | RECYCLABLE_PROPORTION_PERCENTAGE | 1.75       |
       | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | WEIGHT_OF_NON_TARGET_MATERIALS   | 1345       |
+      | INVALID_DATE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | DATE_RECEIVED_FOR_REPROCESSING   | 30-06-2025 |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
