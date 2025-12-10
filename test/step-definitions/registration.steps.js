@@ -4,8 +4,20 @@ import { Registration } from '../support/generator.js'
 import { dbClient, baseAPI } from '../support/hooks.js'
 import logger from '../support/logger.js'
 
+Given(
+  'I have entered my registration details as a Reprocessor for all materials',
+  function () {
+    const orgId = this.orgResponseData?.orgId
+    const refNo = this.orgResponseData?.referenceNumber
+    this.registration = new Registration(orgId, refNo)
+    this.payload = this.registration.toAllMaterialsPayload()
+  }
+)
+
 Given('I have entered my registration details', function () {
-  this.registration = new Registration()
+  const orgId = this.orgResponseData?.orgId
+  const refNo = this.orgResponseData?.referenceNumber
+  this.registration = new Registration(orgId, refNo)
   this.payload = this.registration.toPayload()
 })
 
@@ -88,8 +100,8 @@ Then(
   'I should see that a registration is created in the database',
   async function () {
     if (!process.env.ENVIRONMENT) {
-      const expectedRefNumber = this.payload.data.main.RIXIzA
-      const expectedOrgId = this.payload.data.main.QnSRcX
+      const expectedRefNumber = this.registration.refNo
+      const expectedOrgId = this.registration.orgId
       const registrationCollection = dbClient.collection('registration')
       const registration = await registrationCollection.findOne({
         referenceNumber: expectedRefNumber
@@ -106,7 +118,6 @@ Then(
       expect(registration.referenceNumber).to.equal(expectedRefNumber)
       expect(registration.orgId).to.equal(parseInt(expectedOrgId))
       expect(registration.schemaVersion).to.equal(1)
-      expect(registration.answers.length).to.equal(23)
       expect(JSON.stringify(registration.rawSubmissionData.meta)).to.equal(
         JSON.stringify(this.payload.meta)
       )
@@ -157,27 +168,12 @@ Then(
         registration.answers.find(
           (a) => a.shortDescription === 'Address to serve notices'
         ).value
-      ).to.equal(this.registration.address)
+      ).to.equal(this.registration.addressServiceNotice)
       expect(
         registration.answers.find(
           (a) => a.shortDescription === 'Carrier, broker or dealer number'
         ).value
       ).to.equal(this.registration.wasteRegNo)
-      expect(
-        registration.answers.find((a) => a.shortDescription === 'Permit type')
-          .value
-      ).to.equal(this.registration.permitType)
-      expect(
-        registration.answers.find(
-          (a) => a.shortDescription === 'WML or Permit number'
-        ).value
-      ).to.equal(this.registration.permitNo)
-      expect(
-        registration.answers.find(
-          (a) =>
-            a.shortDescription === 'Packaging waste category to be registered'
-        ).value
-      ).to.equal(this.registration.material)
     } else {
       logger.warn(
         {

@@ -39,12 +39,14 @@ const roles = ['Reprocessor', 'Exporter', 'Reprocessor and exporter']
 const nations = ['England', 'Northern Ireland', 'Scotland', 'Wales']
 
 export class Accreditation {
-  constructor() {
+  constructor(orgId, refNo) {
     this.phoneNumber = fakerEN_GB.phone.number()
     this.fullName = fakerEN_GB.person.fullName()
     this.email = fakerEN_GB.internet.email()
-    this.refNo = fakerEN_GB.database.mongodbObjectId()
-    this.orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
+    this.refNo = refNo || fakerEN_GB.database.mongodbObjectId()
+    this.orgId = orgId
+      ? `${orgId}`
+      : `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
     this.jobTitle = fakerEN_GB.person.jobTitle()
 
     this.fileId1 = fakerEN_GB.string.uuid()
@@ -66,6 +68,8 @@ export class Accreditation {
 
   toReprocessorPayload() {
     const payload = JSON.parse(JSON.stringify(accReprocessorPayload))
+
+    this.material = 'Paper or board (R3)'
 
     payload.data.main.PcYDad = this.fullName
     payload.data.main.ANtYzb = this.email
@@ -151,8 +155,6 @@ export class Organisation {
 
     this.companyName = fakerEN_GB.company.name() + ' Limited'
 
-    const roleIndex = Math.floor(Math.random() * roles.length)
-    this.role = roles[roleIndex]
     this.numberOfNations = Math.floor(Math.random() * nations.length) + 1
   }
 
@@ -168,7 +170,6 @@ export class Organisation {
     payload.data.main.aSoxDO = this.email
     payload.data.main.aIFHXo = this.phoneNumber
     payload.data.main.LyeSzH = this.jobTitle
-    payload.data.main.WVADkQ = this.role
     payload.data.main.WkWBWB = this.companyName
     payload.data.main.xsDMEE = this.companyName
     payload.data.main.VcdRNr = nations.slice(0, this.numberOfNations).join(', ')
@@ -191,12 +192,12 @@ export class Organisation {
     payload.data.main.aIFHXo = this.phoneNumber
     payload.data.main.YXSHOs = fakerEN_GB.phone.number()
     payload.data.main.bCwGVt = this.jobTitle
-    payload.data.main.WVADkQ = this.role
     payload.data.main.JbEBvr = this.companyName
     payload.data.main.QdhMJS = this.companyName
-    payload.data.main.RUKDyH = this.companyName
     payload.data.main.VcdRNr = nations.slice(0, this.numberOfNations).join(', ')
     payload.data.main.VATjEi = this.address
+
+    this.role = 'Reprocessor'
 
     return payload
   }
@@ -224,6 +225,9 @@ export class Organisation {
   toPayload() {
     const payload = JSON.parse(JSON.stringify(orgPayload))
 
+    const roleIndex = Math.floor(Math.random() * roles.length)
+    this.role = roles[roleIndex]
+
     payload.data.main.BYtjnh = this.fullName
     payload.data.main.aSoxDO = this.email
     payload.data.main.aIFHXo = this.phoneNumber
@@ -238,12 +242,14 @@ export class Organisation {
 }
 
 export class Registration {
-  constructor() {
+  constructor(orgId, refNo) {
     this.phoneNumber = fakerEN_GB.phone.number()
     this.fullName = fakerEN_GB.person.fullName()
     this.email = fakerEN_GB.internet.email()
-    this.refNo = fakerEN_GB.database.mongodbObjectId()
-    this.orgId = `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
+    this.refNo = refNo || fakerEN_GB.database.mongodbObjectId()
+    this.orgId = orgId
+      ? `${orgId}`
+      : `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
     this.jobTitle = fakerEN_GB.person.jobTitle()
     this.companyName = fakerEN_GB.company.name() + ' Limited'
 
@@ -262,6 +268,13 @@ export class Registration {
     this.permitNo = `${fakerEN_GB.number.int({ min: 1000000000, max: 9999999999 })}`
 
     this.address =
+      fakerEN_GB.location.streetAddress() +
+      ',' +
+      fakerEN_GB.location.city() +
+      ',' +
+      fakerEN_GB.location.zipCode()
+
+    this.addressServiceNotice =
       fakerEN_GB.location.streetAddress() +
       ',' +
       fakerEN_GB.location.city() +
@@ -296,12 +309,7 @@ export class Registration {
       ' ' +
       fakerEN_GB.number.int({ min: 500, max: 999 })
 
-    payload.data.main.VHfukU =
-      fakerEN_GB.location.streetAddress() +
-      ',' +
-      fakerEN_GB.location.city() +
-      ',' +
-      fakerEN_GB.location.zipCode()
+    payload.data.main.VHfukU = this.addressServiceNotice
 
     payload.data.main.DAcLmf = this.refNo
     payload.data.main.rJMICz = this.orgId
@@ -339,7 +347,7 @@ export class Registration {
 
     payload.data.main.BeHQjA = this.material
 
-    payload.data.main.pGYoub = this.address
+    payload.data.main.pGYoub = this.addressServiceNotice
     payload.data.main.fubWwR = this.wasteRegNo
     payload.data.main.CACJrG = this.permitNo
     payload.data.main.vsaLhJ = this.supplier

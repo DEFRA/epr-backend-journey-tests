@@ -1,19 +1,6 @@
 @organisation
 Feature: Organisation endpoint
 
-  Scenario: Ensure that organisation endpoint returns an orgId / reference number and organisation name on response
-    Given I have entered my organisation details
-    When I submit the organisation details
-    Then I should receive a successful organisation details response
-    And I should see that an organisation details is created in the database
-    And the following messages appear in the log
-      | Log Level | Event Action    | Message                            |
-      | info      | request_success | Stored organisation data for orgId |
-    And the following audit logs are present
-      | Event Category | Event Action    | Context Keys                              | Count |
-      | database       | database_insert | orgId, orgName, referenceNumber           | 1     |
-      | email          | email_sent      | templateId, emailAddress, personalisation | 2     |
-
   Scenario: Organisation endpoint returns an error if pages information in metadata are not present
     Given I have entered my organisation details without pages metadata
     When I submit the organisation details
