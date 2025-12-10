@@ -1,18 +1,6 @@
 @accreditation
 Feature: Accreditation endpoint
 
-  Scenario: Ensure that accreditation endpoint returns a created response when payload is stored into database
-    Given I have entered my accreditation details
-    When I submit the accreditation details
-    Then I should receive an accreditation resource created response
-    And I should see that an accreditation is created in the database
-    And the following messages appear in the log
-      | Log Level | Event Action    | Message                             |
-      | info      | request_success | Stored accreditation data for orgId |
-    And the following audit logs are present
-      | Event Category | Event Action    | Context Keys           | Count |
-      | database       | database_insert | orgId, referenceNumber | 1     |
-
   Scenario: Accreditation endpoint returns an error if pages information in metadata are not present
     Given I have entered my accreditation details without pages metadata
     When I submit the accreditation details

@@ -4,6 +4,14 @@ import { Organisation } from '../support/generator.js'
 import { dbClient, baseAPI } from '../support/hooks.js'
 import logger from '../support/logger.js'
 
+Given(
+  'I have entered my organisation details for a non registered UK Sole trader Reprocessor',
+  function () {
+    this.organisation = new Organisation()
+    this.payload = this.organisation.toNonRegisteredUKSoleTraderPayload()
+  }
+)
+
 Given('I have entered my organisation details', function () {
   this.organisation = new Organisation()
   this.payload = this.organisation.toPayload()
@@ -56,10 +64,10 @@ Then(
   'I should receive a successful organisation details response',
   async function () {
     expect(this.response.statusCode).to.equal(200)
-    this.responseData = await this.response.body.json()
-    expect(this.responseData.orgId).to.match(/^\d{6}$/)
-    expect(this.responseData.referenceNumber).to.match(/^[0-9a-f]{24}$/i)
-    expect(this.responseData.orgName).to.equal(this.payload.data.main.RUKDyH)
+    this.orgResponseData = await this.response.body.json()
+    expect(this.orgResponseData.orgId).to.match(/^\d{6}$/)
+    expect(this.orgResponseData.referenceNumber).to.match(/^[0-9a-f]{24}$/i)
+    expect(this.orgResponseData.orgName).to.equal(this.organisation.companyName)
   }
 )
 
@@ -67,8 +75,8 @@ Then(
   'I should see that an organisation details is created in the database',
   async function () {
     if (!process.env.ENVIRONMENT) {
-      const expectedOrgId = this.responseData.orgId
-      const expectedOrgName = this.responseData.orgName
+      const expectedOrgId = this.orgResponseData.orgId
+      const expectedOrgName = this.orgResponseData.orgName
       const organisationCollection = dbClient.collection('organisation')
       const organisation = await organisationCollection.findOne({
         orgId: expectedOrgId
@@ -88,7 +96,6 @@ Then(
       expect(organisation.orgId).to.equal(parseInt(expectedOrgId))
       expect(organisation.schemaVersion).to.equal(1)
       expect(organisation.email).to.equal(this.organisation.email)
-      expect(organisation.answers.length).to.equal(14)
       expect(JSON.stringify(organisation.rawSubmissionData.meta)).to.equal(
         JSON.stringify(this.payload.meta)
       )

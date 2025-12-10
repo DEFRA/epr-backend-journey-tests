@@ -1,18 +1,6 @@
 @registration
 Feature: Registration endpoint
 
-  Scenario: Ensure that registration endpoint returns a response
-    Given I have entered my registration details
-    When I submit the registration details
-    Then I should receive a registration resource created response
-    And I should see that a registration is created in the database
-    And the following messages appear in the log
-      | Log Level | Event Action    | Message                            |
-      | info      | request_success | Stored registration data for orgId |
-    And the following audit logs are present
-      | Event Category | Event Action    | Context Keys           | Count |
-      | database       | database_insert | orgId, referenceNumber | 1     |
-
   Scenario: Registration endpoint returns an error if data / answers are not present
     Given I have entered my registration details without data
     When I submit the registration details

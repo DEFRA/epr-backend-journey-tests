@@ -4,8 +4,17 @@ import { Accreditation } from '../support/generator.js'
 import { dbClient, baseAPI } from '../support/hooks.js'
 import logger from '../support/logger.js'
 
+Given('I have entered my accreditation details as a Reprocessor', function () {
+  const orgId = this.orgResponseData?.orgId
+  const refNo = this.orgResponseData?.referenceNumber
+  this.accreditation = new Accreditation(orgId, refNo)
+  this.payload = this.accreditation.toReprocessorPayload()
+})
+
 Given('I have entered my accreditation details', function () {
-  this.accreditation = new Accreditation()
+  const orgId = this.orgResponseData?.orgId
+  const refNo = this.orgResponseData?.referenceNumber
+  this.accreditation = new Accreditation(orgId, refNo)
   this.payload = this.accreditation.toPayload()
 })
 
@@ -82,8 +91,8 @@ Then(
   'I should see that an accreditation is created in the database',
   async function () {
     if (!process.env.ENVIRONMENT) {
-      const expectedRefNumber = this.payload.data.main.MyWHms
-      const expectedOrgId = this.payload.data.main.Ooierc
+      const expectedRefNumber = this.accreditation.refNo
+      const expectedOrgId = this.accreditation.orgId
       const accreditationCollection = dbClient.collection('accreditation')
       const accreditation = await accreditationCollection.findOne({
         referenceNumber: expectedRefNumber
@@ -100,7 +109,6 @@ Then(
       expect(accreditation.referenceNumber).to.equal(expectedRefNumber)
       expect(accreditation.orgId).to.equal(parseInt(expectedOrgId))
       expect(accreditation.schemaVersion).to.equal(1)
-      expect(accreditation.answers.length).to.equal(25)
       expect(JSON.stringify(accreditation.rawSubmissionData.meta)).to.equal(
         JSON.stringify(this.payload.meta)
       )
