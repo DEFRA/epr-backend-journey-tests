@@ -75,7 +75,7 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  @wip @invalid
+  @wip
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
     Then the organisations data update succeeds
@@ -106,8 +106,10 @@ Feature: Summary Logs endpoint
       | INVALID_DATE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | DATE_RECEIVED_FOR_REPROCESSING        | 30-06-2025 |
       | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE | Unsure     |
       | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | BAILING_WIRE_PROTOCOL                 | Invalid    |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | GROSS_WEIGHT                          | 1500       |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | NET_WEIGHT                            | 1475       |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | GROSS_WEIGHT                          | 3500       |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | NET_WEIGHT                            | 1275       |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | TARE_WEIGHT                           | 1115       |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 8            | PALLET_WEIGHT                         | 1110       |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
