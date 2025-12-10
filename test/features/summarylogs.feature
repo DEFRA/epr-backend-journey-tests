@@ -76,32 +76,35 @@ Feature: Summary Logs endpoint
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   @wip
-  Scenario: Summary Logs uploads (Reprocessor Output) and fails validation for product tonnage
+  Scenario: Summary Logs uploads (Reprocessor Output) and fails in-sheet revalidation
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
     Then the organisations data update succeeds
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs             |
-      | s3Key    | reprocessor-output-invalid-tonnage-key     |
-      | fileId   | reprocessor-output-invalid-tonnage-file-id |
-      | filename | reprocessor-output-invalid-tonnage.xlsx    |
-      | status   | complete                       |
+      | s3Bucket | re-ex-summary-logs                 |
+      | s3Key    | reprocessor-output-invalid-key     |
+      | fileId   | reprocessor-output-invalid-file-id |
+      | filename | reprocessor-output-invalid.xlsx    |
+      | status   | complete                           |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
     And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                                                                                               |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-tonnage-file-id, filename=reprocessor-output-invalid-tonnage.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=reprocessor-output-invalid-tonnage-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-tonnage-file-id, filename=reprocessor-output-invalid-tonnage.xlsx                                                                                    |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-tonnage-file-id, filename=reprocessor-output-invalid-tonnage.xlsx                                                                                        |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-tonnage-file-id, filename=reprocessor-output-invalid-tonnage.xlsx, status=invalid                                                                               |
+      | Log Level | Event Action    | Message                                                                                                                                                                                                                       |
+      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-file-id, filename=reprocessor-output-invalid.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=reprocessor-output-invalid-key |
+      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-file-id, filename=reprocessor-output-invalid.xlsx                                                                            |
+      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-file-id, filename=reprocessor-output-invalid.xlsx                                                                                |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-file-id, filename=reprocessor-output-invalid.xlsx, status=invalid                                                                       |
     When I check for the summary log status
     Then I should see the following summary log response
       | status | invalid |
     And I should see the following summary log validation failures
-      | Code               | Location Sheet                  | Location Table    | Location Row |
-      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 6            |
+      | Code               | Location Sheet                  | Location Table    | Location Row | Location Header                | Actual     |
+      | INVALID_DATE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 6            | DATE_LOAD_LEFT_SITE            | 30-06-2025 |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 6            | PRODUCT_TONNAGE                | 1005       |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 6            | UK_PACKAGING_WEIGHT_PERCENTAGE | 1.1        |
+      | INVALID_TYPE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 6            | ADD_PRODUCT_WEIGHT             | Invalid    |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 

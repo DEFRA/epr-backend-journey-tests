@@ -220,7 +220,8 @@ Then(
 
     const expectedResults = dataTable.hashes()
     expect(this.responseData.validation.failures.length).to.equal(
-      expectedResults.length
+      expectedResults.length,
+      'Number of actual validation failures does not match expected value'
     )
 
     for (const expectedResult of expectedResults) {
@@ -233,6 +234,7 @@ Then(
             ['Location Table', 'location.table'],
             ['Location Row ID', 'location.rowId'],
             ['Location Row', 'location.row'],
+            ['Location Header', 'location.header'],
             ['Actual', 'actual']
           ]
 
