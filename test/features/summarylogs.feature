@@ -114,6 +114,37 @@ Feature: Summary Logs endpoint
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   @wip
+  Scenario: Summary Logs uploads (Reprocessor Input, Sent On sheet) and fails in-sheet revalidation
+    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
+    Then the organisations data update succeeds
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket | re-ex-summary-logs                       |
+      | s3Key    | reprocessor-input-senton-invalid-key     |
+      | fileId   | reprocessor-input-senton-invalid-file-id |
+      | filename | reprocessor-input-senton-invalid.xlsx    |
+      | status   | complete                                 |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+
+    And the following messages appear in the log
+      | Log Level | Event Action    | Message                                                                                                                                                                                                                                         |
+      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-senton-invalid-file-id, filename=reprocessor-input-senton-invalid.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=reprocessor-input-senton-invalid-key |
+      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-senton-invalid-file-id, filename=reprocessor-input-senton-invalid.xlsx                                                                                  |
+      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-senton-invalid-file-id, filename=reprocessor-input-senton-invalid.xlsx                                                                                      |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-senton-invalid-file-id, filename=reprocessor-input-senton-invalid.xlsx, status=invalid                                                                             |
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | invalid |
+    And I should see the following summary log validation failures
+      | Code               | Location Sheet                | Location Table  | Location Row | Location Header     | Actual     |
+      | INVALID_DATE       | Sent on (sections 5, 6 and 7) | SENT_ON_LOADS   | 6            | DATE_LOAD_LEFT_SITE | 30-02-2025 |
+
+    When I submit the uploaded summary log
+    Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+
+  @wip
   Scenario: Summary Logs uploads (Reprocessor Output) and fails in-sheet revalidation
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
     Then the organisations data update succeeds
