@@ -31,10 +31,9 @@ Feature: Summary Logs endpoint
     When I check for the summary log status
     Then I should see the following summary log response
       | status  | validated  |
-    #FIXME: To be fixed by further ticket
-#    And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 8 and sheet "Received (sections 1, 2 and 3)"
-#      | Type  | Code           | Header   | Column |
-#      | error | FIELD_REQUIRED | EWC_CODE | F      |
+    And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 10 and sheet "Received (sections 1, 2 and 3)"
+      | Type  | Code           | Header   | Column |
+      | error | FIELD_REQUIRED | EWC_CODE | F      |
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds
@@ -75,7 +74,7 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  @wip
+  @wip @invalid
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
     Then the organisations data update succeeds
@@ -100,16 +99,18 @@ Feature: Summary Logs endpoint
     Then I should see the following summary log response
       | status | invalid |
     And I should see the following summary log validation failures
-      | Code               | Location Sheet                 | Location Table                  | Location Row | Location Header                       | Actual     |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | RECYCLABLE_PROPORTION_PERCENTAGE      | 1.75       |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WEIGHT_OF_NON_TARGET_MATERIALS        | 1345       |
-      | INVALID_DATE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DATE_RECEIVED_FOR_REPROCESSING        | 30-06-2025 |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE | Unsure     |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | BAILING_WIRE_PROTOCOL                 | Invalid    |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | GROSS_WEIGHT                          | 3500       |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | NET_WEIGHT                            | 1275       |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | TARE_WEIGHT                           | 1115       |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | PALLET_WEIGHT                         | 1110       |
+      | Code               | Location Sheet                 | Location Table                  | Location Row | Location Header                       | Actual            |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | RECYCLABLE_PROPORTION_PERCENTAGE      | 1.75              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WEIGHT_OF_NON_TARGET_MATERIALS        | 1345              |
+      | INVALID_DATE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DATE_RECEIVED_FOR_REPROCESSING        | 30-06-2025        |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE | Unsure            |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | BAILING_WIRE_PROTOCOL                 | Invalid           |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | GROSS_WEIGHT                          | 3500              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | NET_WEIGHT                            | 1275              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | TARE_WEIGHT                           | 1115              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | PALLET_WEIGHT                         | 1110              |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DESCRIPTION_WASTE                     | Wrong description |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | EWC_CODE                              | Invalid EWC       |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
