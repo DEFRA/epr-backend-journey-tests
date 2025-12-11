@@ -74,7 +74,7 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  @wip @invalid
+  @wip
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
     Then the organisations data update succeeds
