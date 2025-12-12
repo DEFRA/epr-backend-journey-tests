@@ -1,4 +1,4 @@
-@summarylogs
+@summarylogs @wip
 Feature: Summary Logs endpoint
 
   @wip
