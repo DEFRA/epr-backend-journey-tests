@@ -8,7 +8,7 @@ import { randomUUID } from 'crypto'
 Given('I register a User to use the system', async function () {
   this.userId = '86a7607c-a1e7-41e5-a0b6-a41680d05a2a'
 
-  if (!defraIdStub.accessTokens.has(this.userId)) {
+  if (!defraIdStub.accessTokens.has(this.userId) && !process.env.ENVIRONMENT) {
     const user = {
       userId: this.userId,
       email: 'alice.smith@ecorecycle.com',
@@ -26,7 +26,7 @@ Given('I register a User to use the system', async function () {
 Given('I add a relationship to the User', async function () {
   const userId = this.userId
 
-  if (!defraIdStub.accessTokens.has(this.userId)) {
+  if (!defraIdStub.accessTokens.has(this.userId) && !process.env.ENVIRONMENT) {
     const params = new URLSearchParams({
       csrfToken: randomUUID(),
       userId,
@@ -46,7 +46,7 @@ Given('I add a relationship to the User', async function () {
 })
 
 When('I authorise the User', async function () {
-  if (!defraIdStub.accessTokens.has(this.userId)) {
+  if (!defraIdStub.accessTokens.has(this.userId) && !process.env.ENVIRONMENT) {
     const payload = {
       user: 'alice.smith@ecorecycle.com',
       // eslint-disable-next-line camelcase
@@ -64,7 +64,7 @@ When('I authorise the User', async function () {
 })
 
 When('I generate the token', async function () {
-  if (!defraIdStub.accessTokens.has(this.userId)) {
+  if (!defraIdStub.accessTokens.has(this.userId) && !process.env.ENVIRONMENT) {
     const payload = {
       // eslint-disable-next-line camelcase
       client_id: '63983fc2-cfff-45bb-8ec2-959e21062b9a',
@@ -82,7 +82,7 @@ When('I generate the token', async function () {
 When(
   'the User is linked to the organisation with id {string}',
   async function (organisationId) {
-    if (!defraIdStub.linked.has(organisationId)) {
+    if (!defraIdStub.linked.has(organisationId) && !process.env.ENVIRONMENT) {
       this.response = await baseAPI.post(
         `/v1/organisations/${organisationId}/link`,
         '',
