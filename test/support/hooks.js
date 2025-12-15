@@ -6,6 +6,7 @@ import { BaseAPI } from '../apis/base-api.js'
 import { setGlobalDispatcher } from 'undici'
 import { Interpolator } from './interpolator.js'
 import { AuthClient } from '../support/auth.js'
+import { DefraIdStub } from '../support/defra-id-stub.js'
 
 let agent
 let dbConnector
@@ -13,12 +14,14 @@ let dbClient
 let authClient
 let baseAPI
 let interpolator
+let defraIdStub
 
 BeforeAll(async function () {
   dbConnector = config.dbConnector
   dbClient = await dbConnector.connect()
   baseAPI = new BaseAPI()
   authClient = new AuthClient()
+  defraIdStub = new DefraIdStub()
   interpolator = new Interpolator()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
@@ -36,4 +39,4 @@ After(async function (scenario) {
   }
 })
 
-export { dbClient, authClient, baseAPI, interpolator }
+export { dbClient, authClient, defraIdStub, baseAPI, interpolator }

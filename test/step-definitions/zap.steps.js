@@ -17,8 +17,9 @@ Given(
     const method = dataTableRows.Method
     this.params = { url: config.zapTargetApiUri + url }
     if (method === 'POST') {
-      this.params.postData = {}
+      this.params.postData = ''
     }
+    this.params.method = method
     await zapClient.runSpider(this.params)
   }
 )

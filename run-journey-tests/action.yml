@@ -30,6 +30,13 @@ runs:
       run: npm i
       shell: bash
 
+    - name: Add hosts entry
+      run: |
+        sudo echo "127.0.0.1 defra-id-stub" | sudo tee -a /etc/hosts
+        # Verify it worked
+        cat /etc/hosts
+      shell: bash
+
     - name: Start docker compose
       shell: bash
       run: |

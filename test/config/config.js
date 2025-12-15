@@ -78,6 +78,10 @@ const auth = {
   grantType: 'password'
 }
 
+const defraId = {
+  local: 'http://defra-id-stub:3200'
+}
+
 const dockerLogParser = {
   containerName: 'epr-backend-journey-tests-epr-backend-1'
 }
@@ -91,10 +95,12 @@ const zapAgent = !withProxy && !withExternalProxy ? agent : zapProxyAgent
 const dbConnector = !environment ? database.mongo : database.stub
 let apiUri
 let authUri
+let defraIdUri
 
 if (!environment) {
   apiUri = api.local
   authUri = auth.local
+  defraIdUri = defraId.local
 } else if (xApiKey) {
   apiUri = api.envFromLocal
   authUri = auth.env
@@ -114,6 +120,7 @@ export default {
   dockerLogParser,
   zap,
   authUri,
+  defraIdUri,
   auth,
   zapAgent,
   undiciAgent: globalUndiciAgent,

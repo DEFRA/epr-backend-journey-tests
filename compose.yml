@@ -73,17 +73,22 @@ services:
      AUDIT_ENABLED: true
      FEATURE_FLAG_SUMMARY_LOGS: true
      FEATURE_FLAG_DEV_ENDPOINTS: true
+     FEATURE_FLAG_DEFRA_ID_AUTH: true
      LOG_FORMAT: ecs
      ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
      ADMIN_UI_ENTRA_CLIENT_ID: clientId
      SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
      CDP_UPLOADER_URL: http://cdp-uploader:7337
      APP_BASE_URL: http://epr-backend:3001
+     DEFRA_ID_OIDC_WELL_KNOWN_URL: http://defra-id-stub:3200/cdp-defra-id-stub/.well-known/openid-configuration
+     DEFRA_ID_CLIENT_ID: 63983fc2-cfff-45bb-8ec2-959e21062b9a
    ports:
      - '3001:3001'
    depends_on:
      mongodb:
        condition: service_healthy
+     defra-id-stub:
+       condition: service_started
    healthcheck:
      test: ["CMD", "curl", "http://localhost:3001/health"]
      interval: 3s
@@ -103,6 +108,27 @@ services:
       interval: 3s
       start_period: 2s
       retries: 3
+    networks:
+      - cdp-tenant
+
+  defra-id-stub:
+    image: defradigital/cdp-defra-id-stub:${DEFRA_ID_STUB_VERSION:-latest}
+    ports:
+      - '3200:3200'
+    depends_on:
+      redis:
+        condition: service_started
+    environment:
+      APP_BASE_URL: http://defra-id-stub:3200
+      NODE_ENV: development
+      OIDC_BASE_PATH: /cdp-defra-id-stub
+      OIDC_CLIENT_ID: 63983fc2-cfff-45bb-8ec2-959e21062b9a
+      OIDC_CLIENT_SECRET: test_value
+      OIDC_SHOW_LOGIN: true
+      PORT: 3200
+      REDIS_HOST: redis
+      SESSION_CACHE_ENGINE: redis
+      USE_SINGLE_INSTANCE_CACHE: true
     networks:
       - cdp-tenant
 
