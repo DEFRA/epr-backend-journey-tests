@@ -80,8 +80,6 @@ const auth = {
 
 const defraId = {
   local: 'http://defra-id-stub:3200'
-  // ? 'http://defra-id-stub:3200'
-  // : 'http://localhost:3200'
 }
 
 const dockerLogParser = {
