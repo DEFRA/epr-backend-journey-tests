@@ -155,27 +155,30 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-#  Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
-#    Given I have the following summary log upload data with a valid organisation and registration details
-#      | s3Bucket       | re-ex-summary-logs       |
-#      | s3Key          | exporter-invalid-key     |
-#      | fileId         | exporter-invalid-file-id |
-#      | filename       | exporter-invalid.xlsx    |
-#      | status         | complete                 |
-#      | processingType | exporter                 |
-#    When I initiate the summary log upload
-#    Then the summary log upload initiation succeeds
-#    When I submit the summary log upload completed
-#    Then I should receive a summary log upload accepted response
-#
-#    When I check for the summary log status
-#    Then I should see the following summary log response
-#      | status | validated |
-#    And I should see the following summary log validation failures
-#      | Code               | Location Sheet                  | Location Table            | Location Row | Location Header  | Actual     |
-#      | INVALID_DATE       | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_OF_EXPORT   | 22-01-2025 |
-#    When I submit the uploaded summary log
-#    Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+  Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket       | re-ex-summary-logs       |
+      | s3Key          | exporter-invalid-key     |
+      | fileId         | exporter-invalid-file-id |
+      | filename       | exporter-invalid.xlsx    |
+      | status         | complete                 |
+      | processingType | exporter                 |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | invalid |
+    And I should see the following summary log validation failures
+      | Code               | Location Sheet                  | Location Table            | Location Row | Location Header                        | Actual                                                                                                             |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_OF_EXPORT                         | 22-01-2025                                                                                                         |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | CONTAINER_NUMBER                       | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | TONNAGE_OF_UK_PACKAGING_WASTE_EXPORTED | 1002                                                                                                               |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | WEIGHT_OF_NON_TARGET_MATERIALS         | 1005                                                                                                               |
+    When I submit the uploaded summary log
+    Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
 
   Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Row ID and cannot be submitted
