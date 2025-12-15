@@ -155,6 +155,7 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
+    @invalid
   Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket       | re-ex-summary-logs       |
@@ -191,6 +192,10 @@ Feature: Summary Logs endpoint
       | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | INTERIM_SITE_ID                             | 99                                                                                                                 |
       | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | TONNAGE_PASSED_INTERIM_SITE_RECEIVED_BY_OSR | -50                                                                                                                |
       | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | OSR_ID                                      | 98A                                                                                                                |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_RECEIVED_BY_OSR                        | 30-02-2025                                                                                                         |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_RECEIVED_FOR_EXPORT                    | 26-06-2025                                                                                                         |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE       | Unknown                                                                                                            |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | Invalid                                                                                                            |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
