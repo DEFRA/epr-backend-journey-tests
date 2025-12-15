@@ -1,4 +1,4 @@
-@zap @wip
+@zap
 Feature: ZAP scanner tests
 
   Scenario: Ensure that the root endpoint does not return any alerts after a full active ZAP scan
