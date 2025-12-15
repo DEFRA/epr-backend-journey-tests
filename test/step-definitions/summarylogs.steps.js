@@ -49,6 +49,9 @@ Given(
     this.summaryLog.regId = '6507f1f77bcf86cd79943912'
     this.uploadData = dataTable.rowsHash()
     this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
+    if (this.uploadData.processingType === 'exporter') {
+      this.summaryLog.regId = '6507f1f77bcf86cd79943913'
+    }
   }
 )
 
