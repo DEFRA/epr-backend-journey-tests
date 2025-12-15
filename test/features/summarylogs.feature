@@ -155,6 +155,7 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
+  @invalid
   Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket       | re-ex-summary-logs       |
@@ -172,11 +173,16 @@ Feature: Summary Logs endpoint
     Then I should see the following summary log response
       | status | invalid |
     And I should see the following summary log validation failures
-      | Code               | Location Sheet                  | Location Table            | Location Row | Location Header                        | Actual                                                                                                             |
-      | INVALID_DATE       | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_OF_EXPORT                         | 22-01-2025                                                                                                         |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | CONTAINER_NUMBER                       | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | TONNAGE_OF_UK_PACKAGING_WASTE_EXPORTED | 1002                                                                                                               |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | WEIGHT_OF_NON_TARGET_MATERIALS         | 1005                                                                                                               |
+      | Code               | Location Sheet                 | Location Table            | Location Row | Location Header                        | Actual                                                                                                             |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_OF_EXPORT                         | 22-01-2025                                                                                                         |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | CONTAINER_NUMBER                       | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | TONNAGE_OF_UK_PACKAGING_WASTE_EXPORTED | 1002                                                                                                               |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | WEIGHT_OF_NON_TARGET_MATERIALS         | 1005                                                                                                               |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | RECYCLABLE_PROPORTION_PERCENTAGE       | 1.1                                                                                                                |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DID_WASTE_PASS_THROUGH_AN_INTERIM_SITE | notValid                                                                                                           |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | EWC_CODE                               | Invalid EWC                                                                                                        |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | BASEL_EXPORT_CODE                      | NotABasel                                                                                                          |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | BAILING_WIRE_PROTOCOL                  | Invalid                                                                                                            |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
