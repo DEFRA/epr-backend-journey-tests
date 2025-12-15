@@ -63,9 +63,13 @@ When('I initiate the summary log upload', async function () {
   this.initiatePayload = {
     redirectUrl: 'summary-log-upload-redirect'
   }
+  this.authHeaders = {
+    Authorization: `Bearer ${this.defraIdToken}`
+  }
   this.response = await baseAPI.post(
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
-    JSON.stringify(this.initiatePayload)
+    JSON.stringify(this.initiatePayload),
+    this.authHeaders
   )
 })
 

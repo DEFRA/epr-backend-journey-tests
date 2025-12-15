@@ -1,6 +1,24 @@
 @summarylogs @wip
 Feature: Summary Logs endpoint
 
+  @testAuth
+  Scenario: Testing auth
+    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
+    Then the organisations data update succeeds
+    Given I register a User to use the system
+    And I add a relationship to the User
+    When I authorise the User
+    And I generate the token
+    Given the User is linked to the organisation with id '6507f1f77bcf86cd79943911'
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket | re-ex-summary-logs              |
+      | s3Key    | valid-summary-log-input-key     |
+      | fileId   | valid-summary-log-input-file-id |
+      | filename | valid-summary-log-input.xlsx    |
+      | status   | complete                        |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+
   @wip
   Scenario: Summary Logs uploads (With Validation concerns) and creates a Waste Record
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
