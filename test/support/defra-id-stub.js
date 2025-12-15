@@ -5,6 +5,9 @@ export class DefraIdStub {
   constructor(baseUrl = config.defraIdUri) {
     this.baseUrl = baseUrl
     this.defaultHeaders = config.apiHeaders
+    this.processedOrgs = new Map()
+    this.accessTokens = new Map()
+    this.linked = new Map()
   }
 
   async register(payload) {
@@ -17,8 +20,8 @@ export class DefraIdStub {
         body: payload
       }
     )
-    const responseJson = await response.body.json()
-    return responseJson
+
+    return await response.body.json()
   }
 
   async addRelationship(payload, userId) {
@@ -35,7 +38,6 @@ export class DefraIdStub {
       }
     )
     return await response
-    // return responseBody
   }
 
   async authorise(payload) {
@@ -55,7 +57,6 @@ export class DefraIdStub {
       }
     )
 
-    // const responseJson = await response.body.json()
     const headers = await response.headers
     return headers.location
   }
@@ -68,7 +69,8 @@ export class DefraIdStub {
       body: payload
     })
     const responseJson = await response.body.json()
-    return responseJson.access_token
+    this.accessToken = responseJson.access_token
+    return responseJson
   }
 
   authHeader() {

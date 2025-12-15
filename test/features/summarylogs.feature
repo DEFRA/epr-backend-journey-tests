@@ -1,28 +1,19 @@
-@summarylogs @wip
+@summarylogs
 Feature: Summary Logs endpoint
 
-  @testAuth
-  Scenario: Testing auth
+  Background:
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
     Then the organisations data update succeeds
+
     Given I register a User to use the system
     And I add a relationship to the User
     When I authorise the User
     And I generate the token
-    Given the User is linked to the organisation with id '6507f1f77bcf86cd79943911'
-    Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs              |
-      | s3Key    | valid-summary-log-input-key     |
-      | fileId   | valid-summary-log-input-file-id |
-      | filename | valid-summary-log-input.xlsx    |
-      | status   | complete                        |
-    When I initiate the summary log upload
-    Then the summary log upload initiation succeeds
+
+    When the User is linked to the organisation with id '6507f1f77bcf86cd79943911'
 
   @wip
   Scenario: Summary Logs uploads (With Validation concerns) and creates a Waste Record
-    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
-    Then the organisations data update succeeds
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs              |
       | s3Key    | valid-summary-log-input-key     |
@@ -94,8 +85,6 @@ Feature: Summary Logs endpoint
 
   @wip
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
-    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
-    Then the organisations data update succeeds
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs                |
       | s3Key    | reprocessor-input-invalid-key     |
@@ -132,10 +121,7 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  @wip
   Scenario: Summary Logs uploads (Reprocessor Input, Sent On sheet) and fails in-sheet revalidation
-    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
-    Then the organisations data update succeeds
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs                       |
       | s3Key    | reprocessor-input-senton-invalid-key     |
@@ -163,10 +149,7 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  @wip
   Scenario: Summary Logs uploads (Reprocessor Output) and fails in-sheet revalidation
-    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
-    Then the organisations data update succeeds
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs                 |
       | s3Key    | reprocessor-output-invalid-key     |
@@ -196,10 +179,7 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  @wip
   Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Row ID and cannot be submitted
-    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
-    Then the organisations data update succeeds
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs     |
       | s3Key    | invalid-row-id-key     |
@@ -221,10 +201,7 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  @wip
   Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Table name and cannot be submitted
-    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
-    Then the organisations data update succeeds
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs         |
       | s3Key    | invalid-table-name-key     |
@@ -245,9 +222,8 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  @wip
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when summary log validation fails
-    Given I have the following summary log upload data
+    Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs       |
       | s3Key    | invalid-test-upload-key  |
       | fileId   | test-upload-file-id      |

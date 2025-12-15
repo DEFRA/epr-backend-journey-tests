@@ -1,5 +1,5 @@
 import { Given, Then, When } from '@cucumber/cucumber'
-import { baseAPI, dbClient } from '../support/hooks.js'
+import { baseAPI, dbClient, defraIdStub } from '../support/hooks.js'
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
 import logger from '../support/logger.js'
@@ -16,14 +16,20 @@ Given(
   'I update the organisations data for id {string} with the following payload {string}',
   async function (orgId, pathToFile) {
     if (!process.env.ENVIRONMENT) {
-      const data = JSON.parse(fs.readFileSync(pathToFile, 'utf8'))
-      const dates = new Dates()
-      dates.updateValidDates(data)
+      if (defraIdStub.processedOrgs.get(orgId) !== pathToFile) {
+        const data = JSON.parse(fs.readFileSync(pathToFile, 'utf8'))
+        const dates = new Dates()
+        dates.updateValidDates(data)
 
-      this.response = await baseAPI.patch(
-        `/v1/dev/organisations/${orgId}`,
-        JSON.stringify(data)
-      )
+        this.response = await baseAPI.patch(
+          `/v1/dev/organisations/${orgId}`,
+          JSON.stringify(data)
+        )
+
+        defraIdStub.processedOrgs.set(orgId, pathToFile)
+      } else {
+        this.response = { statusCode: 200 }
+      }
     } else {
       logger.warn(
         {
@@ -63,13 +69,10 @@ When('I initiate the summary log upload', async function () {
   this.initiatePayload = {
     redirectUrl: 'summary-log-upload-redirect'
   }
-  this.authHeaders = {
-    Authorization: `Bearer ${this.defraIdToken}`
-  }
   this.response = await baseAPI.post(
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
     JSON.stringify(this.initiatePayload),
-    this.authHeaders
+    defraIdStub.authHeader()
   )
 })
 
@@ -106,7 +109,7 @@ When(
     const startTime = Date.now()
 
     while (Date.now() - startTime < timeout) {
-      this.response = await baseAPI.get(url)
+      this.response = await baseAPI.get(url, defraIdStub.authHeader())
 
       // If the response is not 200, stop polling and return the error response
       if (this.response.statusCode !== 200) {
@@ -146,7 +149,7 @@ When(
     }
 
     // Timeout reached - make one final request and store the response
-    this.response = await baseAPI.get(url)
+    this.response = await baseAPI.get(url, defraIdStub.authHeader())
     if (this.response.statusCode === 200) {
       this.responseData = await this.response.body.json()
     }
@@ -166,7 +169,9 @@ When(
 When('I submit the uploaded summary log', async function () {
   const summaryLogId = this.summaryLog.summaryLogId
   this.response = await baseAPI.post(
-    `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/submit`
+    `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/submit`,
+    '',
+    defraIdStub.authHeader()
   )
 })
 
