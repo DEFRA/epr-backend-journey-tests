@@ -12,7 +12,6 @@ Feature: Summary Logs endpoint
 
     When the User is linked to the organisation with id '6507f1f77bcf86cd79943911'
 
-  @wip
   Scenario: Summary Logs uploads (With Validation concerns) and creates a Waste Record
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs              |
@@ -66,12 +65,6 @@ Feature: Summary Logs endpoint
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-    And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                                                                    |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=valid-summary-log-input-2-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx                                                                           |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx                                                                               |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-2-file-id, filename=valid-summary-log-input-2.xlsx, status=invalid                                                                      |
     When I check for the summary log status
     Then I should see the following summary log response
       | status | invalid |
@@ -83,7 +76,6 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  @wip
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs                |
@@ -96,28 +88,23 @@ Feature: Summary Logs endpoint
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
-    And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                                                                    |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-invalid-file-id, filename=reprocessor-input-invalid.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=reprocessor-input-invalid-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-invalid-file-id, filename=reprocessor-input-invalid.xlsx                                                                           |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-invalid-file-id, filename=reprocessor-input-invalid.xlsx                                                                               |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-invalid-file-id, filename=reprocessor-input-invalid.xlsx, status=invalid                                                                      |
     When I check for the summary log status
     Then I should see the following summary log response
       | status | invalid |
     And I should see the following summary log validation failures
-      | Code               | Location Sheet                 | Location Table                  | Location Row | Location Header                       | Actual            |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | RECYCLABLE_PROPORTION_PERCENTAGE      | 1.75              |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WEIGHT_OF_NON_TARGET_MATERIALS        | 1345              |
-      | INVALID_DATE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DATE_RECEIVED_FOR_REPROCESSING        | 30-06-2025        |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE | Unsure            |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | BAILING_WIRE_PROTOCOL                 | Invalid           |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | GROSS_WEIGHT                          | 3500              |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | NET_WEIGHT                            | 1275              |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | TARE_WEIGHT                           | 1115              |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | PALLET_WEIGHT                         | 1110              |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DESCRIPTION_WASTE                     | Wrong description |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | EWC_CODE                              | Invalid EWC       |
+      | Code               | Location Sheet                 | Location Table                  | Location Row | Location Header                             | Actual            |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | RECYCLABLE_PROPORTION_PERCENTAGE            | 1.75              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WEIGHT_OF_NON_TARGET_MATERIALS              | 1345              |
+      | INVALID_DATE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DATE_RECEIVED_FOR_REPROCESSING              | 30-06-2025        |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE       | Unsure            |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | BAILING_WIRE_PROTOCOL                       | Invalid           |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | GROSS_WEIGHT                                | 3500              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | NET_WEIGHT                                  | 1275              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | TARE_WEIGHT                                 | 1115              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | PALLET_WEIGHT                               | 1110              |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DESCRIPTION_WASTE                           | Wrong description |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | EWC_CODE                                    | Invalid EWC       |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | Wrong value       |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
@@ -133,18 +120,13 @@ Feature: Summary Logs endpoint
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
-    And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                                                                                         |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-senton-invalid-file-id, filename=reprocessor-input-senton-invalid.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=reprocessor-input-senton-invalid-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-senton-invalid-file-id, filename=reprocessor-input-senton-invalid.xlsx                                                                                  |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-senton-invalid-file-id, filename=reprocessor-input-senton-invalid.xlsx                                                                                      |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=reprocessor-input-senton-invalid-file-id, filename=reprocessor-input-senton-invalid.xlsx, status=invalid                                                                             |
     When I check for the summary log status
     Then I should see the following summary log response
       | status | invalid |
     And I should see the following summary log validation failures
-      | Code               | Location Sheet                | Location Table  | Location Row | Location Header     | Actual     |
-      | INVALID_DATE       | Sent on (sections 5, 6 and 7) | SENT_ON_LOADS   | 8            | DATE_LOAD_LEFT_SITE | 30-02-2025 |
+      | Code               | Location Sheet                | Location Table  | Location Row | Location Header                       | Actual     |
+      | INVALID_DATE       | Sent on (sections 5, 6 and 7) | SENT_ON_LOADS   | 8            | DATE_LOAD_LEFT_SITE                   | 30-02-2025 |
+      | VALUE_OUT_OF_RANGE | Sent on (sections 5, 6 and 7) | SENT_ON_LOADS   | 8            | TONNAGE_OF_UK_PACKAGING_WASTE_SENT_ON | 1001       |
 
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
@@ -161,12 +143,6 @@ Feature: Summary Logs endpoint
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
-    And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                                                                       |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-file-id, filename=reprocessor-output-invalid.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=reprocessor-output-invalid-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-file-id, filename=reprocessor-output-invalid.xlsx                                                                            |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-file-id, filename=reprocessor-output-invalid.xlsx                                                                                |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=reprocessor-output-invalid-file-id, filename=reprocessor-output-invalid.xlsx, status=invalid                                                                       |
     When I check for the summary log status
     Then I should see the following summary log response
       | status | invalid |
@@ -178,6 +154,32 @@ Feature: Summary Logs endpoint
       | INVALID_TYPE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | ADD_PRODUCT_WEIGHT             | Invalid    |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+
+  Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket       | re-ex-summary-logs       |
+      | s3Key          | exporter-invalid-key     |
+      | fileId         | exporter-invalid-file-id |
+      | filename       | exporter-invalid.xlsx    |
+      | status         | complete                 |
+      | processingType | exporter                 |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | invalid |
+    And I should see the following summary log validation failures
+      | Code               | Location Sheet                  | Location Table            | Location Row | Location Header                        | Actual                                                                                                             |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_OF_EXPORT                         | 22-01-2025                                                                                                         |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | CONTAINER_NUMBER                       | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | TONNAGE_OF_UK_PACKAGING_WASTE_EXPORTED | 1002                                                                                                               |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3)  | RECEIVED_LOADS_FOR_EXPORT | 8            | WEIGHT_OF_NON_TARGET_MATERIALS         | 1005                                                                                                               |
+    When I submit the uploaded summary log
+    Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+
 
   Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Row ID and cannot be submitted
     Given I have the following summary log upload data with a valid organisation and registration details

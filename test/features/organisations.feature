@@ -1,4 +1,4 @@
-@organisations @wip
+@organisations
 Feature: Organisations endpoint
 
   Scenario: Ensure that organisations endpoint returns a response
