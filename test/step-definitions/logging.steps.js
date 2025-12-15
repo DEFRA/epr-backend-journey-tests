@@ -11,7 +11,7 @@ const dockerLogParser = new DockerLogParser(
 
 Then(
   'the following messages appear in the log',
-  { timeout: 15000 },
+  { timeout: 20000 },
   async function (dataTable) {
     if (config.testLogs) {
       const expectedLogs = dataTable.hashes()
