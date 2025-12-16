@@ -155,7 +155,6 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-    @invalid
   Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket       | re-ex-summary-logs       |
