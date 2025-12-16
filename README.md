@@ -40,6 +40,14 @@ Install application dependencies:
 npm install
 ```
 
+### Additional configuration in Linux
+
+For Linux based machines, you will need to add this entry into your `etc/hosts` file for the tests to run locally:
+
+```
+127.0.0.1 defra-id-stub
+```
+
 ### Running local tests
 
 Bring up the relevant Docker containers:
