@@ -29,7 +29,7 @@
     "report:publish": "npm run report; ./bin/publish-tests.sh"
   },
   "dependencies": {
-    "allure-commandline": "2.35.1",
+    "allure-commandline": "2.36.0",
     "allure-js-commons": "3.4.3",
     "esm-module-alias": "2.2.1",
     "global-agent": "3.0.0",
