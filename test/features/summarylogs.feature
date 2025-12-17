@@ -105,6 +105,7 @@ Feature: Summary Logs endpoint
       | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DESCRIPTION_WASTE                           | Wrong description |
       | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | EWC_CODE                                    | Invalid EWC       |
       | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | Wrong value       |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | TONNAGE_RECEIVED_FOR_RECYCLING              | -122.5            |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
@@ -147,11 +148,12 @@ Feature: Summary Logs endpoint
     Then I should see the following summary log response
       | status | invalid |
     And I should see the following summary log validation failures
-      | Code               | Location Sheet                  | Location Table    | Location Row | Location Header                | Actual     |
-      | INVALID_DATE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | DATE_LOAD_LEFT_SITE            | 30-06-2025 |
-      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | PRODUCT_TONNAGE                | 1005       |
-      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | UK_PACKAGING_WEIGHT_PERCENTAGE | 1.1        |
-      | INVALID_TYPE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | ADD_PRODUCT_WEIGHT             | Invalid    |
+      | Code               | Location Sheet                  | Location Table    | Location Row | Location Header                        | Actual     |
+      | INVALID_DATE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | DATE_LOAD_LEFT_SITE                    | 30-06-2025 |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | PRODUCT_TONNAGE                        | 1005       |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | UK_PACKAGING_WEIGHT_PERCENTAGE         | 1.1        |
+      | INVALID_TYPE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | ADD_PRODUCT_WEIGHT                     | Invalid    |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | PRODUCT_UK_PACKAGING_WEIGHT_PROPORTION | 1105.5     |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
@@ -195,6 +197,7 @@ Feature: Summary Logs endpoint
       | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_RECEIVED_FOR_EXPORT                    | 26-06-2025                                                                                                         |
       | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE       | Unknown                                                                                                            |
       | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | Invalid                                                                                                            |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | TONNAGE_RECEIVED_FOR_EXPORT                 | -1160.5                                                                                                            |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
