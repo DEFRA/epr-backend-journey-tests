@@ -12,7 +12,6 @@ Feature: Summary Logs endpoint
 
     When the User is linked to the organisation with id '6507f1f77bcf86cd79943911'
 
-    @valid
   Scenario: Summary Logs uploads (With Validation concerns) and creates a Waste Record
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs              |
