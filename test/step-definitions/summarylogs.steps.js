@@ -169,6 +169,38 @@ When(
   }
 )
 
+When(
+  'I submit the uploaded summary log and initiate a new upload at the same time',
+  async function () {
+    const summaryLogId = this.summaryLog.summaryLogId
+    const submissionResponse = await baseAPI.post(
+      `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/submit`,
+      '',
+      defraIdStub.authHeader()
+    )
+
+    const initiatePayload = {
+      redirectUrl: 'summary-log-upload-redirect'
+    }
+    const uploadResponse = await baseAPI.post(
+      `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
+      JSON.stringify(initiatePayload),
+      defraIdStub.authHeader()
+    )
+    this.response = await submissionResponse
+    this.newUploadResponse = await uploadResponse
+  }
+)
+
+Then(
+  'the new upload attempt fails with message: {string}',
+  async function (message) {
+    expect(this.newUploadResponse.statusCode).to.equal(409)
+    const responseMessage = await this.newUploadResponse.body.json()
+    expect(responseMessage.message).to.equal(message)
+  }
+)
+
 When('I submit the uploaded summary log', async function () {
   const summaryLogId = this.summaryLog.summaryLogId
   this.response = await baseAPI.post(

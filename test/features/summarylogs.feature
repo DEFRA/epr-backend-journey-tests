@@ -12,6 +12,7 @@ Feature: Summary Logs endpoint
 
     When the User is linked to the organisation with id '6507f1f77bcf86cd79943911'
 
+    @valid
   Scenario: Summary Logs uploads (With Validation concerns) and creates a Waste Record
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs              |
@@ -43,8 +44,9 @@ Feature: Summary Logs endpoint
       | Type  | Code           | Header   | Column |
       | error | FIELD_REQUIRED | EWC_CODE | H      |
 
-    When I submit the uploaded summary log
+    When I submit the uploaded summary log and initiate a new upload at the same time
     Then the summary log submission succeeds
+    And the new upload attempt fails with message: 'A submission is in progress. Please wait.'
     And the following messages appear in the log
       | Log Level | Message                                              |
       | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
