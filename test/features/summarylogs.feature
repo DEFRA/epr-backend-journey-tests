@@ -39,9 +39,9 @@ Feature: Summary Logs endpoint
     When I check for the summary log status
     Then I should see the following summary log response
       | status  | validated  |
-    And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 10 and sheet "Received (sections 1, 2 and 3)"
+    And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 6 and sheet "Received (sections 1, 2 and 3)"
       | Type  | Code           | Header   | Column |
-      | error | FIELD_REQUIRED | EWC_CODE | F      |
+      | error | FIELD_REQUIRED | EWC_CODE | H      |
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds
@@ -93,19 +93,19 @@ Feature: Summary Logs endpoint
       | status | invalid |
     And I should see the following summary log validation failures
       | Code               | Location Sheet                 | Location Table                  | Location Row | Location Header                             | Actual            |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | RECYCLABLE_PROPORTION_PERCENTAGE            | 1.75              |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WEIGHT_OF_NON_TARGET_MATERIALS              | 1345              |
-      | INVALID_DATE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DATE_RECEIVED_FOR_REPROCESSING              | 30-06-2025        |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE       | Unsure            |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | BAILING_WIRE_PROTOCOL                       | Invalid           |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | GROSS_WEIGHT                                | 3500              |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | NET_WEIGHT                                  | 1275              |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | TARE_WEIGHT                                 | 1115              |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | PALLET_WEIGHT                               | 1110              |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | DESCRIPTION_WASTE                           | Wrong description |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | EWC_CODE                                    | Invalid EWC       |
-      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | Wrong value       |
-      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 10           | TONNAGE_RECEIVED_FOR_RECYCLING              | -122.5            |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | RECYCLABLE_PROPORTION_PERCENTAGE            | 1.75              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | WEIGHT_OF_NON_TARGET_MATERIALS              | 1345              |
+      | INVALID_DATE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | DATE_RECEIVED_FOR_REPROCESSING              | 30-06-2025        |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE       | Unsure            |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | BAILING_WIRE_PROTOCOL                       | Invalid           |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | GROSS_WEIGHT                                | 3500              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | NET_WEIGHT                                  | 1275              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | TARE_WEIGHT                                 | 1115              |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | PALLET_WEIGHT                               | 1110              |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | DESCRIPTION_WASTE                           | Wrong description |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | EWC_CODE                                    | Invalid EWC       |
+      | INVALID_TYPE       | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | Wrong value       |
+      | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | TONNAGE_RECEIVED_FOR_RECYCLING              | -122.5            |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
@@ -126,8 +126,8 @@ Feature: Summary Logs endpoint
       | status | invalid |
     And I should see the following summary log validation failures
       | Code               | Location Sheet                | Location Table  | Location Row | Location Header                       | Actual     |
-      | INVALID_DATE       | Sent on (sections 5, 6 and 7) | SENT_ON_LOADS   | 8            | DATE_LOAD_LEFT_SITE                   | 30-02-2025 |
-      | VALUE_OUT_OF_RANGE | Sent on (sections 5, 6 and 7) | SENT_ON_LOADS   | 8            | TONNAGE_OF_UK_PACKAGING_WASTE_SENT_ON | 1001       |
+      | INVALID_DATE       | Sent on (sections 5, 6 and 7) | SENT_ON_LOADS   | 4            | DATE_LOAD_LEFT_SITE                   | 30-02-2025 |
+      | VALUE_OUT_OF_RANGE | Sent on (sections 5, 6 and 7) | SENT_ON_LOADS   | 4            | TONNAGE_OF_UK_PACKAGING_WASTE_SENT_ON | 1001       |
 
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
@@ -149,11 +149,11 @@ Feature: Summary Logs endpoint
       | status | invalid |
     And I should see the following summary log validation failures
       | Code               | Location Sheet                  | Location Table    | Location Row | Location Header                        | Actual     |
-      | INVALID_DATE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | DATE_LOAD_LEFT_SITE                    | 30-06-2025 |
-      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | PRODUCT_TONNAGE                        | 1005       |
-      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | UK_PACKAGING_WEIGHT_PERCENTAGE         | 1.1        |
-      | INVALID_TYPE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | ADD_PRODUCT_WEIGHT                     | Invalid    |
-      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 8            | PRODUCT_UK_PACKAGING_WEIGHT_PROPORTION | 1105.5     |
+      | INVALID_DATE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | DATE_LOAD_LEFT_SITE                    | 30-06-2025 |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | PRODUCT_TONNAGE                        | 1005       |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | UK_PACKAGING_WEIGHT_PERCENTAGE         | 1.1        |
+      | INVALID_TYPE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | ADD_PRODUCT_WEIGHT                     | Invalid    |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | PRODUCT_UK_PACKAGING_WEIGHT_PROPORTION | 1105.5     |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
@@ -175,29 +175,29 @@ Feature: Summary Logs endpoint
       | status | invalid |
     And I should see the following summary log validation failures
       | Code               | Location Sheet                 | Location Table            | Location Row | Location Header                             | Actual                                                                                                             |
-      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_OF_EXPORT                              | 22-01-2025                                                                                                         |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | CONTAINER_NUMBER                            | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | CUSTOMS_CODES                               | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | TONNAGE_OF_UK_PACKAGING_WASTE_EXPORTED      | 1002                                                                                                               |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | WEIGHT_OF_NON_TARGET_MATERIALS              | 1005                                                                                                               |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | RECYCLABLE_PROPORTION_PERCENTAGE            | 1.1                                                                                                                |
-      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DID_WASTE_PASS_THROUGH_AN_INTERIM_SITE      | notValid                                                                                                           |
-      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | EWC_CODE                                    | Invalid EWC                                                                                                        |
-      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | BASEL_EXPORT_CODE                           | NotABasel                                                                                                          |
-      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | BAILING_WIRE_PROTOCOL                       | Invalid                                                                                                            |
-      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DESCRIPTION_WASTE                           | WrongDesc                                                                                                          |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | GROSS_WEIGHT                                | 1010                                                                                                               |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | NET_WEIGHT                                  | -50                                                                                                                |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | TARE_WEIGHT                                 | -10                                                                                                                |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | PALLET_WEIGHT                               | -50                                                                                                                |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | INTERIM_SITE_ID                             | 99                                                                                                                 |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | TONNAGE_PASSED_INTERIM_SITE_RECEIVED_BY_OSR | -50                                                                                                                |
-      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | OSR_ID                                      | 98A                                                                                                                |
-      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_RECEIVED_BY_OSR                        | 30-02-2025                                                                                                         |
-      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | DATE_RECEIVED_FOR_EXPORT                    | 26-06-2025                                                                                                         |
-      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE       | Unknown                                                                                                            |
-      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | Invalid                                                                                                            |
-      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 8            | TONNAGE_RECEIVED_FOR_EXPORT                 | -1160.5                                                                                                            |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DATE_OF_EXPORT                              | 22-01-2025                                                                                                         |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | CONTAINER_NUMBER                            | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | CUSTOMS_CODES                               | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | TONNAGE_OF_UK_PACKAGING_WASTE_EXPORTED      | 1002                                                                                                               |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | WEIGHT_OF_NON_TARGET_MATERIALS              | 1005                                                                                                               |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | RECYCLABLE_PROPORTION_PERCENTAGE            | 1.1                                                                                                                |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DID_WASTE_PASS_THROUGH_AN_INTERIM_SITE      | notValid                                                                                                           |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | EWC_CODE                                    | Invalid EWC                                                                                                        |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | BASEL_EXPORT_CODE                           | NotABasel                                                                                                          |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | BAILING_WIRE_PROTOCOL                       | Invalid                                                                                                            |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DESCRIPTION_WASTE                           | WrongDesc                                                                                                          |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | GROSS_WEIGHT                                | 1010                                                                                                               |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | NET_WEIGHT                                  | -50                                                                                                                |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | TARE_WEIGHT                                 | -10                                                                                                                |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | PALLET_WEIGHT                               | -50                                                                                                                |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | INTERIM_SITE_ID                             | 99                                                                                                                 |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | TONNAGE_PASSED_INTERIM_SITE_RECEIVED_BY_OSR | -50                                                                                                                |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | OSR_ID                                      | 98A                                                                                                                |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DATE_RECEIVED_BY_OSR                        | 30-02-2025                                                                                                         |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DATE_RECEIVED_FOR_EXPORT                    | 26-06-2025                                                                                                         |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE       | Unknown                                                                                                            |
+      | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | Invalid                                                                                                            |
+      | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | TONNAGE_RECEIVED_FOR_EXPORT                 | -1160.5                                                                                                            |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
