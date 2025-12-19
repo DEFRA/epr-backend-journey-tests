@@ -77,6 +77,54 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
+  Scenario: Stale preview is rejected at submission time (deferred staleness detection)
+    # User A uploads and validates file 1
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket | re-ex-summary-logs                |
+      | s3Key    | staleness-test-file-1-key         |
+      | fileId   | staleness-test-file-1-id          |
+      | filename | staleness-test-file-1.xlsx        |
+      | status   | complete                          |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | validated |
+    And I store the current summary log as 'first upload'
+
+    # User B uploads and validates file 2 (both coexist - no blocking)
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket | re-ex-summary-logs                |
+      | s3Key    | staleness-test-file-2-key         |
+      | fileId   | staleness-test-file-2-id          |
+      | filename | staleness-test-file-2.xlsx        |
+      | status   | complete                          |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | validated |
+    And I store the current summary log as 'second upload'
+
+    # User A submits file 1 successfully
+    When I restore the summary log stored as 'first upload'
+    And I submit the uploaded summary log
+    Then the summary log submission succeeds
+
+    # User B tries to submit file 2 - rejected because preview is now stale
+    When I restore the summary log stored as 'second upload'
+    And I submit the uploaded summary log
+    Then I should receive a 409 error response 'Waste records have changed since preview was generated. Please re-upload.'
+
+    # Verify stale summary log is marked as superseded
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | superseded |
+
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details
       | s3Bucket | re-ex-summary-logs                |
