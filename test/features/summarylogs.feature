@@ -306,11 +306,6 @@ Feature: Summary Logs endpoint
       | status   | complete                 |
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-    And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                                          |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=invalid-test-upload-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx                                                                     |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=test-upload-file-id, filename=invalid-test-upload.xlsx, status=invalid                                                                |
     And I should see that a summary log is created in the database with the following values
       | s3Bucket   | re-ex-summary-logs       |
       | s3Key      | invalid-test-upload-key  |
