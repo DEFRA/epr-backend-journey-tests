@@ -201,6 +201,31 @@ Then(
   }
 )
 
+Then('the new upload attempt succeeds', async function () {
+  expect(this.newUploadResponse.statusCode).to.equal(201)
+})
+
+Then('I call this upload {string}', function (name) {
+  if (!this.namedUploads) {
+    this.namedUploads = new Map()
+  }
+  this.namedUploads.set(name, {
+    summaryLogId: this.summaryLog.summaryLogId,
+    orgId: this.summaryLog.orgId,
+    regId: this.summaryLog.regId
+  })
+})
+
+When('I return to the {string} upload', function (name) {
+  const upload = this.namedUploads?.get(name)
+  if (!upload) {
+    throw new Error(`No upload called '${name}'`)
+  }
+  this.summaryLog.summaryLogId = upload.summaryLogId
+  this.summaryLog.orgId = upload.orgId
+  this.summaryLog.regId = upload.regId
+})
+
 When('I submit the uploaded summary log', async function () {
   const summaryLogId = this.summaryLog.summaryLogId
   this.response = await baseAPI.post(
