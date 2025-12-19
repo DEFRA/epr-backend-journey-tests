@@ -45,7 +45,7 @@ Feature: Summary Logs endpoint
 
     When I submit the uploaded summary log and initiate a new upload at the same time
     Then the summary log submission succeeds
-    And the new upload attempt fails with message: 'A submission is in progress. Please wait.'
+    And the new upload attempt succeeds
     And the following messages appear in the log
       | Log Level | Message                                              |
       | info      | Summary log submitted: summaryLogId={{summaryLogId}} |

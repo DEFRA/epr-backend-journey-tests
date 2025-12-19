@@ -201,6 +201,10 @@ Then(
   }
 )
 
+Then('the new upload attempt succeeds', async function () {
+  expect(this.newUploadResponse.statusCode).to.equal(201)
+})
+
 When('I submit the uploaded summary log', async function () {
   const summaryLogId = this.summaryLog.summaryLogId
   this.response = await baseAPI.post(
