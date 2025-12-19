@@ -92,7 +92,7 @@ Feature: Summary Logs endpoint
     When I check for the summary log status
     Then I should see the following summary log response
       | status | validated |
-    And I store the current summary log as 'first upload'
+    And I call this upload 'first'
 
     # User B uploads and validates file 2 (both coexist - no blocking)
     Given I have the following summary log upload data with a valid organisation and registration details
@@ -108,15 +108,15 @@ Feature: Summary Logs endpoint
     When I check for the summary log status
     Then I should see the following summary log response
       | status | validated |
-    And I store the current summary log as 'second upload'
+    And I call this upload 'second'
 
     # User A submits file 1 successfully
-    When I restore the summary log stored as 'first upload'
+    When I return to the 'first' upload
     And I submit the uploaded summary log
     Then the summary log submission succeeds
 
     # User B tries to submit file 2 - rejected because preview is now stale
-    When I restore the summary log stored as 'second upload'
+    When I return to the 'second' upload
     And I submit the uploaded summary log
     Then I should receive a 409 error response 'Waste records have changed since preview was generated. Please re-upload.'
 

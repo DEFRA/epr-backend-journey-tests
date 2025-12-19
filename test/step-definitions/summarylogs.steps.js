@@ -205,27 +205,25 @@ Then('the new upload attempt succeeds', async function () {
   expect(this.newUploadResponse.statusCode).to.equal(201)
 })
 
-Then('I store the current summary log as {string}', function (name) {
-  if (!this.storedSummaryLogs) {
-    this.storedSummaryLogs = new Map()
+Then('I call this upload {string}', function (name) {
+  if (!this.namedUploads) {
+    this.namedUploads = new Map()
   }
-  // Store a copy of the current summary log state
-  this.storedSummaryLogs.set(name, {
+  this.namedUploads.set(name, {
     summaryLogId: this.summaryLog.summaryLogId,
     orgId: this.summaryLog.orgId,
     regId: this.summaryLog.regId
   })
 })
 
-When('I restore the summary log stored as {string}', function (name) {
-  const stored = this.storedSummaryLogs?.get(name)
-  if (!stored) {
-    throw new Error(`No summary log stored with name '${name}'`)
+When('I return to the {string} upload', function (name) {
+  const upload = this.namedUploads?.get(name)
+  if (!upload) {
+    throw new Error(`No upload called '${name}'`)
   }
-  // Restore the stored summary log as current
-  this.summaryLog.summaryLogId = stored.summaryLogId
-  this.summaryLog.orgId = stored.orgId
-  this.summaryLog.regId = stored.regId
+  this.summaryLog.summaryLogId = upload.summaryLogId
+  this.summaryLog.orgId = upload.orgId
+  this.summaryLog.regId = upload.regId
 })
 
 When('I submit the uploaded summary log', async function () {
