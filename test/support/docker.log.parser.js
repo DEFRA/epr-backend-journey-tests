@@ -5,7 +5,7 @@ import crypto from 'crypto'
 const execAsync = promisify(exec)
 
 const logsLookBackInSeconds = 15
-const logLinesLimit = 50
+const logLinesLimit = 200
 
 export class DockerLogParser {
   constructor(containerName) {
