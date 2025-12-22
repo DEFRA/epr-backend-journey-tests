@@ -61,7 +61,7 @@ export class DefraIdStub {
     return headers.location
   }
 
-  async generateToken(payload) {
+  async generateToken(payload, userId) {
     const instanceHeaders = { ...this.defaultHeaders }
     const response = await request(`${this.baseUrl}/cdp-defra-id-stub/token`, {
       method: 'POST',
@@ -69,13 +69,13 @@ export class DefraIdStub {
       body: payload
     })
     const responseJson = await response.body.json()
-    this.accessToken = responseJson.access_token
+    this.accessTokens.set(userId, responseJson.access_token)
     return responseJson
   }
 
-  authHeader() {
-    if (this.accessToken) {
-      return { Authorization: 'Bearer ' + this.accessToken }
+  authHeader(userId) {
+    if (this.accessTokens.has(userId)) {
+      return { Authorization: 'Bearer ' + this.accessTokens.get(userId) }
     } else {
       return {}
     }
