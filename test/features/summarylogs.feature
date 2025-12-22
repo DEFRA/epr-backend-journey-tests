@@ -54,6 +54,7 @@ Feature: Summary Logs endpoint
       | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1000  | received |
       | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1001  | received |
       | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1002  | received |
+    And the submitted summary log should not have an expiry
 
     # Summary Logs uploads and fails validation for removed row on second upload. This depends on the previous steps being executed
     Given I have the following summary log upload data with a valid organisation and registration details
