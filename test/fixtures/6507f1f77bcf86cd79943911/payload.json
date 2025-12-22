@@ -15,8 +15,7 @@
         "status": "approved",
         "validFrom": "2025-01-01T00:00:00.000Z",
         "validTo": "2026-01-01T00:00:00.000Z",
-        "registrationNumber": "E25SR500030913PA",
-        "reprocessingType": "input"
+        "registrationNumber": "E25SR500030913PA"
       }
     ],
     "accreditations": [
@@ -33,8 +32,7 @@
         "accreditationNumber": "ACC234567",
         "validFrom": "2025-01-01T00:00:00.000Z",
         "validTo": "2026-01-01T00:00:00.000Z",
-        "status": "approved",
-        "reprocessingType": "input"
+        "status": "approved"
       }
     ],
     "status": "approved"
