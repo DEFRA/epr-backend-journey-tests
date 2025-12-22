@@ -6,7 +6,8 @@
         "status": "approved",
         "validFrom": "2025-01-01T00:00:00.000Z",
         "validTo": "2026-01-01T00:00:00.000Z",
-        "registrationNumber": "R25SR500030912PA"
+        "registrationNumber": "R25SR500030912PA",
+        "reprocessingType": "input"
       },
       {
         "id": "6507f1f77bcf86cd79943913",
@@ -23,7 +24,8 @@
         "accreditationNumber": "ACC123456",
         "validFrom": "2025-01-01T00:00:00.000Z",
         "validTo": "2026-01-01T00:00:00.000Z",
-        "status": "approved"
+        "status": "approved",
+        "reprocessingType": "input"
       },
       {
         "id": "68f6a147c117aec8a1ab7498",

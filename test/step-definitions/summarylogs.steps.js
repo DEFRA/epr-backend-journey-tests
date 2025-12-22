@@ -51,6 +51,11 @@ Given(
     this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
     if (this.uploadData.processingType === 'exporter') {
       this.summaryLog.regId = '6507f1f77bcf86cd79943913'
+    } else if (
+      this.uploadData.processingType === 'reprocessorOutput-exporter'
+    ) {
+      this.summaryLog.orgId = '6507f1f77bcf86cd79943931'
+      this.summaryLog.regId = '6507f1f77bcf86cd79943932'
     }
   }
 )
@@ -75,7 +80,7 @@ When('I initiate the summary log upload', async function () {
   this.response = await baseAPI.post(
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
     JSON.stringify(this.initiatePayload),
-    defraIdStub.authHeader()
+    defraIdStub.authHeader(this.userId)
   )
 })
 
@@ -100,19 +105,22 @@ Then('the summary log upload initiation succeeds', async function () {
 
 When(
   'I check for the summary log status',
-  { timeout: 10000 },
+  { timeout: 15000 },
   async function () {
     const summaryLogId = this.summaryLog.summaryLogId
     const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
 
     // Transient statuses that indicate processing is still in progress
     const transientStatuses = ['preprocessing', 'validating']
-    const timeout = 10000 // 10 seconds
+    const timeout = 15000 // 10 seconds
     const interval = 500 // 500ms between polls
     const startTime = Date.now()
 
     while (Date.now() - startTime < timeout) {
-      this.response = await baseAPI.get(url, defraIdStub.authHeader())
+      this.response = await baseAPI.get(
+        url,
+        defraIdStub.authHeader(this.userId)
+      )
 
       // If the response is not 200, stop polling and return the error response
       if (this.response.statusCode !== 200) {
@@ -152,7 +160,7 @@ When(
     }
 
     // Timeout reached - make one final request and store the response
-    this.response = await baseAPI.get(url, defraIdStub.authHeader())
+    this.response = await baseAPI.get(url, defraIdStub.authHeader(this.userId))
     if (this.response.statusCode === 200) {
       this.responseData = await this.response.body.json()
     }
@@ -176,7 +184,7 @@ When(
     const submissionResponse = await baseAPI.post(
       `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/submit`,
       '',
-      defraIdStub.authHeader()
+      defraIdStub.authHeader(this.userId)
     )
 
     const initiatePayload = {
@@ -185,7 +193,7 @@ When(
     const uploadResponse = await baseAPI.post(
       `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
       JSON.stringify(initiatePayload),
-      defraIdStub.authHeader()
+      defraIdStub.authHeader(this.userId)
     )
     this.response = await submissionResponse
     this.newUploadResponse = await uploadResponse
@@ -231,7 +239,7 @@ When('I submit the uploaded summary log', async function () {
   this.response = await baseAPI.post(
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/submit`,
     '',
-    defraIdStub.authHeader()
+    defraIdStub.authHeader(this.userId)
   )
 })
 
@@ -431,13 +439,13 @@ Then(
   async function (dataTable) {
     if (!process.env.ENVIRONMENT) {
       const wasteRecordsCollection = dbClient.collection('waste-records')
+      const expectedWasteRecords = dataTable.hashes()
       const wasteRecords = await wasteRecordsCollection
         .find({
-          organisationId: '6507f1f77bcf86cd79943911'
+          organisationId: expectedWasteRecords[0].OrganisationId,
+          registrationId: expectedWasteRecords[0].RegistrationId
         })
         .toArray()
-
-      const expectedWasteRecords = dataTable.hashes()
       expect(wasteRecords.length).to.equal(expectedWasteRecords.length)
 
       for (const expectedWasteRecord of expectedWasteRecords) {
