@@ -85,6 +85,12 @@ aws s3api put-object \
   --body /etc/localstack/init/ready.d/exporter-invalid.xlsx \
   --endpoint-url=http://localhost:4566 \
 
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key exporter-key \
+  --body /etc/localstack/init/ready.d/exporter.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
 # Staleness test fixtures (reuse valid file with different keys)
 aws s3api put-object \
   --bucket re-ex-summary-logs \
