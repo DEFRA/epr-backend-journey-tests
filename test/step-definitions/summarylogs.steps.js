@@ -483,3 +483,13 @@ Then(
     }
   }
 )
+
+Then('the submitted summary log should not have an expiry', async function () {
+  if (!process.env.ENVIRONMENT) {
+    const summaryLogsCollection = dbClient.collection('summary-logs')
+    const summaryLog = await summaryLogsCollection.findOne({
+      _id: this.summaryLog.summaryLogId
+    })
+    expect(summaryLog.expiresAt).to.equal(null)
+  }
+})
