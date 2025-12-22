@@ -5,8 +5,8 @@ Feature: Summary Logs endpoint
     Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
     Then the organisations data update succeeds
 
-    Given I register a User to use the system
-    And I add a relationship to the User
+    Given I register a 'Reprocessor (Input) / Exporter' User to use the system
+    And I add a relationship to the 'Reprocessor (Input) / Exporter' User
     When I authorise the User
     And I generate the token
 
@@ -184,30 +184,41 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-#  Scenario: Summary Logs uploads (Reprocessor Output) and fails in-sheet revalidation
-#    Given I have the following summary log upload data with a valid organisation and registration details
-#      | s3Bucket | re-ex-summary-logs                 |
-#      | s3Key    | reprocessor-output-invalid-key     |
-#      | fileId   | reprocessor-output-invalid-file-id |
-#      | filename | reprocessor-output-invalid.xlsx    |
-#      | status   | complete                           |
-#    When I initiate the summary log upload
-#    Then the summary log upload initiation succeeds
-#    When I submit the summary log upload completed
-#    Then I should receive a summary log upload accepted response
-#
-#    When I check for the summary log status
-#    Then I should see the following summary log response
-#      | status | invalid |
-#    And I should see the following summary log validation failures
-#      | Code               | Location Sheet                  | Location Table    | Location Row | Location Header                        | Actual     |
-#      | INVALID_DATE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | DATE_LOAD_LEFT_SITE                    | 30-06-2025 |
-#      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | PRODUCT_TONNAGE                        | 1005       |
-#      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | UK_PACKAGING_WEIGHT_PERCENTAGE         | 1.1        |
-#      | INVALID_TYPE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | ADD_PRODUCT_WEIGHT                     | Invalid    |
-#      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | PRODUCT_UK_PACKAGING_WEIGHT_PROPORTION | 1105.5     |
-#    When I submit the uploaded summary log
-#    Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+  Scenario: Summary Logs uploads (Reprocessor Output) and fails in-sheet revalidation
+    Given I update the organisations data for id "6507f1f77bcf86cd79943931" with the following payload "./test/fixtures/6507f1f77bcf86cd79943931/payload.json"
+    Then the organisations data update succeeds
+
+    Given I register a 'Reprocessor (Output) / Exporter' User to use the system
+    And I add a relationship to the 'Reprocessor (Output) / Exporter' User
+    When I authorise the User
+    And I generate the token
+
+    When the User is linked to the organisation with id '6507f1f77bcf86cd79943931'
+
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket       | re-ex-summary-logs                 |
+      | s3Key          | reprocessor-output-invalid-key     |
+      | fileId         | reprocessor-output-invalid-file-id |
+      | filename       | reprocessor-output-invalid.xlsx    |
+      | status         | complete                           |
+      | processingType | reprocessorOutput-exporter         |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | invalid |
+    And I should see the following summary log validation failures
+      | Code               | Location Sheet                  | Location Table    | Location Row | Location Header                        | Actual     |
+      | INVALID_DATE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | DATE_LOAD_LEFT_SITE                    | 30-06-2025 |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | PRODUCT_TONNAGE                        | 1005       |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | UK_PACKAGING_WEIGHT_PERCENTAGE         | 1.1        |
+      | INVALID_TYPE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | ADD_PRODUCT_WEIGHT                     | Invalid    |
+      | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | PRODUCT_UK_PACKAGING_WEIGHT_PROPORTION | 1105.5     |
+    When I submit the uploaded summary log
+    Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details
