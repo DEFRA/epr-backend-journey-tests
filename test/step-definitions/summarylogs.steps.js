@@ -439,13 +439,13 @@ Then(
   async function (dataTable) {
     if (!process.env.ENVIRONMENT) {
       const wasteRecordsCollection = dbClient.collection('waste-records')
+      const expectedWasteRecords = dataTable.hashes()
       const wasteRecords = await wasteRecordsCollection
         .find({
-          organisationId: '6507f1f77bcf86cd79943911'
+          organisationId: expectedWasteRecords[0].OrganisationId,
+          registrationId: expectedWasteRecords[0].RegistrationId
         })
         .toArray()
-
-      const expectedWasteRecords = dataTable.hashes()
       expect(wasteRecords.length).to.equal(expectedWasteRecords.length)
 
       for (const expectedWasteRecord of expectedWasteRecords) {
