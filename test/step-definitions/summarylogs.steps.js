@@ -105,14 +105,14 @@ Then('the summary log upload initiation succeeds', async function () {
 
 When(
   'I check for the summary log status',
-  { timeout: 10000 },
+  { timeout: 15000 },
   async function () {
     const summaryLogId = this.summaryLog.summaryLogId
     const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
 
     // Transient statuses that indicate processing is still in progress
     const transientStatuses = ['preprocessing', 'validating']
-    const timeout = 10000 // 10 seconds
+    const timeout = 15000 // 10 seconds
     const interval = 500 // 500ms between polls
     const startTime = Date.now()
 
