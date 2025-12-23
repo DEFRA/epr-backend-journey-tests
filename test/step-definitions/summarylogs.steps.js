@@ -105,14 +105,14 @@ Then('the summary log upload initiation succeeds', async function () {
 
 When(
   'I check for the summary log status',
-  { timeout: 15000 },
+  { timeout: 18000 },
   async function () {
     const summaryLogId = this.summaryLog.summaryLogId
     const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
 
     // Transient statuses that indicate processing is still in progress
     const transientStatuses = ['preprocessing', 'validating']
-    const timeout = 15000 // 10 seconds
+    const timeout = 15000 // 15 seconds
     const interval = 500 // 500ms between polls
     const startTime = Date.now()
 
@@ -255,6 +255,44 @@ Then('the summary log submission succeeds', async function () {
     )
   }
 })
+
+Then(
+  'the summary log submission status is {string}',
+  { timeout: 12000 },
+  async function (expectedStatus) {
+    const summaryLogId = this.summaryLog.summaryLogId
+    const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
+
+    const timeout = 10000
+    const interval = 500
+    const startTime = Date.now()
+    let actualStatus
+
+    while (Date.now() - startTime < timeout) {
+      this.response = await baseAPI.get(
+        url,
+        defraIdStub.authHeader(this.userId)
+      )
+
+      // Parse response to check status
+      const responseData = await this.response.body.json()
+      actualStatus = responseData.status
+
+      // If status matches, we are done
+      if (actualStatus === expectedStatus) {
+        this.responseData = responseData
+        return
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, interval))
+    }
+
+    expect(actualStatus).to.equal(
+      expectedStatus,
+      `Summary log submission status check failed with status ${actualStatus}`
+    )
+  }
+)
 
 Then(
   'I should receive a summary log upload accepted response',
@@ -479,6 +517,50 @@ Then(
             'Then I should see that waste records are created in the database with the following values'
         },
         'Skipping waste record database checks'
+      )
+    }
+  }
+)
+
+Then(
+  'I should see that waste balances are created in the database with the following values',
+  async function (dataTable) {
+    if (!process.env.ENVIRONMENT) {
+      const wasteBalancesCollection = dbClient.collection('waste-balances')
+      const expectedWasteBalances = dataTable.hashes()
+      const wasteBalances = await wasteBalancesCollection
+        .find({
+          organisationId: expectedWasteBalances[0].OrganisationId,
+          accreditationId: expectedWasteBalances[0].AccreditationId
+        })
+        .toArray()
+      expect(wasteBalances.length).to.equal(expectedWasteBalances.length)
+
+      for (const expectedWasteBalance of expectedWasteBalances) {
+        const matchingRecord = wasteBalances.find(
+          (wasteBalance) =>
+            wasteBalance.organisationId ===
+              expectedWasteBalance.OrganisationId &&
+            wasteBalance.accreditationId ===
+              expectedWasteBalance.AccreditationId &&
+            wasteBalance.amount === parseInt(expectedWasteBalance.Amount) &&
+            wasteBalance.availableAmount ===
+              parseInt(expectedWasteBalance.AvailableAmount)
+        )
+
+        if (!matchingRecord) {
+          expect.fail(
+            `Expected record: ${JSON.stringify(expectedWasteBalance)}, but no waste balances found with those values. Actual waste balances found: ${JSON.stringify(wasteBalances)}`
+          )
+        }
+      }
+    } else {
+      logger.warn(
+        {
+          step_definition:
+            'Then I should see that waste balances are created in the database with the following values'
+        },
+        'Skipping waste balances database checks'
       )
     }
   }
