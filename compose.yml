@@ -73,7 +73,7 @@ services:
      AUDIT_ENABLED: true
      FEATURE_FLAG_SUMMARY_LOGS: true
      FEATURE_FLAG_DEV_ENDPOINTS: true
-     FEATURE_FLAG_DEFRA_ID_AUTH: true
+     FEATURE_FLAG_CALCULATE_WASTE_BALANCE_ON_IMPORT: true
      LOG_FORMAT: ecs
      ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
      ADMIN_UI_ENTRA_CLIENT_ID: clientId
