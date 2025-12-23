@@ -267,12 +267,12 @@ Feature: Summary Logs endpoint
 
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket       | re-ex-summary-logs      |
-      | s3Key          | exporter-update-key     |
-      | fileId         | exporter-update-file-id |
-      | filename       | exporter-update.xlsx    |
-      | status         | complete                |
-      | processingType | exporter                |
+      | s3Bucket       | re-ex-summary-logs |
+      | s3Key          | exporter-key       |
+      | fileId         | exporter-file-id   |
+      | filename       | exporter.xlsx      |
+      | status         | complete           |
+      | processingType | exporter           |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -280,6 +280,7 @@ Feature: Summary Logs endpoint
     And the summary log submission status is 'validated'
     When I submit the uploaded summary log
     Then the summary log submission succeeds
+    And the summary log submission status is 'submitted'
     And I should see that waste balances are created in the database with the following values
       | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
       | 6507f1f77bcf86cd79943911 | 68f6a147c117aec8a1ab7498 | 30     | 30              |
