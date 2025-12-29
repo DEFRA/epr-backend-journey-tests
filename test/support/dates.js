@@ -13,8 +13,9 @@ export class Dates {
         item.forEach(traverse)
         return
       }
-      if (Object.prototype.hasOwnProperty.call(item, 'validTo')) {
-        item.validTo = validTo.toISOString()
+
+      if (Object.hasOwn(item, 'validTo')) {
+        item.validTo = validTo.toISOString().slice(0, 10)
       }
 
       Object.values(item).forEach(traverse)
