@@ -8,7 +8,7 @@ export class ZAPClient {
     this.scanners = []
     this.partialScanActive = false
     this.fullScanActive = false
-    this.getScanners()
+    // this.getScanners()
   }
 
   async getScanners() {
