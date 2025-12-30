@@ -159,7 +159,7 @@ This only applies to local builds. You can generate 50 organisation details, reg
 npm run generatedata
 ```
 
-This will create mock datasets for the 3 collections in the database. Only to be used for local development purposes.
+This will create mock datasets for the 3 collections in the database. Only to be used for local development purposes.  
 
 ## What is tested in this test suite
 
