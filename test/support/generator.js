@@ -38,6 +38,8 @@ const permitTypes = [
 const roles = ['Reprocessor', 'Exporter', 'Reprocessor and exporter']
 const nations = ['England', 'Northern Ireland', 'Scotland', 'Wales']
 
+const regPostcode = fakerEN_GB.location.zipCode()
+
 export class Accreditation {
   constructor(orgId, refNo) {
     this.phoneNumber = fakerEN_GB.phone.number()
@@ -69,7 +71,7 @@ export class Accreditation {
   toReprocessorPayload() {
     const payload = JSON.parse(JSON.stringify(accReprocessorPayload))
 
-    this.material = 'Paper or board (R3)'
+    this.material = 'Glass (R5)'
 
     payload.data.main.PcYDad = this.fullName
     payload.data.main.ANtYzb = this.email
@@ -86,6 +88,10 @@ export class Accreditation {
     payload.data.main.eAhuYs = this.developingNewMarketsPercentage
     payload.data.main.tJvMrh = this.developingNewUsesPercentage
     payload.data.main.LuybKn = this.otherCategoriesPercentage
+
+    payload.data.main.IaTELm = this.material
+    payload.data.main.gQZpRd = 'Both'
+    payload.data.main.gWdCTX = regPostcode
 
     payload.data.repeaters.kaaxig[0].aGZJEm = this.fullName
     payload.data.repeaters.kaaxig[0].oVQfjw = this.email
@@ -146,12 +152,13 @@ export class Organisation {
 
     this.jobTitle = fakerEN_GB.person.jobTitle()
 
+    this.postcode = fakerEN_GB.location.zipCode()
     this.address =
       fakerEN_GB.location.streetAddress() +
       ',' +
       fakerEN_GB.location.city() +
       ',' +
-      fakerEN_GB.location.zipCode()
+      this.postcode
 
     this.companyName = fakerEN_GB.company.name() + ' Limited'
 
@@ -161,8 +168,8 @@ export class Organisation {
   toNonRegisteredOutsideUKAddressPayload() {
     const payload = JSON.parse(JSON.stringify(nonRegOutsideUkAddressPayload))
 
-    this.foreignCity = fakerFR.location.zipCode()
-    this.foreignCity = fakerFR.location.zipCode()
+    this.foreignCity = fakerFR.location.city()
+    this.foreignCity = fakerFR.location.city()
     this.foreignAddress = fakerFR.location.streetAddress()
 
     payload.data.main.JiSlkT = fakerEN_GB.person.fullName()
@@ -272,7 +279,7 @@ export class Registration {
       ',' +
       fakerEN_GB.location.city() +
       ',' +
-      fakerEN_GB.location.zipCode()
+      regPostcode
 
     this.addressServiceNotice =
       fakerEN_GB.location.streetAddress() +
