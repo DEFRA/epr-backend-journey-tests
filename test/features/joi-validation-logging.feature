@@ -13,4 +13,4 @@ Feature: Joi validation error logging
     Then I should receive a 422 error response '"redirectUrl" is required'
     And the following messages appear in the log
       | Log Level | Event Action     | Message                               |
-      | error     | response_failure | "redirectUrl" is required \| data: [{ |
+      | warn      | response_failure | "redirectUrl" is required \| data: [{ |
