@@ -448,4 +448,3 @@ Feature: Summary Logs endpoint
       | rejected       | pending      | rejected          | preprocessing   |
       | rejected       | rejected     | rejected          | rejected        |
       | complete       | complete     | validating        | validating      |
-
