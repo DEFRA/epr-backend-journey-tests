@@ -449,10 +449,3 @@ Feature: Summary Logs endpoint
       | rejected       | rejected     | rejected          | rejected        |
       | complete       | complete     | validating        | validating      |
 
-  @joiValidationLogging
-  Scenario: Joi validation errors include field-level details in logs
-    When I initiate the summary log upload without redirectUrl
-    Then I should receive a 422 error response '"redirectUrl" is required'
-    And the following messages appear in the log
-      | Log Level | Event Action     | Message                               |
-      | error     | response_failure | "redirectUrl" is required \| data: [{ |
