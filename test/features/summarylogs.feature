@@ -52,6 +52,9 @@ Feature: Summary Logs endpoint
       | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1001  | received |
       | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1002  | received |
     And the submitted summary log should not have an expiry
+    And I should see that waste balances are created in the database with the following values
+      | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
+      | 6507f1f77bcf86cd79943911 | 68f6a147c117aec8a1ab7497 | 391.62 | 391.62          |
 
     # Summary Logs uploads and fails validation for removed row on second upload. This depends on the previous steps being executed
     Given I have the following summary log upload data with a valid organisation and registration details
@@ -217,6 +220,36 @@ Feature: Summary Logs endpoint
       | VALUE_OUT_OF_RANGE | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | PRODUCT_UK_PACKAGING_WEIGHT_PROPORTION | 1105.5     |
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+
+  Scenario: Summary Logs uploads (Reprocessor Output) and succeeds, with waste balance calculated for Sent On
+    Given I update the organisations data for id "6507f1f77bcf86cd79943931" with the following payload "./test/fixtures/6507f1f77bcf86cd79943931/payload.json"
+    Then the organisations data update succeeds
+
+    Given I register a 'Reprocessor (Output) / Exporter' User to use the system
+    And I add a relationship to the 'Reprocessor (Output) / Exporter' User
+    When I authorise the User
+    And I generate the token
+
+    When the User is linked to the organisation with id '6507f1f77bcf86cd79943931'
+
+    Given I have the following summary log upload data with a valid organisation and registration details
+      | s3Bucket       | re-ex-summary-logs               |
+      | s3Key          | reprocessor-output-valid-key     |
+      | fileId         | reprocessor-output-valid-file-id |
+      | filename       | reprocessor-output-valid.xlsx    |
+      | status         | complete                         |
+      | processingType | reprocessorOutput-exporter       |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    And the summary log submission status is 'validated'
+    When I submit the uploaded summary log
+    Then the summary log submission succeeds
+    And the summary log submission status is 'submitted'
+    And I should see that waste balances are created in the database with the following values
+      | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
+      | 6507f1f77bcf86cd79943931 | 68f6a147c117aec8a1ab749a | -40    | -40             |
 
   Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details

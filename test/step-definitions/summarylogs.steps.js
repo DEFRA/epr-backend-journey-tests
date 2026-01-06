@@ -699,9 +699,10 @@ Then(
               expectedWasteBalance.OrganisationId &&
             wasteBalance.accreditationId ===
               expectedWasteBalance.AccreditationId &&
-            wasteBalance.amount === parseInt(expectedWasteBalance.Amount) &&
-            wasteBalance.availableAmount ===
-              parseInt(expectedWasteBalance.AvailableAmount)
+            parseFloat(wasteBalance.amount).toFixed(2) ===
+              parseFloat(expectedWasteBalance.Amount).toFixed(2) &&
+            parseFloat(wasteBalance.availableAmount).toFixed(2) ===
+              parseFloat(expectedWasteBalance.AvailableAmount).toFixed(2)
         )
 
         if (!matchingRecord) {
