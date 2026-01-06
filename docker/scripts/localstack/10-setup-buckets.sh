@@ -69,6 +69,12 @@ aws s3api put-object \
 
 aws s3api put-object \
   --bucket re-ex-summary-logs \
+  --key reprocessor-output-valid-key \
+  --body /etc/localstack/init/ready.d/reprocessor-output-valid.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
   --key reprocessor-input-invalid-key \
   --body /etc/localstack/init/ready.d/reprocessor-input-invalid.xlsx \
   --endpoint-url=http://localhost:4566 \
