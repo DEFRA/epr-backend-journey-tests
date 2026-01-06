@@ -86,7 +86,21 @@ When('I initiate the summary log upload', async function () {
 
 Then('the organisations data update succeeds', async function () {
   if (!process.env.ENVIRONMENT) {
-    expect(this.response.statusCode).to.equal(200)
+    if (this.response.statusCode === 422) {
+      this.responseData = await this.response.body.json()
+      if (
+        this.responseData.message ===
+        'Cannot transition organisation status from active to approved'
+      ) {
+        logger.info('Organisation already active, no update required')
+      } else {
+        expect.fail(
+          `Organisation update failed with HTTP status code ${this.response.statusCode} and message: ${this.responseData.message}`
+        )
+      }
+    } else {
+      expect(this.response.statusCode).to.equal(200)
+    }
   } else {
     logger.warn(
       {
