@@ -99,6 +99,21 @@ When(
   }
 )
 
+When(
+  'I try to access summary logs for organisation {string}',
+  async function (organisationId) {
+    this.summaryLog = new SummaryLog()
+    this.summaryLog.orgId = organisationId
+    this.summaryLog.regId = '6507f1f77bcf86cd79943912'
+    this.initiatePayload = { redirectUrl: 'test-redirect' }
+    this.response = await baseAPI.post(
+      `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
+      JSON.stringify(this.initiatePayload),
+      defraIdStub.authHeader(this.userId)
+    )
+  }
+)
+
 Then('the organisations data update succeeds', async function () {
   if (!process.env.ENVIRONMENT) {
     if (this.response.statusCode === 422) {
