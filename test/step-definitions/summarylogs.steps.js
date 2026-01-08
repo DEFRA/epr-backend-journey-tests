@@ -566,7 +566,6 @@ Then(
       expect(summaryLog.file.id).to.equal(this.summaryLog.fileId)
       expect(summaryLog.file.name).to.equal(this.summaryLog.filename)
       expect(summaryLog.file.status).to.equal(this.summaryLog.fileStatus)
-      // expect(summaryLog.status).to.equal(this.summaryLog.status)
       switch (this.summaryLog.fileStatus) {
         case 'complete':
           expect(summaryLog.file.uri).to.equal(
