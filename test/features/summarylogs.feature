@@ -13,29 +13,23 @@ Feature: Summary Logs endpoint
     When the User is linked to the organisation with id '6507f1f77bcf86cd79943911'
 
   Scenario: Summary Logs uploads (With Validation concerns) and creates a Waste Record
-    Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs              |
-      | s3Key    | valid-summary-log-input-key     |
-      | fileId   | valid-summary-log-input-file-id |
-      | filename | valid-summary-log-input.xlsx    |
-      | status   | complete                        |
+    Given I have valid organisation and registration details for summary log upload with waste processing type 'reprocessorInput'
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-    When I submit the summary log upload completed
+
+    When I upload the file 'valid-summary-log-input.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I submit the summary log upload completed with the response from CDP Uploader
     Then I should receive a summary log upload accepted response
     And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                                                              |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-file-id, filename=valid-summary-log-input.xlsx, status=complete, s3Bucket=re-ex-summary-logs, s3Key=valid-summary-log-input-key |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-file-id, filename=valid-summary-log-input.xlsx                                                                         |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-file-id, filename=valid-summary-log-input.xlsx                                                                             |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId=valid-summary-log-input-file-id, filename=valid-summary-log-input.xlsx, status=validated                                                                  |
-    And I should see that a summary log is created in the database with the following values
-      | s3Bucket   | re-ex-summary-logs              |
-      | s3Key      | valid-summary-log-input-key     |
-      | fileId     | valid-summary-log-input-file-id |
-      | filename   | valid-summary-log-input.xlsx    |
-      | fileStatus | complete                        |
-      | status     | validated                       |
+      | Log Level | Event Action    | Message                                                                                                                                                                                                         |
+      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId={{summaryLogFileId}}, filename={{summaryLogFilename}}, status={{summaryLogFileStatus}}, s3Bucket={{summaryLogS3Bucket}}, s3Key={{summaryLogS3Key}} |
+      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId={{summaryLogFileId}}, filename={{summaryLogFilename}}                                                                                     |
+      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId={{summaryLogFileId}}, filename={{summaryLogFilename}}                                                                                         |
+      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId={{summaryLogFileId}}, filename={{summaryLogFilename}}, status=validated                                                                              |
+    And the summary log is created in the database successfully
+
     When I check for the summary log status
     Then I should see the following summary log response
       | status  | validated  |
@@ -61,11 +55,11 @@ Feature: Summary Logs endpoint
 
     # Summary Logs uploads and fails validation for removed row on second upload. This depends on the previous steps being executed
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs                |
-      | s3Key    | valid-summary-log-input-2-key     |
-      | fileId   | valid-summary-log-input-2-file-id |
-      | filename | valid-summary-log-input-2.xlsx    |
-      | status   | complete                          |
+      | s3Bucket   | re-ex-summary-logs                |
+      | s3Key      | valid-summary-log-input-2-key     |
+      | fileId     | valid-summary-log-input-2-file-id |
+      | filename   | valid-summary-log-input-2.xlsx    |
+      | fileStatus | complete                          |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -84,11 +78,11 @@ Feature: Summary Logs endpoint
   Scenario: Stale preview is rejected at submission time (deferred staleness detection)
     # User A uploads and validates file 1
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs                |
-      | s3Key    | staleness-test-file-1-key         |
-      | fileId   | staleness-test-file-1-id          |
-      | filename | staleness-test-file-1.xlsx        |
-      | status   | complete                          |
+      | s3Bucket   | re-ex-summary-logs                |
+      | s3Key      | staleness-test-file-1-key         |
+      | fileId     | staleness-test-file-1-id          |
+      | filename   | staleness-test-file-1.xlsx        |
+      | fileStatus | complete                          |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -100,11 +94,11 @@ Feature: Summary Logs endpoint
 
     # User B uploads and validates file 2 (both coexist - no blocking)
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs                |
-      | s3Key    | staleness-test-file-2-key         |
-      | fileId   | staleness-test-file-2-id          |
-      | filename | staleness-test-file-2.xlsx        |
-      | status   | complete                          |
+      | s3Bucket    | re-ex-summary-logs         |
+      | s3Key       | staleness-test-file-2-key  |
+      | fileId      | staleness-test-file-2-id   |
+      | filename    | staleness-test-file-2.xlsx |
+      | fileStatus  | complete                   |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -134,11 +128,11 @@ Feature: Summary Logs endpoint
 
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs                |
-      | s3Key    | reprocessor-input-invalid-key     |
-      | fileId   | reprocessor-input-invalid-file-id |
-      | filename | reprocessor-input-invalid.xlsx    |
-      | status   | complete                          |
+      | s3Bucket   | re-ex-summary-logs                |
+      | s3Key      | reprocessor-input-invalid-key     |
+      | fileId     | reprocessor-input-invalid-file-id |
+      | filename   | reprocessor-input-invalid.xlsx    |
+      | fileStatus | complete                          |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -167,11 +161,11 @@ Feature: Summary Logs endpoint
 
   Scenario: Summary Logs uploads (Reprocessor Input, Sent On sheet) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs                       |
-      | s3Key    | reprocessor-input-senton-invalid-key     |
-      | fileId   | reprocessor-input-senton-invalid-file-id |
-      | filename | reprocessor-input-senton-invalid.xlsx    |
-      | status   | complete                                 |
+      | s3Bucket   | re-ex-summary-logs                       |
+      | s3Key      | reprocessor-input-senton-invalid-key     |
+      | fileId     | reprocessor-input-senton-invalid-file-id |
+      | filename   | reprocessor-input-senton-invalid.xlsx    |
+      | fileStatus | complete                                 |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -204,7 +198,7 @@ Feature: Summary Logs endpoint
       | s3Key          | reprocessor-output-invalid-key     |
       | fileId         | reprocessor-output-invalid-file-id |
       | filename       | reprocessor-output-invalid.xlsx    |
-      | status         | complete                           |
+      | fileStatus     | complete                           |
       | processingType | reprocessorOutput-exporter         |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
@@ -230,7 +224,7 @@ Feature: Summary Logs endpoint
       | s3Key          | exporter-invalid-key     |
       | fileId         | exporter-invalid-file-id |
       | filename       | exporter-invalid.xlsx    |
-      | status         | complete                 |
+      | fileStatus     | complete                 |
       | processingType | exporter                 |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
@@ -274,7 +268,7 @@ Feature: Summary Logs endpoint
       | s3Key          | exporter-key       |
       | fileId         | exporter-file-id   |
       | filename       | exporter.xlsx      |
-      | status         | complete           |
+      | fileStatus     | complete           |
       | processingType | exporter           |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
@@ -290,11 +284,11 @@ Feature: Summary Logs endpoint
 
   Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Row ID and cannot be submitted
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs     |
-      | s3Key    | invalid-row-id-key     |
-      | fileId   | invalid-row-id-file-id |
-      | filename | invalid-row-id.xlsx    |
-      | status   | complete               |
+      | s3Bucket   | re-ex-summary-logs     |
+      | s3Key      | invalid-row-id-key     |
+      | fileId     | invalid-row-id-file-id |
+      | filename   | invalid-row-id.xlsx    |
+      | fileStatus | complete               |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -312,11 +306,11 @@ Feature: Summary Logs endpoint
 
   Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Table name and cannot be submitted
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs         |
-      | s3Key    | invalid-table-name-key     |
-      | fileId   | invalid-table-name-file-id |
-      | filename | invalid-table-name.xlsx    |
-      | status   | complete                   |
+      | s3Bucket   | re-ex-summary-logs         |
+      | s3Key      | invalid-table-name-key     |
+      | fileId     | invalid-table-name-file-id |
+      | filename   | invalid-table-name.xlsx    |
+      | fileStatus | complete                   |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -333,11 +327,11 @@ Feature: Summary Logs endpoint
 
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when summary log validation fails
     Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket | re-ex-summary-logs       |
-      | s3Key    | invalid-test-upload-key  |
-      | fileId   | test-upload-file-id      |
-      | filename | invalid-test-upload.xlsx |
-      | status   | complete                 |
+      | s3Bucket   | re-ex-summary-logs       |
+      | s3Key      | invalid-test-upload-key  |
+      | fileId     | test-upload-file-id      |
+      | filename   | invalid-test-upload.xlsx |
+      | fileStatus | complete                 |
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     When I check for the summary log status
@@ -360,11 +354,11 @@ Feature: Summary Logs endpoint
 
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
     Given I have the following summary log upload data
-      | s3Bucket | re-ex-summary-logs  |
-      | s3Key    | test-upload-key     |
-      | fileId   | test-upload-file-id |
-      | filename | test-upload.xlsx    |
-      | status   | pending             |
+      | s3Bucket   | re-ex-summary-logs  |
+      | s3Key      | test-upload-key     |
+      | fileId     | test-upload-file-id |
+      | filename   | test-upload.xlsx    |
+      | fileStatus | pending             |
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the following messages appear in the log
@@ -378,11 +372,11 @@ Feature: Summary Logs endpoint
 
   Scenario: Summary Logs upload-completed endpoint processes with rejected status with all required fields
     Given I have the following summary log upload data
-      | s3Bucket | re-ex-summary-logs  |
-      | s3Key    | test-upload-key     |
-      | fileId   | test-upload-file-id |
-      | filename | test-upload.xlsx    |
-      | status   | rejected            |
+      | s3Bucket   | re-ex-summary-logs  |
+      | s3Key      | test-upload-key     |
+      | fileId     | test-upload-file-id |
+      | filename   | test-upload.xlsx    |
+      | fileStatus | rejected            |
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the following messages appear in the log
@@ -397,19 +391,19 @@ Feature: Summary Logs endpoint
 
   Scenario Outline: Summary Logs upload-completed endpoint valid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data
-      | s3Bucket | re-ex-summary-logs  |
-      | s3Key    | test-upload-key     |
-      | fileId   | test-upload-file-id |
-      | filename | test-upload.xlsx    |
-      | status   | <FromTransition>    |
+      | s3Bucket   | re-ex-summary-logs  |
+      | s3Key      | test-upload-key     |
+      | fileId     | test-upload-file-id |
+      | filename   | test-upload.xlsx    |
+      | fileStatus | <FromTransition>    |
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     When the summary log upload data is updated
-      | s3Bucket | re-ex-summary-logs  |
-      | s3Key    | test-upload-key     |
-      | fileId   | test-upload-file-id |
-      | filename | test-upload.xlsx    |
-      | status   | <ToTransition>      |
+      | s3Bucket   | re-ex-summary-logs  |
+      | s3Key      | test-upload-key     |
+      | fileId     | test-upload-file-id |
+      | filename   | test-upload.xlsx    |
+      | fileStatus | <ToTransition>      |
     And I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
@@ -421,19 +415,19 @@ Feature: Summary Logs endpoint
 
   Scenario Outline: Summary Logs upload-completed endpoint invalid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data
-      | s3Bucket | re-ex-summary-logs  |
-      | s3Key    | test-upload-key     |
-      | fileId   | test-upload-file-id |
-      | filename | test-upload.xlsx    |
-      | status   | <FromTransition>    |
+      | s3Bucket   | re-ex-summary-logs  |
+      | s3Key      | test-upload-key     |
+      | fileId     | test-upload-file-id |
+      | filename   | test-upload.xlsx    |
+      | fileStatus | <FromTransition>    |
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     When the summary log upload data is updated
-      | s3Bucket | re-ex-summary-logs  |
-      | s3Key    | test-upload-key     |
-      | fileId   | test-upload-file-id |
-      | filename | test-upload.xlsx    |
-      | status   | <ToTransition>      |
+      | s3Bucket   | re-ex-summary-logs  |
+      | s3Key      | test-upload-key     |
+      | fileId     | test-upload-file-id |
+      | filename   | test-upload.xlsx    |
+      | fileStatus | <ToTransition>      |
     And I submit the summary log upload completed
     Then I should receive a 409 error response 'Cannot transition summary log from <FromTransitionLog> to <ToTransitionLog>'
     And the following messages appear in the log
