@@ -32,8 +32,7 @@ export class CDPUploader {
 
   async status(uploadId) {
     const instanceHeaders = {
-      ...this.defaultHeaders,
-      'Content-Type': 'application/x-www-form-urlencoded'
+      ...this.defaultHeaders
     }
     const response = await request(`${this.baseUrl}/status/${uploadId}`, {
       method: 'GET',
