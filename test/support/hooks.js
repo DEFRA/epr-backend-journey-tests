@@ -7,6 +7,7 @@ import { setGlobalDispatcher } from 'undici'
 import { Interpolator } from './interpolator.js'
 import { AuthClient } from '../support/auth.js'
 import { DefraIdStub } from '../support/defra-id-stub.js'
+import { CDPUploader } from '../support/cdp-uploader.js'
 import { Users } from '../support/users.js'
 
 let agent
@@ -16,6 +17,7 @@ let authClient
 let baseAPI
 let interpolator
 let defraIdStub
+let cdpUploader
 let users
 
 BeforeAll(async function () {
@@ -26,6 +28,7 @@ BeforeAll(async function () {
   defraIdStub = new DefraIdStub()
   users = new Users()
   interpolator = new Interpolator()
+  cdpUploader = new CDPUploader()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
 })
@@ -42,4 +45,12 @@ After(async function (scenario) {
   }
 })
 
-export { dbClient, authClient, defraIdStub, baseAPI, interpolator, users }
+export {
+  dbClient,
+  authClient,
+  defraIdStub,
+  baseAPI,
+  interpolator,
+  users,
+  cdpUploader
+}

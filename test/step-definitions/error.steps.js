@@ -9,7 +9,8 @@ const setupSummaryLog = (context) => {
     'test-bucket',
     'test-key',
     'test-file-id',
-    'test-filename.xlsx'
+    'test-filename.xlsx',
+    'complete'
   )
 }
 

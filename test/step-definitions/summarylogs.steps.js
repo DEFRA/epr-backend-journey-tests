@@ -1,5 +1,10 @@
 import { Given, Then, When } from '@cucumber/cucumber'
-import { baseAPI, dbClient, defraIdStub } from '../support/hooks.js'
+import {
+  baseAPI,
+  dbClient,
+  defraIdStub,
+  cdpUploader
+} from '../support/hooks.js'
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
 import logger from '../support/logger.js'
@@ -9,7 +14,8 @@ import { Dates } from '../support/dates.js'
 Given('I have the following summary log upload data', function (dataTable) {
   this.summaryLog = new SummaryLog()
   this.uploadData = dataTable.rowsHash()
-  this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
+  this.summaryLog.setUploadData(this.uploadData)
+  this.payload = this.summaryLog.toUploadCompletedPayload()
 })
 
 Given(
@@ -48,7 +54,8 @@ Given(
     this.summaryLog.orgId = '6507f1f77bcf86cd79943911'
     this.summaryLog.regId = '6507f1f77bcf86cd79943912'
     this.uploadData = dataTable.rowsHash()
-    this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
+    this.summaryLog.setUploadData(this.uploadData)
+    this.payload = this.summaryLog.toUploadCompletedPayload()
     if (this.uploadData.processingType === 'exporter') {
       this.summaryLog.regId = '6507f1f77bcf86cd79943913'
     } else if (
@@ -60,9 +67,25 @@ Given(
   }
 )
 
+Given(
+  'I have valid organisation and registration details for summary log upload with waste processing type {string}',
+  function (processingType) {
+    this.summaryLog = new SummaryLog()
+    this.summaryLog.orgId = '6507f1f77bcf86cd79943911'
+    this.summaryLog.regId = '6507f1f77bcf86cd79943912'
+    if (processingType === 'exporter') {
+      this.summaryLog.regId = '6507f1f77bcf86cd79943913'
+    } else if (processingType === 'reprocessorOutput-exporter') {
+      this.summaryLog.orgId = '6507f1f77bcf86cd79943931'
+      this.summaryLog.regId = '6507f1f77bcf86cd79943932'
+    }
+  }
+)
+
 When('the summary log upload data is updated', function (dataTable) {
   this.uploadData = dataTable.rowsHash()
-  this.payload = this.summaryLog.toUploadCompletedPayload(this.uploadData)
+  this.summaryLog.setUploadData(this.uploadData)
+  this.payload = this.summaryLog.toUploadCompletedPayload()
 })
 
 When('I submit the summary log upload completed', async function () {
@@ -73,15 +96,74 @@ When('I submit the summary log upload completed', async function () {
   )
 })
 
+When(
+  'I submit the summary log upload completed with the response from CDP Uploader',
+  async function () {
+    const timeout = 10000 // 10 seconds
+    const interval = 500 // 500ms between polls
+    const startTime = Date.now()
+
+    while (Date.now() - startTime < timeout) {
+      this.response = await cdpUploader.status(this.uploadId)
+
+      this.responseData = await this.response.body.json()
+      const fileStatus = this.responseData.form?.file?.fileStatus
+      if (fileStatus === 'complete') {
+        break
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, interval))
+    }
+
+    this.summaryLog = new SummaryLog()
+
+    this.summaryLog.orgId = '6507f1f77bcf86cd79943911'
+    this.summaryLog.regId = '6507f1f77bcf86cd79943912'
+
+    this.summaryLog.setFileData(
+      this.responseData.form.file.s3Bucket,
+      this.responseData.form.file.s3Key,
+      this.responseData.form.file.fileId,
+      this.responseData.form.file.filename,
+      this.responseData.form.file.fileStatus
+    )
+
+    this.payload = this.summaryLog.toUploadCompletedPayload()
+
+    this.response = await baseAPI.post(
+      `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${this.summaryLog.summaryLogId}/upload-completed`,
+      JSON.stringify(this.payload)
+    )
+  }
+)
+
 When('I initiate the summary log upload', async function () {
   this.initiatePayload = {
-    redirectUrl: 'summary-log-upload-redirect'
+    redirectUrl: `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${this.summaryLog.summaryLogId}`
   }
   this.response = await baseAPI.post(
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
     JSON.stringify(this.initiatePayload),
     defraIdStub.authHeader(this.userId)
   )
+})
+
+Then('the summary log upload initiation succeeds', async function () {
+  expect(this.response.statusCode).to.equal(201)
+  this.responseData = await this.response.body.json()
+  this.summaryLog.summaryLogId = this.responseData.summaryLogId
+  this.uploadId = this.responseData.uploadId
+})
+
+When(
+  'I upload the file {string} via the CDP uploader',
+  async function (filename) {
+    this.response = await cdpUploader.uploadAndScan(this.uploadId, filename)
+  }
+)
+
+Then('the upload to CDP uploader succeeds', async function () {
+  expect(this.response.statusCode).to.equal(302)
 })
 
 When(
@@ -139,12 +221,6 @@ Then('the organisations data update succeeds', async function () {
       'Skipping organisations data update checks'
     )
   }
-})
-
-Then('the summary log upload initiation succeeds', async function () {
-  expect(this.response.statusCode).to.equal(201)
-  this.responseData = await this.response.body.json()
-  this.summaryLog.summaryLogId = this.responseData.summaryLogId
 })
 
 When(
@@ -474,6 +550,42 @@ Then(
           `Expected validation ${JSON.stringify(expectedResult)} but no concerns found with those values. Actual validation concern values found: ${JSON.stringify(this.responseData.validation.concerns)}`
         )
       }
+    }
+  }
+)
+
+Then(
+  'the summary log is created in the database successfully',
+  async function () {
+    if (!process.env.ENVIRONMENT) {
+      const summaryLogCollection = dbClient.collection('summary-logs')
+      const summaryLog = await summaryLogCollection.findOne({
+        _id: this.summaryLog.summaryLogId
+      })
+      expect(summaryLog._id).to.equal(this.summaryLog.summaryLogId)
+      expect(summaryLog.file.id).to.equal(this.summaryLog.fileId)
+      expect(summaryLog.file.name).to.equal(this.summaryLog.filename)
+      expect(summaryLog.file.status).to.equal(this.summaryLog.fileStatus)
+      switch (this.summaryLog.fileStatus) {
+        case 'complete':
+          expect(summaryLog.file.uri).to.equal(
+            `s3://${this.summaryLog.s3Bucket}/${this.summaryLog.s3Key}`
+          )
+          break
+        case 'rejected':
+          expect(summaryLog.validation.failures[0].code).to.equal(
+            'FILE_REJECTED'
+          )
+          break
+      }
+    } else {
+      logger.warn(
+        {
+          step_definition:
+            'Then the summary log is created in the database successfully'
+        },
+        'Skipping summary log database checks'
+      )
     }
   }
 )

@@ -379,11 +379,22 @@ export class SummaryLog {
     this.regId = regId
   }
 
-  setFileData(s3Bucket, s3Key, fileId, filename) {
+  setUploadData(uploadData) {
+    this.setFileData(
+      uploadData.s3Bucket,
+      uploadData.s3Key,
+      uploadData.fileId,
+      uploadData.filename,
+      uploadData.fileStatus
+    )
+  }
+
+  setFileData(s3Bucket, s3Key, fileId, filename, fileStatus) {
     this.s3Bucket = s3Bucket
     this.s3Key = s3Key
     this.fileId = fileId
     this.filename = filename
+    this.fileStatus = fileStatus
   }
 
   toPayload() {
@@ -395,15 +406,15 @@ export class SummaryLog {
     }
   }
 
-  toUploadCompletedPayload(dataTableHash) {
+  toUploadCompletedPayload() {
     return {
       form: {
         summaryLogUpload: {
-          fileId: dataTableHash.fileId,
-          filename: dataTableHash.filename,
-          fileStatus: dataTableHash.status,
-          s3Bucket: dataTableHash.s3Bucket,
-          s3Key: dataTableHash.s3Key
+          fileId: this.fileId,
+          filename: this.filename,
+          fileStatus: this.fileStatus,
+          s3Bucket: this.s3Bucket,
+          s3Key: this.s3Key
         }
       }
     }

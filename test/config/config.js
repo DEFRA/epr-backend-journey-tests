@@ -82,6 +82,11 @@ const defraId = {
   local: 'http://defra-id-stub:3200'
 }
 
+const cdpUploader = {
+  local: withProxy ? 'http://cdp-uploader:7337' : 'http://localhost:7337',
+  env: `https://cdp-uploader.${environment}.cdp-int.defra.cloud`
+}
+
 const dockerLogParser = {
   containerName: 'epr-backend-journey-tests-epr-backend-1'
 }
@@ -96,17 +101,21 @@ const dbConnector = !environment ? database.mongo : database.stub
 let apiUri
 let authUri
 let defraIdUri
+let cdpUploaderUri
 
 if (!environment) {
   apiUri = api.local
   authUri = auth.local
   defraIdUri = defraId.local
+  cdpUploaderUri = cdpUploader.local
 } else if (xApiKey) {
   apiUri = api.envFromLocal
   authUri = auth.env
+  cdpUploaderUri = cdpUploader.env
 } else {
   apiUri = api.env
   authUri = auth.env
+  cdpUploaderUri = cdpUploader.env
 }
 
 const zapTargetApiUri = !environment ? zapTargetApi.local : zapTargetApi.env
@@ -121,6 +130,7 @@ export default {
   zap,
   authUri,
   defraIdUri,
+  cdpUploaderUri,
   auth,
   zapAgent,
   undiciAgent: globalUndiciAgent,
