@@ -83,7 +83,7 @@ const defraId = {
 }
 
 const cdpUploader = {
-  local: 'http://cdp-uploader:7337',
+  local: withProxy ? 'http://cdp-uploader:7337' : 'http://localhost:7337',
   env: `https://cdp-uploader.${environment}.cdp-int.defra.cloud`
 }
 

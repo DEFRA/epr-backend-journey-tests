@@ -17,7 +17,7 @@ Feature: Summary Logs endpoint
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
 
-    When I upload the file 'valid-summary-log-input.xlsx' via the CDP uploader
+    When I upload the file 'reprocessor-input-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I submit the summary log upload completed with the response from CDP Uploader
