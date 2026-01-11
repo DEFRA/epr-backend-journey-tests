@@ -30,11 +30,11 @@
   },
   "dependencies": {
     "allure-commandline": "2.36.0",
-    "allure-js-commons": "3.4.3",
+    "allure-js-commons": "3.4.4",
     "esm-module-alias": "2.2.1",
     "global-agent": "3.0.0",
     "pino": "10.1.0",
-    "undici": "7.16.0"
+    "undici": "7.18.2"
   },
   "devDependencies": {
     "@babel/core": "7.28.5",
