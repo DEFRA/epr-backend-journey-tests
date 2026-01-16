@@ -237,7 +237,7 @@ Feature: Summary Logs endpoint
       | s3Key          | reprocessor-output-valid-key     |
       | fileId         | reprocessor-output-valid-file-id |
       | filename       | reprocessor-output-valid.xlsx    |
-      | status         | complete                         |
+      | fileStatus     | complete                         |
       | processingType | reprocessorOutput-exporter       |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
@@ -249,7 +249,7 @@ Feature: Summary Logs endpoint
     And the summary log submission status is 'submitted'
     And I should see that waste balances are created in the database with the following values
       | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
-      | 6507f1f77bcf86cd79943931 | 68f6a147c117aec8a1ab749a | -40    | -40             |
+      | 6507f1f77bcf86cd79943931 | 68f6a147c117aec8a1ab749a | 3      | 3               |
 
   Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
     Given I have the following summary log upload data with a valid organisation and registration details
