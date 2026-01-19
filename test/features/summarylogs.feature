@@ -47,14 +47,16 @@ Feature: Summary Logs endpoint
       | Event Category  | Event Action | Context Keys                                 | Count |
       | waste-reporting | submit       | summaryLogId, organisationId, registrationId | 1     |
     And I should see that waste records are created in the database with the following values
-      | OrganisationId           | RegistrationId           | RowId | Type     |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1000  | received |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1001  | received |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1002  | received |
+      | OrganisationId           | RegistrationId           | RowId | Type      |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1000  | received  |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1001  | received  |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1002  | received  |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 4000  | processed |
+      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 5000  | sentOn    |
     And the submitted summary log should not have an expiry
     And I should see that waste balances are created in the database with the following values
       | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
-      | 6507f1f77bcf86cd79943911 | 68f6a147c117aec8a1ab7497 | 391.62 | 391.62          |
+      | 6507f1f77bcf86cd79943911 | 68f6a147c117aec8a1ab7497 | 361.62 | 361.62          |
 
     # Summary Logs uploads and fails validation for removed row on second upload. This depends on the previous steps being executed
     Given I have the following summary log upload data with a valid organisation and registration details
@@ -74,6 +76,8 @@ Feature: Summary Logs endpoint
       | Code                   | Location Sheet | Location Table                  | Location Row ID |
       | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 1001            |
       | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 1002            |
+      | SEQUENTIAL_ROW_REMOVED | Processed      | PROCESSED_LOADS                 | 4000            |
+      | SEQUENTIAL_ROW_REMOVED | Sent on        | SENT_ON_LOADS                   | 5000            |
 
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
@@ -247,6 +251,14 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
+    And I should see that waste records are created in the database with the following values
+      | OrganisationId           | RegistrationId           | RowId | Type      |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1000  | received  |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1001  | received  |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1002  | received  |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 3000  | processed |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 5000  | sentOn    |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 5001  | sentOn    |
     And I should see that waste balances are created in the database with the following values
       | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
       | 6507f1f77bcf86cd79943931 | 68f6a147c117aec8a1ab749a | 3      | 3               |
@@ -311,6 +323,14 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
+    And I should see that waste records are created in the database with the following values
+      | OrganisationId           | RegistrationId           | RowId | Type      |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1000  | received  |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1001  | received  |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1002  | received  |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 3000  | processed |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 5000  | sentOn    |
+      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 5001  | sentOn    |
     And I should see that waste balances are created in the database with the following values
       | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
       | 6507f1f77bcf86cd79943911 | 68f6a147c117aec8a1ab7498 | 30     | 30              |
