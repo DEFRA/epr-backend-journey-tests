@@ -37,20 +37,20 @@
     "undici": "7.18.2"
   },
   "devDependencies": {
-    "@babel/core": "7.28.5",
-    "@babel/eslint-parser": "7.28.5",
-    "@babel/preset-env": "7.28.5",
+    "@babel/core": "7.28.6",
+    "@babel/eslint-parser": "7.28.6",
+    "@babel/preset-env": "7.28.6",
     "@cucumber/cucumber": "12.5.0",
-    "@cucumber/messages": "31.1.0",
-    "@faker-js/faker": "10.1.0",
-    "allure-cucumberjs": "3.4.3",
+    "@cucumber/messages": "31.2.0",
+    "@faker-js/faker": "10.2.0",
+    "allure-cucumberjs": "3.4.5",
     "chai": "6.2.2",
     "eslint": "9.39.2",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-prettier": "5.5.4",
+    "eslint-plugin-prettier": "5.5.5",
     "husky": "9.1.7",
     "mongodb": "7.0.0",
     "neostandard": "0.12.2",
-    "prettier": "3.7.4"
+    "prettier": "3.8.0"
   }
 }
