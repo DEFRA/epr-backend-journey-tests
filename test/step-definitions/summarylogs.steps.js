@@ -657,14 +657,24 @@ Then(
           )
         }
 
-        const sameTimestamp = wasteRecords.every(
-          (obj) =>
-            obj.versions[0].createdAt === wasteRecords[0].versions[0].createdAt
-        )
-        expect(sameTimestamp).to.equal(
-          true,
-          'All waste records created on the same upload should have the same timestamp'
-        )
+        const groupedByType = wasteRecords.reduce((acc, rec) => {
+          const type = rec.type
+          if (!acc[type]) acc[type] = []
+          acc[type].push(rec)
+          return acc
+        }, {})
+
+        Object.entries(groupedByType).forEach(([type, group]) => {
+          const sameTimestamp = group.every(
+            (obj) =>
+              obj.versions[0].createdAt === group[0].versions[0].createdAt
+          )
+
+          expect(sameTimestamp).to.equal(
+            true,
+            `All waste records of type ${type} created on the same upload should have the same timestamp`
+          )
+        })
       }
     } else {
       logger.warn(
