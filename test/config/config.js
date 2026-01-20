@@ -64,7 +64,8 @@ const auth = {
 }
 
 const defraId = {
-  local: 'http://defra-id-stub:3200'
+  local: 'http://defra-id-stub:3200',
+  env: `https://cdp-defra-id-stub.${environment}.cdp-int.defra.cloud`
 }
 
 const cdpUploader = {
@@ -96,10 +97,12 @@ if (!environment) {
   apiUri = api.envFromLocal
   authUri = auth.env
   cdpUploaderUri = cdpUploader.env
+  defraIdUri = defraId.env
 } else {
   apiUri = api.env
   authUri = auth.env
   cdpUploaderUri = cdpUploader.env
+  defraIdUri = defraId.env
 }
 
 export default {

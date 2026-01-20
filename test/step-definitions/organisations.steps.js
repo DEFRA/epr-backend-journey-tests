@@ -16,6 +16,9 @@ When('I request the organisations', async function () {
 })
 
 When('I request the organisations with id {string}', async function (orgId) {
+  if (orgId === 'migrated-id') {
+    orgId = this.orgResponseData?.referenceNumber
+  }
   this.response = await baseAPI.get(
     `/v1/organisations/${orgId}`,
     authClient.authHeader()
@@ -34,6 +37,10 @@ When('I update the organisations with id {string}', async function (orgId) {
 When(
   'I update the organisations with id {string} with the following payload',
   async function (orgId, dataTable) {
+    if (orgId === 'migrated-id') {
+      orgId = this.orgResponseData?.referenceNumber
+    }
+
     this.organisations = new Organisations()
     this.payload = dataTable.rowsHash()
 
@@ -43,6 +50,9 @@ When(
 
     if (this.payload.updateFragment === 'sample-fixture') {
       this.payload = this.organisations.toDefaultPayload(this.payload)
+    } else if (this.payload.updateFragment === 'response-data') {
+      this.payload.updateFragment = this.responseData
+      this.payload = this.organisations.toPayload(this.payload)
     } else {
       this.payload = this.organisations.toPayload(this.payload)
     }
@@ -72,6 +82,10 @@ Then(
     expect(this.response.statusCode).to.equal(200)
     this.responseData = await this.response.body.json()
     this.version = this.responseData.version
+
+    if (id === 'migrated-id') {
+      id = this.orgResponseData?.referenceNumber
+    }
     expect(this.responseData.id).to.equal(id)
   }
 )

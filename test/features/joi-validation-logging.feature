@@ -1,4 +1,5 @@
 @joiValidationLogging
+@smoketest
 Feature: Joi validation error logging
 
   Background:

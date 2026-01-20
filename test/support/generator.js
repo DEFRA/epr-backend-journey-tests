@@ -430,7 +430,7 @@ export class Organisations {
   }
 
   toPayload(dataTableHash) {
-    let updateFragment = {}
+    let updateFragment
     try {
       updateFragment = JSON.parse(dataTableHash.updateFragment)
     } catch (error) {
