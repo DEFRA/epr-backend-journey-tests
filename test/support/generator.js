@@ -314,7 +314,7 @@ export class Registration {
     payload.data.main.dFPgaw = material
 
     if (material === 'Glass (R5)') {
-      payload.data.main.YMRnmp = "Glass other"
+      payload.data.main.YMRnmp = 'Glass other'
     }
 
     payload.data.main.Laiblc = this.address
