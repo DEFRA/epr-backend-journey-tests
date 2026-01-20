@@ -20,11 +20,6 @@ const api = {
   headers: xApiKey ? { 'x-api-key': xApiKey } : {}
 }
 
-const zapTargetApi = {
-  local: 'http://epr-backend:3001',
-  env: `https://epr-backend.${environment}.cdp-int.defra.cloud`
-}
-
 const proxy = process.env.HTTP_PROXY
   ? new ProxyAgent({
       uri: process.env.HTTP_PROXY
@@ -37,11 +32,6 @@ const proxy = process.env.HTTP_PROXY
       }
     })
 
-const zapProxyAgent = new ProxyAgent({
-  uri: 'http://localhost:7777',
-  proxyTunnel: false
-})
-
 const database = {
   stub: new StubConnector(),
   mongo: new MongoConnector()
@@ -53,11 +43,6 @@ const agent = new Agent({
   headersTimeout: 30000,
   bodyTimeout: 30000
 })
-
-const zap = {
-  uri: withProxy ? 'http://zap:8080' : 'http://localhost:8080',
-  key: 'zap-api-key'
-}
 
 const auth = {
   local: withProxy
@@ -96,7 +81,6 @@ const mongoUri = 'mongodb://localhost:27017/epr-backend'
 const testLogs = !withoutLogs && !environment
 const globalUndiciAgent =
   !withProxy && !withExternalProxy && environment !== 'test' ? agent : proxy
-const zapAgent = !withProxy && !withExternalProxy ? agent : zapProxyAgent
 const dbConnector = !environment ? database.mongo : database.stub
 let apiUri
 let authUri
@@ -118,21 +102,16 @@ if (!environment) {
   cdpUploaderUri = cdpUploader.env
 }
 
-const zapTargetApiUri = !environment ? zapTargetApi.local : zapTargetApi.env
-
 export default {
   dbConnector,
   mongoUri,
   apiUri,
-  zapTargetApiUri,
   testLogs,
   dockerLogParser,
-  zap,
   authUri,
   defraIdUri,
   cdpUploaderUri,
   auth,
-  zapAgent,
   undiciAgent: globalUndiciAgent,
   apiHeaders: api.headers
 }

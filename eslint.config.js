@@ -28,7 +28,7 @@ export default [
       camelcase: [
         'error',
         {
-          allow: ['^faker[A-Z]{2}_[A-Z]{2}$', 'step_definition', 'zap_alert']
+          allow: ['^faker[A-Z]{2}_[A-Z]{2}$', 'step_definition']
         }
       ]
     }

@@ -48,7 +48,6 @@ runs:
       run: |
         echo "Waiting for backend to be ready..."
         timeout 180 bash -c 'until curl -f http://localhost:3001/health; do sleep 5; done'
-#        timeout 180 bash -c 'until curl -f http://localhost:8080/JSON/core/view/version?apikey=zap-api-key; do sleep 5; done'
 
     - name: Run the tests
       shell: bash

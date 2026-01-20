@@ -405,6 +405,7 @@ Feature: Summary Logs endpoint
       | MATERIAL_REQUIRED         | MATERIAL            |
       | REGISTRATION_REQUIRED     | REGISTRATION_NUMBER |
 
+  @smoketest
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
     Given I have the following summary log upload data
       | s3Bucket   | re-ex-summary-logs  |
@@ -423,6 +424,7 @@ Feature: Summary Logs endpoint
       | fileStatus | pending             |
       | status     | preprocessing       |
 
+  @smoketest
   Scenario: Summary Logs upload-completed endpoint processes with rejected status with all required fields
     Given I have the following summary log upload data
       | s3Bucket   | re-ex-summary-logs  |
@@ -442,6 +444,7 @@ Feature: Summary Logs endpoint
       | status            | rejected            |
       | validationFailure | FILE_REJECTED       |
 
+  @smoketest
   Scenario Outline: Summary Logs upload-completed endpoint valid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data
       | s3Bucket   | re-ex-summary-logs  |
@@ -466,6 +469,7 @@ Feature: Summary Logs endpoint
       | pending        | complete     |
       | pending        | rejected     |
 
+  @smoketest
   Scenario Outline: Summary Logs upload-completed endpoint invalid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data
       | s3Bucket   | re-ex-summary-logs  |

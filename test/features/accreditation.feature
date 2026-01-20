@@ -1,4 +1,5 @@
 @accreditation
+@smoketest
 Feature: Accreditation endpoint
 
   Scenario: Accreditation endpoint returns an error if pages information in metadata are not present

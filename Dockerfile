@@ -1,22 +1,8 @@
-FROM zaproxy/zap-stable:latest AS zap-stage
-
-RUN zap.sh -cmd -addoninstall ascanrules
-RUN zap.sh -cmd -addoninstall pscanrules
-
 FROM node:22.21.0-alpine3.22
 
 ENV TZ="Europe/London"
 
 USER root
-
-# Copy ZAP from zap stage
-COPY --from=zap-stage /zap /zap
-COPY --from=zap-stage /home/zap/.ZAP /home/zap/.ZAP
-
-# Set up ZAP environment
-ENV ZAP_PATH=/zap
-ENV PATH=$ZAP_PATH:$PATH
-ENV ZAP_PORT=8080
 
 RUN apk update\
     && apk add \
