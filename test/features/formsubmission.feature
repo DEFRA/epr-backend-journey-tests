@@ -36,3 +36,6 @@ Feature: Form Submission (Organisation / Registration / Accreditation) with link
     And the following audit logs are present
       | Event Category | Event Action    | Context Keys           | Count |
       | database       | database_insert | orgId, referenceNumber | 1     |
+
+    When I migrate the form submissions organisations data
+    Then the form submissions organisations data is migrated

@@ -34,7 +34,7 @@ BeforeAll(async function () {
 })
 
 AfterAll(async function () {
-  await agent.close()
+  await agent.destroy()
   await dbConnector.disconnect()
 })
 

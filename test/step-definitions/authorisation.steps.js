@@ -12,10 +12,7 @@ Given(
         ? users.reprocessorInputAndExporterUser
         : users.reprocessorOutputUser
     this.userId = user.userId
-    if (
-      !defraIdStub.accessTokens.has(this.userId) &&
-      !process.env.ENVIRONMENT
-    ) {
+    if (!defraIdStub.accessTokens.has(this.userId)) {
       await defraIdStub.register(JSON.stringify(user))
     }
   }
@@ -28,14 +25,14 @@ Given('I add a relationship to the {string} User', async function (userType) {
       : users.reprocessorOutputUserParams
   const userId = this.userId
 
-  if (!defraIdStub.accessTokens.has(this.userId) && !process.env.ENVIRONMENT) {
+  if (!defraIdStub.accessTokens.has(this.userId)) {
     const resp = await defraIdStub.addRelationship(params.toString(), userId)
     expect(resp.statusCode).to.equal(302)
   }
 })
 
 When('I authorise the User', async function () {
-  if (!defraIdStub.accessTokens.has(this.userId) && !process.env.ENVIRONMENT) {
+  if (!defraIdStub.accessTokens.has(this.userId)) {
     const payload = await users.authorisationPayload(this.userId)
 
     const response = await defraIdStub.authorise(payload)
@@ -44,7 +41,7 @@ When('I authorise the User', async function () {
 })
 
 When('I generate the token', async function () {
-  if (!defraIdStub.accessTokens.has(this.userId) && !process.env.ENVIRONMENT) {
+  if (!defraIdStub.accessTokens.has(this.userId)) {
     const payload = await users.tokenPayload(this.sessionId)
     await defraIdStub.generateToken(JSON.stringify(payload), this.userId)
   }
@@ -53,7 +50,7 @@ When('I generate the token', async function () {
 When(
   'the User is linked to the organisation with id {string}',
   async function (organisationId) {
-    if (!defraIdStub.linked.has(organisationId) && !process.env.ENVIRONMENT) {
+    if (!defraIdStub.linked.has(organisationId)) {
       this.response = await baseAPI.post(
         `/v1/organisations/${organisationId}/link`,
         '',

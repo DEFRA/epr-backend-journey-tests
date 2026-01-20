@@ -68,10 +68,14 @@ export class Accreditation {
     this.tonnageBand = tonnageBands[tonnageBandIndex]
   }
 
-  toReprocessorPayload() {
+  toReprocessorPayload(material = 'Paper or board (R3)') {
     const payload = JSON.parse(JSON.stringify(accReprocessorPayload))
 
-    this.material = 'Glass (R5)'
+    this.material = material
+
+    if (this.material === 'Glass (R5)') {
+      payload.data.main.gQZpRd = 'Both'
+    }
 
     payload.data.main.PcYDad = this.fullName
     payload.data.main.ANtYzb = this.email
@@ -90,7 +94,6 @@ export class Accreditation {
     payload.data.main.LuybKn = this.otherCategoriesPercentage
 
     payload.data.main.IaTELm = this.material
-    payload.data.main.gQZpRd = 'Both'
     payload.data.main.gWdCTX = regPostcode
 
     payload.data.repeaters.kaaxig[0].aGZJEm = this.fullName
@@ -289,7 +292,7 @@ export class Registration {
       fakerEN_GB.location.zipCode()
   }
 
-  toAllMaterialsPayload() {
+  toAllMaterialsPayload(material = 'Paper or board (R3)') {
     const payload = JSON.parse(JSON.stringify(regAllMaterialsPayload))
 
     payload.data.main.DDVUrr = this.companyName
@@ -308,6 +311,11 @@ export class Registration {
     payload.data.main.pPrfJB = this.email
     payload.data.main.aCYymT = this.phoneNumber
     payload.data.main.DxFVqx = this.jobTitle
+    payload.data.main.dFPgaw = material
+
+    if (material === 'Glass (R5)') {
+      payload.data.main.YMRnmp = 'Glass other'
+    }
 
     payload.data.main.Laiblc = this.address
     payload.data.main.xinNGX =
@@ -430,7 +438,7 @@ export class Organisations {
   }
 
   toPayload(dataTableHash) {
-    let updateFragment = {}
+    let updateFragment
     try {
       updateFragment = JSON.parse(dataTableHash.updateFragment)
     } catch (error) {

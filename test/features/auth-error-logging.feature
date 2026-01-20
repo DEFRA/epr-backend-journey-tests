@@ -1,4 +1,5 @@
 @authErrorLogging
+@smoketest
 Feature: Auth error logging
 
   Background:
