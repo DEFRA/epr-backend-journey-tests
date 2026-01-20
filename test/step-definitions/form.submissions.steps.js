@@ -8,13 +8,16 @@ import {
 } from '../support/generator.js'
 
 Given(
-  `I create a linked and migrated organisation for {string}`,
-  async function (orgType) {
+  `I create a linked and migrated organisation for the following`,
+  async function (dataTable) {
+    const dataRows = dataTable.hashes()
+
     this.organisation = new Organisation()
     this.payload = ''
-    if (orgType === 'Reprocessor') {
+    if (dataRows[0].wasteProcessingType === 'Reprocessor') {
       this.payload = this.organisation.toNonRegisteredUKSoleTraderPayload()
     }
+
     this.response = await baseAPI.post(
       '/v1/apply/organisation',
       JSON.stringify(this.payload)
@@ -25,23 +28,31 @@ Given(
 
     const orgId = this.orgResponseData?.orgId
     const refNo = this.orgResponseData?.referenceNumber
-    this.accreditation = new Accreditation(orgId, refNo)
-    this.payload = this.accreditation.toReprocessorPayload()
 
-    this.response = await baseAPI.post(
-      '/v1/apply/accreditation',
-      JSON.stringify(this.payload)
-    )
-    expect(this.response.statusCode).to.equal(201)
+    for (const dataRow of dataRows) {
+      this.material = 'Paper or board (R3)'
+      if (dataRow.material !== '') {
+        this.material = dataRow.material
+      }
 
-    this.registration = new Registration(orgId, refNo)
-    this.payload = this.registration.toAllMaterialsPayload()
+      this.accreditation = new Accreditation(orgId, refNo)
+      this.payload = this.accreditation.toReprocessorPayload(this.material)
 
-    this.response = await baseAPI.post(
-      '/v1/apply/registration',
-      JSON.stringify(this.payload)
-    )
-    expect(this.response.statusCode).to.equal(201)
+      this.response = await baseAPI.post(
+        '/v1/apply/accreditation',
+        JSON.stringify(this.payload)
+      )
+      expect(this.response.statusCode).to.equal(201)
+
+      this.registration = new Registration(orgId, refNo)
+      this.payload = this.registration.toAllMaterialsPayload(this.material)
+
+      this.response = await baseAPI.post(
+        '/v1/apply/registration',
+        JSON.stringify(this.payload)
+      )
+      expect(this.response.statusCode).to.equal(201)
+    }
 
     this.response = await baseAPI.post(
       `/v1/dev/form-submissions/${refNo}/migrate`,

@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto'
 const reprocessorInputAndExporterUserId = '86a7607c-a1e7-41e5-a0b6-a41680d05a2a'
 const reprocessorOutputUserId = '75b7607c-b1f2-12c3-b198-ab358075892b'
 
-export class Users {
+class Users {
   reprocessorInputAndExporterUser = {
     userId: reprocessorInputAndExporterUserId,
     email: 'alice.smith@ecorecycle.com',
@@ -52,13 +52,37 @@ export class Users {
     enrolmentRequestCount: 1
   }
 
-  async authorisationPayload(userId) {
-    const user =
-      userId === reprocessorInputAndExporterUserId
-        ? this.reprocessorInputAndExporterUser.email
-        : this.reprocessorOutputUser.email
+  async userPayload(email) {
     return {
-      user,
+      userId: randomUUID(),
+      email,
+      firstName: 'Test',
+      lastName: 'User',
+      loa: '1',
+      aal: '1',
+      enrolmentCount: 1,
+      enrolmentRequestCount: 1
+    }
+  }
+
+  async userParams(userId) {
+    return new URLSearchParams({
+      csrfToken: randomUUID(),
+      userId,
+      relationshipId: 'relId',
+      organisationId: randomUUID(),
+      organisationName: 'ACME ltd',
+      relationshipRole: 'role',
+      roleName: 'User',
+      roleStatus: 'Status',
+      // eslint-disable-next-line camelcase
+      redirect_uri: 'http://localhost:3000/'
+    })
+  }
+
+  async authorisationPayload(email) {
+    return {
+      user: email,
       // eslint-disable-next-line camelcase
       client_id: '63983fc2-cfff-45bb-8ec2-959e21062b9a',
       // eslint-disable-next-line camelcase
@@ -82,3 +106,5 @@ export class Users {
     }
   }
 }
+
+export default Users

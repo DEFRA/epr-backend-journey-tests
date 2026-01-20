@@ -11,12 +11,56 @@ import logger from '../support/logger.js'
 import fs from 'node:fs'
 import { Dates } from '../support/dates.js'
 
+const interval = process.env.ENVIRONMENT ? 2000 : 500
+const pollTimeout = process.env.ENVIRONMENT ? 60000 : 30000
+
 Given('I have the following summary log upload data', function (dataTable) {
   this.summaryLog = new SummaryLog()
   this.uploadData = dataTable.rowsHash()
   this.summaryLog.setUploadData(this.uploadData)
   this.payload = this.summaryLog.toUploadCompletedPayload()
 })
+
+Given(
+  'I update the organisations data with the following data',
+  async function (dataTable) {
+    const updateDataRows = dataTable.hashes()
+
+    const currentYear = new Date().getFullYear()
+
+    let data = this.responseData
+
+    for (let i = 0; i < updateDataRows.length; i++) {
+      const orgUpdateData = updateDataRows[i]
+      data.registrations[i].status = orgUpdateData.status
+      data.registrations[i].validFrom = '2025-01-01'
+      data.registrations[i].validTo = `${currentYear + 1}-01-01`
+      data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
+      data.registrations[i].registrationNumber = orgUpdateData.regNumber
+      data.accreditations[i].status = orgUpdateData.status
+      data.accreditations[i].validFrom = '2025-01-01'
+      data.accreditations[i].validTo = `${currentYear + 1}-01-01`
+      data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
+      data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
+    }
+    this.email = data.submitterContactDetails.email
+
+    data.status = updateDataRows[0].status
+
+    const orgId = this.orgResponseData?.referenceNumber
+
+    this.registrationId = data.registrations[0].id
+    this.accreditationId = data.accreditations[0].id
+    this.organisationId = orgId
+
+    data = { organisation: data }
+
+    this.response = await baseAPI.patch(
+      `/v1/dev/organisations/${orgId}`,
+      JSON.stringify(data)
+    )
+  }
+)
 
 Given(
   'I update the organisations data for id {string} with the following payload {string}',
@@ -82,6 +126,15 @@ Given(
   }
 )
 
+Given(
+  'I have organisation and registration details for summary log upload',
+  function () {
+    this.summaryLog = new SummaryLog()
+    this.summaryLog.orgId = this.organisationId
+    this.summaryLog.regId = this.registrationId
+  }
+)
+
 When('the summary log upload data is updated', function (dataTable) {
   this.uploadData = dataTable.rowsHash()
   this.summaryLog.setUploadData(this.uploadData)
@@ -99,8 +152,7 @@ When('I submit the summary log upload completed', async function () {
 When(
   'I submit the summary log upload completed with the response from CDP Uploader',
   async function () {
-    const timeout = 10000 // 10 seconds
-    const interval = 500 // 500ms between polls
+    const timeout = pollTimeout
     const startTime = Date.now()
 
     while (Date.now() - startTime < timeout) {
@@ -114,11 +166,6 @@ When(
 
       await new Promise((resolve) => setTimeout(resolve, interval))
     }
-
-    this.summaryLog = new SummaryLog()
-
-    this.summaryLog.orgId = '6507f1f77bcf86cd79943911'
-    this.summaryLog.regId = '6507f1f77bcf86cd79943912'
 
     this.summaryLog.setFileData(
       this.responseData.form.file.s3Bucket,
@@ -134,6 +181,9 @@ When(
       `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${this.summaryLog.summaryLogId}/upload-completed`,
       JSON.stringify(this.payload)
     )
+  },
+  {
+    timeout: pollTimeout
   }
 )
 
@@ -225,15 +275,14 @@ Then('the organisations data update succeeds', async function () {
 
 When(
   'I check for the summary log status',
-  { timeout: 18000 },
+  { timeout: pollTimeout },
   async function () {
     const summaryLogId = this.summaryLog.summaryLogId
     const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
 
     // Transient statuses that indicate processing is still in progress
     const transientStatuses = ['preprocessing', 'validating']
-    const timeout = 15000 // 15 seconds
-    const interval = 500 // 500ms between polls
+    const timeout = pollTimeout
     const startTime = Date.now()
 
     while (Date.now() - startTime < timeout) {
@@ -364,27 +413,17 @@ When('I submit the uploaded summary log', async function () {
 })
 
 Then('the summary log submission succeeds', async function () {
-  if (!process.env.ENVIRONMENT) {
-    expect(this.response.statusCode).to.equal(200)
-  } else {
-    logger.warn(
-      {
-        step_definition: 'Then the summary log submission succeeds'
-      },
-      'Skipping summary log submission checks'
-    )
-  }
+  expect(this.response.statusCode).to.equal(200)
 })
 
 Then(
   'the summary log submission status is {string}',
-  { timeout: 12000 },
+  { timeout: pollTimeout },
   async function (expectedStatus) {
     const summaryLogId = this.summaryLog.summaryLogId
     const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
 
-    const timeout = 10000
-    const interval = 500
+    const timeout = pollTimeout
     const startTime = Date.now()
     let actualStatus
 
@@ -427,14 +466,11 @@ Then(
     const expectedResults = dataTable.rowsHash()
     expect(this.response.statusCode).to.equal(200)
 
-    // Only check the status in local runs as environment runs will not have the file uploaded to S3
-    if (!process.env.ENVIRONMENT) {
-      // responseData is already parsed in the status check step
-      if (!this.responseData) {
-        this.responseData = await this.response.body.json()
-      }
-      expect(this.responseData.status).to.equal(expectedResults.status)
+    // responseData is already parsed in the status check step
+    if (!this.responseData) {
+      this.responseData = await this.response.body.json()
     }
+    expect(this.responseData.status).to.equal(expectedResults.status)
   }
 )
 
@@ -497,16 +533,16 @@ Then(
   'I should see the following summary log validation concerns for table {string}, row {int} and sheet {string}',
   async function (expectedTable, expectedRow, expectedSheet, dataTable) {
     // Only check the status in local runs as environment runs will not have the file uploaded to S3
-    if (process.env.ENVIRONMENT) {
-      logger.warn(
-        {
-          step_definition:
-            'Then I should see the following summary log validation concerns'
-        },
-        'Skipping summary log validation concerns checks'
-      )
-      return
-    }
+    // if (process.env.ENVIRONMENT) {
+    //   logger.warn(
+    //     {
+    //       step_definition:
+    //         'Then I should see the following summary log validation concerns'
+    //     },
+    //     'Skipping summary log validation concerns checks'
+    //   )
+    //   return
+    // }
 
     const expectedResults = dataTable.hashes()
     // eslint-disable-next-line no-unused-expressions
