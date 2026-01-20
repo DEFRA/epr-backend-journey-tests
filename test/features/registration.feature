@@ -1,4 +1,5 @@
 @registration
+@smoketest
 Feature: Registration endpoint
 
   Scenario: Registration endpoint returns an error if data / answers are not present

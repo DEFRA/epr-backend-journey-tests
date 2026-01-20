@@ -131,12 +131,6 @@ You can also run the tests against environments locally. This can be achieved by
 
 First, you will need to generate your `X_API_KEY` to use. Follow the [CDP README](https://portal.cdp-int.defra.cloud/documentation/how-to/developer-api-key.md) for more information.
 
-Ensure ZAP docker container is running and the proxy of your choice is running.
-
-```
-docker compose up -d zap
-```
-
 Then, to run the tests against the `dev` environment (Where `<api_key>` = the generated key from the CDP README above):
 
 ```
@@ -168,7 +162,6 @@ This will create mock datasets for the 3 collections in the database. Only to be
 | Endpoint tests          | &check;           | &check;         | &check;          |
 | Mongo / database checks | &check;           | &#x2612;        | &#x2612;         |
 | Logging tests           | &check;           | &#x2612;        | &#x2612;         |
-| ZAP tests               | &check;           | &check;         | &check;          |
 | Email / Notify tests    | &#x2612;          | &#x2612;        | &check;          |
 | Slack non-prod tests    | &#x2612;          | &check;         | &check;          |
 
