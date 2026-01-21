@@ -22,47 +22,6 @@ Given('I have the following summary log upload data', function (dataTable) {
 })
 
 Given(
-  'I update the organisations data with the following data',
-  async function (dataTable) {
-    const updateDataRows = dataTable.hashes()
-
-    const currentYear = new Date().getFullYear()
-
-    let data = this.responseData
-
-    for (let i = 0; i < updateDataRows.length; i++) {
-      const orgUpdateData = updateDataRows[i]
-      data.registrations[i].status = orgUpdateData.status
-      data.registrations[i].validFrom = '2025-01-01'
-      data.registrations[i].validTo = `${currentYear + 1}-01-01`
-      data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
-      data.registrations[i].registrationNumber = orgUpdateData.regNumber
-      data.accreditations[i].status = orgUpdateData.status
-      data.accreditations[i].validFrom = '2025-01-01'
-      data.accreditations[i].validTo = `${currentYear + 1}-01-01`
-      data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
-      data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
-    }
-    this.email = data.submitterContactDetails.email
-
-    data.status = updateDataRows[0].status
-
-    const orgId = this.orgResponseData?.referenceNumber
-
-    this.registrationId = data.registrations[0].id
-    this.accreditationId = data.accreditations[0].id
-    this.organisationId = orgId
-
-    data = { organisation: data }
-
-    this.response = await baseAPI.patch(
-      `/v1/dev/organisations/${orgId}`,
-      JSON.stringify(data)
-    )
-  }
-)
-
-Given(
   'I update the organisations data for id {string} with the following payload {string}',
   async function (orgId, pathToFile) {
     if (!process.env.ENVIRONMENT) {
@@ -151,6 +110,7 @@ When('I submit the summary log upload completed', async function () {
 
 When(
   'I submit the summary log upload completed with the response from CDP Uploader',
+  { timeout: pollTimeout },
   async function () {
     const timeout = pollTimeout
     const startTime = Date.now()
@@ -181,9 +141,6 @@ When(
       `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${this.summaryLog.summaryLogId}/upload-completed`,
       JSON.stringify(this.payload)
     )
-  },
-  {
-    timeout: pollTimeout
   }
 )
 

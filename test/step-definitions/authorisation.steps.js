@@ -97,6 +97,40 @@ When(
   }
 )
 
+When(
+  'I register and authorise a User and link it to the recently migrated organisation',
+  async function () {
+    const user = await users.userPayload(this.email)
+    this.userId = user.userId
+    if (!defraIdStub.accessTokens.has(this.userId)) {
+      await defraIdStub.register(JSON.stringify(user))
+
+      const params = await users.userParams(this.userId)
+      const resp = await defraIdStub.addRelationship(
+        params.toString(),
+        this.userId
+      )
+      expect(resp.statusCode).to.equal(302)
+
+      const payload = await users.authorisationPayload(this.email)
+      const response = await defraIdStub.authorise(payload)
+      this.sessionId = response.split('sessionId=')[1]
+
+      const tokenPayload = await users.tokenPayload(this.sessionId)
+      await defraIdStub.generateToken(JSON.stringify(tokenPayload), this.userId)
+
+      const organisationId = this.orgResponseData?.referenceNumber
+
+      this.response = await baseAPI.post(
+        `/v1/organisations/${organisationId}/link`,
+        '',
+        defraIdStub.authHeader(this.userId)
+      )
+      defraIdStub.linked.set(organisationId, this.userId)
+    }
+  }
+)
+
 Given('I am logged in as a service maintainer', async function () {
   let payload, urlSuffix
   if (process.env.ENVIRONMENT === 'test') {
