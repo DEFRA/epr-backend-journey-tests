@@ -11,9 +11,9 @@ Feature: Form Submission (Organisation / Registration / Accreditation) with link
       | Log Level | Event Action    | Message                            |
       | info      | request_success | Stored organisation data for orgId |
     And the following audit logs are present
-      | Event Category | Event Action    | Context Keys                              | Count |
-      | database       | database_insert | orgId, orgName, referenceNumber           | 1     |
-      | email          | email_sent      | templateId, emailAddress, personalisation | 2     |
+      | Event Category | Event Action    | Context Keys                              | Count | Context Values                                |
+      | database       | database_insert | orgId, orgName, referenceNumber           | 1     | {{formOrgId}}, {{formOrgName}}, {{formRefNo}} |
+      | email          | email_sent      | templateId, emailAddress, personalisation | 2     | {{formOrgId}}, {{formRefNo}}                  |
 
     Given I have entered my accreditation details as a Reprocessor
     When I submit the accreditation details
@@ -23,8 +23,8 @@ Feature: Form Submission (Organisation / Registration / Accreditation) with link
     | Log Level | Event Action    | Message                             |
     | info      | request_success | Stored accreditation data for orgId |
     And the following audit logs are present
-    | Event Category | Event Action    | Context Keys           | Count |
-    | database       | database_insert | orgId, referenceNumber | 1     |
+    | Event Category | Event Action    | Context Keys           | Count | Context Values               |
+    | database       | database_insert | orgId, referenceNumber | 1     | {{formOrgId}}, {{formRefNo}} |
 
     Given I have entered my registration details as a Reprocessor for all materials
     When I submit the registration details
@@ -34,8 +34,8 @@ Feature: Form Submission (Organisation / Registration / Accreditation) with link
       | Log Level | Event Action    | Message                            |
       | info      | request_success | Stored registration data for orgId |
     And the following audit logs are present
-      | Event Category | Event Action    | Context Keys           | Count |
-      | database       | database_insert | orgId, referenceNumber | 1     |
+      | Event Category | Event Action    | Context Keys           | Count | Context Values               |
+      | database       | database_insert | orgId, referenceNumber | 1     | {{formOrgId}}, {{formRefNo}} |
 
     When I migrate the form submissions organisations data
     Then the form submissions organisations data is migrated

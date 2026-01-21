@@ -67,7 +67,10 @@ Then(
           // Only check if Context Values are provided for better filtering
           if (expectedLogRow['Context Values']) {
             const actualContext = JSON.stringify(log.context)
-            const contextValues = expectedLogRow['Context Values'].split(',')
+            const contextValues = expectedLogRow['Context Values']
+              .split(',')
+              .map((item) => item.trim())
+
             contextValuesExist = contextValues.every((value) =>
               actualContext.includes(interpolator.interpolate(this, value))
             )
