@@ -112,8 +112,16 @@ export class Accreditation {
     return payload
   }
 
-  toPayload() {
+  toExporterPayload(material = 'Paper or board (R3)') {
     const payload = JSON.parse(JSON.stringify(accPayload))
+
+    this.material = material
+
+    if (this.material === 'Glass (R5)') {
+      payload.data.main.WNTLmM = 'Both'
+    } else {
+      delete payload.data.main.WNTLmM
+    }
 
     payload.data.main.WGGxRc = this.fullName
     payload.data.main.qeJOQY = this.email
@@ -337,8 +345,16 @@ export class Registration {
     return payload
   }
 
-  toPayload() {
+  toExporterPayload(material = 'Paper or board (R3)') {
     const payload = JSON.parse(JSON.stringify(regPayload))
+
+    this.material = material
+
+    if (this.material === 'Glass (R5)') {
+      payload.data.main.RaiIHT = 'Both'
+    } else {
+      delete payload.data.main.RaiIHT
+    }
 
     payload.data.main.VIxUne = this.companyName
 
@@ -365,7 +381,6 @@ export class Registration {
     payload.data.main.pGYoub = this.addressServiceNotice
     payload.data.main.fubWwR = this.wasteRegNo
     payload.data.main.CACJrG = this.permitNo
-    payload.data.main.vsaLhJ = this.supplier
     payload.data.main.QHJFhL = this.permitType
 
     payload.data.files.qEZeYC[0].fileId = this.fileId1

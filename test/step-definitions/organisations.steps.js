@@ -25,18 +25,35 @@ When(
 
     let data = this.responseData
 
+    this.registrationIds = new Map()
+    this.accreditationIds = new Map()
+
     for (let i = 0; i < updateDataRows.length; i++) {
       const orgUpdateData = updateDataRows[i]
       data.registrations[i].status = orgUpdateData.status
       data.registrations[i].validFrom = '2025-01-01'
       data.registrations[i].validTo = `${currentYear + 1}-01-01`
-      data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
+      if (orgUpdateData.reprocessingType !== '') {
+        data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
+      }
       data.registrations[i].registrationNumber = orgUpdateData.regNumber
+      data.registrations[i].accreditationId = data.accreditations[i].id
       data.accreditations[i].status = orgUpdateData.status
       data.accreditations[i].validFrom = '2025-01-01'
       data.accreditations[i].validTo = `${currentYear + 1}-01-01`
-      data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
+      if (orgUpdateData.reprocessingType !== '') {
+        data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
+      }
       data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
+
+      this.registrationIds.set(
+        orgUpdateData.regNumber,
+        data.registrations[i].id
+      )
+      this.accreditationIds.set(
+        orgUpdateData.accNumber,
+        data.accreditations[i].id
+      )
     }
 
     if (updateDataRows[0].email) {
