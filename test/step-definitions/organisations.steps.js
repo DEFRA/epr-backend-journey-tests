@@ -1,12 +1,68 @@
-import { Given, When, Then } from '@cucumber/cucumber'
+import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { baseAPI, authClient } from '../support/hooks.js'
+import { authClient, baseAPI } from '../support/hooks.js'
 import { Organisations } from '../support/generator.js'
+import { fakerEN_GB } from '@faker-js/faker'
 
 Given('I have access to the get organisations endpoint', function () {})
 Given('I try to access the get organisations endpoint', function () {})
 
 Given('I have access to the put organisations endpoint', function () {})
+
+When(
+  'I update the recently migrated organisations data with the following data',
+  async function (dataTable) {
+    const orgId = this.orgResponseData?.referenceNumber
+    this.response = await baseAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+
+    this.responseData = await this.response.body.json()
+
+    const updateDataRows = dataTable.hashes()
+    const currentYear = new Date().getFullYear()
+
+    let data = this.responseData
+
+    for (let i = 0; i < updateDataRows.length; i++) {
+      const orgUpdateData = updateDataRows[i]
+      data.registrations[i].status = orgUpdateData.status
+      data.registrations[i].validFrom = '2025-01-01'
+      data.registrations[i].validTo = `${currentYear + 1}-01-01`
+      data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
+      data.registrations[i].registrationNumber = orgUpdateData.regNumber
+      data.accreditations[i].status = orgUpdateData.status
+      data.accreditations[i].validFrom = '2025-01-01'
+      data.accreditations[i].validTo = `${currentYear + 1}-01-01`
+      data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
+      data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
+    }
+
+    if (updateDataRows[0].email) {
+      this.email = updateDataRows[0].email
+    } else {
+      // Replace email address with a newly generated one in Environment to avoid same email address all the time
+      this.email = process.env.ENVIRONMENT
+        ? fakerEN_GB.internet.email()
+        : data.submitterContactDetails.email
+      data.submitterContactDetails.email = this.email
+    }
+
+    data.status = updateDataRows[0].status
+
+    this.registrationId = data.registrations[0].id
+    this.accreditationId = data.accreditations[0].id
+    this.organisationId = orgId
+
+    data = { organisation: data }
+
+    this.response = await baseAPI.patch(
+      `/v1/dev/organisations/${orgId}`,
+      JSON.stringify(data)
+    )
+  }
+)
 
 When('I request the organisations', async function () {
   this.response = await baseAPI.get(
