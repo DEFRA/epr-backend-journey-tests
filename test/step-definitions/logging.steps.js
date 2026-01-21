@@ -61,13 +61,26 @@ Then(
 
       for (const expectedLogRow of expectedLogs) {
         const expectedAuditCount = parseInt(expectedLogRow.Count)
-        const filtered = actualLogs.filter(
-          (log) =>
+        const filtered = actualLogs.filter((log) => {
+          let contextValuesExist = true
+
+          // Only check if Context Values are provided for better filtering
+          if (expectedLogRow['Context Values']) {
+            const actualContext = JSON.stringify(log.context)
+            const contextValues = expectedLogRow['Context Values'].split(',')
+            contextValuesExist = contextValues.every((value) =>
+              actualContext.includes(interpolator.interpolate(this, value))
+            )
+          }
+
+          return (
             log.event.category === expectedLogRow['Event Category'] &&
             log.event.action === expectedLogRow['Event Action'] &&
             Object.keys(log.context).join(', ') ===
-              expectedLogRow['Context Keys']
-        )
+              expectedLogRow['Context Keys'] &&
+            contextValuesExist
+          )
+        })
         if (filtered.length !== expectedAuditCount) {
           logger.info(filtered.length + ' audit logs found')
           logger.info(expectedLogRow.Count + ' expected logs found')

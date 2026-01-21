@@ -15,9 +15,11 @@ export class DockerLogParser {
     this.testStartTime = new Date()
   }
 
-  async getLogs(lookback = logsLookBackInSeconds) {
+  async getLogs() {
     const now = new Date()
-    const currentTimestamp = new Date(now.getTime() - lookback * 1000)
+    const currentTimestamp = new Date(
+      now.getTime() - logsLookBackInSeconds * 1000
+    )
       .toISOString()
       .slice(0, 19)
 
@@ -98,7 +100,7 @@ export class DockerLogParser {
   }
 
   async retrieveAuditLogs() {
-    const logs = await this.getLogs(3)
+    const logs = await this.getLogs()
     return this.parseAuditLogs(logs)
   }
 
