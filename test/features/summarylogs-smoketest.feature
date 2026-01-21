@@ -1,5 +1,4 @@
 @smoketest
-  @summlog
 Feature: Summary Logs smoke test for Test environment
 
   Scenario: Summary Logs For Reprocessor Input uploads (With validation concerns) and succeeds
