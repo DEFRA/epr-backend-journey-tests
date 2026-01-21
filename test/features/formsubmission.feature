@@ -1,5 +1,4 @@
 @formsubmission
-@smoketest
 Feature: Form Submission (Organisation / Registration / Accreditation) with linked accreditation / registration
 
   Scenario: Ensure that form endpoint creates an organisation that has accreditation and registration links

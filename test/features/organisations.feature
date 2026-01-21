@@ -1,5 +1,4 @@
 @organisations
-@smoketest
 Feature: Organisations endpoint
 
   Scenario: Ensure that organisations endpoint returns a response
@@ -31,15 +30,11 @@ Feature: Organisations endpoint
     When I request the recently migrated organisation
     Then I should receive a valid organisations response for the recently migrated organisation
 
-    Given I have access to the put organisations endpoint
     When I update the recently migrated organisation with the following payload
     | version        | 0              |
     | updateFragment | sample-fixture |
     Then I should receive a 409 error response 'Version conflict: attempted to update with version 0 but current version is {{version}}'
 
-    Given I have access to the put organisations endpoint
-    When I request the recently migrated organisation
-    Then I should receive a valid organisations response for the recently migrated organisation
     When I update the recently migrated organisation with the following payload
       | updateFragment | response-data |
     Then I should receive a successful update organisations response

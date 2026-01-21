@@ -157,13 +157,13 @@ This will create mock datasets for the 3 collections in the database. Only to be
 
 ## What is tested in this test suite
 
-| Test type               | Local / PR Checks | Dev environment | Test environment |
-| ----------------------- | ----------------- | --------------- | ---------------- |
-| Endpoint tests          | &check;           | &check;         | &check;          |
-| Mongo / database checks | &check;           | &#x2612;        | &#x2612;         |
-| Logging tests           | &check;           | &#x2612;        | &#x2612;         |
-| Email / Notify tests    | &#x2612;          | &#x2612;        | &check;          |
-| Slack non-prod tests    | &#x2612;          | &check;         | &check;          |
+| Test type               | Local / PR Checks | Test environment |
+| ----------------------- | ----------------- | ---------------- |
+| Endpoint tests          | &check;           | &check;          |
+| Mongo / database checks | &check;           | &#x2612;         |
+| Logging tests           | &check;           | &#x2612;         |
+| Email / Notify tests    | &#x2612;          | &check;          |
+| Slack non-prod tests    | &#x2612;          | &check;          |
 
 For more information on the tests, please refer to the [Confluence page](https://eaflood.atlassian.net/wiki/spaces/MWR/pages/5912559719/EPR+RE+EX+Testing).
 

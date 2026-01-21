@@ -16,6 +16,8 @@ Given(
     this.payload = ''
     if (dataRows[0].wasteProcessingType === 'Reprocessor') {
       this.payload = this.organisation.toNonRegisteredUKSoleTraderPayload()
+    } else {
+      this.payload = this.organisation.toPayload()
     }
 
     this.response = await baseAPI.post(
