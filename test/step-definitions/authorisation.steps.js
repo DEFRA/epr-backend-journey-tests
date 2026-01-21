@@ -12,11 +12,31 @@ Given(
         ? users.reprocessorInputAndExporterUser
         : users.reprocessorOutputUser
     this.userId = user.userId
+    this.email = user.email
     if (!defraIdStub.accessTokens.has(this.userId)) {
       await defraIdStub.register(JSON.stringify(user))
     }
   }
 )
+
+Given('I register a User to use the system', async function () {
+  const user = await users.userPayload(this.email)
+
+  this.userId = user.userId
+  if (!defraIdStub.accessTokens.has(this.userId)) {
+    await defraIdStub.register(JSON.stringify(user))
+  }
+})
+
+Given('I add a relationship to the User', async function () {
+  const userId = this.userId
+  const params = await users.userParams(this.userId)
+
+  if (!defraIdStub.accessTokens.has(this.userId)) {
+    const resp = await defraIdStub.addRelationship(params.toString(), userId)
+    expect(resp.statusCode).to.equal(302)
+  }
+})
 
 Given('I add a relationship to the {string} User', async function (userType) {
   const params =
@@ -33,7 +53,7 @@ Given('I add a relationship to the {string} User', async function (userType) {
 
 When('I authorise the User', async function () {
   if (!defraIdStub.accessTokens.has(this.userId)) {
-    const payload = await users.authorisationPayload(this.userId)
+    const payload = await users.authorisationPayload(this.email)
 
     const response = await defraIdStub.authorise(payload)
     this.sessionId = response.split('sessionId=')[1]
@@ -50,6 +70,10 @@ When('I generate the token', async function () {
 When(
   'the User is linked to the organisation with id {string}',
   async function (organisationId) {
+    if (organisationId === 'migrated-id') {
+      organisationId = this.orgResponseData?.referenceNumber
+    }
+
     if (!defraIdStub.linked.has(organisationId)) {
       this.response = await baseAPI.post(
         `/v1/organisations/${organisationId}/link`,

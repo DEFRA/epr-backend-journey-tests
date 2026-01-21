@@ -23,7 +23,9 @@ Feature: Organisations endpoint
     Then I should receive a 400 error response 'Payload must include an updateFragment object'
 
   Scenario: Organisations PUT endpoint returns an error response when version is wrong
-    Given I create a linked and migrated organisation for 'Reprocessor'
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType |
+      | Reprocessor         |
     Given I am logged in as a service maintainer
     And I have access to the get organisations endpoint
     When I request the organisations with id 'migrated-id'

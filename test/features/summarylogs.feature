@@ -44,8 +44,8 @@ Feature: Summary Logs endpoint
       | Log Level | Message                                              |
       | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
     And the following audit logs are present
-      | Event Category  | Event Action | Context Keys                                 | Count |
-      | waste-reporting | submit       | summaryLogId, organisationId, registrationId | 1     |
+      | Event Category  | Event Action | Context Keys                                 | Count | Context Values                                           |
+      | waste-reporting | submit       | summaryLogId, organisationId, registrationId | 1     | {{summaryLogId}},{{summaryLogOrgId}},{{summaryLogRegId}} |
     And I should see that waste records are created in the database with the following values
       | OrganisationId           | RegistrationId           | RowId | Type      |
       | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1000  | received  |

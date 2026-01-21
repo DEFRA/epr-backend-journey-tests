@@ -1,6 +1,8 @@
 export class Interpolator {
   interpolate(context, expectedMessage) {
     const replacements = {
+      '{{summaryLogOrgId}}': context.summaryLog?.orgId,
+      '{{summaryLogRegId}}': context.summaryLog?.regId,
       '{{summaryLogId}}': context.summaryLog?.summaryLogId,
       '{{summaryLogFileId}}': context.summaryLog?.fileId,
       '{{summaryLogFilename}}': context.summaryLog?.filename,

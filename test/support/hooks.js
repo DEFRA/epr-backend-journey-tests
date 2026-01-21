@@ -8,7 +8,7 @@ import { Interpolator } from './interpolator.js'
 import { AuthClient } from '../support/auth.js'
 import { DefraIdStub } from '../support/defra-id-stub.js'
 import { CDPUploader } from '../support/cdp-uploader.js'
-import { Users } from '../support/users.js'
+import Users from '../support/users.js'
 
 let agent
 let dbConnector
