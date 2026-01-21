@@ -532,18 +532,6 @@ Then(
 Then(
   'I should see the following summary log validation concerns for table {string}, row {int} and sheet {string}',
   async function (expectedTable, expectedRow, expectedSheet, dataTable) {
-    // Only check the status in local runs as environment runs will not have the file uploaded to S3
-    // if (process.env.ENVIRONMENT) {
-    //   logger.warn(
-    //     {
-    //       step_definition:
-    //         'Then I should see the following summary log validation concerns'
-    //     },
-    //     'Skipping summary log validation concerns checks'
-    //   )
-    //   return
-    // }
-
     const expectedResults = dataTable.hashes()
     // eslint-disable-next-line no-unused-expressions
     expect(this.responseData.validation.concerns[expectedTable]).to.not.be
