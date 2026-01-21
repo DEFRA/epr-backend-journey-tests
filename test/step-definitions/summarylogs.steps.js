@@ -163,30 +163,7 @@ When(
 )
 
 Then('the organisations data update succeeds', async function () {
-  if (!process.env.ENVIRONMENT) {
-    if (this.response.statusCode === 422) {
-      this.responseData = await this.response.body.json()
-      if (
-        this.responseData.message ===
-        'Cannot transition organisation status from active to approved'
-      ) {
-        logger.info('Organisation already active, no update required')
-      } else {
-        expect.fail(
-          `Organisation update failed with HTTP status code ${this.response.statusCode} and message: ${this.responseData.message}`
-        )
-      }
-    } else {
-      expect(this.response.statusCode).to.equal(200)
-    }
-  } else {
-    logger.warn(
-      {
-        step_definition: 'Then the organisations data update succeeds'
-      },
-      'Skipping organisations data update checks'
-    )
-  }
+  expect(this.response.statusCode).to.equal(200)
 })
 
 When(
@@ -393,18 +370,6 @@ Then(
 Then(
   'I should see the following summary log validation failures',
   async function (dataTable) {
-    // Only check the status in local runs as environment runs will not have the file uploaded to S3
-    if (process.env.ENVIRONMENT) {
-      logger.warn(
-        {
-          step_definition:
-            'Then I should see the following summary log validation failures'
-        },
-        'Skipping summary log validation failure checks'
-      )
-      return
-    }
-
     const expectedResults = dataTable.hashes()
     expect(this.responseData.validation.failures.length).to.equal(
       expectedResults.length,

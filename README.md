@@ -131,19 +131,19 @@ You can also run the tests against environments locally. This can be achieved by
 
 First, you will need to generate your `X_API_KEY` to use. Follow the [CDP README](https://portal.cdp-int.defra.cloud/documentation/how-to/developer-api-key.md) for more information.
 
-Then, to run the tests against the `dev` environment (Where `<api_key>` = the generated key from the CDP README above):
+Then, to run the tests against the `test` environment (Where `<api_key>` = the generated key from the CDP README above):
 
 ```
-X_API_KEY=<api_key> ENVIRONMENT=dev npm run test
+X_API_KEY=<api_key> ENVIRONMENT=test npm run test:tagged @smoketest
 ```
 
-If you want to run the tests with proxy against the `dev` environment, you can do so by supplying the following:
+If you want to run the tests with proxy against the `test` environment, you can do so by supplying the following:
 
 ```
-WITH_PROXY=true X_API_KEY=<api_key> ENVIRONMENT=dev npm run test
+WITH_PROXY=true X_API_KEY=<api_key> ENVIRONMENT=test npm run test:tagged @smoketest
 ```
 
-Note that the database checks and logging tests will not run against the `dev` environment as they rely on the local Docker services.
+Note that you will need to run the tests tagged with `@smoketest` to run against the `test` environment as not all tests can be run against the `test` environment (e.g. Database checks).
 
 ### Running the data generator for epr-backend
 
