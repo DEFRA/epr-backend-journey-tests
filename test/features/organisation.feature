@@ -1,5 +1,4 @@
 @organisation
-@smoketest
 Feature: Organisation endpoint
 
   Scenario: Organisation endpoint returns an error if pages information in metadata are not present

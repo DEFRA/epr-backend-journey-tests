@@ -3,13 +3,12 @@ import {
   baseAPI,
   dbClient,
   defraIdStub,
-  cdpUploader
+  cdpUploader,
+  interpolator
 } from '../support/hooks.js'
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
 import logger from '../support/logger.js'
-import fs from 'node:fs'
-import { Dates } from '../support/dates.js'
 
 const interval = process.env.ENVIRONMENT ? 2000 : 500
 const pollTimeout = process.env.ENVIRONMENT ? 60000 : 30000
@@ -22,66 +21,31 @@ Given('I have the following summary log upload data', function (dataTable) {
 })
 
 Given(
-  'I update the organisations data for id {string} with the following payload {string}',
-  async function (orgId, pathToFile) {
-    if (!process.env.ENVIRONMENT) {
-      if (defraIdStub.processedOrgs.get(orgId) !== pathToFile) {
-        const data = JSON.parse(fs.readFileSync(pathToFile, 'utf8'))
-        const dates = new Dates()
-        dates.updateValidDates(data)
-
-        this.response = await baseAPI.patch(
-          `/v1/dev/organisations/${orgId}`,
-          JSON.stringify(data)
-        )
-
-        defraIdStub.processedOrgs.set(orgId, pathToFile)
-      } else {
-        this.response = { statusCode: 200 }
-      }
-    } else {
-      logger.warn(
-        {
-          step_definition: `Given I update the organisations data for id ${orgId} with the following payload ${pathToFile}`
-        },
-        'Skipping organisations data update'
-      )
-    }
-  }
-)
-
-Given(
-  'I have the following summary log upload data with a valid organisation and registration details',
+  'I have the following summary log upload data for summary log upload',
   function (dataTable) {
     this.summaryLog = new SummaryLog()
-    this.summaryLog.orgId = '6507f1f77bcf86cd79943911'
-    this.summaryLog.regId = '6507f1f77bcf86cd79943912'
     this.uploadData = dataTable.rowsHash()
+
+    if (this.uploadData.accreditationNumber) {
+      this.summaryLog.accId = this.accreditationIds.get(
+        this.uploadData.accreditationNumber
+      )
+    } else {
+      this.summaryLog.accId = this.accreditationId
+    }
+
+    if (this.uploadData.registrationNumber) {
+      this.summaryLog.regId = this.registrationIds.get(
+        this.uploadData.registrationNumber
+      )
+    } else {
+      this.summaryLog.regId = this.registrationId
+    }
+
+    this.summaryLog.orgId = this.organisationId
+
     this.summaryLog.setUploadData(this.uploadData)
     this.payload = this.summaryLog.toUploadCompletedPayload()
-    if (this.uploadData.processingType === 'exporter') {
-      this.summaryLog.regId = '6507f1f77bcf86cd79943913'
-    } else if (
-      this.uploadData.processingType === 'reprocessorOutput-exporter'
-    ) {
-      this.summaryLog.orgId = '6507f1f77bcf86cd79943931'
-      this.summaryLog.regId = '6507f1f77bcf86cd79943932'
-    }
-  }
-)
-
-Given(
-  'I have valid organisation and registration details for summary log upload with waste processing type {string}',
-  function (processingType) {
-    this.summaryLog = new SummaryLog()
-    this.summaryLog.orgId = '6507f1f77bcf86cd79943911'
-    this.summaryLog.regId = '6507f1f77bcf86cd79943912'
-    if (processingType === 'exporter') {
-      this.summaryLog.regId = '6507f1f77bcf86cd79943913'
-    } else if (processingType === 'reprocessorOutput-exporter') {
-      this.summaryLog.orgId = '6507f1f77bcf86cd79943931'
-      this.summaryLog.regId = '6507f1f77bcf86cd79943932'
-    }
   }
 )
 
@@ -91,6 +55,7 @@ Given(
     this.summaryLog = new SummaryLog()
     this.summaryLog.orgId = this.organisationId
     this.summaryLog.regId = this.registrationId
+    this.summaryLog.accId = this.accreditationId
   }
 )
 
@@ -198,30 +163,7 @@ When(
 )
 
 Then('the organisations data update succeeds', async function () {
-  if (!process.env.ENVIRONMENT) {
-    if (this.response.statusCode === 422) {
-      this.responseData = await this.response.body.json()
-      if (
-        this.responseData.message ===
-        'Cannot transition organisation status from active to approved'
-      ) {
-        logger.info('Organisation already active, no update required')
-      } else {
-        expect.fail(
-          `Organisation update failed with HTTP status code ${this.response.statusCode} and message: ${this.responseData.message}`
-        )
-      }
-    } else {
-      expect(this.response.statusCode).to.equal(200)
-    }
-  } else {
-    logger.warn(
-      {
-        step_definition: 'Then the organisations data update succeeds'
-      },
-      'Skipping organisations data update checks'
-    )
-  }
+  expect(this.response.statusCode).to.equal(200)
 })
 
 When(
@@ -428,18 +370,6 @@ Then(
 Then(
   'I should see the following summary log validation failures',
   async function (dataTable) {
-    // Only check the status in local runs as environment runs will not have the file uploaded to S3
-    if (process.env.ENVIRONMENT) {
-      logger.warn(
-        {
-          step_definition:
-            'Then I should see the following summary log validation failures'
-        },
-        'Skipping summary log validation failure checks'
-      )
-      return
-    }
-
     const expectedResults = dataTable.hashes()
     expect(this.responseData.validation.failures.length).to.equal(
       expectedResults.length,
@@ -609,10 +539,18 @@ Then(
     if (!process.env.ENVIRONMENT) {
       const wasteRecordsCollection = dbClient.collection('waste-records')
       const expectedWasteRecords = dataTable.hashes()
+      const expectedOrgId = interpolator.interpolate(
+        this,
+        expectedWasteRecords[0].OrganisationId
+      )
+      const expectedRegId = interpolator.interpolate(
+        this,
+        expectedWasteRecords[0].RegistrationId
+      )
       const wasteRecords = await wasteRecordsCollection
         .find({
-          organisationId: expectedWasteRecords[0].OrganisationId,
-          registrationId: expectedWasteRecords[0].RegistrationId
+          organisationId: expectedOrgId,
+          registrationId: expectedRegId
         })
         .toArray()
       expect(wasteRecords.length).to.equal(expectedWasteRecords.length)
@@ -620,15 +558,15 @@ Then(
       for (const expectedWasteRecord of expectedWasteRecords) {
         const matchingRecord = wasteRecords.find(
           (record) =>
-            record.organisationId === expectedWasteRecord.OrganisationId &&
-            record.registrationId === expectedWasteRecord.RegistrationId &&
+            record.organisationId === expectedOrgId &&
+            record.registrationId === expectedRegId &&
             record.rowId === parseInt(expectedWasteRecord.RowId) &&
             record.type === expectedWasteRecord.Type
         )
 
         if (!matchingRecord) {
           expect.fail(
-            `Expected record: ${JSON.stringify(expectedWasteRecord)}, but no records found with those values. Actual records found: ${JSON.stringify(wasteRecords)}`
+            `Expected record: ${interpolator.interpolate(this, JSON.stringify(expectedWasteRecord))}, but no records found with those values. Actual records found: ${JSON.stringify(wasteRecords)}`
           )
         }
 
@@ -669,10 +607,18 @@ Then(
     if (!process.env.ENVIRONMENT) {
       const wasteBalancesCollection = dbClient.collection('waste-balances')
       const expectedWasteBalances = dataTable.hashes()
+      const expectedOrgId = interpolator.interpolate(
+        this,
+        expectedWasteBalances[0].OrganisationId
+      )
+      const expectedAccId = interpolator.interpolate(
+        this,
+        expectedWasteBalances[0].AccreditationId
+      )
       const wasteBalances = await wasteBalancesCollection
         .find({
-          organisationId: expectedWasteBalances[0].OrganisationId,
-          accreditationId: expectedWasteBalances[0].AccreditationId
+          organisationId: expectedOrgId,
+          accreditationId: expectedAccId
         })
         .toArray()
       expect(wasteBalances.length).to.equal(expectedWasteBalances.length)
@@ -680,10 +626,8 @@ Then(
       for (const expectedWasteBalance of expectedWasteBalances) {
         const matchingRecord = wasteBalances.find(
           (wasteBalance) =>
-            wasteBalance.organisationId ===
-              expectedWasteBalance.OrganisationId &&
-            wasteBalance.accreditationId ===
-              expectedWasteBalance.AccreditationId &&
+            wasteBalance.organisationId === expectedOrgId &&
+            wasteBalance.accreditationId === expectedAccId &&
             parseFloat(wasteBalance.amount).toFixed(2) ===
               parseFloat(expectedWasteBalance.Amount).toFixed(2) &&
             parseFloat(wasteBalance.availableAmount).toFixed(2) ===
@@ -692,7 +636,7 @@ Then(
 
         if (!matchingRecord) {
           expect.fail(
-            `Expected record: ${JSON.stringify(expectedWasteBalance)}, but no waste balances found with those values. Actual waste balances found: ${JSON.stringify(wasteBalances)}`
+            `Expected record: ${interpolator.interpolate(this, JSON.stringify(expectedWasteBalance))}, but no waste balances found with those values. Actual waste balances found: ${JSON.stringify(wasteBalances)}`
           )
         }
       }

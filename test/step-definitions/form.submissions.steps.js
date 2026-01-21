@@ -16,6 +16,8 @@ Given(
     this.payload = ''
     if (dataRows[0].wasteProcessingType === 'Reprocessor') {
       this.payload = this.organisation.toNonRegisteredUKSoleTraderPayload()
+    } else {
+      this.payload = this.organisation.toPayload()
     }
 
     this.response = await baseAPI.post(
@@ -36,7 +38,10 @@ Given(
       }
 
       this.accreditation = new Accreditation(orgId, refNo)
-      this.payload = this.accreditation.toReprocessorPayload(this.material)
+      this.payload =
+        dataRow.wasteProcessingType === 'Reprocessor'
+          ? this.accreditation.toReprocessorPayload(this.material)
+          : this.accreditation.toExporterPayload(this.material)
 
       this.response = await baseAPI.post(
         '/v1/apply/accreditation',
@@ -45,7 +50,10 @@ Given(
       expect(this.response.statusCode).to.equal(201)
 
       this.registration = new Registration(orgId, refNo)
-      this.payload = this.registration.toAllMaterialsPayload(this.material)
+      this.payload =
+        dataRow.wasteProcessingType === 'Reprocessor'
+          ? this.registration.toAllMaterialsPayload(this.material)
+          : this.registration.toExporterPayload(this.material)
 
       this.response = await baseAPI.post(
         '/v1/apply/registration',

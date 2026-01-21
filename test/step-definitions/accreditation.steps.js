@@ -15,14 +15,14 @@ Given('I have entered my accreditation details', function () {
   const orgId = this.orgResponseData?.orgId
   const refNo = this.orgResponseData?.referenceNumber
   this.accreditation = new Accreditation(orgId, refNo)
-  this.payload = this.accreditation.toPayload()
+  this.payload = this.accreditation.toExporterPayload()
 })
 
 Given(
   'I have entered my accreditation details without pages metadata',
   function () {
     this.accreditation = new Accreditation()
-    this.payload = this.accreditation.toPayload()
+    this.payload = this.accreditation.toExporterPayload()
     delete this.payload.meta.definition.pages
   }
 )
@@ -31,7 +31,7 @@ Given(
   'I have entered my accreditation details without organisation ID',
   function () {
     this.accreditation = new Accreditation()
-    this.payload = this.accreditation.toPayload()
+    this.payload = this.accreditation.toExporterPayload()
     delete this.payload.data.main.Ooierc
   }
 )
@@ -40,7 +40,7 @@ Given(
   'I have entered my accreditation details without reference number',
   function () {
     this.accreditation = new Accreditation()
-    this.payload = this.accreditation.toPayload()
+    this.payload = this.accreditation.toExporterPayload()
     delete this.payload.data.main.MyWHms
   }
 )
@@ -49,7 +49,7 @@ Given(
   'I have entered my accreditation details with orgId value of {string}',
   function (orgId) {
     this.accreditation = new Accreditation()
-    this.payload = this.accreditation.toPayload()
+    this.payload = this.accreditation.toExporterPayload()
     this.payload.data.main.Ooierc = orgId
   }
 )
@@ -58,7 +58,7 @@ Given(
   'I have entered my accreditation details with reference number value of {string}',
   function (refNo) {
     this.accreditation = new Accreditation()
-    this.payload = this.accreditation.toPayload()
+    this.payload = this.accreditation.toExporterPayload()
     this.payload.data.main.MyWHms = refNo
   }
 )
@@ -69,7 +69,7 @@ Given(
     this.accreditation = new Accreditation()
     this.accreditation.orgId = orgId
     this.accreditation.refNo = refNo
-    this.payload = this.accreditation.toPayload()
+    this.payload = this.accreditation.toExporterPayload()
   }
 )
 

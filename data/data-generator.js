@@ -47,7 +47,7 @@ async function generate() {
     registration.refNo = referenceNumber
     registration.orgId = orgId
 
-    let registrationPayload = registration.toPayload()
+    let registrationPayload = registration.toExporterPayload()
 
     if (i % 2 === 0) {
       registrationPayload = registration.toAllMaterialsPayload()
@@ -65,7 +65,7 @@ async function generate() {
     accreditation.orgId = orgId
     accreditation.material = registration.material
 
-    let accreditationPayload = accreditation.toPayload()
+    let accreditationPayload = accreditation.toExporterPayload()
 
     if (i % 2 === 0) {
       accreditationPayload = accreditation.toReprocessorPayload()

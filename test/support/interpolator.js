@@ -4,6 +4,7 @@ export class Interpolator {
       '{{formOrgId}}': context.orgResponseData?.orgId,
       '{{formOrgName}}': context.orgResponseData?.orgName,
       '{{formRefNo}}': context.orgResponseData?.referenceNumber,
+      '{{summaryLogAccId}}': context.summaryLog?.accId,
       '{{summaryLogOrgId}}': context.summaryLog?.orgId,
       '{{summaryLogRegId}}': context.summaryLog?.regId,
       '{{summaryLogId}}': context.summaryLog?.summaryLogId,

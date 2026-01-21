@@ -1,19 +1,25 @@
 @summarylogs
-Feature: Summary Logs endpoint
+Feature: Summary Logs test (Validation and upload)
 
   Background:
-    Given I update the organisations data for id "6507f1f77bcf86cd79943911" with the following payload "./test/fixtures/6507f1f77bcf86cd79943911/payload.json"
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType | material   |
+      | Reprocessor         |            |
+      | Exporter            |            |
+      | Reprocessor         | Steel (R4) |
+
+    Given I am logged in as a service maintainer
+    When I update the recently migrated organisations data with the following data
+      | reprocessingType | regNumber        | accNumber | status   |
+      | input            | R25SR500030912PA | ACC123456 | approved |
+      |                  | E25SR500030913PA | ACC234567 | approved |
+      | output           | R25SR500050912PA | ACC500591 | approved |
     Then the organisations data update succeeds
 
-    Given I register a 'Reprocessor (Input) / Exporter' User to use the system
-    And I add a relationship to the 'Reprocessor (Input) / Exporter' User
-    When I authorise the User
-    And I generate the token
-
-    When the User is linked to the organisation with id '6507f1f77bcf86cd79943911'
+    When I register and authorise a User and link it to the recently migrated organisation
 
   Scenario: Summary Logs uploads (With Validation concerns) and creates a Waste Record
-    Given I have valid organisation and registration details for summary log upload with waste processing type 'reprocessorInput'
+    Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
 
@@ -47,19 +53,19 @@ Feature: Summary Logs endpoint
       | Event Category  | Event Action | Context Keys                                 | Count | Context Values                                           |
       | waste-reporting | submit       | summaryLogId, organisationId, registrationId | 1     | {{summaryLogId}},{{summaryLogOrgId}},{{summaryLogRegId}} |
     And I should see that waste records are created in the database with the following values
-      | OrganisationId           | RegistrationId           | RowId | Type      |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1000  | received  |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1001  | received  |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 1002  | received  |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 4000  | processed |
-      | 6507f1f77bcf86cd79943911 | 6507f1f77bcf86cd79943912 | 5000  | sentOn    |
+      | OrganisationId      | RegistrationId      | RowId | Type      |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}} | 1000  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}} | 1001  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}} | 1002  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}} | 4000  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}} | 5000  | sentOn    |
     And the submitted summary log should not have an expiry
     And I should see that waste balances are created in the database with the following values
-      | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
-      | 6507f1f77bcf86cd79943911 | 68f6a147c117aec8a1ab7497 | 361.62 | 361.62          |
+      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 361.62 | 361.62          |
 
     # Summary Logs uploads and fails validation for removed row on second upload. This depends on the previous steps being executed
-    Given I have the following summary log upload data with a valid organisation and registration details
+    Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs                |
       | s3Key      | valid-summary-log-input-2-key     |
       | fileId     | valid-summary-log-input-2-file-id |
@@ -84,7 +90,7 @@ Feature: Summary Logs endpoint
 
   Scenario: Stale preview is rejected at submission time (deferred staleness detection)
     # User A uploads and validates file 1
-    Given I have the following summary log upload data with a valid organisation and registration details
+    Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs                |
       | s3Key      | staleness-test-file-1-key         |
       | fileId     | staleness-test-file-1-id          |
@@ -100,7 +106,7 @@ Feature: Summary Logs endpoint
     And I call this upload 'first'
 
     # User B uploads and validates file 2 (both coexist - no blocking)
-    Given I have the following summary log upload data with a valid organisation and registration details
+    Given I have the following summary log upload data for summary log upload
       | s3Bucket    | re-ex-summary-logs         |
       | s3Key       | staleness-test-file-2-key  |
       | fileId      | staleness-test-file-2-id   |
@@ -134,7 +140,7 @@ Feature: Summary Logs endpoint
       | status | superseded |
 
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
-    Given I have the following summary log upload data with a valid organisation and registration details
+    Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs                |
       | s3Key      | reprocessor-input-invalid-key     |
       | fileId     | reprocessor-input-invalid-file-id |
@@ -167,7 +173,7 @@ Feature: Summary Logs endpoint
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   Scenario: Summary Logs uploads (Reprocessor Input, Sent On sheet) and fails in-sheet revalidation
-    Given I have the following summary log upload data with a valid organisation and registration details
+    Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs                       |
       | s3Key      | reprocessor-input-senton-invalid-key     |
       | fileId     | reprocessor-input-senton-invalid-file-id |
@@ -189,24 +195,17 @@ Feature: Summary Logs endpoint
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
+
   Scenario: Summary Logs uploads (Reprocessor Output) and fails in-sheet revalidation
-    Given I update the organisations data for id "6507f1f77bcf86cd79943931" with the following payload "./test/fixtures/6507f1f77bcf86cd79943931/payload.json"
-    Then the organisations data update succeeds
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs                 |
+      | s3Key               | reprocessor-output-invalid-key     |
+      | fileId              | reprocessor-output-invalid-file-id |
+      | filename            | reprocessor-output-invalid.xlsx    |
+      | fileStatus          | complete                           |
+      | accreditationNumber | ACC500591                          |
+      | registrationNumber  | R25SR500050912PA                   |
 
-    Given I register a 'Reprocessor (Output) / Exporter' User to use the system
-    And I add a relationship to the 'Reprocessor (Output) / Exporter' User
-    When I authorise the User
-    And I generate the token
-
-    When the User is linked to the organisation with id '6507f1f77bcf86cd79943931'
-
-    Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket       | re-ex-summary-logs                 |
-      | s3Key          | reprocessor-output-invalid-key     |
-      | fileId         | reprocessor-output-invalid-file-id |
-      | filename       | reprocessor-output-invalid.xlsx    |
-      | fileStatus     | complete                           |
-      | processingType | reprocessorOutput-exporter         |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -226,23 +225,14 @@ Feature: Summary Logs endpoint
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   Scenario: Summary Logs uploads (Reprocessor Output) and succeeds, with waste balance calculated for Sent On
-    Given I update the organisations data for id "6507f1f77bcf86cd79943931" with the following payload "./test/fixtures/6507f1f77bcf86cd79943931/payload.json"
-    Then the organisations data update succeeds
-
-    Given I register a 'Reprocessor (Output) / Exporter' User to use the system
-    And I add a relationship to the 'Reprocessor (Output) / Exporter' User
-    When I authorise the User
-    And I generate the token
-
-    When the User is linked to the organisation with id '6507f1f77bcf86cd79943931'
-
-    Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket       | re-ex-summary-logs               |
-      | s3Key          | reprocessor-output-valid-key     |
-      | fileId         | reprocessor-output-valid-file-id |
-      | filename       | reprocessor-output-valid.xlsx    |
-      | fileStatus     | complete                         |
-      | processingType | reprocessorOutput-exporter       |
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs               |
+      | s3Key               | reprocessor-output-valid-key     |
+      | fileId              | reprocessor-output-valid-file-id |
+      | filename            | reprocessor-output-valid.xlsx    |
+      | fileStatus          | complete                         |
+      | accreditationNumber | ACC500591                        |
+      | registrationNumber  | R25SR500050912PA                 |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -252,25 +242,27 @@ Feature: Summary Logs endpoint
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
     And I should see that waste records are created in the database with the following values
-      | OrganisationId           | RegistrationId           | RowId | Type      |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1000  | received  |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1001  | received  |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1002  | received  |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 3000  | processed |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 5000  | sentOn    |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 5001  | sentOn    |
+      | OrganisationId      | RegistrationId       | RowId | Type      |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1000  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1001  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1002  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3000  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5000  | sentOn    |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5001  | sentOn    |
     And I should see that waste balances are created in the database with the following values
-      | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
-      | 6507f1f77bcf86cd79943931 | 68f6a147c117aec8a1ab749a | 3      | 3               |
+      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 3      | 3               |
 
   Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
-    Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket       | re-ex-summary-logs       |
-      | s3Key          | exporter-invalid-key     |
-      | fileId         | exporter-invalid-file-id |
-      | filename       | exporter-invalid.xlsx    |
-      | fileStatus     | complete                 |
-      | processingType | exporter                 |
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs       |
+      | s3Key               | exporter-invalid-key     |
+      | fileId              | exporter-invalid-file-id |
+      | filename            | exporter-invalid.xlsx    |
+      | fileStatus          | complete                 |
+      | accreditationNumber | ACC234567                |
+      | registrationNumber  | E25SR500030913PA         |
+
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -308,13 +300,14 @@ Feature: Summary Logs endpoint
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated
-    Given I have the following summary log upload data with a valid organisation and registration details
-      | s3Bucket       | re-ex-summary-logs |
-      | s3Key          | exporter-key       |
-      | fileId         | exporter-file-id   |
-      | filename       | exporter.xlsx      |
-      | fileStatus     | complete           |
-      | processingType | exporter           |
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs |
+      | s3Key               | exporter-key       |
+      | fileId              | exporter-file-id   |
+      | filename            | exporter.xlsx      |
+      | fileStatus          | complete           |
+      | accreditationNumber | ACC234567          |
+      | registrationNumber  | E25SR500030913PA   |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -324,19 +317,16 @@ Feature: Summary Logs endpoint
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
     And I should see that waste records are created in the database with the following values
-      | OrganisationId           | RegistrationId           | RowId | Type      |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1000  | received  |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1001  | received  |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 1002  | received  |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 3000  | processed |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 5000  | sentOn    |
-      | 6507f1f77bcf86cd79943931 | 6507f1f77bcf86cd79943932 | 5001  | sentOn    |
+      | OrganisationId      | RegistrationId       | RowId | Type      |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1000  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1001  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | sentOn    |
     And I should see that waste balances are created in the database with the following values
-      | OrganisationId           | AccreditationId          | Amount | AvailableAmount |
-      | 6507f1f77bcf86cd79943911 | 68f6a147c117aec8a1ab7498 | 30     | 30              |
+      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 30     | 30              |
 
   Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Row ID and cannot be submitted
-    Given I have the following summary log upload data with a valid organisation and registration details
+    Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs     |
       | s3Key      | invalid-row-id-key     |
       | fileId     | invalid-row-id-file-id |
@@ -358,7 +348,7 @@ Feature: Summary Logs endpoint
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   Scenario: Summary Logs uploads and fails validation (Fatal) for Invalid Table name and cannot be submitted
-    Given I have the following summary log upload data with a valid organisation and registration details
+    Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs         |
       | s3Key      | invalid-table-name-key     |
       | fileId     | invalid-table-name-file-id |
@@ -379,7 +369,7 @@ Feature: Summary Logs endpoint
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
   Scenario: Summary Logs upload-completed endpoint accepts upload and marks as invalid when summary log validation fails
-    Given I have the following summary log upload data with a valid organisation and registration details
+    Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs       |
       | s3Key      | invalid-test-upload-key  |
       | fileId     | test-upload-file-id      |
@@ -405,7 +395,6 @@ Feature: Summary Logs endpoint
       | MATERIAL_REQUIRED         | MATERIAL            |
       | REGISTRATION_REQUIRED     | REGISTRATION_NUMBER |
 
-  @smoketest
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
     Given I have the following summary log upload data
       | s3Bucket   | re-ex-summary-logs  |
@@ -424,7 +413,6 @@ Feature: Summary Logs endpoint
       | fileStatus | pending             |
       | status     | preprocessing       |
 
-  @smoketest
   Scenario: Summary Logs upload-completed endpoint processes with rejected status with all required fields
     Given I have the following summary log upload data
       | s3Bucket   | re-ex-summary-logs  |
@@ -444,7 +432,6 @@ Feature: Summary Logs endpoint
       | status            | rejected            |
       | validationFailure | FILE_REJECTED       |
 
-  @smoketest
   Scenario Outline: Summary Logs upload-completed endpoint valid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data
       | s3Bucket   | re-ex-summary-logs  |
@@ -469,7 +456,6 @@ Feature: Summary Logs endpoint
       | pending        | complete     |
       | pending        | rejected     |
 
-  @smoketest
   Scenario Outline: Summary Logs upload-completed endpoint invalid state transitions from <FromTransition> to <ToTransition>
     Given I have the following summary log upload data
       | s3Bucket   | re-ex-summary-logs  |

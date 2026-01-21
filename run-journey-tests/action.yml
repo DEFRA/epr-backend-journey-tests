@@ -52,7 +52,7 @@ runs:
     - name: Run the tests
       shell: bash
       run: |
-        npm run test:tagged "not @wip"
+        npm run test:tagged "not @smoketest"
 
     - name: debug
       if: always()

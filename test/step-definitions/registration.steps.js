@@ -18,21 +18,21 @@ Given('I have entered my registration details', function () {
   const orgId = this.orgResponseData?.orgId
   const refNo = this.orgResponseData?.referenceNumber
   this.registration = new Registration(orgId, refNo)
-  this.payload = this.registration.toPayload()
+  this.payload = this.registration.toExporterPayload()
 })
 
 Given(
   'I have entered my registration details without pages metadata',
   function () {
     this.registration = new Registration()
-    this.payload = this.registration.toPayload()
+    this.payload = this.registration.toExporterPayload()
     delete this.payload.meta.definition.pages
   }
 )
 
 Given('I have entered my registration details without data', function () {
   this.registration = new Registration()
-  this.payload = this.registration.toPayload()
+  this.payload = this.registration.toExporterPayload()
   delete this.payload.data
 })
 
@@ -40,7 +40,7 @@ Given(
   'I have entered my registration details without organisation ID',
   function () {
     this.registration = new Registration()
-    this.payload = this.registration.toPayload()
+    this.payload = this.registration.toExporterPayload()
     delete this.payload.data.main.QnSRcX
   }
 )
@@ -49,7 +49,7 @@ Given(
   'I have entered my registration details without reference number',
   function () {
     this.registration = new Registration()
-    this.payload = this.registration.toPayload()
+    this.payload = this.registration.toExporterPayload()
     delete this.payload.data.main.RIXIzA
   }
 )
@@ -58,7 +58,7 @@ Given(
   'I have entered my registration details with orgId value of {string}',
   function (orgId) {
     this.registration = new Registration()
-    this.payload = this.registration.toPayload()
+    this.payload = this.registration.toExporterPayload()
     this.payload.data.main.QnSRcX = orgId
   }
 )
@@ -67,7 +67,7 @@ Given(
   'I have entered my registration details with reference number value of {string}',
   function (refNo) {
     this.registration = new Registration()
-    this.payload = this.registration.toPayload()
+    this.payload = this.registration.toExporterPayload()
     this.payload.data.main.RIXIzA = refNo
   }
 )
@@ -78,7 +78,7 @@ Given(
     this.registration = new Registration()
     this.registration.orgId = orgId
     this.registration.refNo = refNo
-    this.payload = this.registration.toPayload()
+    this.payload = this.registration.toExporterPayload()
   }
 )
 
