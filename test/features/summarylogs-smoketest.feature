@@ -7,8 +7,8 @@ Feature: Summary Logs smoke test for Test environment
       | Reprocessor         |
 
     Given I am logged in as a service maintainer
-    When I request the organisations with id 'migrated-id'
-    Then I should receive a valid organisations response for 'migrated-id'
+    When I request the recently migrated organisation
+    Then I should receive a valid organisations response for the recently migrated organisation
 
     Given I update the organisations data with the following data
       | reprocessingType | regNumber        | accNumber | status   |
@@ -20,7 +20,7 @@ Feature: Summary Logs smoke test for Test environment
     When I authorise the User
     And I generate the token
 
-    When the User is linked to the organisation with id 'migrated-id'
+    When the User is linked to the recently migrated organisation
 
     Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
@@ -48,8 +48,8 @@ Feature: Summary Logs smoke test for Test environment
       | Reprocessor         | Steel (R4) |
 
     Given I am logged in as a service maintainer
-    When I request the organisations with id 'migrated-id'
-    Then I should receive a valid organisations response for 'migrated-id'
+    When I request the recently migrated organisation
+    Then I should receive a valid organisations response for the recently migrated organisation
 
     Given I update the organisations data with the following data
       | reprocessingType | regNumber        | accNumber | status   |
@@ -61,7 +61,7 @@ Feature: Summary Logs smoke test for Test environment
     When I authorise the User
     And I generate the token
 
-    When the User is linked to the organisation with id 'migrated-id'
+    When the User is linked to the recently migrated organisation
 
     Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload

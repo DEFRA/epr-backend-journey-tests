@@ -70,9 +70,21 @@ When('I generate the token', async function () {
 When(
   'the User is linked to the organisation with id {string}',
   async function (organisationId) {
-    if (organisationId === 'migrated-id') {
-      organisationId = this.orgResponseData?.referenceNumber
+    if (!defraIdStub.linked.has(organisationId)) {
+      this.response = await baseAPI.post(
+        `/v1/organisations/${organisationId}/link`,
+        '',
+        defraIdStub.authHeader(this.userId)
+      )
+      defraIdStub.linked.set(organisationId, this.userId)
     }
+  }
+)
+
+When(
+  'the User is linked to the recently migrated organisation',
+  async function () {
+    const organisationId = this.orgResponseData?.referenceNumber
 
     if (!defraIdStub.linked.has(organisationId)) {
       this.response = await baseAPI.post(

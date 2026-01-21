@@ -15,10 +15,15 @@ When('I request the organisations', async function () {
   )
 })
 
+When('I request the recently migrated organisation', async function () {
+  const orgId = this.orgResponseData?.referenceNumber
+  this.response = await baseAPI.get(
+    `/v1/organisations/${orgId}`,
+    authClient.authHeader()
+  )
+})
+
 When('I request the organisations with id {string}', async function (orgId) {
-  if (orgId === 'migrated-id') {
-    orgId = this.orgResponseData?.referenceNumber
-  }
   this.response = await baseAPI.get(
     `/v1/organisations/${orgId}`,
     authClient.authHeader()
@@ -37,9 +42,33 @@ When('I update the organisations with id {string}', async function (orgId) {
 When(
   'I update the organisations with id {string} with the following payload',
   async function (orgId, dataTable) {
-    if (orgId === 'migrated-id') {
-      orgId = this.orgResponseData?.referenceNumber
+    this.organisations = new Organisations()
+    this.payload = dataTable.rowsHash()
+
+    if (!this.payload.version) {
+      this.payload.version = this.version
     }
+
+    if (this.payload.updateFragment === 'sample-fixture') {
+      this.payload = this.organisations.toDefaultPayload(this.payload)
+    } else if (this.payload.updateFragment === 'response-data') {
+      this.payload.updateFragment = this.responseData
+      this.payload = this.organisations.toPayload(this.payload)
+    } else {
+      this.payload = this.organisations.toPayload(this.payload)
+    }
+
+    this.response = await baseAPI.put(
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(this.organisations.toPayload(this.payload)),
+      authClient.authHeader()
+    )
+  }
+)
+When(
+  'I update the recently migrated organisation with the following payload',
+  async function (dataTable) {
+    const orgId = this.orgResponseData?.referenceNumber
 
     this.organisations = new Organisations()
     this.payload = dataTable.rowsHash()
@@ -77,15 +106,24 @@ Then(
 )
 
 Then(
+  'I should receive a valid organisations response for the recently migrated organisation',
+  async function () {
+    expect(this.response.statusCode).to.equal(200)
+    this.responseData = await this.response.body.json()
+    this.version = this.responseData.version
+
+    const id = this.orgResponseData?.referenceNumber
+    expect(this.responseData.id).to.equal(id)
+  }
+)
+
+Then(
   'I should receive a valid organisations response for {string}',
   async function (id) {
     expect(this.response.statusCode).to.equal(200)
     this.responseData = await this.response.body.json()
     this.version = this.responseData.version
 
-    if (id === 'migrated-id') {
-      id = this.orgResponseData?.referenceNumber
-    }
     expect(this.responseData.id).to.equal(id)
   }
 )
