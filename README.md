@@ -153,7 +153,13 @@ This only applies to local builds. You can generate 50 organisation details, reg
 npm run generatedata
 ```
 
-This will create mock datasets for the 3 collections in the database. Only to be used for local development purposes.
+To generate with user linking (This assumes you have Defra ID Stub and Entra Stub running locally):
+
+```
+npm run generatedata:withUserLinking
+```
+
+This will create mock approved Organisation datasets with linked users. Only to be used for local development purposes.
 
 ## What is tested in this test suite
 
