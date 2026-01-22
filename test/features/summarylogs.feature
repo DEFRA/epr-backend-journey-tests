@@ -1,24 +1,21 @@
 @summarylogs
+@summarylogs_exporter
 Feature: Summary Logs test (Validation and upload)
 
-  Background:
+  Scenario: Stale preview is rejected at submission time (deferred staleness detection)
+
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType | material   |
       | Reprocessor         |            |
-      | Exporter            |            |
-      | Reprocessor         | Steel (R4) |
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
       | reprocessingType | regNumber        | accNumber | status   |
       | input            | R25SR500030912PA | ACC123456 | approved |
-      |                  | E25SR500030913PA | ACC234567 | approved |
-      | output           | R25SR500050912PA | ACC500591 | approved |
     Then the organisations data update succeeds
 
     When I register and authorise a User and link it to the recently migrated organisation
 
-  Scenario: Stale preview is rejected at submission time (deferred staleness detection)
     # User A uploads and validates file 1
     Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs                |
@@ -70,6 +67,18 @@ Feature: Summary Logs test (Validation and upload)
       | status | superseded |
 
   Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType |
+      | Exporter            |
+
+    Given I am logged in as a service maintainer
+    When I update the recently migrated organisations data with the following data
+      | regNumber        | accNumber | status   |
+      | E25SR500030913PA | ACC234567 | approved |
+    Then the organisations data update succeeds
+
+    When I register and authorise a User and link it to the recently migrated organisation
+
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs       |
       | s3Key               | exporter-invalid-key     |
@@ -115,7 +124,22 @@ Feature: Summary Logs test (Validation and upload)
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
+  ###
+  # RowId 1002 has 2025-01-01 date, so it's not factored into Waste Balance calculations
+  # as Accreditation is valid from 2025-02-02
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType |
+      | Exporter            |
+
+    Given I am logged in as a service maintainer
+    When I update the recently migrated organisations data with the following data
+      | regNumber        | accNumber | status   | validFrom  |
+      | E25SR500030913PA | ACC234567 | approved | 2025-02-02 |
+    Then the organisations data update succeeds
+
+    When I register and authorise a User and link it to the recently migrated organisation
+
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs |
       | s3Key               | exporter-key       |
@@ -129,6 +153,12 @@ Feature: Summary Logs test (Validation and upload)
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the summary log submission status is 'validated'
+    And the summary log has the following loads
+      | LoadType       | Count | RowIDs         |
+      | added.valid    | 3     | 1000,1001,4000 |
+      | added.invalid  | 0     |                |
+      | added.included | 3     | 1000,1001,4000 |
+      | added.excluded | 0     |                |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -136,6 +166,7 @@ Feature: Summary Logs test (Validation and upload)
       | OrganisationId      | RegistrationId       | RowId | Type      |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1000  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1001  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1002  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | sentOn    |
     And I should see that waste balances are created in the database with the following values
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |

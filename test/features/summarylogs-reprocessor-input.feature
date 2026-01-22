@@ -39,6 +39,12 @@ Feature: Summary Logs - Reprocessor on Input
     And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 6 and sheet "Received (sections 1, 2 and 3)"
       | Type  | Code           | Header   | Column |
       | error | FIELD_REQUIRED | EWC_CODE | H      |
+    And the summary log has the following loads
+      | LoadType       | Count | RowIDs              |
+      | added.valid    | 4     | 1000,1001,4000,5000 |
+      | added.invalid  | 1     | 1002                |
+      | added.included | 3     | 1000,1001,5000      |
+      | added.excluded | 2     | 1002,4000           |
 
     When I submit the uploaded summary log and initiate a new upload at the same time
     Then the summary log submission succeeds
