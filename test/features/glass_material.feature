@@ -30,7 +30,7 @@ Feature: Glass material schema validation
     | input            | R25SR500030912PA | ACC123456 | approved | glass_invalid         |
     Then the organisations data update fails
 
-  Scenario Outline: Glass Recycling should not be relevant to other material apart from Glass
+  Scenario Outline: Glass Recycling Process should not be relevant to other material apart from Glass
     Given I create a linked and migrated organisation for the following
     | wasteProcessingType   | material   |
     | <WasteProcessingType> | <Material> |
@@ -40,15 +40,15 @@ Feature: Glass material schema validation
     Then I should receive a valid organisations response for the recently migrated organisation
 
     When I update the recently migrated organisations data with the following data
-    | reprocessingType   | regNumber        | accNumber | status   | glassRecyclingProcess |
-    | <ReprocessingType> | R25SR500030912PA | ACC123456 | approved | glass_re_melt         |
+    | reprocessingType   | regNumber        | accNumber | status   | glassRecyclingProcess   |
+    | <ReprocessingType> | R25SR500030912PA | ACC123456 | approved | <GlassRecyclingProcess> |
     Then the organisations data update fails
 
     Examples:
-      | WasteProcessingType | ReprocessingType | Material                            |
-      | Exporter            |                  | Aluminium (R4)                      |
-      | Exporter            |                  | Fibre-based composite material (R3) |
-      | Reprocessor         | input            | Paper or board (R3)                 |
-      | Reprocessor         | output           | Plastic (R3)                        |
-      | Reprocessor         | input            | Steel (R4)                          |
-      | Reprocessor         | output           | Wood (R3)                           |
+      | WasteProcessingType | ReprocessingType | Material                            | GlassRecyclingProcess      |
+      | Exporter            |                  | Aluminium (R4)                      | glass_re_melt              |
+      | Exporter            |                  | Fibre-based composite material (R3) | glass_other                |
+      | Reprocessor         | input            | Paper or board (R3)                 | glass_re_melt, glass_other |
+      | Reprocessor         | output           | Plastic (R3)                        | glass_re_melt              |
+      | Reprocessor         | input            | Steel (R4)                          | glass_re_melt, glass_other |
+      | Reprocessor         | output           | Wood (R3)                           | glass_other                |
