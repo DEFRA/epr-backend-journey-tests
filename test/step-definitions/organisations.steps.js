@@ -36,6 +36,9 @@ When(
       if (orgUpdateData.reprocessingType !== '') {
         data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
       }
+      if (orgUpdateData.glassRecyclingProcess !== '') {
+        data.registrations[i].glassRecyclingProcess = orgUpdateData.glassRecyclingProcess.split(',').map(item => item.trim())
+      }
       data.registrations[i].registrationNumber = orgUpdateData.regNumber
       data.registrations[i].accreditationId = data.accreditations[i].id
       data.accreditations[i].status = orgUpdateData.status
@@ -43,6 +46,9 @@ When(
       data.accreditations[i].validTo = `${currentYear + 1}-01-01`
       if (orgUpdateData.reprocessingType !== '') {
         data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
+      }
+      if (orgUpdateData.glassRecyclingProcess !== '') {
+        data.accreditations[i].glassRecyclingProcess = orgUpdateData.glassRecyclingProcess.split(',').map((item) => item.trim())
       }
       data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
 
