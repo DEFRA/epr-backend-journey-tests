@@ -2,20 +2,17 @@
 @summarylogs_exporter
 Feature: Summary Logs - Exporter
 
-  Background:
+  Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
       | Exporter            |
-
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
-      | regNumber        | accNumber | status   | validFrom  |
-      | E25SR500030913PA | ACC234567 | approved | 2025-02-02 |
+      | regNumber        | accNumber | status   |
+      | E25SR500030913PA | ACC234567 | approved |
     Then the organisations data update succeeds
-
     When I register and authorise a User and link it to the recently migrated organisation
 
-  Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs       |
       | s3Key               | exporter-invalid-key     |
@@ -69,6 +66,16 @@ Feature: Summary Logs - Exporter
   # Row ID with 1002 has a date that outside of the Accreditation period (ValidFrom is 2025-02-02), so will
   # not be included in the Waste Balance amount (Otherwise it would have been 50)
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType |
+      | Exporter            |
+    Given I am logged in as a service maintainer
+    When I update the recently migrated organisations data with the following data
+      | regNumber        | accNumber | status   | validFrom  |
+      | E25SR500030913PA | ACC234567 | approved | 2025-02-02 |
+    Then the organisations data update succeeds
+    When I register and authorise a User and link it to the recently migrated organisation
+
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs |
       | s3Key               | exporter-key       |
