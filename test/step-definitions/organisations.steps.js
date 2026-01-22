@@ -33,10 +33,13 @@ When(
       data.registrations[i].status = orgUpdateData.status
       data.registrations[i].validFrom = '2025-01-01'
       data.registrations[i].validTo = `${currentYear + 1}-01-01`
-      if (orgUpdateData.reprocessingType !== '') {
+      if (
+        orgUpdateData.reprocessingType !== '' ||
+        orgUpdateData.reprocessingType !== undefined
+      ) {
         data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
       }
-      if (orgUpdateData.glassRecyclingProcess !== '') {
+      if (orgUpdateData.glassRecyclingProcess !== undefined) {
         data.registrations[i].glassRecyclingProcess =
           orgUpdateData.glassRecyclingProcess
             .split(',')
@@ -47,10 +50,13 @@ When(
       data.accreditations[i].status = orgUpdateData.status
       data.accreditations[i].validFrom = '2025-01-01'
       data.accreditations[i].validTo = `${currentYear + 1}-01-01`
-      if (orgUpdateData.reprocessingType !== '') {
+      if (
+        orgUpdateData.reprocessingType !== '' ||
+        orgUpdateData.reprocessingType !== undefined
+      ) {
         data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
       }
-      if (orgUpdateData.glassRecyclingProcess !== '') {
+      if (orgUpdateData.glassRecyclingProcess !== undefined) {
         data.accreditations[i].glassRecyclingProcess =
           orgUpdateData.glassRecyclingProcess
             .split(',')
