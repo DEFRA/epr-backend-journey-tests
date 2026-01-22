@@ -128,12 +128,24 @@ async function generate(options = {}) {
     }
     await authClient.generateToken(payload, urlSuffix)
 
-    const getOrgResponse = await baseAPI.get(
-      `/v1/organisations/${referenceNumber}`,
-      authClient.authHeader()
-    )
+    let data = ''
+    let attempts = 0
 
-    let data = await getOrgResponse.body.json()
+    // Retry if organisation has not been fully migrated yet
+    while (attempts < 5) {
+      const getOrgResponse = await baseAPI.get(
+        `/v1/organisations/${referenceNumber}`,
+        authClient.authHeader()
+      )
+
+      data = await getOrgResponse.body.json()
+      if (data.accreditations && data.accreditations.length > 0) {
+        break
+      }
+      attempts++
+
+      await new Promise((resolve) => setTimeout(resolve, 500))
+    }
 
     let updateDataRows = [
       {

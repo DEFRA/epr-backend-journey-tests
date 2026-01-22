@@ -57,45 +57,45 @@ services:
       - cdp-tenant
   ################################################################################
   epr-backend:
-   image: defradigital/epr-backend:${EPR_BACKEND:-latest}
-   build:
-     context: .
-     target: development
-   env_file:
-     - ./docker/config/defaults.env
-     - ./docker/config/example-backend.env
-   environment:
-     PORT: 3001
-     NODE_ENV: development
-     LOCALSTACK_ENDPOINT: http://localstack:4566
-     MONGO_URI: mongodb://mongodb:27017/
-     GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
-     AUDIT_ENABLED: true
-     FEATURE_FLAG_SUMMARY_LOGS: true
-     FEATURE_FLAG_DEV_ENDPOINTS: true
-     FEATURE_FLAG_CALCULATE_WASTE_BALANCE_ON_IMPORT: true
-     LOG_FORMAT: ecs
-     ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
-     ADMIN_UI_ENTRA_CLIENT_ID: clientId
-     SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
-     CDP_UPLOADER_URL: http://cdp-uploader:7337
-     APP_BASE_URL: http://epr-backend:3001
-     DEFRA_ID_OIDC_WELL_KNOWN_URL: http://defra-id-stub:3200/cdp-defra-id-stub/.well-known/openid-configuration
-     DEFRA_ID_CLIENT_ID: 63983fc2-cfff-45bb-8ec2-959e21062b9a
-   ports:
-     - '3001:3001'
-   depends_on:
-     mongodb:
-       condition: service_healthy
-     defra-id-stub:
-       condition: service_started
-   healthcheck:
-     test: ["CMD", "curl", "http://localhost:3001/health"]
-     interval: 3s
-     start_period: 2s
-     retries: 3
-   networks:
-     - cdp-tenant
+    image: defradigital/epr-backend:${EPR_BACKEND:-latest}
+    build:
+      context: .
+      target: development
+    env_file:
+      - ./docker/config/defaults.env
+      - ./docker/config/example-backend.env
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      LOCALSTACK_ENDPOINT: http://localstack:4566
+      MONGO_URI: mongodb://mongodb:27017/
+      GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
+      AUDIT_ENABLED: true
+      FEATURE_FLAG_SUMMARY_LOGS: true
+      FEATURE_FLAG_DEV_ENDPOINTS: true
+      FEATURE_FLAG_CALCULATE_WASTE_BALANCE_ON_IMPORT: true
+      LOG_FORMAT: ecs
+      ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
+      ADMIN_UI_ENTRA_CLIENT_ID: clientId
+      SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
+      CDP_UPLOADER_URL: http://cdp-uploader:7337
+      APP_BASE_URL: http://epr-backend:3001
+      DEFRA_ID_OIDC_WELL_KNOWN_URL: http://defra-id-stub:3200/cdp-defra-id-stub/.well-known/openid-configuration
+      DEFRA_ID_CLIENT_ID: 63983fc2-cfff-45bb-8ec2-959e21062b9a
+    ports:
+      - '3001:3001'
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      defra-id-stub:
+        condition: service_started
+    healthcheck:
+      test: ['CMD', 'curl', 'http://localhost:3001/health']
+      interval: 3s
+      start_period: 2s
+      retries: 3
+    networks:
+      - cdp-tenant
 
   epr-re-ex-entra-stub:
     image: defradigital/epr-re-ex-entra-stub:latest
@@ -104,7 +104,7 @@ services:
     environment:
       STUB_INTERNAL_URL: http://epr-re-ex-entra-stub:3010
     healthcheck:
-      test: [ "CMD", "curl", "http://localhost:3010/health" ]
+      test: ['CMD', 'curl', 'http://localhost:3010/health']
       interval: 3s
       start_period: 2s
       retries: 3
@@ -139,7 +139,7 @@ services:
       - '6379:6379'
     restart: always
     healthcheck:
-      test: ["CMD", "redis-cli", "PING"]
+      test: ['CMD', 'redis-cli', 'PING']
       interval: 5s
       start_period: 2s
       retries: 5
