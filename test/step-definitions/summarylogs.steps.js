@@ -340,7 +340,6 @@ Then(
         return
       }
 
-      this.log(responseData)
       await new Promise((resolve) => setTimeout(resolve, interval))
     }
 
@@ -376,7 +375,6 @@ Then(
   'I should see the following summary log validation failures',
   async function (dataTable) {
     const expectedResults = dataTable.hashes()
-    console.log(this.responseData)
     expect(this.responseData.validation.failures.length).to.equal(
       expectedResults.length,
       'Number of actual validation failures does not match expected value'
