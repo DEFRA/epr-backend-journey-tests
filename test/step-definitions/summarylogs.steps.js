@@ -350,6 +350,25 @@ Then(
   }
 )
 
+Then('the summary log has the following loads', async function (dataTable) {
+  const expectedLoads = dataTable.hashes()
+
+  for (const expectedLoad of expectedLoads) {
+    const actualLoadType = expectedLoad.LoadType.split('.').reduce(
+      (acc, key) => acc?.[key],
+      this.responseData.loads
+    )
+    expect(actualLoadType.count).to.equal(
+      parseInt(expectedLoad.Count),
+      'Failed at ' + expectedLoad.LoadType
+    )
+    expect(actualLoadType.rowIds.join(',')).to.equal(
+      expectedLoad.RowIDs,
+      'Failed at ' + expectedLoad.LoadType
+    )
+  }
+})
+
 Then(
   'I should receive a summary log upload accepted response',
   async function () {

@@ -33,23 +33,23 @@ When(
       data.registrations[i].status = orgUpdateData.status
       data.registrations[i].validFrom = '2025-01-01'
       data.registrations[i].validTo = `${currentYear + 1}-01-01`
-      if (orgUpdateData.reprocessingType?.trim()) {
-        data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
-      }
-      if (orgUpdateData.glassRecyclingProcess?.trim()) {
-        data.registrations[i].glassRecyclingProcess = [
-          orgUpdateData.glassRecyclingProcess
-        ]
-      }
       data.registrations[i].registrationNumber = orgUpdateData.regNumber
       data.registrations[i].accreditationId = data.accreditations[i].id
       data.accreditations[i].status = orgUpdateData.status
       data.accreditations[i].validFrom = '2025-01-01'
       data.accreditations[i].validTo = `${currentYear + 1}-01-01`
+      if (orgUpdateData.validFrom?.trim()) {
+        data.registrations[i].validFrom = orgUpdateData.validFrom
+        data.accreditations[i].validFrom = orgUpdateData.validFrom
+      }
       if (orgUpdateData.reprocessingType?.trim()) {
+        data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
         data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
       }
       if (orgUpdateData.glassRecyclingProcess?.trim()) {
+        data.registrations[i].glassRecyclingProcess = [
+          orgUpdateData.glassRecyclingProcess
+        ]
         data.accreditations[i].glassRecyclingProcess = [
           orgUpdateData.glassRecyclingProcess
         ]
