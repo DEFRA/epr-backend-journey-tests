@@ -32,6 +32,9 @@ When(
       const orgUpdateData = updateDataRows[i]
       data.registrations[i].status = orgUpdateData.status
       data.registrations[i].validFrom = '2025-01-01'
+      if (orgUpdateData.validFrom?.trim()) {
+        data.registrations[i].validFrom = orgUpdateData.validFrom
+      }
       data.registrations[i].validTo = `${currentYear + 1}-01-01`
       if (orgUpdateData.reprocessingType?.trim()) {
         data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
@@ -45,6 +48,9 @@ When(
       data.registrations[i].accreditationId = data.accreditations[i].id
       data.accreditations[i].status = orgUpdateData.status
       data.accreditations[i].validFrom = '2025-01-01'
+      if (orgUpdateData.validFrom?.trim()) {
+        data.accreditations[i].validFrom = orgUpdateData.validFrom
+      }
       data.accreditations[i].validTo = `${currentYear + 1}-01-01`
       if (orgUpdateData.reprocessingType?.trim()) {
         data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType

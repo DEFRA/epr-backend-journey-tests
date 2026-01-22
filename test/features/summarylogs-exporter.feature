@@ -9,8 +9,8 @@ Feature: Summary Logs - Exporter
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
-      | regNumber        | accNumber | status   |
-      | E25SR500030913PA | ACC234567 | approved |
+      | regNumber        | accNumber | status   | validFrom  |
+      | E25SR500030913PA | ACC234567 | approved | 2025-02-02 |
     Then the organisations data update succeeds
 
     When I register and authorise a User and link it to the recently migrated organisation
@@ -61,6 +61,13 @@ Feature: Summary Logs - Exporter
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
+  ################ Context ######################
+  # exporter.xlsx has the following
+  # Row ID: 1000 | Weight: 10 | Date: 11/20/2025
+  # Row ID: 1001 | Weight: 20 | Date: 12/20/2025
+  # Row ID: 1002 | Weight: 20 | Date: 01/01/2025
+  # Row ID with 1002 has a date that outside of the Accreditation period (ValidFrom is 2025-02-02), so will
+  # not be included in the Waste Balance amount (Otherwise it would have been 50)
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs |
@@ -82,7 +89,9 @@ Feature: Summary Logs - Exporter
       | OrganisationId      | RegistrationId       | RowId | Type      |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1000  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1001  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1002  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | sentOn    |
+    # Read Context above as to how the Amount gets calculated in the next step
     And I should see that waste balances are created in the database with the following values
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogOrgId}} | {{summaryLogAccId}} | 30     | 30              |
