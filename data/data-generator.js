@@ -139,7 +139,11 @@ async function generate(options = {}) {
       )
 
       data = await getOrgResponse.body.json()
-      if (data.accreditations && data.accreditations.length > 0) {
+      if (
+        data.accreditations &&
+        data.accreditations.length > 0 &&
+        data.accreditations[0].id
+      ) {
         break
       }
       attempts++

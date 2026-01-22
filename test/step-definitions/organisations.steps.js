@@ -25,7 +25,8 @@ When(
       this.responseData = await this.response.body.json()
       if (
         this.responseData.accreditations &&
-        this.responseData.accreditations.length > 0
+        this.responseData.accreditations.length > 0 &&
+        this.responseData.accreditations[0].id
       ) {
         break
       }
