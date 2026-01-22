@@ -21,11 +21,6 @@ Feature: Glass material schema validation
     Then the organisations data update succeeds
 
     When I update the recently migrated organisations data with the following data
-    | reprocessingType | regNumber        | accNumber | status   | glassRecyclingProcess      |
-    | input            | R25SR500030912PA | ACC123456 | approved | glass_other, glass_re_melt |
-    Then the organisations data update succeeds
-
-    When I update the recently migrated organisations data with the following data
     | reprocessingType | regNumber        | accNumber | status   | glassRecyclingProcess |
     | input            | R25SR500030912PA | ACC123456 | approved | glass_invalid         |
     Then the organisations data update fails
@@ -45,10 +40,10 @@ Feature: Glass material schema validation
     Then the organisations data update fails
 
     Examples:
-      | WasteProcessingType | ReprocessingType | Material                            | GlassRecyclingProcess      |
-      | Exporter            |                  | Aluminium (R4)                      | glass_re_melt              |
-      | Exporter            |                  | Fibre-based composite material (R3) | glass_other                |
-      | Reprocessor         | input            | Paper or board (R3)                 | glass_re_melt, glass_other |
-      | Reprocessor         | output           | Plastic (R3)                        | glass_re_melt              |
-      | Reprocessor         | input            | Steel (R4)                          | glass_re_melt, glass_other |
-      | Reprocessor         | output           | Wood (R3)                           | glass_other                |
+      | WasteProcessingType | ReprocessingType | Material                            | GlassRecyclingProcess |
+      | Exporter            |                  | Aluminium (R4)                      | glass_re_melt         |
+      | Exporter            |                  | Fibre-based composite material (R3) | glass_other           |
+      | Reprocessor         | input            | Paper or board (R3)                 | glass_other           |
+      | Reprocessor         | output           | Plastic (R3)                        | glass_re_melt         |
+      | Reprocessor         | input            | Steel (R4)                          | glass_other           |
+      | Reprocessor         | output           | Wood (R3)                           | glass_other           |

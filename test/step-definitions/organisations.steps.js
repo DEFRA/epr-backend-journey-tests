@@ -37,10 +37,9 @@ When(
         data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
       }
       if (orgUpdateData.glassRecyclingProcess?.trim()) {
-        data.registrations[i].glassRecyclingProcess =
+        data.registrations[i].glassRecyclingProcess = [
           orgUpdateData.glassRecyclingProcess
-            .split(',')
-            .map((item) => item.trim())
+        ]
       }
       data.registrations[i].registrationNumber = orgUpdateData.regNumber
       data.registrations[i].accreditationId = data.accreditations[i].id
@@ -51,10 +50,9 @@ When(
         data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
       }
       if (orgUpdateData.glassRecyclingProcess?.trim()) {
-        data.accreditations[i].glassRecyclingProcess =
+        data.accreditations[i].glassRecyclingProcess = [
           orgUpdateData.glassRecyclingProcess
-            .split(',')
-            .map((item) => item.trim())
+        ]
       }
       data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
 
