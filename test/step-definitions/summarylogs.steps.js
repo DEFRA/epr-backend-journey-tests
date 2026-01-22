@@ -166,6 +166,10 @@ Then('the organisations data update succeeds', async function () {
   expect(this.response.statusCode).to.equal(200)
 })
 
+Then('the organisations data update fails', async function () {
+  expect(this.response.statusCode).to.equal(422)
+})
+
 When(
   'I check for the summary log status',
   { timeout: pollTimeout },

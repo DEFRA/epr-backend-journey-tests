@@ -99,16 +99,10 @@ async function generate(options = {}) {
       JSON.stringify(accreditationPayload)
     )
 
-    // Slight delay to allow accreditation to be written to database
-    await new Promise((resolve) => setTimeout(resolve, 50))
-
     await baseAPI.post(
       `/v1/dev/form-submissions/${referenceNumber}/migrate`,
       ''
     )
-
-    // Slight delay to allow migration process to complete in background
-    await new Promise((resolve) => setTimeout(resolve, 50))
 
     let payload, urlSuffix
     if (process.env.ENVIRONMENT === 'test') {
@@ -220,9 +214,6 @@ async function generate(options = {}) {
         defraIdStub.authHeader(user.userId)
       )
     }
-
-    // Delay by 25ms to avoid collision of orgId in org payload
-    await new Promise((resolve) => setTimeout(resolve, 25))
   }
 
   logger.info(

@@ -13,11 +13,11 @@ When(
   'I update the recently migrated organisations data with the following data',
   async function (dataTable) {
     const orgId = this.orgResponseData?.referenceNumber
+
     this.response = await baseAPI.get(
       `/v1/organisations/${orgId}`,
       authClient.authHeader()
     )
-
     this.responseData = await this.response.body.json()
 
     const updateDataRows = dataTable.hashes()
@@ -33,16 +33,26 @@ When(
       data.registrations[i].status = orgUpdateData.status
       data.registrations[i].validFrom = '2025-01-01'
       data.registrations[i].validTo = `${currentYear + 1}-01-01`
-      if (orgUpdateData.reprocessingType !== '') {
+      if (orgUpdateData.reprocessingType?.trim()) {
         data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
+      }
+      if (orgUpdateData.glassRecyclingProcess?.trim()) {
+        data.registrations[i].glassRecyclingProcess = [
+          orgUpdateData.glassRecyclingProcess
+        ]
       }
       data.registrations[i].registrationNumber = orgUpdateData.regNumber
       data.registrations[i].accreditationId = data.accreditations[i].id
       data.accreditations[i].status = orgUpdateData.status
       data.accreditations[i].validFrom = '2025-01-01'
       data.accreditations[i].validTo = `${currentYear + 1}-01-01`
-      if (orgUpdateData.reprocessingType !== '') {
+      if (orgUpdateData.reprocessingType?.trim()) {
         data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
+      }
+      if (orgUpdateData.glassRecyclingProcess?.trim()) {
+        data.accreditations[i].glassRecyclingProcess = [
+          orgUpdateData.glassRecyclingProcess
+        ]
       }
       data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
 

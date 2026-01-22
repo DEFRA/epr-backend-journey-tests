@@ -51,8 +51,8 @@ Feature: Organisations endpoint
       | updateFragment | {} |
     Then I should receive a 404 error response 'Organisation with id 123456789012345678901234 not found'
 
-    Scenario: Organisations PUT endpoint returns Authorisation error when a non-service maintainer attempts to access endpoint
-      Given I am logged in as a non-service maintainer
-      And I try to access the get organisations endpoint
-      When I request the organisations
-      Then I should receive a 403 error response 'Insufficient scope'
+  Scenario: Organisations PUT endpoint returns Authorisation error when a non-service maintainer attempts to access endpoint
+    Given I am logged in as a non-service maintainer
+    And I try to access the get organisations endpoint
+    When I request the organisations
+    Then I should receive a 403 error response 'Insufficient scope'
