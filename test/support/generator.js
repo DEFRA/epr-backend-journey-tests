@@ -75,7 +75,7 @@ export class Accreditation {
     this.material = material
 
     if (this.material === 'Glass (R5)') {
-      payload.data.main.gQZpRd = 'Both'
+      payload.data.main.gQZpRd = 'Glass re-melt'
     }
 
     payload.data.main.PcYDad = this.fullName
@@ -354,7 +354,7 @@ export class Registration {
     this.material = material
 
     if (this.material === 'Glass (R5)') {
-      payload.data.main.RaiIHT = 'Both'
+      payload.data.main.RaiIHT = 'Glass re-melt'
     } else {
       delete payload.data.main.RaiIHT
     }

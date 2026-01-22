@@ -99,16 +99,10 @@ async function generate(options = {}) {
       JSON.stringify(accreditationPayload)
     )
 
-    // Slight delay to allow accreditation to be written to database
-    await new Promise((resolve) => setTimeout(resolve, 50))
-
     await baseAPI.post(
       `/v1/dev/form-submissions/${referenceNumber}/migrate`,
       ''
     )
-
-    // Slight delay to allow migration process to complete in background
-    await new Promise((resolve) => setTimeout(resolve, 50))
 
     let payload, urlSuffix
     if (process.env.ENVIRONMENT === 'test') {
@@ -128,28 +122,12 @@ async function generate(options = {}) {
     }
     await authClient.generateToken(payload, urlSuffix)
 
-    let data = ''
-    let attempts = 0
+    const getOrgResponse = await baseAPI.get(
+      `/v1/organisations/${referenceNumber}`,
+      authClient.authHeader()
+    )
 
-    // Retry if organisation has not been fully migrated yet
-    while (attempts < 5) {
-      const getOrgResponse = await baseAPI.get(
-        `/v1/organisations/${referenceNumber}`,
-        authClient.authHeader()
-      )
-
-      data = await getOrgResponse.body.json()
-      if (
-        data.accreditations &&
-        data.accreditations.length > 0 &&
-        data.accreditations[0].id
-      ) {
-        break
-      }
-      attempts++
-
-      await new Promise((resolve) => setTimeout(resolve, 500))
-    }
+    let data = await getOrgResponse.body.json()
 
     let updateDataRows = [
       {
@@ -236,9 +214,6 @@ async function generate(options = {}) {
         defraIdStub.authHeader(user.userId)
       )
     }
-
-    // Delay by 25ms to avoid collision of orgId in org payload
-    await new Promise((resolve) => setTimeout(resolve, 25))
   }
 
   logger.info(

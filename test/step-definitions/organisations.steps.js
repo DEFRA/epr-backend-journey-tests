@@ -14,26 +14,11 @@ When(
   async function (dataTable) {
     const orgId = this.orgResponseData?.referenceNumber
 
-    // Retry if organisation has not been migrated yet
-    let attempts = 0
-    while (attempts < 5) {
-      this.response = await baseAPI.get(
-        `/v1/organisations/${orgId}`,
-        authClient.authHeader()
-      )
-
-      this.responseData = await this.response.body.json()
-      if (
-        this.responseData.accreditations &&
-        this.responseData.accreditations.length > 0 &&
-        this.responseData.accreditations[0].id
-      ) {
-        break
-      }
-      attempts++
-
-      await new Promise((resolve) => setTimeout(resolve, 500))
-    }
+    this.response = await baseAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+    this.responseData = await this.response.body.json()
 
     const updateDataRows = dataTable.hashes()
     const currentYear = new Date().getFullYear()
