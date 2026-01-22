@@ -18,6 +18,7 @@
     "setup:husky": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module",
     "clean": "rm -rf allure-results && rm -rf allure-report",
     "generatedata": "node ./data/data-generator.js",
+    "generatedata:withLinking": "node ./data/data-generator.js --with-linking",
     "test": "cucumber-js ; npm run report",
     "test:tagged": "cucumber-js --tags",
     "format": "prettier --write 'test/**/*.js' '**/*.{js,md,json,config.js}'",

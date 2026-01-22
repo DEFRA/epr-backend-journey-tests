@@ -66,6 +66,7 @@ export class Accreditation {
     this.material = materials[materialIndex]
     const tonnageBandIndex = Math.floor(Math.random() * tonnageBands.length)
     this.tonnageBand = tonnageBands[tonnageBandIndex]
+    this.postcode = regPostcode
   }
 
   toReprocessorPayload(material = 'Paper or board (R3)') {
@@ -94,7 +95,7 @@ export class Accreditation {
     payload.data.main.LuybKn = this.otherCategoriesPercentage
 
     payload.data.main.IaTELm = this.material
-    payload.data.main.gWdCTX = regPostcode
+    payload.data.main.gWdCTX = this.postcode
 
     payload.data.repeaters.kaaxig[0].aGZJEm = this.fullName
     payload.data.repeaters.kaaxig[0].oVQfjw = this.email
@@ -291,6 +292,8 @@ export class Registration {
       fakerEN_GB.location.city() +
       ',' +
       regPostcode
+
+    this.postcode = regPostcode
 
     this.addressServiceNotice =
       fakerEN_GB.location.streetAddress() +
