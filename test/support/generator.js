@@ -259,7 +259,11 @@ export class Organisation {
 }
 
 export class Registration {
-  constructor(orgId, refNo, streetAddress = fakerEN_GB.location.zipCode()) {
+  constructor(
+    orgId,
+    refNo,
+    streetAddress = fakerEN_GB.location.streetAddress()
+  ) {
     this.phoneNumber = fakerEN_GB.phone.number()
     this.fullName = fakerEN_GB.person.fullName()
     this.email = fakerEN_GB.internet.email()
