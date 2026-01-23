@@ -57,6 +57,12 @@ Feature: Summary Logs - Reprocessor on Output
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the summary log submission status is 'validated'
+    And the summary log has the following loads
+      | LoadType       | Count | RowIDs                        |
+      | added.valid    | 6     | 1000,1001,1002,3000,5000,5001 |
+      | added.invalid  | 0     |                               |
+      | added.included | 1     | 3000                          |
+      | added.excluded | 5     | 1000,1001,1002,5000,5001      |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'

@@ -36,8 +36,19 @@ Given(
       if (dataRow.material !== '') {
         this.material = dataRow.material
       }
+      this.registration = new Registration(orgId, refNo)
+      this.payload =
+        dataRow.wasteProcessingType === 'Reprocessor'
+          ? this.registration.toAllMaterialsPayload(this.material)
+          : this.registration.toExporterPayload(this.material)
+      this.response = await baseAPI.post(
+        '/v1/apply/registration',
+        JSON.stringify(this.payload)
+      )
+      expect(this.response.statusCode).to.equal(201)
 
       this.accreditation = new Accreditation(orgId, refNo)
+      this.accreditation.postcode = this.registration.postcode
       this.payload =
         dataRow.wasteProcessingType === 'Reprocessor'
           ? this.accreditation.toReprocessorPayload(this.material)
@@ -45,18 +56,6 @@ Given(
 
       this.response = await baseAPI.post(
         '/v1/apply/accreditation',
-        JSON.stringify(this.payload)
-      )
-      expect(this.response.statusCode).to.equal(201)
-
-      this.registration = new Registration(orgId, refNo)
-      this.payload =
-        dataRow.wasteProcessingType === 'Reprocessor'
-          ? this.registration.toAllMaterialsPayload(this.material)
-          : this.registration.toExporterPayload(this.material)
-
-      this.response = await baseAPI.post(
-        '/v1/apply/registration',
         JSON.stringify(this.payload)
       )
       expect(this.response.statusCode).to.equal(201)
