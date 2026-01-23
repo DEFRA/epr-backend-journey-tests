@@ -1,6 +1,7 @@
 @glassMaterial
 Feature: Glass material schema validation
 
+  
   Scenario: Glass Recycling should not accept any value other than defined in schema
     Given I create a linked and migrated organisation for the following
     | wasteProcessingType | material   |
