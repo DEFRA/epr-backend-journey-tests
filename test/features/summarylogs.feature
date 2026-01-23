@@ -124,7 +124,6 @@ Feature: Summary Logs test (Validation and upload)
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-    @summlogs
   ###
   # RowId 1002 has 2025-01-01 date, so it's not factored into Waste Balance calculations
   # as Accreditation is valid from 2025-02-02
