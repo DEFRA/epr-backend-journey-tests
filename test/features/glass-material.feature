@@ -61,16 +61,14 @@ Feature: Glass material schema validation
 
     When I register and authorise a User and link it to the recently migrated organisation
 
-    Given I have the following summary log upload data for summary log upload
-      | s3Bucket            | re-ex-summary-logs       |
-      | s3Key               | glass-remelt-input-key   |
-      | fileId              | glass-remelt-input-id    |
-      | filename            | glass-remelt-input.xlsx  |
-      | fileStatus          | complete                 |
-
+    Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-    When I submit the summary log upload completed
+
+    When I upload the file 'glass-remelt-input.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I submit the summary log upload completed with the response from CDP Uploader
     Then I should receive a summary log upload accepted response
 
     When I check for the summary log status
@@ -93,16 +91,14 @@ Feature: Glass material schema validation
 
     When I register and authorise a User and link it to the recently migrated organisation
 
-    Given I have the following summary log upload data for summary log upload
-      | s3Bucket            | re-ex-summary-logs       |
-      | s3Key               | glass-other-output-key   |
-      | fileId              | glass-other-output-id    |
-      | filename            | glass-other-output.xlsx  |
-      | fileStatus          | complete                 |
-
+    Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-    When I submit the summary log upload completed
+
+    When I upload the file 'glass-other-output.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I submit the summary log upload completed with the response from CDP Uploader
     Then I should receive a summary log upload accepted response
 
     When I check for the summary log status
@@ -125,16 +121,14 @@ Feature: Glass material schema validation
 
     When I register and authorise a User and link it to the recently migrated organisation
 
-    Given I have the following summary log upload data for summary log upload
-      | s3Bucket            | re-ex-summary-logs       |
-      | s3Key               | glass-remelt-input-key   |
-      | fileId              | glass-remelt-input-id    |
-      | filename            | glass-remelt-input.xlsx  |
-      | fileStatus          | complete                 |
-
+    Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-    When I submit the summary log upload completed
+
+    When I upload the file 'glass-remelt-input.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I submit the summary log upload completed with the response from CDP Uploader
     Then I should receive a summary log upload accepted response
 
     When I check for the summary log status
@@ -154,16 +148,14 @@ Feature: Glass material schema validation
 
     When I register and authorise a User and link it to the recently migrated organisation
 
-    Given I have the following summary log upload data for summary log upload
-      | s3Bucket            | re-ex-summary-logs       |
-      | s3Key               | glass-other-output-key   |
-      | fileId              | glass-other-output-id    |
-      | filename            | glass-other-output.xlsx  |
-      | fileStatus          | complete                 |
-
+    Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-    When I submit the summary log upload completed
+
+    When I upload the file 'glass-other-output.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I submit the summary log upload completed with the response from CDP Uploader
     Then I should receive a summary log upload accepted response
 
     When I check for the summary log status
