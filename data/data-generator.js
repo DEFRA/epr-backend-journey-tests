@@ -86,7 +86,7 @@ async function generate(options = {}) {
     accreditation.refNo = referenceNumber
     accreditation.orgId = orgId
     accreditation.material = registration.material
-    accreditation.postcode = organisation.postcode
+    accreditation.postcode = registration.postcode
 
     let accreditationPayload = accreditation.toExporterPayload(material)
 

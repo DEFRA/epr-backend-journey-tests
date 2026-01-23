@@ -38,8 +38,6 @@ const permitTypes = [
 const roles = ['Reprocessor', 'Exporter', 'Reprocessor and exporter']
 const nations = ['England', 'Northern Ireland', 'Scotland', 'Wales']
 
-const regPostcode = fakerEN_GB.location.zipCode()
-
 export class Accreditation {
   constructor(orgId, refNo) {
     this.phoneNumber = fakerEN_GB.phone.number()
@@ -66,7 +64,7 @@ export class Accreditation {
     this.material = materials[materialIndex]
     const tonnageBandIndex = Math.floor(Math.random() * tonnageBands.length)
     this.tonnageBand = tonnageBands[tonnageBandIndex]
-    this.postcode = regPostcode
+    this.postcode = fakerEN_GB.location.zipCode()
   }
 
   toReprocessorPayload(material = 'Paper or board (R3)') {
@@ -119,7 +117,7 @@ export class Accreditation {
     this.material = material
 
     if (this.material === 'Glass (R5)') {
-      payload.data.main.WNTLmM = 'Both'
+      payload.data.main.WNTLmM = 'Glass re-melt'
     } else {
       delete payload.data.main.WNTLmM
     }
@@ -261,7 +259,11 @@ export class Organisation {
 }
 
 export class Registration {
-  constructor(orgId, refNo) {
+  constructor(
+    orgId,
+    refNo,
+    streetAddress = fakerEN_GB.location.streetAddress()
+  ) {
     this.phoneNumber = fakerEN_GB.phone.number()
     this.fullName = fakerEN_GB.person.fullName()
     this.email = fakerEN_GB.internet.email()
@@ -286,21 +288,19 @@ export class Registration {
       'CBDU' + fakerEN_GB.number.int({ min: 100000, max: 999999 })
     this.permitNo = `${fakerEN_GB.number.int({ min: 1000000000, max: 9999999999 })}`
 
-    this.address =
-      fakerEN_GB.location.streetAddress() +
-      ',' +
-      fakerEN_GB.location.city() +
-      ',' +
-      regPostcode
+    const postcode = fakerEN_GB.location.zipCode()
 
-    this.postcode = regPostcode
+    this.address =
+      streetAddress + ',' + fakerEN_GB.location.city() + ',' + postcode
+
+    this.postcode = postcode
 
     this.addressServiceNotice =
       fakerEN_GB.location.streetAddress() +
       ',' +
       fakerEN_GB.location.city() +
       ',' +
-      fakerEN_GB.location.zipCode()
+      postcode
   }
 
   toAllMaterialsPayload(material = 'Paper or board (R3)') {
@@ -327,7 +327,6 @@ export class Registration {
     if (material === 'Glass (R5)') {
       payload.data.main.YMRnmp = 'Glass other'
     }
-
     payload.data.main.Laiblc = this.address
     payload.data.main.xinNGX =
       'TQ ' +
