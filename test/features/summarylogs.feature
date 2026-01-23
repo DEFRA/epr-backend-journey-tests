@@ -172,3 +172,45 @@ Feature: Summary Logs test (Validation and upload)
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogOrgId}} | {{summaryLogAccId}} | 30     | 30              |
 
+    Given I have organisation and registration details for summary log upload
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+
+    When I upload the file 'exporter-adjustments.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I submit the summary log upload completed with the response from CDP Uploader
+    Then I should receive a summary log upload accepted response
+
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | validated |
+    And the summary log has the following loads
+      | LoadType           | Count | RowIDs    |
+      | added.valid        | 2     | 1004,4001 |
+      | added.invalid      | 0     |           |
+      | added.included     | 2     | 1004,4001 |
+      | added.excluded     | 0     |           |
+      | unchanged.valid    | 2     | 1000,4000 |
+      | unchanged.invalid  | 0     |           |
+      | unchanged.included | 2     | 1000,4000 |
+      | unchanged.excluded | 0     |           |
+      | adjusted.valid     | 1     | 1001      |
+      | adjusted.invalid   | 0     |           |
+      | adjusted.included  | 1     | 1001      |
+      | adjusted.excluded  | 0     |           |
+    When I submit the uploaded summary log
+    Then the summary log submission succeeds
+    And the summary log submission status is 'submitted'
+    And I should see that waste records are updated in the database with the following values
+      | OrganisationId      | RegistrationId       | RowId | Type      |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1000  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1001  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1002  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1003  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1004  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | sentOn    |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4001  | sentOn    |
+    And I should see that waste balances are created in the database with the following values
+      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 89     | 89              |
