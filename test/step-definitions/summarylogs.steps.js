@@ -625,6 +625,55 @@ Then(
 )
 
 Then(
+  'I should see that waste records are updated in the database with the following values',
+  async function (dataTable) {
+    if (!process.env.ENVIRONMENT) {
+      const wasteRecordsCollection = dbClient.collection('waste-records')
+      const expectedWasteRecords = dataTable.hashes()
+      const expectedOrgId = interpolator.interpolate(
+        this,
+        expectedWasteRecords[0].OrganisationId
+      )
+      const expectedRegId = interpolator.interpolate(
+        this,
+        expectedWasteRecords[0].RegistrationId
+      )
+      const wasteRecords = await wasteRecordsCollection
+        .find({
+          organisationId: expectedOrgId,
+          registrationId: expectedRegId
+        })
+        .toArray()
+      expect(wasteRecords.length).to.equal(expectedWasteRecords.length)
+
+      for (const expectedWasteRecord of expectedWasteRecords) {
+        const matchingRecord = wasteRecords.find(
+          (record) =>
+            record.organisationId === expectedOrgId &&
+            record.registrationId === expectedRegId &&
+            record.rowId === parseInt(expectedWasteRecord.RowId) &&
+            record.type === expectedWasteRecord.Type
+        )
+
+        if (!matchingRecord) {
+          expect.fail(
+            `Expected record: ${interpolator.interpolate(this, JSON.stringify(expectedWasteRecord))}, but no records found with those values. Actual records found: ${JSON.stringify(wasteRecords)}`
+          )
+        }
+      }
+    } else {
+      logger.warn(
+        {
+          step_definition:
+            'Then I should see that waste records are updated in the database with the following values'
+        },
+        'Skipping waste record database checks'
+      )
+    }
+  }
+)
+
+Then(
   'I should see that waste balances are created in the database with the following values',
   async function (dataTable) {
     if (!process.env.ENVIRONMENT) {
