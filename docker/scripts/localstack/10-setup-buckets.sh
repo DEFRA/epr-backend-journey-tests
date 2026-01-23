@@ -97,6 +97,18 @@ aws s3api put-object \
   --body /etc/localstack/init/ready.d/exporter.xlsx \
   --endpoint-url=http://localhost:4566 \
 
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key glass-remelt-input-key \
+  --body /etc/localstack/init/ready.d/glass-remelt-input.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key glass-other-output-key \
+  --body /etc/localstack/init/ready.d/glass-other-output.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
 # Staleness test fixtures (reuse valid file with different keys)
 aws s3api put-object \
   --bucket re-ex-summary-logs \
