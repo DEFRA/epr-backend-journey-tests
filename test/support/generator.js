@@ -67,13 +67,16 @@ export class Accreditation {
     this.postcode = fakerEN_GB.location.zipCode()
   }
 
-  toReprocessorPayload(material = 'Paper or board (R3)') {
+  toReprocessorPayload(
+    material = 'Paper or board (R3)',
+    glassRecyclingProcess = 'Both'
+  ) {
     const payload = JSON.parse(JSON.stringify(accReprocessorPayload))
 
     this.material = material
 
     if (this.material === 'Glass (R5)') {
-      payload.data.main.gQZpRd = 'Both'
+      payload.data.main.gQZpRd = glassRecyclingProcess
     }
 
     payload.data.main.PcYDad = this.fullName
@@ -111,13 +114,16 @@ export class Accreditation {
     return payload
   }
 
-  toExporterPayload(material = 'Paper or board (R3)') {
+  toExporterPayload(
+    material = 'Paper or board (R3)',
+    glassRecyclingProcess = 'Both'
+  ) {
     const payload = JSON.parse(JSON.stringify(accPayload))
 
     this.material = material
 
     if (this.material === 'Glass (R5)') {
-      payload.data.main.WNTLmM = 'Both'
+      payload.data.main.WNTLmM = glassRecyclingProcess
     } else {
       delete payload.data.main.WNTLmM
     }
@@ -298,7 +304,10 @@ export class Registration {
       fakerEN_GB.location.streetAddress() + ',' + fakerEN_GB.location.city()
   }
 
-  toAllMaterialsPayload(material = 'Paper or board (R3)') {
+  toAllMaterialsPayload(
+    material = 'Paper or board (R3)',
+    glassRecyclingProcess = 'Both'
+  ) {
     const payload = JSON.parse(JSON.stringify(regAllMaterialsPayload))
 
     payload.data.main.DDVUrr = this.companyName
@@ -320,7 +329,7 @@ export class Registration {
     payload.data.main.dFPgaw = material
 
     if (material === 'Glass (R5)') {
-      payload.data.main.YMRnmp = 'Both'
+      payload.data.main.YMRnmp = glassRecyclingProcess
     }
     payload.data.main.Laiblc = this.address + ',' + this.postcode
     payload.data.main.xinNGX =
@@ -342,13 +351,16 @@ export class Registration {
     return payload
   }
 
-  toExporterPayload(material = 'Paper or board (R3)') {
+  toExporterPayload(
+    material = 'Paper or board (R3)',
+    glassRecyclingProcess = 'Both'
+  ) {
     const payload = JSON.parse(JSON.stringify(regPayload))
 
     this.material = material
 
     if (this.material === 'Glass (R5)') {
-      payload.data.main.RaiIHT = 'Both'
+      payload.data.main.RaiIHT = glassRecyclingProcess
     } else {
       delete payload.data.main.RaiIHT
     }
