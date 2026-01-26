@@ -35,14 +35,14 @@
     "esm-module-alias": "2.2.1",
     "global-agent": "3.0.0",
     "pino": "10.2.1",
-    "undici": "7.18.2"
+    "undici": "7.19.0"
   },
   "devDependencies": {
     "@babel/core": "7.28.6",
     "@babel/eslint-parser": "7.28.6",
     "@babel/preset-env": "7.28.6",
     "@cucumber/cucumber": "12.6.0",
-    "@cucumber/messages": "31.2.0",
+    "@cucumber/messages": "32.0.0",
     "@faker-js/faker": "10.2.0",
     "allure-cucumberjs": "3.4.5",
     "chai": "6.2.2",
