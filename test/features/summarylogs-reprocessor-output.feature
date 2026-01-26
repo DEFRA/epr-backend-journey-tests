@@ -9,8 +9,8 @@ Feature: Summary Logs - Reprocessor on Output
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
-      | reprocessingType | regNumber        | accNumber | status   |
-      | output           | R25SR500050912PA | ACC500591 | approved |
+      | reprocessingType | regNumber        | accNumber | status   | validFrom  |
+      | output           | R25SR500050912PA | ACC500591 | approved | 2026-01-01 |
     Then the organisations data update succeeds
 
     When I register and authorise a User and link it to the recently migrated organisation
@@ -77,3 +77,51 @@ Feature: Summary Logs - Reprocessor on Output
     And I should see that waste balances are created in the database with the following values
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogOrgId}} | {{summaryLogAccId}} | 3      | 3               |
+
+    Given I have organisation and registration details for summary log upload
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+
+    When I upload the file 'reprocessor-output-adjustments.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I submit the summary log upload completed with the response from CDP Uploader
+    Then I should receive a summary log upload accepted response
+
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | validated |
+    # RowIDs with 3001, 1003, 5002 are filtered from waste balance as they don't fall within the validFrom date range
+    # RowID with 3000 is also adjusted
+    And the summary log has the following loads
+      | LoadType           | Count | RowIDs                   |
+      | added.valid        | 1     | 3002                     |
+      | added.invalid      | 0     |                          |
+      | added.included     | 1     | 3002                     |
+      | added.excluded     | 0     |                          |
+      | unchanged.valid    | 5     | 1000,1001,1002,5000,5001 |
+      | unchanged.invalid  | 0     |                          |
+      | unchanged.included | 0     |                          |
+      | unchanged.excluded | 5     | 1000,1001,1002,5000,5001 |
+      | adjusted.valid     | 1     | 3000                     |
+      | adjusted.invalid   | 0     |                          |
+      | adjusted.included  | 1     | 3000                     |
+      | adjusted.excluded  | 0     |                          |
+    When I submit the uploaded summary log
+    Then the summary log submission succeeds
+    And the summary log submission status is 'submitted'
+    And I should see that waste records are updated in the database with the following values
+      | OrganisationId      | RegistrationId       | RowId | Type      |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1000  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1001  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1002  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1003  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3000  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3001  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3002  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5000  | sentOn    |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5001  | sentOn    |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5002  | sentOn    |
+    And I should see that waste balances are created in the database with the following values
+      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 9.25   | 9.25            |
