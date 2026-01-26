@@ -41,7 +41,7 @@
     "@babel/core": "7.28.6",
     "@babel/eslint-parser": "7.28.6",
     "@babel/preset-env": "7.28.6",
-    "@cucumber/cucumber": "12.5.0",
+    "@cucumber/cucumber": "12.6.0",
     "@cucumber/messages": "31.2.0",
     "@faker-js/faker": "10.2.0",
     "allure-cucumberjs": "3.4.5",
@@ -52,6 +52,6 @@
     "husky": "9.1.7",
     "mongodb": "7.0.0",
     "neostandard": "0.12.2",
-    "prettier": "3.8.0"
+    "prettier": "3.8.1"
   }
 }
