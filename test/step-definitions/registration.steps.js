@@ -168,7 +168,11 @@ Then(
         registration.answers.find(
           (a) => a.shortDescription === 'Address to serve notices'
         ).value
-      ).to.equal(this.registration.addressServiceNotice)
+      ).to.equal(
+        this.registration.addressServiceNotice +
+          ',' +
+          this.registration.postcode
+      )
       expect(
         registration.answers.find(
           (a) => a.shortDescription === 'Carrier, broker or dealer number'

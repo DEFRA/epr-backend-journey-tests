@@ -73,7 +73,7 @@ export class Accreditation {
     this.material = material
 
     if (this.material === 'Glass (R5)') {
-      payload.data.main.gQZpRd = 'Glass re-melt'
+      payload.data.main.gQZpRd = 'Both'
     }
 
     payload.data.main.PcYDad = this.fullName
@@ -117,7 +117,7 @@ export class Accreditation {
     this.material = material
 
     if (this.material === 'Glass (R5)') {
-      payload.data.main.WNTLmM = 'Glass re-melt'
+      payload.data.main.WNTLmM = 'Both'
     } else {
       delete payload.data.main.WNTLmM
     }
@@ -290,17 +290,12 @@ export class Registration {
 
     const postcode = fakerEN_GB.location.zipCode()
 
-    this.address =
-      streetAddress + ',' + fakerEN_GB.location.city() + ',' + postcode
+    this.address = streetAddress + ',' + fakerEN_GB.location.city()
 
     this.postcode = postcode
 
     this.addressServiceNotice =
-      fakerEN_GB.location.streetAddress() +
-      ',' +
-      fakerEN_GB.location.city() +
-      ',' +
-      postcode
+      fakerEN_GB.location.streetAddress() + ',' + fakerEN_GB.location.city()
   }
 
   toAllMaterialsPayload(material = 'Paper or board (R3)') {
@@ -325,16 +320,16 @@ export class Registration {
     payload.data.main.dFPgaw = material
 
     if (material === 'Glass (R5)') {
-      payload.data.main.YMRnmp = 'Glass other'
+      payload.data.main.YMRnmp = 'Both'
     }
-    payload.data.main.Laiblc = this.address
+    payload.data.main.Laiblc = this.address + ',' + this.postcode
     payload.data.main.xinNGX =
       'TQ ' +
       fakerEN_GB.number.int({ min: 111, max: 500 }) +
       ' ' +
       fakerEN_GB.number.int({ min: 500, max: 999 })
 
-    payload.data.main.VHfukU = this.addressServiceNotice
+    payload.data.main.VHfukU = this.addressServiceNotice + ',' + this.postcode
 
     payload.data.main.DAcLmf = this.refNo
     payload.data.main.rJMICz = this.orgId
@@ -353,7 +348,7 @@ export class Registration {
     this.material = material
 
     if (this.material === 'Glass (R5)') {
-      payload.data.main.RaiIHT = 'Glass re-melt'
+      payload.data.main.RaiIHT = 'Both'
     } else {
       delete payload.data.main.RaiIHT
     }
