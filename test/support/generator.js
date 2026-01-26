@@ -290,15 +290,12 @@ export class Registration {
 
     const postcode = fakerEN_GB.location.zipCode()
 
-    this.address =
-      streetAddress + ',' + fakerEN_GB.location.city()
+    this.address = streetAddress + ',' + fakerEN_GB.location.city()
 
     this.postcode = postcode
 
     this.addressServiceNotice =
-      fakerEN_GB.location.streetAddress() +
-      ',' +
-      fakerEN_GB.location.city()
+      fakerEN_GB.location.streetAddress() + ',' + fakerEN_GB.location.city()
   }
 
   toAllMaterialsPayload(material = 'Paper or board (R3)') {
