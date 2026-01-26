@@ -37,10 +37,8 @@ async function generate(options = {}) {
   ]
 
   const materialIndex = Math.floor(Math.random() * materials.length)
-  const material = materials[materialIndex].material
-  const suffix = materials[materialIndex].suffix
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 50; i++) {
     const organisation = new Organisation()
 
     let organisationPayload = organisation.toPayload()
@@ -58,6 +56,8 @@ async function generate(options = {}) {
     const referenceNumber = responseData.referenceNumber
     const orgId = `${responseData.orgId}`
 
+    const material = materials[materialIndex].material
+    const suffix = materials[materialIndex].suffix
     const registration = new Registration(orgId, referenceNumber)
     registration.fullName = organisation.fullName
     registration.email = organisation.email
@@ -130,49 +130,59 @@ async function generate(options = {}) {
 
     let data = await getOrgResponse.body.json()
 
-    const orgUpdateData =
-      i % 2 === 0
-        ? {
-            status: 'approved',
-            regNumber: `R25SR500${i}30912${suffix}`,
-            accNumber: `ACC1234${i}56${suffix}`,
-            reprocessingType: 'input'
-          }
-        : {
-            status: 'approved',
-            regNumber: `25SR5000${i}912${suffix}`,
-            accNumber: `ACC1${i}3456${suffix}`
-          }
+    let updateDataRows = [
+      {
+        status: 'approved',
+        regNumber: `25SR5000${i}912${suffix}`,
+        accNumber: `ACC1${i}3456${suffix}`
+      }
+    ]
+
+    if (i % 2 === 0) {
+      updateDataRows = [
+        {
+          status: 'approved',
+          regNumber: `R25SR500${i}30912${suffix}`,
+          accNumber: `ACC1234${i}56${suffix}`,
+          reprocessingType: 'input'
+        }
+      ]
+    }
 
     const currentYear = new Date().getFullYear()
 
-    data.registrations[0].status = orgUpdateData.status
-    data.registrations[0].validFrom = '2025-01-01'
-    data.registrations[0].validTo = `${currentYear + 1}-01-01`
-    if (orgUpdateData.reprocessingType !== '') {
-      data.registrations[0].reprocessingType = orgUpdateData.reprocessingType
+    const registrationIds = new Map()
+    const accreditationIds = new Map()
+
+    for (let i = 0; i < updateDataRows.length; i++) {
+      const orgUpdateData = updateDataRows[i]
+      data.registrations[i].status = orgUpdateData.status
+      data.registrations[i].validFrom = '2025-01-01'
+      data.registrations[i].validTo = `${currentYear + 1}-01-01`
+      if (orgUpdateData.reprocessingType !== '') {
+        data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
+      }
+      data.registrations[i].registrationNumber = orgUpdateData.regNumber
+      data.registrations[i].accreditationId = data.accreditations[i].id
+      data.accreditations[i].status = orgUpdateData.status
+      data.accreditations[i].validFrom = '2025-01-01'
+      data.accreditations[i].validTo = `${currentYear + 1}-01-01`
+      if (orgUpdateData.reprocessingType !== '') {
+        data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
+      }
+      data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
+
+      registrationIds.set(orgUpdateData.regNumber, data.registrations[i].id)
+      accreditationIds.set(orgUpdateData.accNumber, data.accreditations[i].id)
     }
-    data.registrations[0].registrationNumber = orgUpdateData.regNumber
-    data.registrations[0].accreditationId = data.accreditations[0].id
-    data.accreditations[0].status = orgUpdateData.status
-    data.accreditations[0].validFrom = '2025-01-01'
-    data.accreditations[0].validTo = `${currentYear + 1}-01-01`
-    if (orgUpdateData.reprocessingType !== '') {
-      data.accreditations[0].reprocessingType = orgUpdateData.reprocessingType
-    }
-    data.accreditations[0].accreditationNumber = orgUpdateData.accNumber
 
     // Replace email address with a newly generated one in Environment to avoid same email address all the time
     const replacementEmail = process.env.ENVIRONMENT
       ? fakerEN_GB.internet.email()
       : data.submitterContactDetails.email
-    data.submitterContactDetails.email = suffix + '_' + replacementEmail
+    data.submitterContactDetails.email = replacementEmail
 
-    logger.info(
-      `${data.registrations[0].wasteProcessingType} Generated email address: ${data.submitterContactDetails.email}`
-    )
-
-    data.status = orgUpdateData.status
+    data.status = updateDataRows[0].status
 
     data = { organisation: data }
 
@@ -208,7 +218,7 @@ async function generate(options = {}) {
   }
 
   logger.info(
-    `Successfully generated 10 organisation details, registrations and accreditations for material: ${material}`
+    'Successfully generated 50 organisation details, registrations and accreditations.'
   )
 }
 
