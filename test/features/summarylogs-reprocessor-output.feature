@@ -43,7 +43,6 @@ Feature: Summary Logs - Reprocessor on Output
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-    @reproOutput
   Scenario: Summary Logs uploads (Reprocessor Output) and succeeds, with waste balance calculated for Sent On
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs               |
