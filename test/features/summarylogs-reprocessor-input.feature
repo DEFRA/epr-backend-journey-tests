@@ -9,8 +9,8 @@ Feature: Summary Logs - Reprocessor on Input
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
-      | reprocessingType | regNumber        | accNumber | status   |
-      | input            | R25SR500030912PA | ACC123456 | approved |
+      | reprocessingType | regNumber        | accNumber | status   | validFrom  |
+      | input            | R25SR500030912PA | ACC123456 | approved | 2025-02-02 |
     Then the organisations data update succeeds
 
     When I register and authorise a User and link it to the recently migrated organisation
@@ -90,6 +90,55 @@ Feature: Summary Logs - Reprocessor on Input
 
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+
+    Given I have organisation and registration details for summary log upload
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+
+    When I upload the file 'reprocessor-input-adjustments.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I submit the summary log upload completed with the response from CDP Uploader
+    Then I should receive a summary log upload accepted response
+
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | validated |
+  # RowIDs with 1003 and 4001 are filtered from waste balance as they don't fall within the validFrom date range
+  # RowID with 1001 is also adjusted
+  # RowID with 1004 is not added to the waste balance as it has PRNs issued against it already
+    And the summary log has the following loads
+      | LoadType           | Count | RowIDs         |
+      | added.valid        | 3     | 1004,4002,5001 |
+      | added.invalid      | 0     |                |
+      | added.included     | 2     | 1004,5001      |
+      | added.excluded     | 1     | 4002           |
+      | unchanged.valid    | 3     | 1000,4000,5000 |
+      | unchanged.invalid  | 0     |                |
+      | unchanged.included | 2     | 1000,5000      |
+      | unchanged.excluded | 1     | 4000           |
+      | adjusted.valid     | 1     | 1001           |
+      | adjusted.invalid   | 1     | 1002           |
+      | adjusted.included  | 1     | 1001           |
+      | adjusted.excluded  | 1     | 1002           |
+    When I submit the uploaded summary log
+    Then the summary log submission succeeds
+    And the summary log submission status is 'submitted'
+    And I should see that waste records are updated in the database with the following values
+      | OrganisationId      | RegistrationId       | RowId | Type      |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1000  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1001  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1002  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1003  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1004  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4001  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4002  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5000  | sentOn    |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5001  | sentOn    |
+    And I should see that waste balances are created in the database with the following values
+      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 386.51 | 386.51          |
 
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
     Given I have the following summary log upload data for summary log upload
