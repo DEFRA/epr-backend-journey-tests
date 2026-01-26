@@ -147,7 +147,7 @@ Note that you will need to run the tests tagged with `@smoketest` to run against
 
 ### Running the data generator for epr-backend
 
-This only applies to local builds. You can generate 50 organisation details, registrations and accreditations (all linked together) in one go with this command:
+This only applies to local builds. You can generate 10 organisation details, registrations and accreditations (all linked together) in one go with this command:
 
 ```
 npm run generatedata

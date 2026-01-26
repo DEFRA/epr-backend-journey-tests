@@ -19,6 +19,8 @@
     "clean": "rm -rf allure-results && rm -rf allure-report",
     "generatedata": "node ./data/data-generator.js",
     "generatedata:withLinking": "node ./data/data-generator.js --with-linking",
+    "generatedata:allMaterials:withLinking": "node ./data/all-materials-data-generator.js --with-linking",
+    "generatedata:allMaterialsMixed:withLinking": "node ./data/all-materials-mixed-data-generator.js --with-linking",
     "test": "cucumber-js ; npm run report",
     "test:tagged": "cucumber-js --tags",
     "format": "prettier --write 'test/**/*.js' '**/*.{js,md,json,config.js}'",

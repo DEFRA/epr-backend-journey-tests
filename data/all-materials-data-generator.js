@@ -12,52 +12,58 @@ import {
 } from './shared-generator-utils.js'
 
 async function generate(options = {}) {
-  logger.info('Running data generator...')
+  logger.info(
+    'Running data generator for all materials per single organisation...'
+  )
 
   const { withUserLinking = false } = options
   const context = new GeneratorContext()
 
-  const materialIndex = Math.floor(Math.random() * MATERIALS.length)
-  const material = MATERIALS[materialIndex].material
-  const suffix = MATERIALS[materialIndex].suffix
-  const glassRecyclingProcess = MATERIALS[materialIndex].glassRecyclingType
-
   for (let i = 0; i < 10; i++) {
-    const { organisation, referenceNumber, orgId } = await createOrganisation(
-      context,
-      i % 2 === 0
-    )
     let wasteProcessingType = 'exp'
+    let isNonRegistered = false
     let reprocessingType = null
 
     if (i % 2 === 0) {
+      isNonRegistered = true
       wasteProcessingType = 'repIn'
       reprocessingType = 'input'
     }
 
     if (i % 3 === 0) {
+      isNonRegistered = true
       wasteProcessingType = 'repOut'
       reprocessingType = 'output'
     }
 
-    await createRegistrationAndAccreditation(context, {
-      organisation,
-      orgId,
-      referenceNumber,
-      material,
-      isExporter: i % 2 !== 0,
-      glassRecyclingProcess
-    })
+    const { organisation, referenceNumber, orgId } = await createOrganisation(
+      context,
+      isNonRegistered
+    )
+
+    for (let j = 0; j < MATERIALS.length; j++) {
+      await createRegistrationAndAccreditation(context, {
+        organisation,
+        orgId,
+        referenceNumber,
+        material: MATERIALS[j].material,
+        isExporter: i % 2 !== 0 && i % 3 !== 0,
+        glassRecyclingProcess: MATERIALS[j].glassRecyclingProcess
+      })
+    }
 
     await migrateFormSubmission(context, referenceNumber)
     await generateAuthToken(context)
 
-    const updateData = generateOrgUpdateData(i, suffix, reprocessingType)
+    const registrationUpdates = MATERIALS.map((mat, j) => ({
+      index: j,
+      updateData: generateOrgUpdateData(j, mat.suffix, reprocessingType)
+    }))
 
     const email = await updateOrganisationData(context, {
       referenceNumber,
-      registrationUpdates: [{ index: 0, updateData }],
-      emailPrefix: suffix + '_' + wasteProcessingType
+      registrationUpdates,
+      emailPrefix: `AM_${wasteProcessingType}`
     })
 
     if (withUserLinking) {
@@ -65,12 +71,8 @@ async function generate(options = {}) {
     }
   }
 
-  let logDesc = material
-  if (material === 'Glass (R5)') {
-    logDesc = material + ' (' + glassRecyclingProcess + ')'
-  }
   logger.info(
-    `Successfully generated 10 organisation details, registrations and accreditations for material: ${logDesc}`
+    'Successfully generated 10 organisation details, registrations and accreditations with All Materials.'
   )
 }
 
