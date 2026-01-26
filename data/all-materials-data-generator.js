@@ -17,7 +17,9 @@ import { AuthClient } from '../test/support/auth.js'
 setGlobalDispatcher(config.undiciAgent)
 
 async function generate(options = {}) {
-  logger.info('Running data generator...')
+  logger.info(
+    'Running data generator for all materials per single organisation...'
+  )
 
   const { withUserLinking = false } = options
 
@@ -36,15 +38,20 @@ async function generate(options = {}) {
     { material: 'Wood (R3)', suffix: 'WO' }
   ]
 
-  const materialIndex = Math.floor(Math.random() * materials.length)
-
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 10; i++) {
+    let wasteProcessingType = 'exp'
     const organisation = new Organisation()
 
     let organisationPayload = organisation.toPayload()
 
     if (i % 2 === 0) {
       organisationPayload = organisation.toNonRegisteredUKSoleTraderPayload()
+      wasteProcessingType = 'repIn'
+    }
+
+    if (i % 3 === 0) {
+      organisationPayload = organisation.toNonRegisteredUKSoleTraderPayload()
+      wasteProcessingType = 'repOut'
     }
 
     const orgResponse = await baseAPI.post(
@@ -56,49 +63,50 @@ async function generate(options = {}) {
     const referenceNumber = responseData.referenceNumber
     const orgId = `${responseData.orgId}`
 
-    const material = materials[materialIndex].material
-    const suffix = materials[materialIndex].suffix
-    const registration = new Registration(orgId, referenceNumber)
-    registration.fullName = organisation.fullName
-    registration.email = organisation.email
-    registration.phoneNumber = organisation.phoneNumber
-    registration.jobTitle = organisation.jobTitle
-    registration.address = organisation.address
-    registration.refNo = referenceNumber
-    registration.orgId = orgId
+    for (let j = 0; j < materials.length; j++) {
+      const material = materials[j].material
+      const registration = new Registration(orgId, referenceNumber)
+      registration.fullName = organisation.fullName
+      registration.email = organisation.email
+      registration.phoneNumber = organisation.phoneNumber
+      registration.jobTitle = organisation.jobTitle
+      registration.address = organisation.address
+      registration.refNo = referenceNumber
+      registration.orgId = orgId
 
-    let registrationPayload = registration.toExporterPayload(material)
+      let registrationPayload = registration.toExporterPayload(material)
 
-    if (i % 2 === 0) {
-      registrationPayload = registration.toAllMaterialsPayload(material)
+      if (i % 2 === 0 || i % 3 === 0) {
+        registrationPayload = registration.toAllMaterialsPayload(material)
+      }
+
+      await baseAPI.post(
+        '/v1/apply/registration',
+        JSON.stringify(registrationPayload)
+      )
+
+      const accreditation = new Accreditation(orgId, referenceNumber)
+
+      accreditation.fullName = organisation.fullName
+      accreditation.email = organisation.email
+      accreditation.phoneNumber = organisation.phoneNumber
+      accreditation.jobTitle = organisation.jobTitle
+      accreditation.refNo = referenceNumber
+      accreditation.orgId = orgId
+      accreditation.material = registration.material
+      accreditation.postcode = registration.postcode
+
+      let accreditationPayload = accreditation.toExporterPayload(material)
+
+      if (i % 2 === 0 || i % 3 === 0) {
+        accreditationPayload = accreditation.toReprocessorPayload(material)
+      }
+
+      await baseAPI.post(
+        '/v1/apply/accreditation',
+        JSON.stringify(accreditationPayload)
+      )
     }
-
-    await baseAPI.post(
-      '/v1/apply/registration',
-      JSON.stringify(registrationPayload)
-    )
-
-    const accreditation = new Accreditation(orgId, referenceNumber)
-
-    accreditation.fullName = organisation.fullName
-    accreditation.email = organisation.email
-    accreditation.phoneNumber = organisation.phoneNumber
-    accreditation.jobTitle = organisation.jobTitle
-    accreditation.refNo = referenceNumber
-    accreditation.orgId = orgId
-    accreditation.material = registration.material
-    accreditation.postcode = registration.postcode
-
-    let accreditationPayload = accreditation.toExporterPayload(material)
-
-    if (i % 2 === 0) {
-      accreditationPayload = accreditation.toReprocessorPayload(material)
-    }
-
-    await baseAPI.post(
-      '/v1/apply/accreditation',
-      JSON.stringify(accreditationPayload)
-    )
 
     await baseAPI.post(
       `/v1/dev/form-submissions/${referenceNumber}/migrate`,
@@ -130,59 +138,66 @@ async function generate(options = {}) {
 
     let data = await getOrgResponse.body.json()
 
-    let updateDataRows = [
-      {
-        status: 'approved',
-        regNumber: `25SR5000${i}912${suffix}`,
-        accNumber: `ACC1${i}3456${suffix}`
-      }
-    ]
+    let orgUpdateData = {}
 
-    if (i % 2 === 0) {
-      updateDataRows = [
-        {
+    for (let j = 0; j < materials.length; j++) {
+      const suffix = materials[j].suffix
+
+      orgUpdateData =
+        i % 2 === 0
+          ? {
+              status: 'approved',
+              regNumber: `R25SR500${j}30912${suffix}`,
+              accNumber: `ACC1234${j}56${suffix}`,
+              reprocessingType: 'input'
+            }
+          : {
+              status: 'approved',
+              regNumber: `25SR5000${j}912${suffix}`,
+              accNumber: `ACC1${j}3456${suffix}`
+            }
+
+      if (i % 3 === 0) {
+        orgUpdateData = {
           status: 'approved',
-          regNumber: `R25SR500${i}30912${suffix}`,
-          accNumber: `ACC1234${i}56${suffix}`,
-          reprocessingType: 'input'
+          regNumber: `R25SR500${j}30912${suffix}`,
+          accNumber: `ACC1234${j}56${suffix}`,
+          reprocessingType: 'output'
         }
-      ]
-    }
-
-    const currentYear = new Date().getFullYear()
-
-    const registrationIds = new Map()
-    const accreditationIds = new Map()
-
-    for (let i = 0; i < updateDataRows.length; i++) {
-      const orgUpdateData = updateDataRows[i]
-      data.registrations[i].status = orgUpdateData.status
-      data.registrations[i].validFrom = '2025-01-01'
-      data.registrations[i].validTo = `${currentYear + 1}-01-01`
-      if (orgUpdateData.reprocessingType !== '') {
-        data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
       }
-      data.registrations[i].registrationNumber = orgUpdateData.regNumber
-      data.registrations[i].accreditationId = data.accreditations[i].id
-      data.accreditations[i].status = orgUpdateData.status
-      data.accreditations[i].validFrom = '2025-01-01'
-      data.accreditations[i].validTo = `${currentYear + 1}-01-01`
-      if (orgUpdateData.reprocessingType !== '') {
-        data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
-      }
-      data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
+      const currentYear = new Date().getFullYear()
 
-      registrationIds.set(orgUpdateData.regNumber, data.registrations[i].id)
-      accreditationIds.set(orgUpdateData.accNumber, data.accreditations[i].id)
+      data.registrations[j].status = orgUpdateData.status
+      data.registrations[j].validFrom = '2025-01-01'
+      data.registrations[j].validTo = `${currentYear + 1}-01-01`
+      if (orgUpdateData.reprocessingType !== '') {
+        data.registrations[j].reprocessingType = orgUpdateData.reprocessingType
+      }
+      data.registrations[j].registrationNumber = orgUpdateData.regNumber
+      data.registrations[j].accreditationId = data.accreditations[j].id
+      data.accreditations[j].status = orgUpdateData.status
+      data.accreditations[j].validFrom = '2025-01-01'
+      data.accreditations[j].validTo = `${currentYear + 1}-01-01`
+      if (orgUpdateData.reprocessingType !== '') {
+        data.accreditations[j].reprocessingType = orgUpdateData.reprocessingType
+      }
+      data.accreditations[j].accreditationNumber = orgUpdateData.accNumber
     }
 
     // Replace email address with a newly generated one in Environment to avoid same email address all the time
-    const replacementEmail = process.env.ENVIRONMENT
+    let replacementEmail = process.env.ENVIRONMENT
       ? fakerEN_GB.internet.email()
       : data.submitterContactDetails.email
-    data.submitterContactDetails.email = replacementEmail
+    data.submitterContactDetails.email =
+      'AM_' + wasteProcessingType + '_' + replacementEmail
 
-    data.status = updateDataRows[0].status
+    replacementEmail = 'AM_' + wasteProcessingType + '_' + replacementEmail
+
+    logger.info(
+      `${data.registrations[0].wasteProcessingType} Generated email address: ${data.submitterContactDetails.email}`
+    )
+
+    data.status = orgUpdateData.status
 
     data = { organisation: data }
 
@@ -218,7 +233,7 @@ async function generate(options = {}) {
   }
 
   logger.info(
-    'Successfully generated 50 organisation details, registrations and accreditations.'
+    'Successfully generated 10 organisation details, registrations and accreditations with All Materials.'
   )
 }
 
