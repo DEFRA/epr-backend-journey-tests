@@ -13,6 +13,9 @@ if (environment === 'prod') {
   )
 }
 
+const interval = process.env.ENVIRONMENT ? 2000 : 500
+const pollTimeout = process.env.ENVIRONMENT ? 60000 : 30000
+
 const api = {
   local: withProxy ? 'http://epr-backend:3001' : 'http://localhost:3001',
   env: `https://epr-backend.${environment}.cdp-int.defra.cloud`,
@@ -120,5 +123,7 @@ export default {
   cdpUploaderUri,
   auth,
   undiciAgent: globalUndiciAgent,
-  apiHeaders: api.headers
+  apiHeaders: api.headers,
+  interval,
+  pollTimeout
 }

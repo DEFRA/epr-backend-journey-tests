@@ -33,6 +33,12 @@ Feature: Summary Logs smoke test
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds
+    And the summary log submission status is 'submitted'
+
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 361.62 | 361.62          |
 
   Scenario: Summary Logs upload (Reprocessor Output) and succeeds
     Given I create a linked and migrated organisation for the following
@@ -63,6 +69,12 @@ Feature: Summary Logs smoke test
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
 
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 3      | 3               |
+
+
   Scenario: Summary Logs upload (Exporter) and succeeds
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
@@ -91,6 +103,11 @@ Feature: Summary Logs smoke test
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
+
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 30      | 30             |
 
   Scenario: Access denied when user tries to access a different organisation and initiating summary log upload without a redirectUrl
     Given I create a linked and migrated organisation for the following

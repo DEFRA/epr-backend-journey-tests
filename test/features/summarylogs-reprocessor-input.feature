@@ -140,6 +140,11 @@ Feature: Summary Logs - Reprocessor on Input
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogOrgId}} | {{summaryLogAccId}} | 386.51 | 386.51          |
 
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 386.51 | 386.51          |
+
   Scenario: Summary Logs uploads (Reprocessor Input) and fails in-sheet revalidation
     Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs                |
