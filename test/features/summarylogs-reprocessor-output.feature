@@ -125,3 +125,8 @@ Feature: Summary Logs - Reprocessor on Output
     And I should see that waste balances are created in the database with the following values
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogOrgId}} | {{summaryLogAccId}} | 9.25   | 9.25            |
+
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 9.25   | 9.25            |

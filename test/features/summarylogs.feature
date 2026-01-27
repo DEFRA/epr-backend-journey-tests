@@ -171,6 +171,10 @@ Feature: Summary Logs test (Validation and upload)
     And I should see that waste balances are created in the database with the following values
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogOrgId}} | {{summaryLogAccId}} | 30     | 30              |
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 30     | 30              |
 
     Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
@@ -214,3 +218,7 @@ Feature: Summary Logs test (Validation and upload)
     And I should see that waste balances are created in the database with the following values
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogOrgId}} | {{summaryLogAccId}} | 89     | 89              |
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 89     | 89              |

@@ -9,9 +9,7 @@ import {
 import { SummaryLog } from '../support/generator.js'
 import { expect } from 'chai'
 import logger from '../support/logger.js'
-
-const interval = process.env.ENVIRONMENT ? 2000 : 500
-const pollTimeout = process.env.ENVIRONMENT ? 60000 : 30000
+import config from '../config/config.js'
 
 Given('I have the following summary log upload data', function (dataTable) {
   this.summaryLog = new SummaryLog()
@@ -75,9 +73,9 @@ When('I submit the summary log upload completed', async function () {
 
 When(
   'I submit the summary log upload completed with the response from CDP Uploader',
-  { timeout: pollTimeout },
+  { timeout: config.pollTimeout },
   async function () {
-    const timeout = pollTimeout
+    const timeout = config.pollTimeout
     const startTime = Date.now()
 
     while (Date.now() - startTime < timeout) {
@@ -89,7 +87,7 @@ When(
         break
       }
 
-      await new Promise((resolve) => setTimeout(resolve, interval))
+      await new Promise((resolve) => setTimeout(resolve, config.interval))
     }
 
     this.summaryLog.setFileData(
@@ -172,14 +170,14 @@ Then('the organisations data update fails', async function () {
 
 When(
   'I check for the summary log status',
-  { timeout: pollTimeout },
+  { timeout: config.pollTimeout },
   async function () {
     const summaryLogId = this.summaryLog.summaryLogId
     const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
 
     // Transient statuses that indicate processing is still in progress
     const transientStatuses = ['preprocessing', 'validating']
-    const timeout = pollTimeout
+    const timeout = config.pollTimeout
     const startTime = Date.now()
 
     while (Date.now() - startTime < timeout) {
@@ -222,7 +220,7 @@ When(
         'Summary log validation in progress, waiting...'
       )
 
-      await new Promise((resolve) => setTimeout(resolve, interval))
+      await new Promise((resolve) => setTimeout(resolve, config.interval))
     }
 
     // Timeout reached - make one final request and store the response
@@ -315,12 +313,12 @@ Then('the summary log submission succeeds', async function () {
 
 Then(
   'the summary log submission status is {string}',
-  { timeout: pollTimeout },
+  { timeout: config.pollTimeout },
   async function (expectedStatus) {
     const summaryLogId = this.summaryLog.summaryLogId
     const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
 
-    const timeout = pollTimeout
+    const timeout = config.pollTimeout
     const startTime = Date.now()
     let actualStatus
 
@@ -340,7 +338,7 @@ Then(
         return
       }
 
-      await new Promise((resolve) => setTimeout(resolve, interval))
+      await new Promise((resolve) => setTimeout(resolve, config.interval))
     }
 
     expect(actualStatus).to.equal(
