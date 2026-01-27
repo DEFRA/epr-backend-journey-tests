@@ -61,7 +61,7 @@ const MATERIALS = Object.freeze([
       'Paper - AAIG EN643 grade 1.04.02 (80%)',
       'Paper - AAIG EN643 grades 1.04.00, 1.05.00 and 1.05.01 (97.5%)',
       'Paper - sorted mixed paper or board ',
-      'Paper - unsorted mixed paper or board (unusable materials removed)'
+      'Paper - unsorted mixed paper or board (unusable materials removed) '
     ]
   },
   {
