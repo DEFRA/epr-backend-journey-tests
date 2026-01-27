@@ -23,6 +23,10 @@ const api = {
   headers: xApiKey ? { 'x-api-key': xApiKey } : {}
 }
 
+const localstackHost = {
+  local: withProxy ? 'localstack' : 'localhost'
+}
+
 const proxy = process.env.HTTP_PROXY
   ? new ProxyAgent({
       uri: process.env.HTTP_PROXY
@@ -121,6 +125,7 @@ export default {
   authUri,
   defraIdUri,
   cdpUploaderUri,
+  localstackHost,
   auth,
   undiciAgent: globalUndiciAgent,
   apiHeaders: api.headers,
