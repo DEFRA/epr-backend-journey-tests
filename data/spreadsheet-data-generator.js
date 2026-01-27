@@ -135,22 +135,33 @@ function generateAccNumber(suffix) {
   return `ACC${random}${suffix}`
 }
 
-// function sentOnRow() {
-//   const date = faker.date.recent({ days: 30 })
-//
-//   return {
-//     // Section 5
-//     G: date.toLocaleDateString('en-US'), // Date load left site
-//     H: faker.number.float({ min: 50, max: 500, precision: 0.01 }) // Tonnage of UK packaging waste sent on
-//
-//     // Section 6
-//     // J: faker.helpers.arrayElement(YES_NO), // UK packaging waste sent on was recycled?
-//   }
-// }
+function generateSentOnRow(material) {
+  const date = faker.date.recent({ days: 20 })
+
+  return {
+    // Section 5
+    G: date.toLocaleDateString('en-US'), // Date load left site
+    H: faker.number.float({ min: 5, max: 20, precision: 0.01 }), // Tonnage of UK packaging waste sent on
+
+    // Section 6
+    M: 'Reprocessor', // Final destination facility type
+    N: faker.company.name(), // Final destination facility name
+    O: faker.location.streetAddress(), // First line of final destination facility address
+    P: faker.location.zipCode(), // Final destination facility postcode
+
+    // Section 7
+    U: faker.internet.email(), // Final destination facility email
+    V: faker.phone.number(), // Final destination facility phone number
+    W: `W${faker.number.int({ min: 100000, max: 999999 })}`, // Your reference
+    X: faker.helpers.arrayElement(material.wasteDescriptions), // Description of waste sent on
+    Y: faker.helpers.arrayElement(EWC_CODES), // EWC code
+    Z: `WB-${faker.number.int({ min: 10000, max: 999999 })}` // Weighbridge ticket number or scales reference
+  }
+}
 
 // Generate a single row for "Received" sections
 function generateReceivedRow(material) {
-  const date = faker.date.recent({ days: 30 })
+  const date = faker.date.recent({ days: 20 })
 
   return {
     // Section 1
@@ -164,7 +175,7 @@ function generateReceivedRow(material) {
     O: faker.helpers.arrayElement(YES_NO), // Column O: Pallet weight
     P: faker.helpers.arrayElement(RECYCLABLE_PROPORTION_METHODS), // Column P
     Q: faker.number.float({ min: 5, max: 10, precision: 0.01 }), // Column Q
-    R: `${faker.number.int({ min: 5, max: 80 })}%`, // Column R
+    R: faker.number.float({ min: 0.05, max: 0.8 }), // Column R
 
     // Section 2
     X: faker.company.name(), // Supplier name
@@ -185,7 +196,7 @@ function generateReceivedRow(material) {
 
 // Generate a single row for "Reprocessed" sections
 function generateReprocessedRow() {
-  const date = faker.date.recent({ days: 30 })
+  const date = faker.date.recent({ days: 20 })
 
   return {
     // Section 4
@@ -307,6 +318,33 @@ async function generateSpreadsheetData(options = {}) {
       )
     } else {
       logger.warn('Reprocessed sheet not found')
+    }
+
+    // Update the Sent On sheet (Sections 5, 6 and 7)
+    const sentOnSheet = workbook.getWorksheet('Sent on (sections 5, 6 and 7)')
+    if (sentOnSheet) {
+      logger.info('Generating data for Sent On sheet...')
+
+      let currentRow = 4 // Start from row 4
+      const totalRows = numberOfRows
+
+      for (let i = 0; i < totalRows; i++) {
+        const rowData = generateSentOnRow(material)
+
+        // Insert data only into specified columns
+        Object.entries(rowData).forEach(([columnLetter, value]) => {
+          const cell = sentOnSheet.getCell(`${columnLetter}${currentRow}`)
+          cell.value = value
+        })
+
+        currentRow++
+      }
+
+      logger.info(
+        `Generated ${totalRows} rows for Sent On sheet (rows 4-${currentRow - 1})`
+      )
+    } else {
+      logger.warn('Sent On sheet not found')
     }
 
     await workbook.xlsx.writeFile(outputFile)
