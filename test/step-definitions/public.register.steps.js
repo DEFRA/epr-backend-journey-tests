@@ -35,6 +35,10 @@ When('I retrieve the public register file', async function () {
   this.mapsData = records.map((row) => new Map(Object.entries(row)))
 })
 
+Then('the public register file should not be empty', async function () {
+  expect(this.mapsData).length.to.be.above(0)
+})
+
 Then(
   'I should see the following public register information',
   async function (dataTable) {
