@@ -13,6 +13,7 @@ export class Interpolator {
       '{{summaryLogFileStatus}}': context.summaryLog?.fileStatus,
       '{{summaryLogS3Key}}': context.summaryLog?.s3Key,
       '{{summaryLogS3Bucket}}': context.summaryLog?.s3Bucket,
+      '{{publicRegisterUrl}}': context.publicRegisterUrl,
       '{{version}}': context.version
     }
 
