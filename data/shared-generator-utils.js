@@ -168,7 +168,7 @@ export async function updateOrganisationData(
     referenceNumber,
     registrationUpdates,
     emailPrefix,
-    validFrom = '2025-01-01'
+    validFrom = '2026-01-01'
   }
 ) {
   const getOrgResponse = await context.baseAPI.get(

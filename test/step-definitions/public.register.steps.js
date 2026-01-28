@@ -20,7 +20,8 @@ Then('I should see the following public register response', async function () {
 
 When('I retrieve the public register file', async function () {
   const publicRegisterResponse = await this.response.body.json()
-  const url = new URL(publicRegisterResponse.downloadUrl)
+  this.publicRegisterUrl = publicRegisterResponse.downloadUrl
+  const url = new URL(this.publicRegisterUrl)
 
   if (!process.env.ENVIRONMENT) {
     url.host = config.localstackHost.local
