@@ -14,10 +14,6 @@ When('I request the public register', async function () {
   )
 })
 
-Then('I should see the following public register response', async function () {
-  expect(this.response.statusCode).to.equal(201)
-})
-
 When('I retrieve the public register file', async function () {
   const publicRegisterResponse = await this.response.body.json()
   this.publicRegisterUrl = publicRegisterResponse.downloadUrl
