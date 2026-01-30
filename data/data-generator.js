@@ -20,7 +20,7 @@ async function generate(options = {}) {
   const materialIndex = Math.floor(Math.random() * MATERIALS.length)
   const material = MATERIALS[materialIndex].material
   const suffix = MATERIALS[materialIndex].suffix
-  const glassRecyclingProcess = MATERIALS[materialIndex].glassRecyclingType
+  const glassRecyclingProcess = MATERIALS[materialIndex].glassRecyclingProcess
 
   for (let i = 0; i < 10; i++) {
     const { organisation, referenceNumber, orgId } = await createOrganisation(

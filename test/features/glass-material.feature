@@ -3,8 +3,8 @@ Feature: Glass material schema validation
 
   Scenario: Glass Recycling should not accept any value other than defined in schema
     Given I create a linked and migrated organisation for the following
-    | wasteProcessingType | material   |
-    | Reprocessor         | Glass (R5) |
+    | wasteProcessingType | material   | glassRecyclingProcess |
+    | Reprocessor         | Glass (R5) | Glass other           |
     Given I am logged in as a service maintainer
     And I have access to the get organisations endpoint
     When I request the recently migrated organisation
@@ -50,8 +50,8 @@ Feature: Glass material schema validation
 
   Scenario: Glass Recycling should not allow Glass Remelt Summary Logs upload if organisation is for Glass Other
     Given I create a linked and migrated organisation for the following
-      | wasteProcessingType | material   |
-      | Reprocessor         | Glass (R5) |
+      | wasteProcessingType | material   | glassRecyclingProcess |
+      | Reprocessor         | Glass (R5) | Glass other           |
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
@@ -80,8 +80,8 @@ Feature: Glass material schema validation
 
   Scenario: Glass Recycling should not allow Glass Other Summary Logs upload if organisation is for Glass Remelt
     Given I create a linked and migrated organisation for the following
-      | wasteProcessingType | material   |
-      | Reprocessor         | Glass (R5) |
+      | wasteProcessingType | material   | glassRecyclingProcess |
+      | Reprocessor         | Glass (R5) | Glass re-melt         |
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
@@ -110,8 +110,8 @@ Feature: Glass material schema validation
 
   Scenario: Glass Recycling should allow Glass Remelt Summary Logs upload if organisation is for Glass Remelt
     Given I create a linked and migrated organisation for the following
-      | wasteProcessingType | material   |
-      | Reprocessor         | Glass (R5) |
+      | wasteProcessingType | material   | glassRecyclingProcess |
+      | Reprocessor         | Glass (R5) | Glass re-melt         |
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
@@ -137,8 +137,8 @@ Feature: Glass material schema validation
 
   Scenario: Glass Recycling should allow Glass Other Summary Logs upload if organisation is for Glass Other
     Given I create a linked and migrated organisation for the following
-      | wasteProcessingType | material   |
-      | Reprocessor         | Glass (R5) |
+      | wasteProcessingType | material   | glassRecyclingProcess |
+      | Reprocessor         | Glass (R5) | Glass other           |
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
@@ -161,3 +161,17 @@ Feature: Glass material schema validation
     When I check for the summary log status
     Then I should see the following summary log response
       | status | validated |
+
+  Scenario: Glass migration should split Glass (Both) into Glass Remelt and Glass Other
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType | material   | glassRecyclingProcess |
+      | Reprocessor         | Glass (R5) | Both                  |
+    Given I am logged in as a service maintainer
+    And I have access to the get organisations endpoint
+    When I request the recently migrated organisation
+    Then I should receive a valid organisations response for the recently migrated organisation
+    And I should see 2 registrations and 2 accreditations in the organisations response
+    And I should see the following glass information in the organisations response
+      | glassRecyclingProcess |
+      | glass_re_melt         |
+      | glass_other           |

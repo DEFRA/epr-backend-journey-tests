@@ -36,11 +36,20 @@ Given(
       if (dataRow.material !== '') {
         this.material = dataRow.material
       }
+      this.glassRecyclingProcess = dataRow.glassRecyclingProcess
+        ? dataRow.glassRecyclingProcess
+        : 'Both'
       this.registration = new Registration(orgId, refNo)
       this.payload =
         dataRow.wasteProcessingType === 'Reprocessor'
-          ? this.registration.toAllMaterialsPayload(this.material)
-          : this.registration.toExporterPayload(this.material)
+          ? this.registration.toAllMaterialsPayload(
+              this.material,
+              this.glassRecyclingProcess
+            )
+          : this.registration.toExporterPayload(
+              this.material,
+              this.glassRecyclingProcess
+            )
       this.response = await baseAPI.post(
         '/v1/apply/registration',
         JSON.stringify(this.payload)
@@ -51,8 +60,14 @@ Given(
       this.accreditation.postcode = this.registration.postcode
       this.payload =
         dataRow.wasteProcessingType === 'Reprocessor'
-          ? this.accreditation.toReprocessorPayload(this.material)
-          : this.accreditation.toExporterPayload(this.material)
+          ? this.accreditation.toReprocessorPayload(
+              this.material,
+              this.glassRecyclingProcess
+            )
+          : this.accreditation.toExporterPayload(
+              this.material,
+              this.glassRecyclingProcess
+            )
 
       this.response = await baseAPI.post(
         '/v1/apply/accreditation',
