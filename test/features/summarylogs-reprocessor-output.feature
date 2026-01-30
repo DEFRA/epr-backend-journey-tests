@@ -92,13 +92,14 @@ Feature: Summary Logs - Reprocessor on Output
     Then I should see the following summary log response
       | status | validated |
     # RowIDs with 3001, 1003, 5002 are filtered from waste balance as they don't fall within the validFrom date range
+    # RowIDs with 3003, 3004 are excluded from waste balance as they are missing certain mandatory fields
     # RowID with 3000 is also adjusted
     And the summary log has the following loads
       | LoadType           | Count | RowIDs                   |
       | added.valid        | 1     | 3002                     |
-      | added.invalid      | 0     |                          |
+      | added.invalid      | 2     | 3003,3004                |
       | added.included     | 1     | 3002                     |
-      | added.excluded     | 0     |                          |
+      | added.excluded     | 2     | 3003,3004                |
       | unchanged.valid    | 5     | 1000,1001,1002,5000,5001 |
       | unchanged.invalid  | 0     |                          |
       | unchanged.included | 0     |                          |
@@ -119,6 +120,8 @@ Feature: Summary Logs - Reprocessor on Output
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3000  | processed |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3001  | processed |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3002  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3003  | processed |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3004  | processed |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5000  | sentOn    |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5001  | sentOn    |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5002  | sentOn    |

@@ -107,12 +107,13 @@ Feature: Summary Logs - Reprocessor on Input
   # RowIDs with 1003 and 4001 are filtered from waste balance as they don't fall within the validFrom date range
   # RowID with 1001 is also adjusted
   # RowID with 1004 is not added to the waste balance as it has PRNs issued against it already
+  # RowID with 1005 is not added to the waste balance as it is missing Pallet Weight
     And the summary log has the following loads
       | LoadType           | Count | RowIDs         |
       | added.valid        | 3     | 1004,4002,5001 |
-      | added.invalid      | 0     |                |
+      | added.invalid      | 1     | 1005           |
       | added.included     | 2     | 1004,5001      |
-      | added.excluded     | 1     | 4002           |
+      | added.excluded     | 2     | 1005,4002      |
       | unchanged.valid    | 3     | 1000,4000,5000 |
       | unchanged.invalid  | 0     |                |
       | unchanged.included | 2     | 1000,5000      |
@@ -131,6 +132,7 @@ Feature: Summary Logs - Reprocessor on Input
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1002  | received  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1003  | received  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1004  | received  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1005  | received  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | processed |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4001  | processed |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4002  | processed |

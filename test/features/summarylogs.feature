@@ -125,6 +125,7 @@ Feature: Summary Logs test (Validation and upload)
   ###
   # RowId 1002 has 2025-01-01 date, so it's not factored into Waste Balance calculations
   # as Accreditation is valid from 2025-02-02
+  # RowId 1003 is within the valid date, but does not have all mandatory fields completed so won't be factored in waste balance calculations
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
@@ -154,9 +155,9 @@ Feature: Summary Logs test (Validation and upload)
     And the summary log has the following loads
       | LoadType       | Count | RowIDs         |
       | added.valid    | 3     | 1000,1001,4000 |
-      | added.invalid  | 0     |                |
+      | added.invalid  | 1     | 1003           |
       | added.included | 3     | 1000,1001,4000 |
-      | added.excluded | 0     |                |
+      | added.excluded | 1     | 1003           |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -165,6 +166,7 @@ Feature: Summary Logs test (Validation and upload)
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1000  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1001  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1002  | exported  |
+      | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1003  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | sentOn    |
     And I should see that waste balances are created in the database with the following values
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
