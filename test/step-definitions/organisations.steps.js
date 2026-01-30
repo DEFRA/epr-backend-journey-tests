@@ -232,3 +232,39 @@ Then(
     }
   }
 )
+
+Then(
+  'I should see {int} registrations and {int} accreditations in the organisations response',
+  async function (regCount, accCount) {
+    expect(this.responseData.accreditations.length).to.equal(accCount)
+    expect(this.responseData.registrations.length).to.equal(regCount)
+  }
+)
+
+Then(
+  'I should see the following glass information in the organisations response',
+  async function (dataTable) {
+    const expectedResults = dataTable.hashes()
+
+    for (let i = 0; i < expectedResults.length; i++) {
+      expect(this.responseData.accreditations[i]).to.have.property(
+        'glassRecyclingProcess'
+      )
+      expect(
+        this.responseData.accreditations[i].glassRecyclingProcess.length
+      ).to.equal(1)
+      expect(
+        this.responseData.accreditations[i].glassRecyclingProcess
+      ).to.contain(expectedResults[i].glassRecyclingProcess)
+      expect(this.responseData.registrations[i]).to.have.property(
+        'glassRecyclingProcess'
+      )
+      expect(
+        this.responseData.registrations[i].glassRecyclingProcess.length
+      ).to.equal(1)
+      expect(
+        this.responseData.registrations[i].glassRecyclingProcess
+      ).to.contain(expectedResults[i].glassRecyclingProcess)
+    }
+  }
+)
