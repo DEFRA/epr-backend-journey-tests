@@ -162,9 +162,10 @@ export class Organisation {
   constructor() {
     this.phoneNumber = fakerEN_GB.phone.number()
     this.fullName = fakerEN_GB.person.fullName()
-    this.email = process.env.ENVIRONMENT
-      ? process.env.EMAIL_ADDRESS
-      : fakerEN_GB.internet.email()
+    this.email =
+      process.env.ENVIRONMENT === 'test'
+        ? process.env.EMAIL_ADDRESS
+        : fakerEN_GB.internet.email()
 
     this.jobTitle = fakerEN_GB.person.jobTitle()
 

@@ -2,126 +2,12 @@ import ExcelJS from 'exceljs'
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import logger from '../test/support/logger.js'
 import EWC_CODES from './ewc-codes.js'
-
-// Material options matching your system
-const MATERIALS = Object.freeze([
-  {
-    dropdownValue: 'Aluminium',
-    material: 'Aluminium',
-    code: 'R4',
-    suffix: 'AL',
-    wasteDescriptions: [
-      'Aluminium - other',
-      'Aluminium - AAIG aluminium cans and associated packaging (97.5%)',
-      'Aluminium - aluminium extracted and processed from IBA (87.5%)'
-    ]
-  },
-  {
-    dropdownValue: 'Fibre_based_composite',
-    material: 'Fibre-based composite material',
-    code: 'R3',
-    suffix: 'FB',
-    wasteDescriptions: [
-      'Fibre-based composite - cups',
-      'Fibre-based composite - drink cartons',
-      'Fibre-based composite - food containers',
-      'Fibre-based composite - mixed'
-    ]
-  },
-  {
-    dropdownValue: 'Glass_remelt',
-    material: 'Glass',
-    code: 'R5',
-    suffix: 'GR',
-    wasteDescriptions: [
-      'Glass - pre-sorted',
-      'Glass - bottle bank glass or commercial glass waste',
-      'Glass - MRF derived glass'
-    ]
-  },
-  {
-    dropdownValue: 'Glass_other',
-    material: 'Glass',
-    code: 'R5',
-    suffix: 'GO',
-    wasteDescriptions: [
-      'Glass - pre-sorted',
-      'Glass - bottle bank glass or commercial glass waste',
-      'Glass - MRF derived glass'
-    ]
-  },
-  {
-    dropdownValue: 'Paper_and_board',
-    material: 'Paper or board',
-    code: 'R3',
-    suffix: 'PA',
-    wasteDescriptions: [
-      'Paper - other',
-      'Paper - AAIG EN643 grade 1.04.01 (70%)',
-      'Paper - AAIG EN643 grade 1.04.02 (80%)',
-      'Paper - AAIG EN643 grades 1.04.00, 1.05.00 and 1.05.01 (97.5%)',
-      'Paper - sorted mixed paper or board ',
-      'Paper - unsorted mixed paper or board (unusable materials removed) '
-    ]
-  },
-  {
-    dropdownValue: 'Plastic',
-    material: 'Plastic',
-    code: 'R3',
-    suffix: 'PL',
-    wasteDescriptions: [
-      'Plastic - HDPE bottles',
-      'Plastic - HDPE other ',
-      'Plastic - LDPE film clear',
-      'Plastic - LDPE film coloured',
-      'Plastic - mixed plastic',
-      'Plastic - mixed rigid plastic',
-      'Plastic - mixed bottles',
-      'Plastic - PET bottles',
-      'Plastic - PET flake',
-      'Plastic - PET other',
-      'Plastic - polystyrene',
-      'Plastic - PP other',
-      'Plastic - PP pots, tubs and trays',
-      'Plastic - PVC packaging'
-    ]
-  },
-  {
-    dropdownValue: 'Steel',
-    material: 'Steel',
-    code: 'R4',
-    suffix: 'ST',
-    wasteDescriptions: [
-      'Steel - 1 and 2 mixed',
-      'Steel - 2',
-      'Steel - 4C',
-      'Steel - 4E',
-      'Steel - 8B',
-      'Steel - fragmentised',
-      'Steel – AAIG steel cans and associated packaging, grade 6E (97.5%)',
-      'Steel - other'
-    ]
-  },
-  {
-    dropdownValue: 'Wood',
-    material: 'Wood',
-    code: 'R3',
-    suffix: 'WO',
-    wasteDescriptions: ['Wood - grade A', 'Wood - grade B', 'Wood - mixed ']
-  }
-])
-
-const ACTIVITIES = Object.freeze(['Sorting', 'Baling'])
-
-const RECYCLABLE_PROPORTION_METHODS = Object.freeze([
-  'AAIG percentage',
-  'Actual weight (100%)',
-  'National protocol percentage',
-  'S&I plan agreed methodology',
-  'S&I plan agreed site-specific protocol percentage'
-])
-
-const YES_NO = Object.freeze(['Yes', 'No'])
+import {
+  RECYCLABLE_PROPORTION_METHODS,
+  YES_NO,
+  ACTIVITIES,
+  MATERIALS
+} from './shared-spreadsheet-values.js'
 
 // Generate fake registration/accreditation numbers
 function generateRegNumber(suffix) {
@@ -214,8 +100,8 @@ function generateReprocessedRow() {
 
 async function generateSpreadsheetData(options = {}) {
   const {
-    inputFile = './reprocessor.input.template.xlsx',
-    outputFile = './Summary_Log_Generated.xlsx',
+    inputFile = './data/reprocessor.input.template.xlsx',
+    outputFile = './data/Summary_Log_Input.xlsx',
     numberOfRows = 10,
     materialSuffix = null
   } = options
