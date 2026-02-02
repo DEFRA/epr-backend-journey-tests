@@ -181,6 +181,39 @@ npm run generatedata:allMaterialsMixed:withUserLinking
 
 This will create mock approved Organisation datasets with linked users. Only to be used for local development purposes.
 
+### Running the spreadsheet generator for epr-backend
+
+There is a built-in spreadsheet generator that can be used to generate a spreadsheet for Summary Logs. Please open the file in Excel (Or equivalent) and save it at least once after the file is generated for it to be readable by the service.
+
+Three generators are available:
+
+For Reprocessor Output:
+
+```
+npm run generate:spreadsheet:output
+```
+
+For Reprocessor Input:
+
+```
+npm run generate:spreadsheet:input
+```
+
+For Exporter:
+
+```
+npm run generate:spreadsheet:exporter
+```
+
+You can also pass in registration number, accreditation number, material and number of rows to generate if you wish.
+For example, if you want to generate 20 rows of Reprocessor Output for Steel with registration number reg-number-123 and accreditation number acc-number-123, you can use:
+
+```
+ROWS=20 MATERIAL=ST REG_NUMBER=reg-number-123 ACC_NUMBER=acc-number-123 npm run generate:spreadsheet:output
+```
+
+For glass, material is GR or GO (Glass Re-melt, Glass Other). Plastic is PL, Aluminium is AL, Fibre is FB, Steel is ST, Paper is PO and Wood is WO.
+
 ## What is tested in this test suite
 
 | Test type               | Local / PR Checks | Test environment |
