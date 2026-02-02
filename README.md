@@ -153,10 +153,30 @@ This only applies to local builds. You can generate 10 organisation details, reg
 npm run generatedata
 ```
 
+If you want to generate an organisation that has all materials (but varied waste processing types, like Reprocessor Input / Output / Exporter), you can run:
+
+```
+npm run generatedata:allMaterials
+```
+
+If you want to generate an organisation that has all materials and all waste processing types (like Reprocessor Input / Output / Exporter in a single Organisation), you can run:
+
+```
+npm run generatedata:allMaterialsMixed
+```
+
 To generate with user linking (This assumes you have Defra ID Stub and Entra Stub running locally):
 
 ```
 npm run generatedata:withUserLinking
+```
+
+```
+npm run generatedata:allMaterials:withUserLinking
+```
+
+```
+npm run generatedata:allMaterialsMixed:withUserLinking
 ```
 
 This will create mock approved Organisation datasets with linked users. Only to be used for local development purposes.
