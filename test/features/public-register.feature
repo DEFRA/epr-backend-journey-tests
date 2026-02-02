@@ -16,8 +16,8 @@ Feature: Public register endpoint
     When I request the public register
     When I retrieve the public register file
     Then I should see the following public register information
-      | Type        | Registration number| Packaging Waste Category| Annex II Process| Accreditation No | Accreditation status|
-      | Reprocessor | PUBLICREG123       | Fibre based composite   | R3              | TESTPUBLICREG123 | Approved            |
+      | Type        | Org ID        | Companies House Number | Registration number | Packaging Waste Category | Annex II Process| Accreditation No | Accreditation status |
+      | Reprocessor | {{formOrgId}} |                        | PUBLICREG123        | Fibre based composite    | R3              | TESTPUBLICREG123 | Approved             |
     And the following audit logs are present
       | Event Category  | Event Action | Context Keys                 | Count | Context Values        |
       | public-register | generate     | url, expiresAt, generatedAt  | 1     | {{publicRegisterUrl}} |

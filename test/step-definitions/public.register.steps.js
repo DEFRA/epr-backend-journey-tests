@@ -1,5 +1,5 @@
 import { When, Then } from '@cucumber/cucumber'
-import { baseAPI, authClient } from '../support/hooks.js'
+import { baseAPI, authClient, interpolator } from '../support/hooks.js'
 import { expect } from 'chai'
 import { request } from 'undici'
 
@@ -46,7 +46,7 @@ Then(
       .map((row) => {
         const map = new Map()
         headers.forEach((header, i) => {
-          map.set(header, row[i])
+          map.set(header, interpolator.interpolate(this, row[i]))
         })
         return map
       })
