@@ -18,6 +18,13 @@ import {
   generateInputReprocessedRow
 } from './reprocessor-input.js'
 
+function sanitiseFilenameComponent(input) {
+  if (typeof input !== 'string') {
+    return ''
+  }
+  return input.replace(/[^a-zA-Z0-9_-]/g, '')
+}
+
 // Generate fake registration/accreditation numbers
 function generateRegNumber(wasteProcessingType, suffix) {
   const year = new Date().getFullYear().toString().slice(-2)
@@ -161,7 +168,10 @@ async function generateSpreadsheetData(options = {}) {
       }
     }
 
-    const outputFile = `./data/${wasteProcessingType}_${accreditationNumber}_${registrationNumber}.xlsx`
+    const safeType = sanitiseFilenameComponent(wasteProcessingType)
+    const safeAcc = sanitiseFilenameComponent(accreditationNumber)
+    const safeReg = sanitiseFilenameComponent(registrationNumber)
+    const outputFile = `./data/${safeType}_${safeAcc}_${safeReg}.xlsx`
     await workbook.xlsx.writeFile(outputFile)
 
     logger.info(`Successfully generated spreadsheet: ${outputFile}`)
