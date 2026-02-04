@@ -2,10 +2,7 @@ import ExcelJS from 'exceljs'
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import logger from '../test/support/logger.js'
 import { MATERIALS } from './shared-spreadsheet-values.js'
-import {
-  generateSentOnRow,
-  generateExportedRow
-} from './exporter-spreadsheet-data-generator.js'
+import { generateSentOnRow, generateExportedRow } from './exporter.js'
 import {
   generateOutputSentOnRow,
   generateReceivedRow,
