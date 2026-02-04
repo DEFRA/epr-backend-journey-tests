@@ -175,6 +175,9 @@ Feature: Summary Logs test (Validation and upload)
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 30     | 30              |
+    And the following audit logs are present
+      | Event Category  | Event Action | Context Keys                                              | Count | Context Values                                 |
+      | waste-reporting | update       | accreditationId, amount, availableAmount, newTransactions | 1     | {{summaryLogAccId}}, 30, waste_record:received |
 
     Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
@@ -222,3 +225,7 @@ Feature: Summary Logs test (Validation and upload)
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 89     | 89              |
+    And the following audit logs are present
+      | Event Category  | Event Action | Context Keys                                              | Count | Context Values                                 |
+      | waste-reporting | update       | accreditationId, amount, availableAmount, newTransactions | 1     | {{summaryLogAccId}}, 89, waste_record:received |
+
