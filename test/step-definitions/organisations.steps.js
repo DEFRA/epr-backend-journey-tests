@@ -54,6 +54,12 @@ When(
           orgUpdateData.glassRecyclingProcess
         ]
       }
+      if (orgUpdateData.submittedToRegulator?.trim()) {
+        data.registrations[i].submittedToRegulator =
+          orgUpdateData.submittedToRegulator
+        data.accreditations[i].submittedToRegulator =
+          orgUpdateData.submittedToRegulator
+      }
       data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
 
       this.registrationIds.set(
