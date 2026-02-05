@@ -1,7 +1,7 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { Registration } from '../support/generator.js'
-import { dbClient, baseAPI } from '../support/hooks.js'
+import { dbClient, eprBackendAPI } from '../support/hooks.js'
 import logger from '../support/logger.js'
 
 Given(
@@ -83,7 +83,7 @@ Given(
 )
 
 When('I submit the registration details', async function () {
-  this.response = await baseAPI.post(
+  this.response = await eprBackendAPI.post(
     '/v1/apply/registration',
     JSON.stringify(this.payload)
   )

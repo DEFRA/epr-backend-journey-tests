@@ -1,6 +1,11 @@
 import { Given, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { authClient, baseAPI, defraIdStub, users } from '../support/hooks.js'
+import {
+  authClient,
+  eprBackendAPI,
+  defraIdStub,
+  users
+} from '../support/hooks.js'
 import { FormData } from 'undici'
 import config from '../config/config.js'
 
@@ -71,7 +76,7 @@ When(
   'the User is linked to the organisation with id {string}',
   async function (organisationId) {
     if (!defraIdStub.linked.has(organisationId)) {
-      this.response = await baseAPI.post(
+      this.response = await eprBackendAPI.post(
         `/v1/organisations/${organisationId}/link`,
         '',
         defraIdStub.authHeader(this.userId)
@@ -86,7 +91,7 @@ When(
   async function () {
     const organisationId = this.orgResponseData?.referenceNumber
 
-    this.response = await baseAPI.post(
+    this.response = await eprBackendAPI.post(
       `/v1/organisations/${organisationId}/link`,
       '',
       defraIdStub.authHeader(this.userId)
@@ -146,7 +151,7 @@ When(
 
       const organisationId = this.orgResponseData?.referenceNumber
 
-      this.response = await baseAPI.post(
+      this.response = await eprBackendAPI.post(
         `/v1/organisations/${organisationId}/link`,
         '',
         defraIdStub.authHeader(this.userId)

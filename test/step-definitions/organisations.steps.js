@@ -1,6 +1,6 @@
 import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { authClient, baseAPI } from '../support/hooks.js'
+import { authClient, eprBackendAPI } from '../support/hooks.js'
 import { Organisations } from '../support/generator.js'
 import { fakerEN_GB } from '@faker-js/faker'
 
@@ -14,7 +14,7 @@ When(
   async function (dataTable) {
     const orgId = this.orgResponseData?.referenceNumber
 
-    this.response = await baseAPI.get(
+    this.response = await eprBackendAPI.get(
       `/v1/organisations/${orgId}`,
       authClient.authHeader()
     )
@@ -84,7 +84,7 @@ When(
 
     data = { organisation: data }
 
-    this.response = await baseAPI.patch(
+    this.response = await eprBackendAPI.patch(
       `/v1/dev/organisations/${orgId}`,
       JSON.stringify(data)
     )
@@ -92,7 +92,7 @@ When(
 )
 
 When('I request the organisations', async function () {
-  this.response = await baseAPI.get(
+  this.response = await eprBackendAPI.get(
     '/v1/organisations',
     authClient.authHeader()
   )
@@ -100,14 +100,14 @@ When('I request the organisations', async function () {
 
 When('I request the recently migrated organisation', async function () {
   const orgId = this.orgResponseData?.referenceNumber
-  this.response = await baseAPI.get(
+  this.response = await eprBackendAPI.get(
     `/v1/organisations/${orgId}`,
     authClient.authHeader()
   )
 })
 
 When('I request the organisations with id {string}', async function (orgId) {
-  this.response = await baseAPI.get(
+  this.response = await eprBackendAPI.get(
     `/v1/organisations/${orgId}`,
     authClient.authHeader()
   )
@@ -115,7 +115,7 @@ When('I request the organisations with id {string}', async function (orgId) {
 
 When('I update the organisations with id {string}', async function (orgId) {
   this.payload = {}
-  this.response = await baseAPI.put(
+  this.response = await eprBackendAPI.put(
     `/v1/organisations/${orgId}`,
     JSON.stringify(this.payload),
     authClient.authHeader()
@@ -141,7 +141,7 @@ When(
       this.payload = this.organisations.toPayload(this.payload)
     }
 
-    this.response = await baseAPI.put(
+    this.response = await eprBackendAPI.put(
       `/v1/organisations/${orgId}`,
       JSON.stringify(this.organisations.toPayload(this.payload)),
       authClient.authHeader()
@@ -169,7 +169,7 @@ When(
       this.payload = this.organisations.toPayload(this.payload)
     }
 
-    this.response = await baseAPI.put(
+    this.response = await eprBackendAPI.put(
       `/v1/organisations/${orgId}`,
       JSON.stringify(this.organisations.toPayload(this.payload)),
       authClient.authHeader()

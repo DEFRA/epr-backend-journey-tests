@@ -1,5 +1,5 @@
 import { Given, Then, When } from '@cucumber/cucumber'
-import { baseAPI } from '../support/hooks.js'
+import { eprBackendAPI } from '../support/hooks.js'
 import { expect } from 'chai'
 import {
   Accreditation,
@@ -20,7 +20,7 @@ Given(
       this.payload = this.organisation.toPayload()
     }
 
-    this.response = await baseAPI.post(
+    this.response = await eprBackendAPI.post(
       '/v1/apply/organisation',
       JSON.stringify(this.payload)
     )
@@ -50,7 +50,7 @@ Given(
               this.material,
               this.glassRecyclingProcess
             )
-      this.response = await baseAPI.post(
+      this.response = await eprBackendAPI.post(
         '/v1/apply/registration',
         JSON.stringify(this.payload)
       )
@@ -69,14 +69,14 @@ Given(
               this.glassRecyclingProcess
             )
 
-      this.response = await baseAPI.post(
+      this.response = await eprBackendAPI.post(
         '/v1/apply/accreditation',
         JSON.stringify(this.payload)
       )
       expect(this.response.statusCode).to.equal(201)
     }
 
-    this.response = await baseAPI.post(
+    this.response = await eprBackendAPI.post(
       `/v1/dev/form-submissions/${refNo}/migrate`,
       ''
     )
@@ -86,7 +86,7 @@ Given(
 
 When('I migrate the form submissions organisations data', async function () {
   const refNo = this.orgResponseData?.referenceNumber
-  this.response = await baseAPI.post(
+  this.response = await eprBackendAPI.post(
     `/v1/dev/form-submissions/${refNo}/migrate`,
     ''
   )

@@ -2,7 +2,7 @@ import { BeforeAll, AfterAll, After } from '@cucumber/cucumber'
 import fs from 'node:fs'
 import config from '../config/config.js'
 
-import { BaseAPI } from '../apis/base-api.js'
+import { EprBackendApi } from '../apis/epr.backend.api.js'
 import { setGlobalDispatcher } from 'undici'
 import { Interpolator } from './interpolator.js'
 import { AuthClient } from '../support/auth.js'
@@ -14,7 +14,7 @@ let agent
 let dbConnector
 let dbClient
 let authClient
-let baseAPI
+let eprBackendAPI
 let interpolator
 let defraIdStub
 let cdpUploader
@@ -23,7 +23,7 @@ let users
 BeforeAll(async function () {
   dbConnector = config.dbConnector
   dbClient = await dbConnector.connect()
-  baseAPI = new BaseAPI()
+  eprBackendAPI = new EprBackendApi()
   authClient = new AuthClient()
   defraIdStub = new DefraIdStub()
   users = new Users()
@@ -49,7 +49,7 @@ export {
   dbClient,
   authClient,
   defraIdStub,
-  baseAPI,
+  eprBackendAPI,
   interpolator,
   users,
   cdpUploader
