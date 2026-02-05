@@ -1,11 +1,11 @@
 import { request } from 'undici'
 import config from '../config/config.js'
 
-let baseUrl
+let eprBackendUrl
 
-export class BaseAPI {
+export class EprBackendApi {
   constructor() {
-    baseUrl = config.apiUri
+    eprBackendUrl = config.apiUri
     this.defaultHeaders = config.apiHeaders
   }
 
@@ -14,7 +14,7 @@ export class BaseAPI {
       statusCode,
       headers: responseHeaders,
       body
-    } = await request(`${baseUrl}${endpoint}`, {
+    } = await request(`${eprBackendUrl}${endpoint}`, {
       method: 'GET',
       headers: { ...this.defaultHeaders, ...headers }
     })
@@ -39,7 +39,7 @@ export class BaseAPI {
       statusCode,
       headers: responseHeaders,
       body
-    } = await request(`${baseUrl}${endpoint}`, {
+    } = await request(`${eprBackendUrl}${endpoint}`, {
       method,
       headers: instanceHeaders,
       body: data
@@ -48,4 +48,4 @@ export class BaseAPI {
   }
 }
 
-export { baseUrl }
+export { eprBackendUrl }

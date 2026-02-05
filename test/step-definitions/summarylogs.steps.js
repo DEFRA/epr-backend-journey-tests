@@ -1,6 +1,6 @@
 import { Given, Then, When } from '@cucumber/cucumber'
 import {
-  baseAPI,
+  eprBackendAPI,
   dbClient,
   defraIdStub,
   cdpUploader,
@@ -65,7 +65,7 @@ When('the summary log upload data is updated', function (dataTable) {
 
 When('I submit the summary log upload completed', async function () {
   const summaryLogId = this.summaryLog.summaryLogId
-  this.response = await baseAPI.post(
+  this.response = await eprBackendAPI.post(
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/upload-completed`,
     JSON.stringify(this.payload)
   )
@@ -100,7 +100,7 @@ When(
 
     this.payload = this.summaryLog.toUploadCompletedPayload()
 
-    this.response = await baseAPI.post(
+    this.response = await eprBackendAPI.post(
       `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${this.summaryLog.summaryLogId}/upload-completed`,
       JSON.stringify(this.payload)
     )
@@ -111,7 +111,7 @@ When('I initiate the summary log upload', async function () {
   this.initiatePayload = {
     redirectUrl: `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${this.summaryLog.summaryLogId}`
   }
-  this.response = await baseAPI.post(
+  this.response = await eprBackendAPI.post(
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
     JSON.stringify(this.initiatePayload),
     defraIdStub.authHeader(this.userId)
@@ -140,7 +140,7 @@ When(
   'I initiate the summary log upload without redirectUrl',
   async function () {
     this.initiatePayload = {}
-    this.response = await baseAPI.post(
+    this.response = await eprBackendAPI.post(
       `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
       JSON.stringify(this.initiatePayload),
       defraIdStub.authHeader(this.userId)
@@ -152,7 +152,7 @@ When(
   'I try to access summary logs for organisation {string}',
   async function (organisationId) {
     this.initiatePayload = { redirectUrl: 'test-redirect' }
-    this.response = await baseAPI.post(
+    this.response = await eprBackendAPI.post(
       `/v1/organisations/${organisationId}/registrations/${this.summaryLog.regId}/summary-logs`,
       JSON.stringify(this.initiatePayload),
       defraIdStub.authHeader(this.userId)
@@ -181,7 +181,7 @@ When(
     const startTime = Date.now()
 
     while (Date.now() - startTime < timeout) {
-      this.response = await baseAPI.get(
+      this.response = await eprBackendAPI.get(
         url,
         defraIdStub.authHeader(this.userId)
       )
@@ -224,7 +224,10 @@ When(
     }
 
     // Timeout reached - make one final request and store the response
-    this.response = await baseAPI.get(url, defraIdStub.authHeader(this.userId))
+    this.response = await eprBackendAPI.get(
+      url,
+      defraIdStub.authHeader(this.userId)
+    )
     if (this.response.statusCode === 200) {
       this.responseData = await this.response.body.json()
     }
@@ -245,7 +248,7 @@ When(
   'I submit the uploaded summary log and initiate a new upload at the same time',
   async function () {
     const summaryLogId = this.summaryLog.summaryLogId
-    const submissionResponse = await baseAPI.post(
+    const submissionResponse = await eprBackendAPI.post(
       `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/submit`,
       '',
       defraIdStub.authHeader(this.userId)
@@ -254,7 +257,7 @@ When(
     const initiatePayload = {
       redirectUrl: 'summary-log-upload-redirect'
     }
-    const uploadResponse = await baseAPI.post(
+    const uploadResponse = await eprBackendAPI.post(
       `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs`,
       JSON.stringify(initiatePayload),
       defraIdStub.authHeader(this.userId)
@@ -300,7 +303,7 @@ When('I return to the {string} upload', function (name) {
 
 When('I submit the uploaded summary log', async function () {
   const summaryLogId = this.summaryLog.summaryLogId
-  this.response = await baseAPI.post(
+  this.response = await eprBackendAPI.post(
     `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}/submit`,
     '',
     defraIdStub.authHeader(this.userId)
@@ -323,7 +326,7 @@ Then(
     let actualStatus
 
     while (Date.now() - startTime < timeout) {
-      this.response = await baseAPI.get(
+      this.response = await eprBackendAPI.get(
         url,
         defraIdStub.authHeader(this.userId)
       )

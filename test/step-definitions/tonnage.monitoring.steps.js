@@ -1,9 +1,9 @@
 import { When, Then } from '@cucumber/cucumber'
-import { baseAPI, authClient } from '../support/hooks.js'
+import { eprBackendAPI, authClient } from '../support/hooks.js'
 import { expect } from 'chai'
 
 When('I request the tonnage monitoring', async function () {
-  this.response = await baseAPI.get(
+  this.response = await eprBackendAPI.get(
     '/v1/tonnage-monitoring',
     authClient.authHeader()
   )

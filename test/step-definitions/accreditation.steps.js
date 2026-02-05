@@ -1,7 +1,7 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { Accreditation } from '../support/generator.js'
-import { dbClient, baseAPI } from '../support/hooks.js'
+import { dbClient, eprBackendAPI } from '../support/hooks.js'
 import logger from '../support/logger.js'
 
 Given('I have entered my accreditation details as a Reprocessor', function () {
@@ -74,7 +74,7 @@ Given(
 )
 
 When('I submit the accreditation details', async function () {
-  this.response = await baseAPI.post(
+  this.response = await eprBackendAPI.post(
     '/v1/apply/accreditation',
     JSON.stringify(this.payload)
   )

@@ -1,7 +1,7 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { Organisation } from '../support/generator.js'
-import { dbClient, baseAPI } from '../support/hooks.js'
+import { dbClient, eprBackendAPI } from '../support/hooks.js'
 import logger from '../support/logger.js'
 
 Given(
@@ -54,7 +54,7 @@ Given('I have entered my organisation details without nations', function () {
 })
 
 When('I submit the organisation details', async function () {
-  this.response = await baseAPI.post(
+  this.response = await eprBackendAPI.post(
     '/v1/apply/organisation',
     JSON.stringify(this.payload)
   )

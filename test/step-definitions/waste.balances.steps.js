@@ -1,10 +1,10 @@
 import { When, Then } from '@cucumber/cucumber'
-import { baseAPI, defraIdStub, interpolator } from '../support/hooks.js'
+import { eprBackendAPI, defraIdStub, interpolator } from '../support/hooks.js'
 import { expect } from 'chai'
 import config from '../config/config.js'
 
 When('I retrieve the waste balance for the organisation', async function () {
-  this.response = await baseAPI.get(
+  this.response = await eprBackendAPI.get(
     `/v1/organisations/${this.organisationId}/waste-balances?accreditationIds=${this.accreditationId}`,
     defraIdStub.authHeader(this.userId)
   )
@@ -26,7 +26,7 @@ Then(
 
       if (Object.keys(wasteBalance).length === 0) {
         // Poll for Waste Balance if it is not available yet
-        this.response = await baseAPI.get(
+        this.response = await eprBackendAPI.get(
           `/v1/organisations/${this.organisationId}/waste-balances?accreditationIds=${this.accreditationId}`,
           defraIdStub.authHeader(this.userId)
         )

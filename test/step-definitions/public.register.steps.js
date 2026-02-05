@@ -1,5 +1,5 @@
 import { When, Then } from '@cucumber/cucumber'
-import { baseAPI, authClient, interpolator } from '../support/hooks.js'
+import { eprBackendAPI, authClient, interpolator } from '../support/hooks.js'
 import { expect } from 'chai'
 import { request } from 'undici'
 
@@ -7,7 +7,7 @@ import config from '../config/config.js'
 import { parse } from 'csv-parse/sync'
 
 When('I request the public register', async function () {
-  this.response = await baseAPI.post(
+  this.response = await eprBackendAPI.post(
     '/v1/public-register/generate',
     '',
     authClient.authHeader()

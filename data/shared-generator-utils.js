@@ -1,4 +1,4 @@
-import { BaseAPI } from '../test/apis/base-api.js'
+import { EprBackendApi } from '../test/apis/epr.backend.api.js'
 import {
   Accreditation,
   Organisation,
@@ -36,7 +36,7 @@ export const MATERIALS = [
 
 export class GeneratorContext {
   constructor() {
-    this.baseAPI = new BaseAPI()
+    this.baseAPI = new EprBackendApi()
     this.defraIdStub = new DefraIdStub()
     this.users = new Users()
     this.authClient = new AuthClient()
