@@ -1,7 +1,7 @@
 @prn
 Feature: Packaging Recycling Notes transitions
 
-  Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated
+  Scenario: PRNs are created after waste balance is available
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
       | Exporter            |
@@ -97,3 +97,8 @@ Feature: Packaging Recycling Notes transitions
     When I update the PRN status to 'awaiting_acceptance'
     Then the PRN is issued successfully
     And the PRN number starts with 'NX'
+
+    # All the successful transitions are audited
+    And the following audit logs are present
+      | Event Category  | Event Subcategory        | Event Action      | Context Keys                          | Count |
+      | waste-reporting | packaging-recycling-note | status-transition | organisationId, prnId, previous, next | 5     |
