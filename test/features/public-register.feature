@@ -15,6 +15,7 @@ Feature: Public register endpoint
     Given I am logged in as a service maintainer
     When I request the public register
     When I retrieve the public register file
+    Then I should see generated at as first row "^Generated at [0-9]{2}\.[0-9]{2}\.[0-9]{2} [0-9]{2}:[0-9]{2}"
     Then I should see the following public register information
       | Type        | Org ID        | Companies House Number | Registration number | Packaging Waste Category | Annex II Process| Accreditation No | Accreditation status |
       | Reprocessor | {{formOrgId}} |                        | PUBLICREG123        | Fibre based composite    | R3              | TESTPUBLICREG123 | Approved             |

@@ -25,8 +25,14 @@ When('I retrieve the public register file', async function () {
 
   const publicRegisterFile = await request(url.href)
   const csvText = await publicRegisterFile.body.text()
+
+  this.rawCsvText = csvText
+
+  // Parse CSV with from_line: 2 to skip the first "Generated at" row
   const records = parse(csvText, {
-    columns: true
+    columns: true,
+    // eslint-disable-next-line camelcase
+    from_line: 2
   })
 
   this.mapsData = records.map((row) => new Map(Object.entries(row)))
@@ -35,6 +41,18 @@ When('I retrieve the public register file', async function () {
 Then('the public register file should not be empty', async function () {
   expect(this.mapsData).length.to.be.above(0)
 })
+
+Then(
+  'I should see generated at as first row {string}',
+  async function (regexString) {
+    const regex = new RegExp(regexString)
+
+    expect(this.rawCsvText).to.match(
+      regex,
+      `Expected first row to match regex: ${regexString}`
+    )
+  }
+)
 
 Then(
   'I should see the following public register information',
