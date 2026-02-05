@@ -14,7 +14,8 @@ Then('the tonnage monitoring information should be correct', async function () {
   const expectedMaterials = [
     'aluminium',
     'fibre',
-    'glass',
+    'glass_other',
+    'glass_re_melt',
     'paper',
     'plastic',
     'steel',
