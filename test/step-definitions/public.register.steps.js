@@ -31,6 +31,7 @@ When('I retrieve the public register file', async function () {
   // Parse CSV with from_line: 2 to skip the first "Generated at" row
   const records = parse(csvText, {
     columns: true,
+    // eslint-disable-next-line camelcase
     from_line: 2
   })
 
