@@ -9,6 +9,7 @@ import { AuthClient } from '../support/auth.js'
 import { DefraIdStub } from '../support/defra-id-stub.js'
 import { CDPUploader } from '../support/cdp-uploader.js'
 import Users from '../support/users.js'
+import { waitForSummaryLogFiles } from '../support/check-summary-log-files.js'
 
 let agent
 let dbConnector
@@ -20,7 +21,7 @@ let defraIdStub
 let cdpUploader
 let users
 
-BeforeAll(async function () {
+BeforeAll({ timeout: 15000 }, async function () {
   dbConnector = config.dbConnector
   dbClient = await dbConnector.connect()
   eprBackendAPI = new EprBackendApi()
@@ -31,6 +32,9 @@ BeforeAll(async function () {
   cdpUploader = new CDPUploader()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
+  if (!process.env.ENVIRONMENT) {
+    await waitForSummaryLogFiles()
+  }
 })
 
 AfterAll(async function () {

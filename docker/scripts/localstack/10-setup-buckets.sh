@@ -82,6 +82,24 @@ aws s3api put-object \
 
 aws s3api put-object \
   --bucket re-ex-summary-logs \
+  --key reprocessor-input-valid-key \
+  --body /etc/localstack/init/ready.d/reprocessor-input-valid.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key reprocessor-input-adjustments-key \
+  --body /etc/localstack/init/ready.d/reprocessor-input-adjustments.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key reprocessor-output-adjustments-key \
+  --body /etc/localstack/init/ready.d/reprocessor-output-adjustments.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
   --key reprocessor-input-senton-invalid-key \
   --body /etc/localstack/init/ready.d/reprocessor-input-senton-invalid.xlsx \
   --endpoint-url=http://localhost:4566 \
@@ -94,8 +112,26 @@ aws s3api put-object \
 
 aws s3api put-object \
   --bucket re-ex-summary-logs \
+  --key exporter-adjustments-key \
+  --body /etc/localstack/init/ready.d/exporter-adjustments.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
   --key exporter-key \
   --body /etc/localstack/init/ready.d/exporter.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key glass-remelt-input-key \
+  --body /etc/localstack/init/ready.d/glass-remelt-input.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key glass-other-output-key \
+  --body /etc/localstack/init/ready.d/glass-other-output.xlsx \
   --endpoint-url=http://localhost:4566 \
 
 # Staleness test fixtures (reuse valid file with different keys)

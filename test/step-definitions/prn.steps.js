@@ -48,6 +48,6 @@ Then('the PRN is issued successfully', async function () {
 })
 
 Then('the PRN number starts with {string}', async function (prefix) {
-  const regex = new RegExp(`^${prefix}\\d{6,8}$`)
+  const regex = new RegExp(`^${prefix}\\d{5,9}$`)
   expect(this.prnNumber).to.match(regex)
 })

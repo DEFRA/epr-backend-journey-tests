@@ -91,14 +91,15 @@ Feature: Summary Logs - Reprocessor on Input
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-    Given I have organisation and registration details for summary log upload
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket   | re-ex-summary-logs                    |
+      | s3Key      | reprocessor-input-adjustments-key     |
+      | fileId     | reprocessor-input-adjustments-file-id |
+      | filename   | reprocessor-input-adjustments.xlsx    |
+      | fileStatus | complete                              |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-
-    When I upload the file 'reprocessor-input-adjustments.xlsx' via the CDP uploader
-    Then the upload to CDP uploader succeeds
-
-    When I submit the summary log upload completed with the response from CDP Uploader
+    When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
     When I check for the summary log status

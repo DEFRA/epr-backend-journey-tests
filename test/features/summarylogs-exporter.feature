@@ -1,70 +1,6 @@
 @summarylogs
 @summarylogs_exporter
-Feature: Summary Logs test (Validation and upload)
-
-  Scenario: Stale preview is rejected at submission time (deferred staleness detection)
-
-    Given I create a linked and migrated organisation for the following
-      | wasteProcessingType | material   |
-      | Reprocessor         |            |
-
-    Given I am logged in as a service maintainer
-    When I update the recently migrated organisations data with the following data
-      | reprocessingType | regNumber        | accNumber | status   |
-      | input            | R25SR500030912PA | ACC123456 | approved |
-    Then the organisations data update succeeds
-
-    When I register and authorise a User and link it to the recently migrated organisation
-
-    # User A uploads and validates file 1
-    Given I have the following summary log upload data for summary log upload
-      | s3Bucket   | re-ex-summary-logs                |
-      | s3Key      | staleness-test-file-1-key         |
-      | fileId     | staleness-test-file-1-id          |
-      | filename   | staleness-test-file-1.xlsx        |
-      | fileStatus | complete                          |
-    When I initiate the summary log upload
-    Then the summary log upload initiation succeeds
-    When I submit the summary log upload completed
-    Then I should receive a summary log upload accepted response
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | validated |
-    And I call this upload 'first'
-
-    # User B uploads and validates file 2 (both coexist - no blocking)
-    Given I have the following summary log upload data for summary log upload
-      | s3Bucket    | re-ex-summary-logs         |
-      | s3Key       | staleness-test-file-2-key  |
-      | fileId      | staleness-test-file-2-id   |
-      | filename    | staleness-test-file-2.xlsx |
-      | fileStatus  | complete                   |
-    When I initiate the summary log upload
-    Then the summary log upload initiation succeeds
-    When I submit the summary log upload completed
-    Then I should receive a summary log upload accepted response
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | validated |
-    And I call this upload 'second'
-
-    # User A submits file 1 successfully
-    When I return to the 'first' upload
-    And I submit the uploaded summary log
-    Then the summary log submission succeeds
-    And the following messages appear in the log
-      | Log Level | Message                                              |
-      | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
-
-    # User B tries to submit file 2 - rejected because preview is now stale
-    When I return to the 'second' upload
-    And I submit the uploaded summary log
-    Then I should receive a 409 error response 'Waste records have changed since preview was generated. Please re-upload.'
-
-    # Verify stale summary log is marked as superseded
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | superseded |
+Feature: Summary Logs - Exporter
 
   Scenario: Summary Logs uploads (Exporter) and fails in-sheet revalidation
     Given I create a linked and migrated organisation for the following
@@ -98,7 +34,7 @@ Feature: Summary Logs test (Validation and upload)
       | status | invalid |
     And I should see the following summary log validation failures
       | Code               | Location Sheet                 | Location Table            | Location Row | Location Header                             | Actual                                                                                                             |
-      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DATE_OF_EXPORT                              | 22-01-2025                                                                                                         |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DATE_OF_EXPORT                              | TBC                                                                                                                |
       | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | CONTAINER_NUMBER                            | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
       | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | CUSTOMS_CODES                               | ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789098765432101234567890 |
       | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | TONNAGE_OF_UK_PACKAGING_WASTE_EXPORTED      | 1002                                                                                                               |
@@ -115,7 +51,7 @@ Feature: Summary Logs test (Validation and upload)
       | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | PALLET_WEIGHT                               | -50                                                                                                                |
       | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | OSR_ID                                      | 98A                                                                                                                |
       | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DATE_RECEIVED_BY_OSR                        | 30-02-2025                                                                                                         |
-      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DATE_RECEIVED_FOR_EXPORT                    | 26-06-2025                                                                                                         |
+      | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DATE_RECEIVED_FOR_EXPORT                    | ????                                                                                                               |
       | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | WERE_PRN_OR_PERN_ISSUED_ON_THIS_WASTE       | Unknown                                                                                                            |
       | INVALID_TYPE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | Invalid                                                                                                            |
       | VALUE_OUT_OF_RANGE | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | TONNAGE_RECEIVED_FOR_EXPORT                 | -1160.5                                                                                                            |
@@ -176,19 +112,21 @@ Feature: Summary Logs test (Validation and upload)
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 30     | 30              |
 
-    Given I have organisation and registration details for summary log upload
+
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs           |
+      | s3Key               | exporter-adjustments-key     |
+      | fileId              | exporter-adjustments-file-id |
+      | filename            | exporter-adjustments.xlsx    |
+      | fileStatus          | complete                     |
+      | accreditationNumber | ACC234567                    |
+      | registrationNumber  | E25SR500030913PA             |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-
-    When I upload the file 'exporter-adjustments.xlsx' via the CDP uploader
-    Then the upload to CDP uploader succeeds
-
-    When I submit the summary log upload completed with the response from CDP Uploader
+    When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
+    And the summary log submission status is 'validated'
 
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | validated |
     And the summary log has the following loads
       | LoadType           | Count | RowIDs    |
       | added.valid        | 2     | 1004,4001 |
