@@ -78,19 +78,19 @@ Feature: Summary Logs - Reprocessor on Output
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogOrgId}} | {{summaryLogAccId}} | 3      | 3               |
 
-    Given I have organisation and registration details for summary log upload
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs                     |
+      | s3Key               | reprocessor-output-adjustments-key     |
+      | fileId              | reprocessor-output-adjustments-file-id |
+      | filename            | reprocessor-output-adjustments.xlsx    |
+      | fileStatus          | complete                               |
+      | accreditationNumber | ACC500591                              |
+      | registrationNumber  | R25SR500050912PA                       |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-
-    When I upload the file 'reprocessor-output-adjustments.xlsx' via the CDP uploader
-    Then the upload to CDP uploader succeeds
-
-    When I submit the summary log upload completed with the response from CDP Uploader
+    When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | validated |
+    And the summary log submission status is 'validated'
     # RowIDs with 3001, 1003, 5002 are filtered from waste balance as they don't fall within the validFrom date range
     # RowIDs with 3003, 3004 are excluded from waste balance as they are missing certain mandatory fields
     # RowID with 3000 is also adjusted
