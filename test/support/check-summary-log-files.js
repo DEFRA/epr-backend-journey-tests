@@ -5,19 +5,22 @@ import logger from '../support/logger.js'
 export async function waitForSummaryLogFiles() {
   const endpoint = `http://${config.localstackHost.local}:4566`
   const bucketName = 're-ex-summary-logs'
-  const maxAttempts = 30
+  const maxAttempts = 20
   const interval = 500
 
   const fileKeys = [
     'exporter-invalid-key',
     'exporter-key',
     'exporter-adjustments-key',
+    'glass-other-output-key',
+    'glass-remelt-input-key',
     'invalid-row-id-key',
     'invalid-table-name-key',
     'invalid-test-upload-key',
     'reprocessor-input-adjustments-key',
     'reprocessor-input-invalid-key',
     'reprocessor-input-senton-invalid-key',
+    'reprocessor-input-valid-key',
     'reprocessor-output-adjustments-key',
     'reprocessor-output-invalid-key',
     'reprocessor-output-valid-key',

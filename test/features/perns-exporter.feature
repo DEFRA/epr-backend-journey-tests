@@ -1,7 +1,9 @@
 @prn
-Feature: Packaging Recycling Notes transitions
+@pern
+@prn_exporter
+Feature: Packaging Recycling Notes transitions for Exporter
 
-  Scenario: PRNs are created after waste balance is available
+  Scenario: PERNs are created after waste balance is available
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
       | Exporter            |
@@ -108,6 +110,7 @@ Feature: Packaging Recycling Notes transitions
 
     When I update the PRN status to 'awaiting_acceptance'
     Then the PRN is issued successfully
+    # NX because N for NIEA, and X for Exporter
     And the PRN number starts with 'NX'
     And the following audit logs are present
       | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                      | Count |

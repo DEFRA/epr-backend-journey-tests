@@ -61,19 +61,21 @@ Feature: Glass material schema validation
 
     When I register and authorise a User and link it to the recently migrated organisation
 
-    Given I have organisation and registration details for summary log upload
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket   | re-ex-summary-logs         |
+      | s3Key      | glass-remelt-input-key     |
+      | fileId     | glass-remelt-input-file-id |
+      | filename   | glass-remelt-input.xlsx    |
+      | fileStatus | complete                   |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-
-    When I upload the file 'glass-remelt-input.xlsx' via the CDP uploader
-    Then the upload to CDP uploader succeeds
-
-    When I submit the summary log upload completed with the response from CDP Uploader
+    When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
     When I check for the summary log status
     Then I should see the following summary log response
       | status | invalid |
+
     And I should see the following summary log validation failures
       | Code              | Location Sheet | Location Row | Actual      |
       | MATERIAL_MISMATCH | Cover          | 7            | glass_other |
@@ -91,19 +93,21 @@ Feature: Glass material schema validation
 
     When I register and authorise a User and link it to the recently migrated organisation
 
-    Given I have organisation and registration details for summary log upload
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket   | re-ex-summary-logs         |
+      | s3Key      | glass-other-output-key     |
+      | fileId     | glass-other-output-file-id |
+      | filename   | glass-other-output.xlsx    |
+      | fileStatus | complete                   |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-
-    When I upload the file 'glass-other-output.xlsx' via the CDP uploader
-    Then the upload to CDP uploader succeeds
-
-    When I submit the summary log upload completed with the response from CDP Uploader
+    When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
     When I check for the summary log status
     Then I should see the following summary log response
       | status | invalid |
+
     And I should see the following summary log validation failures
       | Code              | Location Sheet | Location Row | Actual        |
       | MATERIAL_MISMATCH | Cover          | 7            | glass_re_melt |
@@ -121,14 +125,15 @@ Feature: Glass material schema validation
 
     When I register and authorise a User and link it to the recently migrated organisation
 
-    Given I have organisation and registration details for summary log upload
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket   | re-ex-summary-logs         |
+      | s3Key      | glass-remelt-input-key     |
+      | fileId     | glass-remelt-input-file-id |
+      | filename   | glass-remelt-input.xlsx    |
+      | fileStatus | complete                   |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-
-    When I upload the file 'glass-remelt-input.xlsx' via the CDP uploader
-    Then the upload to CDP uploader succeeds
-
-    When I submit the summary log upload completed with the response from CDP Uploader
+    When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
     When I check for the summary log status
@@ -148,14 +153,15 @@ Feature: Glass material schema validation
 
     When I register and authorise a User and link it to the recently migrated organisation
 
-    Given I have organisation and registration details for summary log upload
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket   | re-ex-summary-logs         |
+      | s3Key      | glass-other-output-key     |
+      | fileId     | glass-other-output-file-id |
+      | filename   | glass-other-output.xlsx    |
+      | fileStatus | complete                   |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
-
-    When I upload the file 'glass-other-output.xlsx' via the CDP uploader
-    Then the upload to CDP uploader succeeds
-
-    When I submit the summary log upload completed with the response from CDP Uploader
+    When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
     When I check for the summary log status
