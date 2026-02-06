@@ -1,7 +1,7 @@
 @prn
 Feature: Packaging Recycling Notes transitions
 
-  Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated
+  Scenario: PRNs are created after waste balance is available
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
       | Exporter            |
@@ -54,6 +54,9 @@ Feature: Packaging Recycling Notes transitions
 
     When I update the PRN status to 'discarded'
     Then the PRN status is updated successfully
+    And the following audit logs are present
+      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                            | Count |
+      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, discarded | 1     |
 
     # Unable to transition to other PRN statuses
     When I update the PRN status to 'awaiting_authorisation'
@@ -74,9 +77,15 @@ Feature: Packaging Recycling Notes transitions
 
     When I update the PRN status to 'awaiting_authorisation'
     Then the PRN status is updated successfully
+    And the following audit logs are present
+      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                         | Count |
+      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, awaiting_authorisation | 1     |
 
     When I update the PRN status to 'deleted'
     Then the PRN status is updated successfully
+    And the following audit logs are present
+      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                          | Count |
+      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, deleted | 1     |
 
     When I update the PRN status to 'awaiting_acceptance'
     Then I should receive a 400 error response 'Invalid status transition: deleted -> awaiting_acceptance'
@@ -93,7 +102,14 @@ Feature: Packaging Recycling Notes transitions
 
     When I update the PRN status to 'awaiting_authorisation'
     Then the PRN status is updated successfully
+    And the following audit logs are present
+      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                         | Count |
+      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, awaiting_authorisation | 1     |
 
     When I update the PRN status to 'awaiting_acceptance'
     Then the PRN is issued successfully
     And the PRN number starts with 'NX'
+    And the following audit logs are present
+      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                      | Count |
+      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, awaiting_acceptance | 1     |
+

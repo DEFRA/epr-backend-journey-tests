@@ -63,6 +63,7 @@ Then(
         const expectedAuditCount = parseInt(expectedLogRow.Count)
         const filtered = actualLogs.filter((log) => {
           let contextValuesExist = true
+          let subCategory = true
 
           // Only check if Context Values are provided for better filtering
           if (expectedLogRow['Context Values']) {
@@ -76,12 +77,22 @@ Then(
             )
           }
 
+          if (
+            log.event.category === expectedLogRow['Event Category'] &&
+            log.event.action === expectedLogRow['Event Action'] &&
+            expectedLogRow['Event Subcategory']
+          ) {
+            subCategory =
+              log.event.subCategory === expectedLogRow['Event Subcategory']
+          }
+
           return (
             log.event.category === expectedLogRow['Event Category'] &&
             log.event.action === expectedLogRow['Event Action'] &&
             Object.keys(log.context).join(', ') ===
               expectedLogRow['Context Keys'] &&
-            contextValuesExist
+            contextValuesExist &&
+            subCategory
           )
         })
         if (filtered.length !== expectedAuditCount) {
