@@ -206,7 +206,9 @@ export async function updateOrganisationData(
   data.submitterContactDetails.email = `${emailPrefix}_${replacementEmail}`
   replacementEmail = `${emailPrefix}_${replacementEmail}`
 
-  logger.info(`Generated email address: ${data.submitterContactDetails.email}`)
+  logger.info(
+    `Generated email address: ${data.submitterContactDetails.email} | Organisation Reference: ${referenceNumber}`
+  )
 
   data.status =
     registrationUpdates[registrationUpdates.length - 1].updateData.status

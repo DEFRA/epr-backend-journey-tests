@@ -54,3 +54,13 @@ Feature: Packaging Recycling Notes transitions for Reprocessors on Input
       | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                      | Count |
       | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, awaiting_acceptance | 1     |
 
+    # External API from RPD
+    When an external API accepts the PRN
+    Then the external API call to update the PRN status is successful
+    # Acceptance shifts the PRN to accepted status
+    And the following audit logs are present
+      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                           | Count |
+      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, accepted | 1     |
+
+    When an external API accepts the PRN
+    Then I should receive a 409 error response 'Packaging recycling note has already been accepted'
