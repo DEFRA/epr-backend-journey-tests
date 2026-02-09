@@ -27,7 +27,7 @@ runs:
         cache: npm
 
     - name: Install
-      run: npm i
+      run: npm ci
       shell: bash
 
     - name: Add hosts entry
