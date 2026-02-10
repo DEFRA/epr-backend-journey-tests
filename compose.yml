@@ -22,7 +22,7 @@ name: epr-backend-journey-tests
 services:
   ################################################################################
   mongodb:
-    image: mongo:6.0.27
+    image: mongo:7.0.28
     networks:
       - cdp-tenant
     ports:

@@ -16,10 +16,43 @@ runs:
   steps:
     - name: Checkout repository if not called by Journey Test PR
       if: inputs.journey-test-pr == 'false'
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         repository: DEFRA/epr-backend-journey-tests
         ref: ${{inputs.branch}}
+
+    - name: Check for matching epr-backend branch if it is Journey Test PR
+      if: inputs.journey-test-pr != 'false'
+      id: service-branch
+      shell: bash
+      run: |
+        BRANCH="${{ github.head_ref }}"
+        if git ls-remote --heads https://github.com/DEFRA/epr-backend.git "$BRANCH" | grep -q .; then
+          echo "ref=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "ref=main" >> "$GITHUB_OUTPUT"
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Checkout epr-backend repository if it is Journey Test PR and there is a matching service branch
+      if: inputs.journey-test-pr != 'false' && steps.service-branch.outputs.exists == 'true'
+      uses: actions/checkout@v6
+      with:
+        repository: DEFRA/epr-backend
+        ref: ${{steps.service-branch.outputs.ref}}
+        path: epr-backend
+
+    - name: Build Docker image from epr-backend if it is Journey Test PR and same branch exists
+      if: inputs.journey-test-pr != 'false' && steps.service-branch.outputs.exists == 'true'
+      id: docker-branch
+      shell: bash
+      run: |
+        cd epr-backend
+        EPR_BACKEND_SHA=$(git rev-parse --short HEAD)
+        IMAGE_TAG="defradigital/epr-backend:${EPR_BACKEND_SHA}"
+        docker build -t $IMAGE_TAG .
+        echo "image=$EPR_BACKEND_SHA" >> $GITHUB_OUTPUT
 
     - uses: actions/setup-node@v5
       with:
@@ -37,7 +70,15 @@ runs:
         cat /etc/hosts
       shell: bash
 
+    - name: Start docker compose with matching Service Branch if it is Journey Test PR
+      if: inputs.journey-test-pr != 'false' && steps.service-branch.outputs.exists == 'true'
+      shell: bash
+      run: |
+        EPR_BACKEND=${{ steps.docker-branch.outputs.image }} \
+        docker compose up --wait-timeout 300 -d --quiet-pull
+
     - name: Start docker compose
+      if : steps.service-branch.outputs.exists != 'true'
       shell: bash
       run: |
         EPR_BACKEND=${{ inputs.epr-backend }} \
