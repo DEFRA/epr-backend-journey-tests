@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Test suite for Defra's Packaging Extended Producer Responsibilities service using Cucumber and API testing framework",
   "engines": {
-    "node": ">=22.21.0"
+    "node": ">=24.13.0 <25.0.0"
   },
   "author": "Defra DDTS",
   "license": "OGL-UK-3.0",
@@ -42,6 +42,7 @@
     "csv-parse": "6.1.0",
     "esm-module-alias": "2.2.1",
     "exceljs": "4.4.0",
+    "fast-jwt": "6.1.0",
     "global-agent": "4.1.2",
     "pino": "10.3.0",
     "undici": "7.21.0"
