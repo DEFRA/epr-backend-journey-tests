@@ -49,7 +49,7 @@ Feature: Packaging Recycling Notes transitions for Exporter
     # awaiting_acceptance -> accepted, awaiting_cancellation, possibly cancelled
     # awaiting_cancellation -> cancelled
     When I update the PRN status to 'draft'
-    Then I should receive a 400 error response 'Invalid status transition: draft -> draft'
+    Then I should receive a 400 error response 'No transition exists from draft to draft'
 
     When I update the PRN status to 'awaiting_authorisation'
     Then I should receive a 409 error response 'Insufficient available waste balance'
@@ -62,10 +62,10 @@ Feature: Packaging Recycling Notes transitions for Exporter
 
     # Unable to transition to other PRN statuses
     When I update the PRN status to 'awaiting_authorisation'
-    Then I should receive a 400 error response 'Invalid status transition: discarded -> awaiting_authorisation'
+    Then I should receive a 400 error response 'No transition exists from discarded to awaiting_authorisation'
 
     When I update the PRN status to 'draft'
-    Then I should receive a 400 error response 'Invalid status transition: discarded -> draft'
+    Then I should receive a 400 error response 'No transition exists from discarded to draft'
 
     # Delete a Created PRN
     When I create a PRN with the following details
@@ -90,7 +90,7 @@ Feature: Packaging Recycling Notes transitions for Exporter
       | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, deleted | 1     |
 
     When I update the PRN status to 'awaiting_acceptance'
-    Then I should receive a 400 error response 'Invalid status transition: deleted -> awaiting_acceptance'
+    Then I should receive a 400 error response 'No transition exists from deleted to awaiting_acceptance'
 
     # This time we update it with a tonnage that's below the waste balance limit
     When I create a PRN with the following details
