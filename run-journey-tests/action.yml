@@ -27,7 +27,7 @@ runs:
         cache: npm
 
     - name: Install
-      run: npm i
+      run: npm ci
       shell: bash
 
     - name: Add hosts entry
@@ -53,6 +53,7 @@ runs:
       shell: bash
       run: |
         npm run test:tagged "not @smoketest"
+        npm run report
 
     - name: debug
       if: always()
