@@ -49,10 +49,10 @@ services:
       - '4566:4566' # LocalStack Gateway
       - '4510-4559:4510-4559' # external services port range
     healthcheck:
-      test: ['CMD', 'curl', 'localhost:4566']
+      test: ['CMD', 'test', '-f', '/tmp/READY']
       interval: 5s
       start_period: 5s
-      retries: 3
+      retries: 10
     networks:
       - cdp-tenant
   ################################################################################
@@ -75,6 +75,8 @@ services:
       FEATURE_FLAG_DEV_ENDPOINTS: true
       FEATURE_FLAG_LUMPY_PACKAGING_RECYCLING_NOTES: true
       FEATURE_FLAG_PACKAGING_RECYCLING_NOTES_EXTERNAL_API: true
+      FEATURE_FLAG_SQS_COMMANDS: true
+      COMMAND_QUEUE_SQS_ENDPOINT: http://localstack:4566
       LOG_FORMAT: ecs
       ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
       ADMIN_UI_ENTRA_CLIENT_ID: clientId
@@ -86,6 +88,8 @@ services:
     ports:
       - '3001:3001'
     depends_on:
+      localstack:
+        condition: service_healthy
       mongodb:
         condition: service_healthy
       defra-id-stub:
