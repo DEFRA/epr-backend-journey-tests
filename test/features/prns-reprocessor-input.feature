@@ -63,4 +63,4 @@ Feature: Packaging Recycling Notes transitions for Reprocessors on Input
       | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, accepted | 1     |
 
     When an external API accepts the PRN
-    Then I should receive a 409 error response 'Packaging recycling note has already been accepted'
+    Then I should receive a 409 error response 'No transition exists from accepted to accepted'
