@@ -34,6 +34,27 @@ When('I update the PRN status to {string}', async function (status) {
   )
 })
 
+When('an external API rejects the PRN', async function () {
+  this.response = await eprBackendAPI.post(
+    `/v1/packaging-recycling-notes/${this.prnNumber}/reject`,
+    JSON.stringify({ rejectedAt: new Date().toISOString() })
+  )
+})
+
+When('an external API accepts the PRN', async function () {
+  this.response = await eprBackendAPI.post(
+    `/v1/packaging-recycling-notes/${this.prnNumber}/accept`,
+    JSON.stringify({ acceptedAt: new Date().toISOString() })
+  )
+})
+
+Then(
+  'the external API call to update the PRN status is successful',
+  async function () {
+    expect(this.response.statusCode).to.equal(204)
+  }
+)
+
 Then('the PRN status is updated successfully', async function () {
   expect(this.response.statusCode).to.equal(200)
   this.prnCreationResponse = await this.response.body.json()
