@@ -40,7 +40,6 @@ Feature: Packaging Recycling Notes transitions for Exporter
       | tradingName    | Trading Name          |
       | issuerNotes    | Testing               |
       | tonnage        | 50                    |
-      | material       | paper                 |
     Then the PRN is successfully created
 
     # Valid states -- Newly created PRN starts from "draft" initially
@@ -74,7 +73,6 @@ Feature: Packaging Recycling Notes transitions for Exporter
       | tradingName    | Trading Name          |
       | issuerNotes    | Testing               |
       | tonnage        | 15                    |
-      | material       | paper                 |
     Then the PRN is successfully created
 
     When I update the PRN status to 'awaiting_authorisation'
@@ -99,7 +97,6 @@ Feature: Packaging Recycling Notes transitions for Exporter
       | tradingName    | Trading Name          |
       | issuerNotes    | Testing               |
       | tonnage        | 25                    |
-      | material       | paper                 |
     Then the PRN is successfully created
 
     When I update the PRN status to 'awaiting_authorisation'
