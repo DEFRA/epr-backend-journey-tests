@@ -1,5 +1,5 @@
-import { MongoConnector, StubConnector } from '../support/db.js'
 import { Agent, ProxyAgent } from 'undici'
+import { MongoConnector, StubConnector } from '../support/db.js'
 
 const environment = process.env.ENVIRONMENT
 const withProxy = process.env.WITH_PROXY
@@ -80,6 +80,12 @@ const cdpUploader = {
   env: `https://cdp-uploader.${environment}.cdp-int.defra.cloud`
 }
 
+const cognitoAuth = {
+  clientId:
+    process.env.PACKAGING_RECYCLING_NOTES_EXTERNAL_API_CLIENT_ID ||
+    'stub-client-id'
+}
+
 const dockerLogParser = {
   containerName: 'epr-backend-journey-tests-epr-backend-1'
 }
@@ -117,18 +123,19 @@ if (!environment) {
 }
 
 export default {
-  dbConnector,
-  mongoUri,
-  apiUri,
-  testLogs,
-  dockerLogParser,
-  authUri,
-  defraIdUri,
-  cdpUploaderUri,
-  localstackHost,
-  auth,
-  undiciAgent: globalUndiciAgent,
   apiHeaders: api.headers,
+  apiUri,
+  auth,
+  authUri,
+  cdpUploaderUri,
+  cognitoAuth,
+  dbConnector,
+  defraIdUri,
+  dockerLogParser,
   interval,
-  pollTimeout
+  localstackHost,
+  mongoUri,
+  pollTimeout,
+  testLogs,
+  undiciAgent: globalUndiciAgent
 }

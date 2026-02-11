@@ -30,7 +30,9 @@ BeforeAll({ timeout: 15000 }, async function () {
   defraIdStub = new DefraIdStub()
   users = new Users()
   interpolator = new Interpolator()
-  cognitoAuthStub = new CognitoAuthStub()
+  cognitoAuthStub = new CognitoAuthStub({
+    clientId: config.cognitoAuth.clientId
+  })
   cdpUploader = new CDPUploader()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
