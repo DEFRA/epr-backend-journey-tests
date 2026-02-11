@@ -71,7 +71,6 @@ services:
       MONGO_URI: mongodb://mongodb:27017/
       GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
       AUDIT_ENABLED: true
-      FEATURE_FLAG_SUMMARY_LOGS: true
       FEATURE_FLAG_DEV_ENDPOINTS: true
       FEATURE_FLAG_PACKAGING_RECYCLING_NOTES: true
       FEATURE_FLAG_PACKAGING_RECYCLING_NOTES_EXTERNAL_API: true
