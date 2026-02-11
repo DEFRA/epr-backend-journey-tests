@@ -1,6 +1,10 @@
-import { When, Then } from '@cucumber/cucumber'
+import { Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { eprBackendAPI, defraIdStub } from '../support/hooks.js'
+import {
+  cognitoAuthStub,
+  defraIdStub,
+  eprBackendAPI
+} from '../support/hooks.js'
 
 When('I create a PRN with the following details', async function (dataTable) {
   this.payload = dataTable.rowsHash()
@@ -37,14 +41,16 @@ When('I update the PRN status to {string}', async function (status) {
 When('an external API rejects the PRN', async function () {
   this.response = await eprBackendAPI.post(
     `/v1/packaging-recycling-notes/${this.prnNumber}/reject`,
-    JSON.stringify({ rejectedAt: new Date().toISOString() })
+    JSON.stringify({ rejectedAt: new Date().toISOString() }),
+    cognitoAuthStub.authHeader()
   )
 })
 
 When('an external API accepts the PRN', async function () {
   this.response = await eprBackendAPI.post(
     `/v1/packaging-recycling-notes/${this.prnNumber}/accept`,
-    JSON.stringify({ acceptedAt: new Date().toISOString() })
+    JSON.stringify({ acceptedAt: new Date().toISOString() }),
+    cognitoAuthStub.authHeader()
   )
 })
 

@@ -3,7 +3,7 @@ import { createSigner } from 'fast-jwt'
 class CognitoAuthStub {
   constructor(config = {}) {
     this.userPoolId = config.userPoolId || 'us-east-1_TESTSTUB'
-    this.clientId = config.clientId || 'test-client-id'
+    this.clientId = config.clientId || 'stub-client-id'
     this.region = config.region || 'us-east-1'
 
     this.signer = createSigner({
@@ -25,6 +25,8 @@ class CognitoAuthStub {
       iss: `https://cognito-idp.${this.region}.amazonaws.com/${this.userPoolId}`,
       aud: this.clientId,
       // eslint-disable-next-line camelcase
+      client_id: this.clientId,
+      // eslint-disable-next-line camelcase
       token_use: claims.token_use || 'id',
       // eslint-disable-next-line camelcase
       auth_time: now,
@@ -32,6 +34,11 @@ class CognitoAuthStub {
       exp: now + 3600,
       ...claims
     })
+  }
+
+  authHeader(claims) {
+    const token = this.generateToken(claims)
+    return { Authorization: `Bearer ${token}` }
   }
 
   // Stub verifier

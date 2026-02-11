@@ -1,14 +1,15 @@
-import { BeforeAll, AfterAll, After } from '@cucumber/cucumber'
+import { After, AfterAll, BeforeAll } from '@cucumber/cucumber'
 import fs from 'node:fs'
 import config from '../config/config.js'
 
-import { EprBackendApi } from '../apis/epr.backend.api.js'
 import { setGlobalDispatcher } from 'undici'
-import { Interpolator } from './interpolator.js'
+import { EprBackendApi } from '../apis/epr.backend.api.js'
 import { AuthClient } from '../support/auth.js'
-import { DefraIdStub } from '../support/defra-id-stub.js'
 import { CDPUploader } from '../support/cdp-uploader.js'
+import { CognitoAuthStub } from '../support/cognito-auth-stub.js'
+import { DefraIdStub } from '../support/defra-id-stub.js'
 import Users from '../support/users.js'
+import { Interpolator } from './interpolator.js'
 
 let agent
 let dbConnector
@@ -18,6 +19,7 @@ let eprBackendAPI
 let interpolator
 let defraIdStub
 let cdpUploader
+let cognitoAuthStub
 let users
 
 BeforeAll({ timeout: 15000 }, async function () {
@@ -28,6 +30,7 @@ BeforeAll({ timeout: 15000 }, async function () {
   defraIdStub = new DefraIdStub()
   users = new Users()
   interpolator = new Interpolator()
+  cognitoAuthStub = new CognitoAuthStub()
   cdpUploader = new CDPUploader()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
@@ -46,11 +49,12 @@ After(async function (scenario) {
 })
 
 export {
-  dbClient,
   authClient,
+  cdpUploader,
+  cognitoAuthStub,
+  dbClient,
   defraIdStub,
   eprBackendAPI,
   interpolator,
-  users,
-  cdpUploader
+  users
 }
