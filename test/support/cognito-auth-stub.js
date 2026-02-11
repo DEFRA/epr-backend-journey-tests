@@ -3,7 +3,7 @@ import { createSigner } from 'fast-jwt'
 class CognitoAuthStub {
   constructor(config = {}) {
     this.userPoolId = config.userPoolId || 'us-east-1_TESTSTUB'
-    this.clientId = config.clientId || 'stub-client-id'
+    this.clientId = config.clientId || 'test-client-id'
     this.region = config.region || 'us-east-1'
 
     this.signer = createSigner({
