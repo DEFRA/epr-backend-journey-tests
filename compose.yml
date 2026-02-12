@@ -57,7 +57,7 @@ services:
       - cdp-tenant
   ################################################################################
   epr-backend:
-    image: epr-backend:local
+    image: defradigital/epr-backend:${EPR_BACKEND:-latest}
     build:
       context: .
       target: development
