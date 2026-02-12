@@ -76,7 +76,6 @@ services:
       FEATURE_FLAG_PACKAGING_RECYCLING_NOTES_EXTERNAL_API: true
       FEATURE_FLAG_SQS_COMMANDS: true
       SQS_ENDPOINT: http://localstack:4566
-      COMMAND_QUEUE_SQS_ENDPOINT: http://localstack:4566
       LOG_FORMAT: ecs
       ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
       ADMIN_UI_ENTRA_CLIENT_ID: clientId
