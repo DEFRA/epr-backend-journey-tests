@@ -37,7 +37,6 @@ Feature: Packaging Recycling Notes transitions for Reprocessors on Input
       | tradingName    | Trading Name          |
       | issuerNotes    | Testing               |
       | tonnage        | 50                    |
-      | material       | paper                 |
     Then the PRN is successfully created
 
     When I update the PRN status to 'awaiting_authorisation'

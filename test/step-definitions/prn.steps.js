@@ -14,8 +14,7 @@ When('I create a PRN with the following details', async function (dataTable) {
       name: this.payload.name,
       tradingName: this.payload.tradingName
     },
-    tonnage: this.payload.tonnage,
-    material: this.payload.material
+    tonnage: this.payload.tonnage
   }
   this.response = await eprBackendAPI.post(
     `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/accreditations/${this.accreditationId}/packaging-recycling-notes`,

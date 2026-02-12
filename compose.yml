@@ -86,6 +86,7 @@ services:
       PACKAGING_RECYCLING_NOTES_EXTERNAL_API_CLIENT_ID: stub-client-id
       PORT: 3001
       SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
+      SQS_ENDPOINT: http://localstack:4566
     ports:
       - '3001:3001'
     depends_on:
