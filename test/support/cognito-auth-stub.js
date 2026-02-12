@@ -1,14 +1,32 @@
-import { createSigner } from 'fast-jwt'
+import { createSigner, createVerifier } from 'fast-jwt'
+import { generateKeyPairSync } from 'crypto'
 
 class CognitoAuthStub {
   constructor(config = {}) {
-    this.userPoolId = config.userPoolId || 'us-east-1_TESTSTUB'
-    this.clientId = config.clientId || 'test-client-id'
-    this.region = config.region || 'us-east-1'
+    this.userPoolId = config.userPoolId || 'eu-west-2_ZJcyFKABL'
+    this.clientId = config.clientId || 'stub-client-id'
+    this.region = config.region || 'eu-west-2'
+
+    const { privateKey, publicKey } = generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+      publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem'
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+      }
+    })
+
+    this.verifier = createVerifier({
+      key: publicKey,
+      algorithms: ['RS256']
+    })
 
     this.signer = createSigner({
-      key: 'test-secret-key',
-      algorithm: 'HS256',
+      key: privateKey,
+      algorithm: 'RS256',
       expiresIn: '1h'
     })
   }
@@ -21,15 +39,16 @@ class CognitoAuthStub {
       'cognito:username': claims.username || 'testuser',
       email: claims.email || 'test@example.com',
       // eslint-disable-next-line camelcase
-      email_verified: true,
+      // email_verified: true,
       iss: `https://cognito-idp.${this.region}.amazonaws.com/${this.userPoolId}`,
       aud: this.clientId,
       // eslint-disable-next-line camelcase
       client_id: this.clientId,
       // eslint-disable-next-line camelcase
-      token_use: claims.token_use || 'id',
+      token_use: claims.token_use || 'access',
       // eslint-disable-next-line camelcase
       auth_time: now,
+      // nbf: now,
       iat: now,
       exp: now + 3600,
       ...claims
