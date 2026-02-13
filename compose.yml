@@ -131,13 +131,26 @@ services:
     networks:
       - cdp-tenant
 
+  # Copies cognito seed files into a volume so cognito-local doesn't modify the host files
+  cognito-stub-init:
+    image: alpine:3.23.3
+    volumes:
+      - ./compose/cognito-local/clients.json:/seed/clients.json:ro
+      - ./compose/cognito-local/local_4D8shcYm.json:/seed/local_4D8shcYm.json:ro
+      - cognito-db:/target
+    command: sh -c "cp /seed/clients.json /seed/local_4D8shcYm.json /target/"
+    networks:
+      - cdp-tenant
+
   cognito-stub:
     image: jagregory/cognito-local:5.1.0
     ports:
       - '9229:9229'
     volumes:
-      - ./compose/cognito-local/clients.json:/app/.cognito/db/clients.json
-      - ./compose/cognito-local/local_4D8shcYm.json:/app/.cognito/db/local_4D8shcYm.json
+      - cognito-db:/app/.cognito/db
+    depends_on:
+      cognito-stub-init:
+        condition: service_completed_successfully
     networks:
       - cdp-tenant
 
@@ -189,12 +202,21 @@ services:
       mongodb:
         condition: service_healthy
     healthcheck:
-      test: ['CMD', 'node', '-e', "fetch('http://localhost:3001/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3001/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+        ]
       interval: 3s
       start_period: 2s
       retries: 3
     networks:
       - cdp-tenant
+
+volumes:
+  cognito-db:
 
 networks:
   cdp-tenant:
