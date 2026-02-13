@@ -1,80 +1,44 @@
-import { createSigner, createVerifier } from 'fast-jwt'
-import { generateKeyPairSync } from 'crypto'
+import { request } from 'undici'
 
 class CognitoAuthStub {
   constructor(config = {}) {
-    this.userPoolId = config.userPoolId || 'eu-west-2_ZJcyFKABL'
-    this.clientId = config.clientId || 'stub-client-id'
-    this.region = config.region || 'eu-west-2'
+    this.cognitoUrl = config.cognitoUrl
+    this.clientId = config.clientId
+    this.username = config.username
+    this.password = config.password
+    this.accessToken = null
+  }
 
-    const { privateKey, publicKey } = generateKeyPairSync('rsa', {
-      modulusLength: 2048,
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
+  async generateToken() {
+    const { statusCode, body } = await request(this.cognitoUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-amz-json-1.1',
+        'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth'
       },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem'
-      }
+      body: JSON.stringify({
+        AuthFlow: 'USER_PASSWORD_AUTH',
+        ClientId: this.clientId,
+        AuthParameters: {
+          USERNAME: this.username,
+          PASSWORD: this.password
+        }
+      })
     })
 
-    this.verifier = createVerifier({
-      key: publicKey,
-      algorithms: ['RS256']
-    })
+    const data = await body.json()
 
-    this.signer = createSigner({
-      key: privateKey,
-      algorithm: 'RS256',
-      expiresIn: '1h'
-    })
-  }
-
-  generateToken(claims = {}) {
-    const now = Math.floor(Date.now() / 1000)
-
-    return this.signer({
-      sub: claims.sub || 'test-user-123',
-      'cognito:username': claims.username || 'testuser',
-      email: claims.email || 'test@example.com',
-      // eslint-disable-next-line camelcase
-      // email_verified: true,
-      iss: `https://cognito-idp.${this.region}.amazonaws.com/${this.userPoolId}`,
-      aud: this.clientId,
-      // eslint-disable-next-line camelcase
-      client_id: this.clientId,
-      // eslint-disable-next-line camelcase
-      token_use: claims.token_use || 'access',
-      // eslint-disable-next-line camelcase
-      auth_time: now,
-      // nbf: now,
-      iat: now,
-      exp: now + 3600,
-      ...claims
-    })
-  }
-
-  authHeader(claims) {
-    const token = this.generateToken(claims)
-    return { Authorization: `Bearer ${token}` }
-  }
-
-  // Stub verifier
-  async verify(token) {
-    const parts = token.split('.')
-    if (parts.length !== 3) {
-      throw new Error('Invalid token format')
+    if (statusCode !== 200) {
+      throw new Error(
+        `Cognito InitiateAuth failed (${statusCode}): ${JSON.stringify(data)}`
+      )
     }
 
-    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString())
+    this.accessToken = data.AuthenticationResult.AccessToken
+  }
 
-    // Check client ID
-    if (payload.aud !== this.clientId) {
-      throw new Error('Token client ID mismatch')
-    }
-
-    return payload
+  authHeader() {
+    return { Authorization: `Bearer ${this.accessToken}` }
   }
 }
 

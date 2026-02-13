@@ -81,9 +81,10 @@ const cdpUploader = {
 }
 
 const cognitoAuth = {
-  clientId:
-    process.env.PACKAGING_RECYCLING_NOTES_EXTERNAL_API_CLIENT_ID ||
-    'stub-client-id'
+  url: withProxy ? 'http://cognito-stub:9229' : 'http://localhost:9229',
+  clientId: '5357lgchj0h0fuomqyas5r87u',
+  username: 'hello@example.com',
+  password: 'testPassword'
 }
 
 const dockerLogParser = {
