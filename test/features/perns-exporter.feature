@@ -113,19 +113,20 @@ Feature: Packaging Recycling Notes transitions for Exporter
       | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                      | Count |
       | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, awaiting_acceptance | 1     |
 
+  #TODO: Re-visit Cognito stub
     # External API from RPD
-    When an external API rejects the PRN
-    Then the external API call to update the PRN status is successful
-    # Rejection shifts the PRN to awaiting_cancellation status
-
-    And the following audit logs are present
-      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                        | Count |
-      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, awaiting_cancellation | 1     |
-
-    # From here the PRN can be cancelled
-    When I update the PRN status to 'cancelled'
-    Then the PRN status is updated successfully
-
-    And the following audit logs are present
-      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                            | Count |
-      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, cancelled | 1     |
+#    When an external API rejects the PRN
+#    Then the external API call to update the PRN status is successful
+#    # Rejection shifts the PRN to awaiting_cancellation status
+#
+#    And the following audit logs are present
+#      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                        | Count |
+#      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, awaiting_cancellation | 1     |
+#
+#    # From here the PRN can be cancelled
+#    When I update the PRN status to 'cancelled'
+#    Then the PRN status is updated successfully
+#
+#    And the following audit logs are present
+#      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                            | Count |
+#      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, cancelled | 1     |

@@ -65,25 +65,28 @@ services:
       - ./docker/config/defaults.env
       - ./docker/config/example-backend.env
     environment:
-      PORT: 3001
-      NODE_ENV: development
-      LOCALSTACK_ENDPOINT: http://localstack:4566
-      MONGO_URI: mongodb://mongodb:27017/
-      GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
-      AUDIT_ENABLED: true
-      FEATURE_FLAG_DEV_ENDPOINTS: true
-      FEATURE_FLAG_PACKAGING_RECYCLING_NOTES: true
-      FEATURE_FLAG_PACKAGING_RECYCLING_NOTES_EXTERNAL_API: true
-      FEATURE_FLAG_SQS_COMMANDS: true
-      SQS_ENDPOINT: http://localstack:4566
-      LOG_FORMAT: ecs
-      ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
       ADMIN_UI_ENTRA_CLIENT_ID: clientId
-      SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
-      CDP_UPLOADER_URL: http://cdp-uploader:7337
       APP_BASE_URL: http://epr-backend:3001
-      DEFRA_ID_OIDC_WELL_KNOWN_URL: http://defra-id-stub:3200/cdp-defra-id-stub/.well-known/openid-configuration
+      AUDIT_ENABLED: true
+      CDP_UPLOADER_URL: http://cdp-uploader:7337
+      COMMAND_QUEUE_SQS_ENDPOINT: http://localstack:4566
       DEFRA_ID_CLIENT_ID: 63983fc2-cfff-45bb-8ec2-959e21062b9a
+      DEFRA_ID_OIDC_WELL_KNOWN_URL: http://defra-id-stub:3200/cdp-defra-id-stub/.well-known/openid-configuration
+      ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
+      FEATURE_FLAG_DEV_ENDPOINTS: true
+      FEATURE_FLAG_PACKAGING_RECYCLING_NOTES_EXTERNAL_API: true
+      FEATURE_FLAG_PACKAGING_RECYCLING_NOTES: true
+      FEATURE_FLAG_SQS_COMMANDS: true
+      FEATURE_FLAG_SUMMARY_LOGS: true
+      GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
+      LOCALSTACK_ENDPOINT: http://localstack:4566
+      LOG_FORMAT: ecs
+      MONGO_URI: mongodb://mongodb:27017/
+      NODE_ENV: development
+      PACKAGING_RECYCLING_NOTES_EXTERNAL_API_CLIENT_ID: stub-client-id
+      PORT: 3001
+      SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
+      SQS_ENDPOINT: http://localstack:4566
     ports:
       - '3001:3001'
     depends_on:
