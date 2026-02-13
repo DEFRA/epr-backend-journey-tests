@@ -131,7 +131,7 @@ services:
     networks:
       - cdp-tenant
 
-  # Copies cognito seed files into a volume so cognito-local doesn't modify the host files
+  # Copies cognito seed files into a volume so cognito-stub has its own copies
   cognito-stub-init:
     image: alpine:3.23.3
     volumes:
