@@ -171,7 +171,7 @@ services:
       MONGO_URI: mongodb://mongodb:27017/
       NODE_ENV: development
       PACKAGING_RECYCLING_NOTES_EXTERNAL_API_CLIENT_ID: 5357lgchj0h0fuomqyas5r87u
-      PACKAGING_RECYCLING_NOTES_EXTERNAL_API_JWKS_URL: http://localhost:9229/local_4D8shcYm/.well-known/jwks.json
+      PACKAGING_RECYCLING_NOTES_EXTERNAL_API_JWKS_URL: http://cognito-stub:9229/local_4D8shcYm/.well-known/jwks.json
       PORT: 3001
       SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
       SQS_ENDPOINT: http://localstack:4566
