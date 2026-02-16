@@ -1,6 +1,9 @@
+/** @import { CognitoAuthConfig } from '../config/config.js' */
+
 import { request } from 'undici'
 
 class CognitoStub {
+  /** @param {CognitoAuthConfig} config */
   constructor(config = {}) {
     this.url = config.url
     this.clientId = config.clientId

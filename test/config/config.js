@@ -82,6 +82,7 @@ const cdpUploader = {
   env: `https://cdp-uploader.${environment}.cdp-int.defra.cloud`
 }
 
+/** @type CognitoAuthConfig */
 const cognitoAuthParams = {
   url: 'http://localhost:9229',
   envUrl: process.env.COGNITO_URL,
@@ -99,7 +100,7 @@ const cognito = {
   env: new CognitoAuth({
     clientId: cognitoAuthParams.clientId,
     clientSecret: cognitoAuthParams.password,
-    cognitoUrl: cognitoAuthParams.envUrl
+    url: cognitoAuthParams.envUrl
   })
 }
 
