@@ -6,9 +6,9 @@ import { setGlobalDispatcher } from 'undici'
 import { EprBackendApi } from '../apis/epr.backend.api.js'
 import { AuthClient } from '../support/auth.js'
 import { CDPUploader } from '../support/cdp-uploader.js'
-import { CognitoStub } from '../support/cognito-auth-stub.js'
 import { DefraIdStub } from '../support/defra-id-stub.js'
 import Users from '../support/users.js'
+import { CognitoStub } from './cognito-stub.js'
 import { Interpolator } from './interpolator.js'
 
 let agent

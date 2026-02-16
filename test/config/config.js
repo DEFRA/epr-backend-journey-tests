@@ -1,7 +1,7 @@
 import { Agent, ProxyAgent } from 'undici'
-import { MongoConnector, StubConnector } from '../support/db.js'
-import { CognitoAuthStub } from '../support/cognito-auth-stub.js'
 import { CognitoAuth } from '../support/cognito-auth.js'
+import { CognitoStub } from '../support/cognito-stub.js'
+import { MongoConnector, StubConnector } from '../support/db.js'
 
 const environment = process.env.ENVIRONMENT
 const withProxy = process.env.WITH_PROXY
@@ -95,12 +95,7 @@ const cognitoAuthParams = {
 }
 
 const cognito = {
-  local: new CognitoAuthStub({
-    clientId: cognitoAuthParams.clientId,
-    cognitoUrl: cognitoAuthParams.url,
-    password: cognitoAuthParams.password,
-    username: cognitoAuthParams.username
-  }),
+  local: new CognitoStub(cognitoAuthParams),
   env: new CognitoAuth({
     clientId: cognitoAuthParams.clientId,
     clientSecret: cognitoAuthParams.password,
