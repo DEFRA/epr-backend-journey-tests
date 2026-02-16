@@ -8,7 +8,6 @@ import { AuthClient } from '../support/auth.js'
 import { CDPUploader } from '../support/cdp-uploader.js'
 import { DefraIdStub } from '../support/defra-id-stub.js'
 import Users from '../support/users.js'
-import { CognitoStub } from './cognito-stub.js'
 import { Interpolator } from './interpolator.js'
 
 let agent
@@ -19,7 +18,7 @@ let eprBackendAPI
 let interpolator
 let defraIdStub
 let cdpUploader
-let cognitoStub
+let cognitoAuth
 let users
 
 BeforeAll({ timeout: 15000 }, async function () {
@@ -30,8 +29,11 @@ BeforeAll({ timeout: 15000 }, async function () {
   defraIdStub = new DefraIdStub()
   users = new Users()
   interpolator = new Interpolator()
-  cognitoStub = new CognitoStub(config.cognitoAuth)
-  await cognitoStub.generateToken()
+  // TODO: Revert this after we get creds in Test
+  if (!process.env.ENVIRONMENT) {
+    cognitoAuth = config.cognitoAuth
+    await cognitoAuth.generateToken()
+  }
   cdpUploader = new CDPUploader()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
@@ -53,7 +55,7 @@ After(async function (scenario) {
 export {
   authClient,
   cdpUploader,
-  cognitoStub,
+  cognitoAuth,
   dbClient,
   defraIdStub,
   eprBackendAPI,
