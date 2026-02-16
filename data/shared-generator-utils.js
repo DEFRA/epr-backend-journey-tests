@@ -53,6 +53,7 @@ export async function createOrganisation(context, isNonRegistered) {
     '/v1/apply/organisation',
     JSON.stringify(organisationPayload)
   )
+  await assertSuccessResponse(orgResponse, '/v1/apply/organisation')
 
   const responseData = await orgResponse.body.json()
   return {
@@ -89,10 +90,11 @@ export async function createRegistrationAndAccreditation(
     ? registration.toExporterPayload(material, glassRecyclingProcess)
     : registration.toAllMaterialsPayload(material, glassRecyclingProcess)
 
-  await context.baseAPI.post(
+  const regResponse = await context.baseAPI.post(
     '/v1/apply/registration',
     JSON.stringify(registrationPayload)
   )
+  await assertSuccessResponse(regResponse, '/v1/apply/registration')
 
   const accreditation = new Accreditation(orgId, referenceNumber)
   accreditation.fullName = organisation.fullName
@@ -108,10 +110,11 @@ export async function createRegistrationAndAccreditation(
     ? accreditation.toExporterPayload(material, glassRecyclingProcess)
     : accreditation.toReprocessorPayload(material, glassRecyclingProcess)
 
-  await context.baseAPI.post(
+  const accResponse = await context.baseAPI.post(
     '/v1/apply/accreditation',
     JSON.stringify(accreditationPayload)
   )
+  await assertSuccessResponse(accResponse, '/v1/apply/accreditation')
 }
 
 export async function generateAuthToken(context) {
@@ -142,22 +145,22 @@ export function generateOrgUpdateData(index, suffix, reprocessingType = null) {
   if (reprocessingType === 'input') {
     return {
       ...baseData,
-      regNumber: `R25SR500${index}30912${suffix}`,
-      accNumber: `ACC1234${index}56${suffix}`,
+      regNumber: `R25SR5000${index}0912${suffix}`,
+      accNumber: `R-ACC12${index}45${suffix}`,
       reprocessingType: 'input'
     }
   } else if (reprocessingType === 'output') {
     return {
       ...baseData,
-      regNumber: `R25SR500${index}30912${suffix}`,
-      accNumber: `ACC1234${index}56${suffix}`,
+      regNumber: `R25SR5000${index}0912${suffix}`,
+      accNumber: `R-ACC12${index}45${suffix}`,
       reprocessingType: 'output'
     }
   } else {
     return {
       ...baseData,
-      regNumber: `E25SR5000${index}912${suffix}`,
-      accNumber: `ACC1${index}3456${suffix}`
+      regNumber: `E25SR5000${index}0912${suffix}`,
+      accNumber: `E-ACC12${index}45${suffix}`
     }
   }
 }
@@ -174,6 +177,10 @@ export async function updateOrganisationData(
   const getOrgResponse = await context.baseAPI.get(
     `/v1/organisations/${referenceNumber}`,
     context.authClient.authHeader()
+  )
+  await assertSuccessResponse(
+    getOrgResponse,
+    `/v1/organisations/${referenceNumber}`
   )
 
   let data = await getOrgResponse.body.json()
@@ -214,9 +221,13 @@ export async function updateOrganisationData(
     registrationUpdates[registrationUpdates.length - 1].updateData.status
   data = { organisation: data }
 
-  await context.baseAPI.patch(
+  const patchResponse = await context.baseAPI.patch(
     `/v1/dev/organisations/${referenceNumber}`,
     JSON.stringify(data)
+  )
+  await assertSuccessResponse(
+    patchResponse,
+    `/v1/dev/organisations/${referenceNumber}`
   )
 
   return replacementEmail
@@ -255,4 +266,13 @@ export async function migrateFormSubmission(context, referenceNumber) {
     `/v1/dev/form-submissions/${referenceNumber}/migrate`,
     ''
   )
+}
+
+async function assertSuccessResponse(response, context) {
+  if (response.statusCode < 200 || response.statusCode >= 300) {
+    const body = await response.body.json()
+    throw new Error(
+      `${context}: expected 2xx but got ${response.statusCode}\n${JSON.stringify(body, null, 2)}`
+    )
+  }
 }

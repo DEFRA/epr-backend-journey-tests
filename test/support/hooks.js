@@ -43,6 +43,7 @@ BeforeAll({ timeout: 15000 }, async function () {
 })
 
 AfterAll(async function () {
+  await defraIdStub.expireAllUsers()
   await agent.destroy()
   await dbConnector.disconnect()
 })
