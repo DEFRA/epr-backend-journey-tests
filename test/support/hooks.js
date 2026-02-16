@@ -6,6 +6,7 @@ import { setGlobalDispatcher } from 'undici'
 import { EprBackendApi } from '../apis/epr.backend.api.js'
 import { AuthClient } from '../support/auth.js'
 import { CDPUploader } from '../support/cdp-uploader.js'
+import { CognitoStub } from '../support/cognito-auth-stub.js'
 import { DefraIdStub } from '../support/defra-id-stub.js'
 import Users from '../support/users.js'
 import { Interpolator } from './interpolator.js'
@@ -18,7 +19,7 @@ let eprBackendAPI
 let interpolator
 let defraIdStub
 let cdpUploader
-let cognitoAuth
+let cognitoStub
 let users
 
 BeforeAll({ timeout: 15000 }, async function () {
@@ -29,8 +30,8 @@ BeforeAll({ timeout: 15000 }, async function () {
   defraIdStub = new DefraIdStub()
   users = new Users()
   interpolator = new Interpolator()
-  cognitoAuth = config.cognitoAuth
-  await cognitoAuth.generateToken()
+  cognitoStub = new CognitoStub(config.cognitoAuth)
+  await cognitoStub.generateToken()
   cdpUploader = new CDPUploader()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
@@ -52,7 +53,7 @@ After(async function (scenario) {
 export {
   authClient,
   cdpUploader,
-  cognitoAuth,
+  cognitoStub,
   dbClient,
   defraIdStub,
   eprBackendAPI,
