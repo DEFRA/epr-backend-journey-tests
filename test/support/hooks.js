@@ -29,8 +29,11 @@ BeforeAll({ timeout: 15000 }, async function () {
   defraIdStub = new DefraIdStub()
   users = new Users()
   interpolator = new Interpolator()
-  cognitoAuth = config.cognitoAuth
-  await cognitoAuth.generateToken()
+  // TODO: Revert this after we get creds in Test
+  if (!process.env.ENVIRONMENT) {
+    cognitoAuth = config.cognitoAuth
+    await cognitoAuth.generateToken()
+  }
   cdpUploader = new CDPUploader()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)
