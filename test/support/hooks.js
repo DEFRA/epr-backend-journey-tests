@@ -31,8 +31,12 @@ BeforeAll({ timeout: 15000 }, async function () {
   users = new Users()
   interpolator = new Interpolator()
   cognitoAuthStub = new CognitoAuthStub({
-    clientId: config.cognitoAuth.clientId
+    clientId: config.cognitoAuth.clientId,
+    cognitoUrl: config.cognitoAuth.url,
+    password: config.cognitoAuth.password,
+    username: config.cognitoAuth.username
   })
+  await cognitoAuthStub.generateToken()
   cdpUploader = new CDPUploader()
   agent = config.undiciAgent
   setGlobalDispatcher(agent)

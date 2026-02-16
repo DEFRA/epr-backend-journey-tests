@@ -1,0 +1,17 @@
+{
+  "Clients": {
+    "5357lgchj0h0fuomqyas5r87u": {
+      "ClientId": "5357lgchj0h0fuomqyas5r87u",
+      "ClientName": "ExampleClient",
+      "CreationDate": "2026-02-12T19:16:44.808Z",
+      "ExplicitAuthFlows": ["USER_PASSWORD_AUTH"],
+      "LastModifiedDate": "2026-02-12T19:16:44.808Z",
+      "TokenValidityUnits": {
+        "AccessToken": "hours",
+        "IdToken": "minutes",
+        "RefreshToken": "days"
+      },
+      "UserPoolId": "local_4D8shcYm"
+    }
+  }
+}
