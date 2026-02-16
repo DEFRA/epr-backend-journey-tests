@@ -1,5 +1,7 @@
 import { Agent, ProxyAgent } from 'undici'
 import { MongoConnector, StubConnector } from '../support/db.js'
+import { CognitoAuthStub } from '../support/cognito-auth-stub.js'
+import { CognitoAuth } from '../support/cognito-auth.js'
 
 const environment = process.env.ENVIRONMENT
 const withProxy = process.env.WITH_PROXY
@@ -80,11 +82,30 @@ const cdpUploader = {
   env: `https://cdp-uploader.${environment}.cdp-int.defra.cloud`
 }
 
-const cognitoAuth = {
+const cognitoAuthParams = {
   url: withProxy ? 'http://cognito-stub:9229' : 'http://localhost:9229',
-  clientId: '5357lgchj0h0fuomqyas5r87u',
+  envUrl: process.env.COGNITO_URL,
+  clientId:
+    environment === 'test'
+      ? process.env.COGNITO_CLIENT_ID
+      : '5357lgchj0h0fuomqyas5r87u',
   username: 'hello@example.com',
-  password: 'testPassword'
+  password:
+    environment === 'test' ? process.env.COGNITO_CLIENT_SECRET : 'testPassword'
+}
+
+const cognito = {
+  local: new CognitoAuthStub({
+    clientId: cognitoAuthParams.clientId,
+    cognitoUrl: cognitoAuthParams.url,
+    password: cognitoAuthParams.password,
+    username: cognitoAuthParams.username
+  }),
+  env: new CognitoAuth({
+    clientId: cognitoAuthParams.clientId,
+    clientSecret: cognitoAuthParams.password,
+    cognitoUrl: cognitoAuthParams.envUrl
+  })
 }
 
 const dockerLogParser = {
@@ -105,22 +126,24 @@ let apiUri
 let authUri
 let defraIdUri
 let cdpUploaderUri
+let cognitoAuth
 
 if (!environment) {
   apiUri = api.local
   authUri = auth.local
   defraIdUri = defraId.local
   cdpUploaderUri = cdpUploader.local
-} else if (xApiKey) {
-  apiUri = api.envFromLocal
-  authUri = auth.env
-  cdpUploaderUri = cdpUploader.env
-  defraIdUri = defraId.env
+  cognitoAuth = cognito.local
 } else {
   apiUri = api.env
   authUri = auth.env
   cdpUploaderUri = cdpUploader.env
   defraIdUri = defraId.env
+  cognitoAuth = cognito.env
+}
+
+if (xApiKey) {
+  apiUri = api.envFromLocal
 }
 
 export default {
