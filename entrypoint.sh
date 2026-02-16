@@ -1,6 +1,14 @@
 #!/bin/sh
 
 echo "run_id: $RUN_ID"
+
+# Generate data based on PROFILE
+if [ "$PROFILE" = "generate" ]; then
+    npm run generatedata:allMaterialsMixed:withLinking
+    echo "Generated test users"
+    exit 0
+fi
+
 npm run test:tagged @smoketest
 
 npm run report:publish

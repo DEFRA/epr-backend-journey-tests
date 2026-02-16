@@ -5,7 +5,6 @@ export class DefraIdStub {
   constructor(baseUrl = config.defraIdUri) {
     this.baseUrl = baseUrl
     this.defaultHeaders = config.apiHeaders
-    this.processedOrgs = new Map()
     this.accessTokens = new Map()
     this.linked = new Map()
   }
@@ -29,7 +28,8 @@ export class DefraIdStub {
       ...this.defaultHeaders,
       'Content-Type': 'application/x-www-form-urlencoded'
     }
-    const response = await request(
+
+    return await request(
       `${this.baseUrl}/cdp-defra-id-stub/register/${userId}/relationship`,
       {
         method: 'POST',
@@ -37,7 +37,6 @@ export class DefraIdStub {
         body: payload
       }
     )
-    return await response
   }
 
   async authorise(payload) {
@@ -78,6 +77,20 @@ export class DefraIdStub {
       return { Authorization: 'Bearer ' + this.accessTokens.get(userId) }
     } else {
       return {}
+    }
+  }
+
+  async expireAllUsers() {
+    const instanceHeaders = { ...this.defaultHeaders }
+    for (const userId of this.accessTokens.keys()) {
+      await request(
+        `${this.baseUrl}/cdp-defra-id-stub/API/register/${userId}/expire`,
+        {
+          method: 'POST',
+          headers: instanceHeaders,
+          body: ''
+        }
+      )
     }
   }
 }
