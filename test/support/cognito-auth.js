@@ -32,7 +32,6 @@ class CognitoAuth {
     }
 
     this.accessToken = data.access_token
-    console.log(this.accessToken)
   }
 
   authHeader() {
