@@ -29,11 +29,11 @@ BeforeAll({ timeout: 15000 }, async function () {
   defraIdStub = new DefraIdStub()
   users = new Users()
   interpolator = new Interpolator()
-  cognitoAuth = config.cognitoAuth
-  await cognitoAuth.generateToken()
   cdpUploader = new CDPUploader()
   agent = config.undiciAgent
+  cognitoAuth = config.cognitoAuth
   setGlobalDispatcher(agent)
+  await cognitoAuth.generateToken()
 })
 
 AfterAll(async function () {
