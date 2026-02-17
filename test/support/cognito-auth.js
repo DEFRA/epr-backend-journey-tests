@@ -1,5 +1,5 @@
 import { request, setGlobalDispatcher } from 'undici'
-import config from '../test/config/config.js'
+import config from '../config/config.js'
 
 setGlobalDispatcher(config.undiciAgent)
 
