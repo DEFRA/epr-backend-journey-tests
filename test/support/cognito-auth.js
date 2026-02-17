@@ -1,8 +1,9 @@
 import { request } from 'undici'
 
 class CognitoAuth {
+  /** @param {CognitoAuthConfig} config */
   constructor(config = {}) {
-    this.cognitoUrl = config.cognitoUrl
+    this.url = config.url
     this.clientId = config.clientId
     this.clientSecret = config.clientSecret
     this.accessToken = null
@@ -18,7 +19,7 @@ class CognitoAuth {
       client_secret: this.clientSecret
     })
 
-    const { statusCode, body } = await request(this.cognitoUrl, {
+    const { statusCode, body } = await request(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: payload.toString()

@@ -1,8 +1,11 @@
+/** @import { CognitoAuthConfig } from '../config/config.js' */
+
 import { request } from 'undici'
 
-class CognitoAuthStub {
+class CognitoStub {
+  /** @param {CognitoAuthConfig} config */
   constructor(config = {}) {
-    this.cognitoUrl = config.cognitoUrl
+    this.url = config.url
     this.clientId = config.clientId
     this.username = config.username
     this.password = config.password
@@ -10,7 +13,7 @@ class CognitoAuthStub {
   }
 
   async generateToken() {
-    const { statusCode, body } = await request(this.cognitoUrl, {
+    const { statusCode, body } = await request(this.url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-amz-json-1.1',
@@ -42,4 +45,4 @@ class CognitoAuthStub {
   }
 }
 
-export { CognitoAuthStub }
+export { CognitoStub }
