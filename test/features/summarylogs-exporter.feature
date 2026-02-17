@@ -62,6 +62,7 @@ Feature: Summary Logs - Exporter
   # RowId 1002 has 2025-01-01 date, so it's not factored into Waste Balance calculations
   # as Accreditation is valid from 2025-02-02
   # RowId 1003 is within the valid date, but does not have all mandatory fields completed so won't be factored in waste balance calculations
+  # RowId 1000 in the adjusted spreadsheet does not have all mandatory fields completed (So considered excluded) -- this results in the waste balance not calculated for RowId 1000
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
@@ -104,6 +105,8 @@ Feature: Summary Logs - Exporter
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1002  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1003  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | sentOn    |
+    ## RowId 1000 = 10, RowId 1001 = 20, hence WB = 30. 1001 and 1002 are valid rows
+    # RowId 1003 is invalid as it does not have all mandatory fields completed
     And I should see that waste balances are created in the database with the following values
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogOrgId}} | {{summaryLogAccId}} | 30     | 30              |
@@ -111,7 +114,6 @@ Feature: Summary Logs - Exporter
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 30     | 30              |
-
 
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs           |
@@ -127,20 +129,21 @@ Feature: Summary Logs - Exporter
     Then I should receive a summary log upload accepted response
     And the summary log submission status is 'validated'
 
+    # RowId 1000 is adjusted with DATE_RECEIVED_BY_OSR removed, hence should be considered invalid and excluded and not factored in waste balance calculations
     And the summary log has the following loads
       | LoadType           | Count | RowIDs    |
       | added.valid        | 2     | 1004,4001 |
       | added.invalid      | 0     |           |
       | added.included     | 2     | 1004,4001 |
       | added.excluded     | 0     |           |
-      | unchanged.valid    | 2     | 1000,4000 |
+      | unchanged.valid    | 1     | 4000      |
       | unchanged.invalid  | 0     |           |
-      | unchanged.included | 2     | 1000,4000 |
+      | unchanged.included | 1     | 4000      |
       | unchanged.excluded | 0     |           |
       | adjusted.valid     | 1     | 1001      |
-      | adjusted.invalid   | 0     |           |
+      | adjusted.invalid   | 1     | 1000      |
       | adjusted.included  | 1     | 1001      |
-      | adjusted.excluded  | 0     |           |
+      | adjusted.excluded  | 1     | 1000      |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -155,8 +158,8 @@ Feature: Summary Logs - Exporter
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4001  | sentOn    |
     And I should see that waste balances are created in the database with the following values
       | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 89     | 89              |
+      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 79     | 79              |
     When I retrieve the waste balance for the organisation
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogAccId}} | 89     | 89              |
+      | {{summaryLogAccId}} | 79     | 79              |
