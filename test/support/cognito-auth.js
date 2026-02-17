@@ -1,6 +1,9 @@
-/** @import { CognitoAuthConfig } from '../config/config.js' */
 
-import { request } from 'undici'
+/** @import { CognitoAuthConfig } from '../config/config.js' */
+import { request, setGlobalDispatcher } from 'undici'
+import config from '../test/config/config.js'
+
+setGlobalDispatcher(config.undiciAgent)
 
 class CognitoAuth {
   /** @param {CognitoAuthConfig} config */
