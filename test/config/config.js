@@ -84,7 +84,7 @@ const cdpUploader = {
 
 /** @type CognitoAuthConfig */
 const cognitoAuthParams = {
-  url: 'http://localhost:9229',
+  url: withProxy ? 'http://cognito-stub:9229' : 'http://localhost:9229',
   envUrl: process.env.COGNITO_URL,
   clientId:
     environment === 'test'
