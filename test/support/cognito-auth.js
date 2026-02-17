@@ -1,4 +1,8 @@
-import { request } from 'undici'
+import { request, setGlobalDispatcher } from 'undici'
+import config from '../test/config/config.js'
+
+setGlobalDispatcher(config.undiciAgent)
+
 class CognitoAuth {
   constructor(config = {}) {
     this.cognitoUrl = config.cognitoUrl
