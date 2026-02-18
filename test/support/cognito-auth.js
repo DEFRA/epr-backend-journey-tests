@@ -1,11 +1,12 @@
 import { request } from 'undici'
+import config from '../config/config.js'
 
 class CognitoAuth {
   /** @param {CognitoAuthConfig} config */
   constructor(config = {}) {
-    this.url = config.url
+    this.url = config.envUrl
     this.clientId = config.clientId
-    this.clientSecret = config.clientSecret
+    this.clientSecret = config.password
     this.accessToken = null
   }
 
@@ -22,7 +23,8 @@ class CognitoAuth {
     const { statusCode, body } = await request(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: payload.toString()
+      body: payload.toString(),
+      dispatcher: config.undiciAgent
     })
 
     const data = await body.json()
