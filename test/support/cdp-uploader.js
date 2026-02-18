@@ -18,26 +18,20 @@ export class CDPUploader {
 
     const fileStream = createReadStream(filePathPrefix + filename)
 
-    const response = await request(
-      `${this.baseUrl}/upload-and-scan/${uploadId}`,
-      {
-        method: 'POST',
-        headers: instanceHeaders,
-        body: fileStream
-      }
-    )
-
-    return await response
+    return await request(`${this.baseUrl}/upload-and-scan/${uploadId}`, {
+      method: 'POST',
+      headers: instanceHeaders,
+      body: fileStream
+    })
   }
 
   async status(uploadId) {
     const instanceHeaders = {
       ...this.defaultHeaders
     }
-    const response = await request(`${this.baseUrl}/status/${uploadId}`, {
+    return await request(`${this.baseUrl}/status/${uploadId}`, {
       method: 'GET',
       headers: instanceHeaders
     })
-    return await response
   }
 }
