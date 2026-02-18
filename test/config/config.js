@@ -97,11 +97,7 @@ const cognitoAuthParams = {
 
 const cognito = {
   local: new CognitoStub(cognitoAuthParams),
-  env: new CognitoAuth({
-    clientId: cognitoAuthParams.clientId,
-    clientSecret: cognitoAuthParams.password,
-    url: cognitoAuthParams.envUrl
-  })
+  env: new CognitoAuth(cognitoAuthParams)
 }
 
 const dockerLogParser = {
