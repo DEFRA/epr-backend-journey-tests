@@ -1,4 +1,5 @@
 import { request } from 'undici'
+import config from '../config/config.js'
 
 class CognitoAuth {
   /** @param {CognitoAuthConfig} config */
@@ -22,7 +23,8 @@ class CognitoAuth {
     const { statusCode, body } = await request(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: payload.toString()
+      body: payload.toString(),
+      dispatcher: config.undiciAgent
     })
 
     const data = await body.json()

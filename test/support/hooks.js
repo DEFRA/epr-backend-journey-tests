@@ -32,8 +32,8 @@ BeforeAll({ timeout: 15000 }, async function () {
   cdpUploader = new CDPUploader()
   agent = config.undiciAgent
   cognitoAuth = config.cognitoAuth
-  setGlobalDispatcher(agent)
   await cognitoAuth.generateToken()
+  setGlobalDispatcher(agent)
 })
 
 AfterAll(async function () {
