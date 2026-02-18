@@ -1,4 +1,9 @@
-import { After, AfterAll, BeforeAll } from '@cucumber/cucumber'
+import {
+  After,
+  AfterAll,
+  BeforeAll,
+  setDefaultTimeout
+} from '@cucumber/cucumber'
 import fs from 'node:fs'
 import config from '../config/config.js'
 
@@ -34,6 +39,10 @@ BeforeAll({ timeout: 15000 }, async function () {
   cognitoAuth = config.cognitoAuth
   await cognitoAuth.generateToken()
   setGlobalDispatcher(agent)
+  // Increase timeout to 30s when running Smoke test
+  if (process.env.ENVIRONMENT) {
+    setDefaultTimeout(30000)
+  }
 })
 
 AfterAll(async function () {
