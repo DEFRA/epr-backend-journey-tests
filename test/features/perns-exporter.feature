@@ -1,6 +1,6 @@
 @prn
 @pern
-  @prn_exporter
+@prn_exporter
 Feature: Packaging Recycling Notes transitions for Exporter
 
   Scenario: PERNs are created after waste balance is available
