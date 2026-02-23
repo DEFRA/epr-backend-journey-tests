@@ -1,6 +1,6 @@
 @prn
 @pern
-@prn_exporter
+  @prn_exporter
 Feature: Packaging Recycling Notes transitions for Exporter
 
   Scenario: PERNs are created after waste balance is available
@@ -129,3 +129,12 @@ Feature: Packaging Recycling Notes transitions for Exporter
     And the following audit logs are present
       | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                            | Count |
       | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, cancelled | 1     |
+
+    When I retrieve the PRNs
+    Then I see the following retrieved PRNs
+    | PRN Number     | Tonnage | Material | Status    | OrganisationId | OrganisationName      | TradingName  |
+    | {{prnNumber}}  | 25      | paper    | cancelled | testId         | Test Organisation Ltd | Trading Name |
+    |                | 50      | paper    | discarded | testId         | Test Organisation Ltd | Trading Name |
+
+    When an external API retrieves the PRN with status 'cancelled'
+    Then the external API call to retrieve the PRN is successful and contains the PRN with PRN Number '{{prnNumber}}'
