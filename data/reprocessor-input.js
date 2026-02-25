@@ -12,7 +12,7 @@ export function generateInputReceivedRow(material) {
 
   return {
     // Section 1
-    G: date.toLocaleDateString('en-US'), // Column G: Date received
+    G: date.toLocaleDateString('en-GB'), // Column G: Date received
     H: faker.helpers.arrayElement(EWC_CODES), // Column H: EWC Code
     I: faker.helpers.arrayElement(material.wasteDescriptions), // Column I
     J: faker.helpers.arrayElement(YES_NO), // Column J: PRN issued
@@ -47,7 +47,7 @@ export function generateInputReprocessedRow() {
 
   return {
     // Section 4
-    G: date.toLocaleDateString('en-US'), // Date load left site
+    G: date.toLocaleDateString('en-GB'), // Date load left site
     H: faker.word.verb(), // Description of product
     I: faker.helpers.arrayElement(YES_NO), // End of waste standards?
     J: faker.number.float({ min: 50, max: 500, precision: 0.01 }), // Product tonnage
@@ -65,7 +65,7 @@ export function generateInputSentOnRow(material) {
 
   return {
     // Section 5
-    G: date.toLocaleDateString('en-US'), // Date load left site
+    G: date.toLocaleDateString('en-GB'), // Date load left site
     H: faker.number.float({ min: 5, max: 20, precision: 0.01 }), // Tonnage of UK packaging waste sent on
 
     // Section 6

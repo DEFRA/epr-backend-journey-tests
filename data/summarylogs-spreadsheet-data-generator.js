@@ -154,6 +154,15 @@ async function generateSpreadsheetData(options = {}) {
           Object.entries(rowData).forEach(([columnLetter, value]) => {
             const cell = sheet.getCell(`${columnLetter}${currentRow}`)
             cell.value = value
+            const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/
+            if (typeof value === 'string' && dateRegex.test(value)) {
+              const [day, month, year] = value.split('/')
+              const parsed = new Date(year, month - 1, day)
+              if (!isNaN(parsed)) {
+                cell.value = parsed
+                cell.numFmt = 'dd/mm/yyyy'
+              }
+            }
           })
 
           currentRow++

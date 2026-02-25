@@ -27,7 +27,7 @@ export function generateExportedRow(material) {
 
   return {
     // Section 1
-    G: date.toLocaleDateString('en-US'), // Column G: Date received for export
+    G: date.toLocaleDateString('en-GB'), // Column G: Date received for export
     H: faker.helpers.arrayElement(EWC_CODES), // Column H: EWC Code
     I: faker.helpers.arrayElement(material.wasteDescriptions), // Column I: Waste description
     J: faker.helpers.arrayElement(YES_NO), // Column J: PRN issued
@@ -39,13 +39,13 @@ export function generateExportedRow(material) {
     Q: faker.number.float({ min: 5, max: 10, precision: 0.01 }), // Column Q: Weight of non-target material and contaminants
     R: faker.number.float({ min: 0.05, max: 0.8 }), // Column R: Recyclable Percentage
     T: faker.number.float({ min: 1, max: 5, precision: 0.01 }), // Column T: Tonnage of UK packaging waste exported
-    U: dateOfExport.toLocaleDateString('en-US'), // Column U: Date of export
+    U: dateOfExport.toLocaleDateString('en-GB'), // Column U: Date of export
     V: faker.helpers.arrayElement(BASEL_CODES), // basel export code
     W: faker.number.int({ min: 3000000000, max: 4000000000 }), // customs code (HS code)
     X:
       faker.string.alpha({ count: 4, casing: 'upper' }) +
       faker.number.int({ min: 1000000, max: 10000000 }), // Container or trailer number / IMO vessel if bulk shipment
-    Y: faker.date.recent({ days: 2 }).toLocaleString('en-US'), // Date received by approved overseas reprocessor
+    Y: faker.date.recent({ days: 2 }).toLocaleDateString('en-GB'), // Date received by approved overseas reprocessor
     Z: faker.number.int({ min: 400, max: 700 }), // Approved overseas reprocessor's ID
     AA: interimSite, // Did you export the waste through an interim site? (If yes, provide information for AB and AC)
     AB: interimSiteId, // Interim Site ID (If applicable)
@@ -60,7 +60,7 @@ export function generateExportedRow(material) {
     AM: faker.helpers.arrayElement(ACTIVITIES), // Column AM: Activities carried out by supplier on the packaging waste (For example, sorting)
     AN: faker.helpers.arrayElement(YES_NO), // Column AN: Was the waste refused by the recipient destination?
     AO: faker.helpers.arrayElement(YES_NO), // Column AO: Was the waste stopped during the course of export?
-    AP: faker.date.recent({ days: 30 }).toLocaleDateString('en-US'), // Column AP: Date that the stopped or refused waste was repatriated
+    AP: faker.date.recent({ days: 30 }).toLocaleDateString('en-GB'), // Column AP: Date that the stopped or refused waste was repatriated
 
     // Section 3
     AU: `W${faker.number.int({ min: 100000, max: 999999 })}`, // Your reference
@@ -101,7 +101,7 @@ export function generateSentOnRow(material) {
 
   return {
     // Section 4
-    G: date.toLocaleDateString('en-US'), // Date load left site
+    G: date.toLocaleDateString('en-GB'), // Date load left site
     H: faker.number.float({ min: 5, max: 20, precision: 0.01 }), // Tonnage of UK packaging waste sent on
     I: 'Exporter', // Final destination facility type
     J: faker.company.name(), // Final destination facility name
