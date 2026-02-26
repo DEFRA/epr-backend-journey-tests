@@ -1,6 +1,11 @@
 import { Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { cognitoAuth, defraIdStub, eprBackendAPI } from '../support/hooks.js'
+import {
+  cognitoAuth,
+  defraIdStub,
+  eprBackendAPI,
+  interpolator
+} from '../support/hooks.js'
 
 When('I create a PRN with the following details', async function (dataTable) {
   this.payload = dataTable.rowsHash()
@@ -48,6 +53,59 @@ When('an external API accepts the PRN', async function () {
     cognitoAuth.authHeader()
   )
 })
+
+When('I retrieve the PRNs', async function () {
+  this.response = await eprBackendAPI.get(
+    `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/accreditations/${this.accreditationId}/packaging-recycling-notes`,
+    defraIdStub.authHeader(this.userId)
+  )
+})
+
+When(
+  'an external API retrieves the PRN with status {string}',
+  async function (status) {
+    this.response = await eprBackendAPI.get(
+      `/v1/packaging-recycling-notes?statuses=${status}`,
+      cognitoAuth.authHeader()
+    )
+  }
+)
+
+Then('I see the following retrieved PRNs', async function (dataTable) {
+  expect(this.response.statusCode).to.equal(200)
+  const dataRows = dataTable.hashes()
+  const prns = await this.response.body.json()
+  expect(prns.length).to.equal(dataRows.length)
+  for (const dataRow of dataRows) {
+    let expectedPrnNumber = null
+    if (dataRow['PRN Number']) {
+      expectedPrnNumber = interpolator.interpolate(this, dataRow['PRN Number'])
+    }
+    const prn = prns.find((p) => p.prnNumber === expectedPrnNumber)
+    if (!prn) {
+      expect.fail(`PRN with PRN Number ${expectedPrnNumber} not found`)
+    }
+    expect(prn.status).to.equal(dataRow.Status)
+    expect(prn.material).to.equal(dataRow.Material)
+    expect(prn.tonnage).to.equal(parseInt(dataRow.Tonnage))
+    expect(prn.issuedToOrganisation.id).to.equal(dataRow.OrganisationId)
+    expect(prn.issuedToOrganisation.name).to.equal(dataRow.OrganisationName)
+    expect(prn.issuedToOrganisation.tradingName).to.equal(dataRow.TradingName)
+  }
+})
+
+Then(
+  'the external API call to retrieve the PRN is successful and contains the PRN with PRN Number {string}',
+  async function (prnNumber) {
+    expect(this.response.statusCode).to.equal(200)
+    const prns = await this.response.body.json()
+    const expectedPrnNumber = interpolator.interpolate(this, prnNumber)
+    const prn = prns.items.find((p) => p.prnNumber === expectedPrnNumber)
+    if (!prn) {
+      expect.fail(`PRN with PRN Number ${prnNumber} not found from the list`)
+    }
+  }
+)
 
 Then(
   'the external API call to update the PRN status is successful',

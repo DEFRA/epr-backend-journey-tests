@@ -1,6 +1,7 @@
 /** @import { CognitoAuthConfig } from '../config/config.js' */
 
 import { request } from 'undici'
+import config from '../config/config.js'
 
 class CognitoStub {
   /** @param {CognitoAuthConfig} config */
@@ -26,7 +27,8 @@ class CognitoStub {
           USERNAME: this.username,
           PASSWORD: this.password
         }
-      })
+      }),
+      dispatcher: config.undiciAgent
     })
 
     const data = await body.json()

@@ -15,7 +15,8 @@ export class Interpolator {
       '{{summaryLogS3Bucket}}': context.summaryLog?.s3Bucket,
       '{{publicRegisterUrl}}': context.publicRegisterUrl,
       '{{version}}': context.version,
-      '{{prnId}}': context.prnId
+      '{{prnId}}': context.prnId,
+      '{{prnNumber}}': context.prnNumber
     }
 
     expectedMessage = Object.entries(replacements).reduce(
