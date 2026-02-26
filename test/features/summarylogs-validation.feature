@@ -125,3 +125,28 @@ Feature: Summary Logs validation tests
       | fileStatus        | rejected            |
       | status            | rejected            |
       | validationFailure | FILE_REJECTED       |
+
+  # RowID with 1000 has missing DATE_RECEIVED column
+  Scenario: Summary Logs uploads (With missing date row) and creates Waste Records but excludes missing date row
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs    |
+      | s3Key               | missing-date-row-key  |
+      | fileId              | missing-date-row-id   |
+      | filename            | missing-date-row.xlsx |
+      | fileStatus          | complete              |
+      | accreditationNumber | ACC123456             |
+      | registrationNumber  | R25SR500030912PA      |
+
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status  | validated  |
+    And the summary log has the following loads
+      | LoadType       | Count | RowIDs         |
+      | added.valid    | 3     | 1001,4000,5000 |
+      | added.invalid  | 2     | 1000,1002      |
+      | added.included | 2     | 1001,5000      |
+      | added.excluded | 3     | 1000,1002,4000 |
