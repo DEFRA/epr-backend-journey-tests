@@ -32,7 +32,6 @@
     "format:check": "prettier --check 'test/**/*.js' '**/*.{js,md,json,config.js}'",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "git:pre-commit-hook": "npm run format:check && npm run lint",
     "report": "allure generate allure-results --single-file --clean",
     "report:publish": "npm run report; ./bin/publish-tests.sh"
   },
@@ -59,6 +58,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.5",
     "husky": "9.1.7",
+    "lint-staged": "16.2.7",
     "mongodb": "7.1.0",
     "neostandard": "0.12.2",
     "prettier": "3.8.1"
