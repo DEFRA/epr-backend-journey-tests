@@ -16,6 +16,7 @@ Given('I have the following summary log upload data', function (dataTable) {
   this.uploadData = dataTable.rowsHash()
   this.summaryLog.setUploadData(this.uploadData)
   this.payload = this.summaryLog.toUploadCompletedPayload()
+  console.log(this.summaryLog)
 })
 
 Given(
