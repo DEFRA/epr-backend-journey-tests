@@ -175,7 +175,6 @@ services:
       FEATURE_FLAG_DEV_ENDPOINTS: true
       FEATURE_FLAG_PACKAGING_RECYCLING_NOTES_EXTERNAL_API: true
       FEATURE_FLAG_PACKAGING_RECYCLING_NOTES: true
-      FEATURE_FLAG_SUMMARY_LOGS: true
       GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
       LOCALSTACK_ENDPOINT: http://localstack:4566
       LOG_FORMAT: ecs
