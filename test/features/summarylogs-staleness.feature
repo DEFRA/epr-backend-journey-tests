@@ -13,6 +13,7 @@ Feature: Summary Logs test (Staleness detection)
       | reprocessingType | regNumber        | accNumber | status   |
       | input            | R25SR500030912PA | ACC123456 | approved |
     Then the organisations data update succeeds
+    When I backdate the accreditation status history to "2025-01-02"
 
     When I register and authorise a User and link it to the recently migrated organisation
 

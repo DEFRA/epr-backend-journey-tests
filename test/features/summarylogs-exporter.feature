@@ -12,6 +12,7 @@ Feature: Summary Logs - Exporter
       | regNumber        | accNumber | status   |
       | E25SR500030913PA | ACC234567 | approved |
     Then the organisations data update succeeds
+    When I backdate the accreditation status history to "2024-12-01"
 
     When I register and authorise a User and link it to the recently migrated organisation
 
@@ -73,6 +74,7 @@ Feature: Summary Logs - Exporter
       | regNumber        | accNumber | status   | validFrom  |
       | E25SR500030913PA | ACC234567 | approved | 2025-02-02 |
     Then the organisations data update succeeds
+    When I backdate the accreditation status history to "2024-12-01"
 
     When I register and authorise a User and link it to the recently migrated organisation
 
