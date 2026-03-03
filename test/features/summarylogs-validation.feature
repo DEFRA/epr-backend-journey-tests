@@ -126,8 +126,38 @@ Feature: Summary Logs validation tests
       | status            | rejected            |
       | validationFailure | FILE_REJECTED       |
 
+  # Rows with DATE_RECEIVED_FOR_REPROCESSING after suspension date are IGNORED
+  Scenario: Summary Logs uploads (Reprocessor Input) ignores received rows when accreditation is suspended
+    When I set the accreditation "ACC123456" status history to
+      | status    | updatedAt  |
+      | created   | 2024-01-01 |
+      | approved  | 2024-06-01 |
+      | suspended | 2025-07-01 |
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs                      |
+      | s3Key               | reprocessor-input-valid-key              |
+      | fileId              | reprocessor-input-suspended-file-id      |
+      | filename            | reprocessor-input-valid.xlsx             |
+      | fileStatus          | complete                                 |
+      | accreditationNumber | ACC123456                                |
+      | registrationNumber  | R25SR500030912PA                         |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status | validated |
+    And the summary log has the following loads
+      | LoadType       | Count | RowIDs    |
+      | added.valid    | 2     | 4000,5000 |
+      | added.invalid  | 0     |           |
+      | added.included | 1     | 5000      |
+      | added.excluded | 1     | 4000      |
+
   # RowID with 1000 has missing DATE_RECEIVED column
   Scenario: Summary Logs uploads (With missing date row) and creates Waste Records but excludes missing date row
+    When I backdate the accreditation status history to "2025-01-02"
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs    |
       | s3Key               | missing-date-row-key  |
