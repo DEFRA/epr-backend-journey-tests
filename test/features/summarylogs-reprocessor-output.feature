@@ -91,15 +91,15 @@ Feature: Summary Logs - Reprocessor on Output
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the summary log submission status is 'validated'
-    # RowIDs with 3001, 1003, 5002 are filtered from waste balance as they don't fall within the validFrom date range
+    # RowIDs with 3001, 5002 are filtered from waste balance as they don't fall within the validFrom date range
     # RowIDs with 3003, 3004 are excluded from waste balance as they are missing certain mandatory fields
     # RowID with 3000 is also adjusted
     And the summary log has the following loads
       | LoadType           | Count | RowIDs                   |
-      | added.valid        | 1     | 3002                     |
+      | added.valid        | 2     | 1003,3002                |
       | added.invalid      | 2     | 3003,3004                |
       | added.included     | 1     | 3002                     |
-      | added.excluded     | 2     | 3003,3004                |
+      | added.excluded     | 3     | 1003,3003,3004           |
       | unchanged.valid    | 5     | 1000,1001,1002,5000,5001 |
       | unchanged.invalid  | 0     |                          |
       | unchanged.included | 0     |                          |
