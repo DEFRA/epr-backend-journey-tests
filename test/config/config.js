@@ -99,7 +99,7 @@ const cognito = {
 }
 
 const dockerLogParser = {
-  containerName: 'epr-backend-journey-tests-epr-backend-1'
+  containerName: 'epr-backend'
 }
 
 const mongoUri = 'mongodb://localhost:27017/epr-backend'
