@@ -85,7 +85,7 @@ Feature: Summary Logs - Reprocessor on Input
       | Code                   | Location Sheet | Location Table                  | Location Row ID |
       | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 1001            |
       | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 1002            |
-      | SEQUENTIAL_ROW_REMOVED | Processed      | PROCESSED_LOADS                 | 4000            |
+      | SEQUENTIAL_ROW_REMOVED | Processed      | REPROCESSED_LOADS               | 4000            |
       | SEQUENTIAL_ROW_REMOVED | Sent on        | SENT_ON_LOADS                   | 5000            |
 
     When I submit the uploaded summary log
