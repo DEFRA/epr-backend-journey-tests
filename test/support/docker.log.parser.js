@@ -40,8 +40,19 @@ export class DockerLogParser {
   }
 
   runDockerCommand = async function (latestTimestamp) {
+    const { stdout: psOutput } = await execAsync(
+      `docker ps --filter "name=${this.containerName}" --format "{{.ID}}" | head -1`
+    )
+    const containerId = psOutput.trim()
+
+    if (!containerId) {
+      throw new Error(
+        `No running container found with name in: ${this.containerName}`
+      )
+    }
+
     const { stdout, stderr } = await execAsync(
-      `docker logs ${this.containerName} -n ${logLinesLimit} --since ${latestTimestamp}Z`
+      `docker logs ${containerId} -n ${logLinesLimit} --since ${latestTimestamp}Z`
     )
     return stdout + stderr
   }
