@@ -54,9 +54,7 @@ const agent = new Agent({
 })
 
 const auth = {
-  local: withProxy
-    ? 'http://epr-re-ex-entra-stub:3010'
-    : 'http://localhost:3010',
+  local: withProxy ? 'http://entra-stub:3010' : 'http://localhost:3010',
   env:
     environment === 'test'
       ? 'https://login.microsoftonline.com/6f504113-6b64-43f2-ade9-242e05780007/oauth2/v2.0/token'
@@ -101,7 +99,7 @@ const cognito = {
 }
 
 const dockerLogParser = {
-  containerName: 'epr-backend-journey-tests-epr-backend-1'
+  containerName: 'epr-backend'
 }
 
 const mongoUri = 'mongodb://localhost:27017/epr-backend'

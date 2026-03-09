@@ -95,12 +95,12 @@ services:
     networks:
       - cdp-tenant
 
-  epr-re-ex-entra-stub:
+  entra-stub:
     image: defradigital/epr-re-ex-entra-stub:latest
     ports:
       - 3010:3010
     environment:
-      STUB_INTERNAL_URL: http://epr-re-ex-entra-stub:3010
+      STUB_INTERNAL_URL: http://entra-stub:3010
     healthcheck:
       test: ['CMD', 'curl', 'http://localhost:3010/health']
       interval: 3s
@@ -171,7 +171,7 @@ services:
       COMMAND_QUEUE_SQS_ENDPOINT: http://localstack:4566
       DEFRA_ID_CLIENT_ID: 63983fc2-cfff-45bb-8ec2-959e21062b9a
       DEFRA_ID_OIDC_WELL_KNOWN_URL: http://defra-id-stub:3200/cdp-defra-id-stub/.well-known/openid-configuration
-      ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://epr-re-ex-entra-stub:3010/.well-known/openid-configuration
+      ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://entra-stub:3010/.well-known/openid-configuration
       FEATURE_FLAG_DEV_ENDPOINTS: true
       GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
       LOCALSTACK_ENDPOINT: http://localstack:4566
@@ -190,7 +190,7 @@ services:
         condition: service_started
       defra-id-stub:
         condition: service_started
-      epr-re-ex-entra-stub:
+      entra-stub:
         condition: service_healthy
       localstack:
         condition: service_healthy
