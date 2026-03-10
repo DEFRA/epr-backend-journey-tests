@@ -26,6 +26,8 @@
     "generate:spreadsheet:input": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=reprocessorInput",
     "generate:spreadsheet:output": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=reprocessorOutput",
     "generate:spreadsheet:exporter": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=exporter",
+    "generate:spreadsheet:regOnlyExporter": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=regOnlyExporter",
+    "generate:spreadsheet:regOnlyReprocessor": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=regOnlyReprocessor",
     "test": "cucumber-js ; npm run report",
     "test:tagged": "cucumber-js --tags",
     "format": "prettier --write 'test/**/*.js' '**/*.{js,md,json,config.js}'",

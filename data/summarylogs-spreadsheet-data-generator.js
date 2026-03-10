@@ -14,6 +14,15 @@ import {
   generateInputReceivedRow,
   generateInputReprocessedRow
 } from './reprocessor-input.js'
+import {
+  generateRegOnlyExportedRow,
+  generateRegOnlyReceivedRow,
+  generateRegOnlySentOnRow
+} from './exporter.reg.only.js'
+import {
+  generateRegOnlyReprocessorReceivedRow,
+  generateRegOnlyReprocessorSentOnRow
+} from './reprocessor.reg.only.js'
 
 function sanitiseFilenameComponent(input) {
   if (typeof input !== 'string') {
@@ -89,7 +98,7 @@ async function generateSpreadsheetData(options = {}) {
         },
         { name: 'Sent on (sections 5 and 6)', fn: generateOutputSentOnRow }
       ]
-    } else {
+    } else if (wasteProcessingType === 'reprocessorInput') {
       templateFile = './data/reprocessor.input.template.xlsx'
       worksheets = [
         {
@@ -102,6 +111,28 @@ async function generateSpreadsheetData(options = {}) {
         },
         { name: 'Sent on (sections 5, 6 and 7)', fn: generateInputSentOnRow }
       ]
+    } else if (wasteProcessingType === 'regOnlyExporter') {
+      templateFile = './data/exporter.reg.only.template.xlsx'
+      worksheets = [
+        { name: 'Received (section 1)', fn: generateRegOnlyReceivedRow },
+        { name: 'Exported (sections 2 and 3)', fn: generateRegOnlyExportedRow },
+        {
+          name: 'Sent on (section 4)',
+          fn: generateRegOnlySentOnRow
+        }
+      ]
+    } else if (wasteProcessingType === 'regOnlyReprocessor') {
+      templateFile = './data/reprocessor.reg.only.template.xlsx'
+      worksheets = [
+        {
+          name: 'Received (section 1)',
+          fn: generateRegOnlyReprocessorReceivedRow
+        },
+        {
+          name: 'Sent on (section 2)',
+          fn: generateRegOnlyReprocessorSentOnRow
+        }
+      ]
     }
 
     // Create workbook and read the template
@@ -113,11 +144,16 @@ async function generateSpreadsheetData(options = {}) {
     if (coverSheet) {
       coverSheet.getCell('E7').value = material.dropdownValue
       coverSheet.getCell('E10').value = registrationNumber
-      coverSheet.getCell('E13').value = accreditationNumber
-
-      logger.info(
-        `Updated Cover sheet -- Material: ${material.material}, Registration: ${registrationNumber}, Accreditation: ${accreditationNumber}`
-      )
+      if (!wasteProcessingType.startsWith('regOnly')) {
+        coverSheet.getCell('E13').value = accreditationNumber
+        logger.info(
+          `Updated Cover sheet -- Material: ${material.material}, Registration: ${registrationNumber}, Accreditation: ${accreditationNumber}`
+        )
+      } else {
+        logger.info(
+          `Updated Cover sheet -- Material: ${material.material}, Registration: ${registrationNumber}`
+        )
+      }
     } else {
       logger.warn('Cover sheet not found')
     }
@@ -147,6 +183,16 @@ async function generateSpreadsheetData(options = {}) {
               worksheet.name === 'Received (sections 1, 2 and 3)'
             ) {
               rowData.N = rowData.K - (rowData.L + rowData.M)
+            } else if (
+              wasteProcessingType === 'regOnlyExporter' &&
+              worksheet.name === 'Received (section 1)'
+            ) {
+              rowData.Q = rowData.N * rowData.P
+            } else if (
+              wasteProcessingType === 'regOnlyReprocessor' &&
+              worksheet.name === 'Received (section 1)'
+            ) {
+              rowData.K = rowData.H * rowData.J
             }
           }
 
@@ -177,7 +223,13 @@ async function generateSpreadsheetData(options = {}) {
     const safeType = sanitiseFilenameComponent(wasteProcessingType)
     const safeAcc = sanitiseFilenameComponent(accreditationNumber)
     const safeReg = sanitiseFilenameComponent(registrationNumber)
-    const outputFile = `./data/${safeType}_${safeAcc}_${safeReg}.xlsx`
+
+    let outputFile
+    if (!wasteProcessingType.startsWith('regOnly')) {
+      outputFile = `./data/${safeType}_${safeAcc}_${safeReg}.xlsx`
+    } else {
+      outputFile = `./data/${safeType}_${safeReg}.xlsx`
+    }
     await workbook.xlsx.writeFile(outputFile)
 
     logger.info(`Successfully generated spreadsheet: ${outputFile}`)
