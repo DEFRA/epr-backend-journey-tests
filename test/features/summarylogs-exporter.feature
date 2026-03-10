@@ -94,8 +94,8 @@ Feature: Summary Logs - Exporter
       | LoadType       | Count | RowIDs         |
       | added.valid    | 3     | 1000,1001,4000 |
       | added.invalid  | 1     | 1003           |
-      | added.included | 3     | 1000,1001,4000 |
-      | added.excluded | 1     | 1003           |
+      | added.included | 2     | 1000,1001      |
+      | added.excluded | 2     | 1003,4000      |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -135,12 +135,12 @@ Feature: Summary Logs - Exporter
       | LoadType           | Count | RowIDs    |
       | added.valid        | 2     | 1004,4001 |
       | added.invalid      | 0     |           |
-      | added.included     | 2     | 1004,4001 |
-      | added.excluded     | 0     |           |
+      | added.included     | 1     | 1004      |
+      | added.excluded     | 1     | 4001      |
       | unchanged.valid    | 1     | 4000      |
       | unchanged.invalid  | 0     |           |
-      | unchanged.included | 1     | 4000      |
-      | unchanged.excluded | 0     |           |
+      | unchanged.included | 0     |           |
+      | unchanged.excluded | 1     | 4000      |
       | adjusted.valid     | 1     | 1001      |
       | adjusted.invalid   | 1     | 1000      |
       | adjusted.included  | 1     | 1001      |
