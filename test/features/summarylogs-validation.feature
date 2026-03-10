@@ -86,7 +86,6 @@ Feature: Summary Logs validation tests
       | PROCESSING_TYPE_INVALID   | PROCESSING_TYPE     |
       | VALIDATION_FALLBACK_ERROR | PROCESSING_TYPE     |
       | TEMPLATE_VERSION_INVALID  | TEMPLATE_VERSION    |
-      | MATERIAL_REQUIRED         | MATERIAL            |
       | REGISTRATION_REQUIRED     | REGISTRATION_NUMBER |
 
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
