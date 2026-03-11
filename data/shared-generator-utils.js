@@ -63,7 +63,7 @@ export async function createOrganisation(context, isNonRegistered) {
   }
 }
 
-export async function createRegistrationAndAccreditation(
+export async function createRegistration(
   context,
   {
     organisation,
@@ -95,7 +95,21 @@ export async function createRegistrationAndAccreditation(
     JSON.stringify(registrationPayload)
   )
   await assertSuccessResponse(regResponse, '/v1/apply/registration')
+  return registration
+}
 
+export async function createAccreditation(
+  context,
+  registration,
+  {
+    organisation,
+    orgId,
+    referenceNumber,
+    material,
+    isExporter,
+    glassRecyclingProcess
+  }
+) {
   const accreditation = new Accreditation(orgId, referenceNumber)
   accreditation.fullName = organisation.fullName
   accreditation.email = organisation.email
@@ -115,6 +129,38 @@ export async function createRegistrationAndAccreditation(
     JSON.stringify(accreditationPayload)
   )
   await assertSuccessResponse(accResponse, '/v1/apply/accreditation')
+}
+
+export async function createRegistrationAndAccreditation(
+  context,
+  {
+    organisation,
+    orgId,
+    referenceNumber,
+    material,
+    street,
+    isExporter,
+    glassRecyclingProcess
+  }
+) {
+  const registration = await createRegistration(context, {
+    organisation,
+    orgId,
+    referenceNumber,
+    material,
+    street,
+    isExporter,
+    glassRecyclingProcess
+  })
+
+  await createAccreditation(context, registration, {
+    organisation,
+    orgId,
+    referenceNumber,
+    material,
+    isExporter,
+    glassRecyclingProcess
+  })
 }
 
 export async function generateAuthToken(context) {
