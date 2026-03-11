@@ -281,7 +281,6 @@ export async function updateOrganisationData(
     registrationUpdates[registrationUpdates.length - 1].updateData.status
   data = { organisation: data }
 
-  // console.log(JSON.stringify(data))
   const patchResponse = await context.baseAPI.patch(
     `/v1/dev/organisations/${referenceNumber}`,
     JSON.stringify(data)
