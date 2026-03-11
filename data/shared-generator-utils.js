@@ -183,30 +183,41 @@ export async function generateAuthToken(context) {
   await context.authClient.generateToken(payload, urlSuffix)
 }
 
-export function generateOrgUpdateData(index, suffix, reprocessingType = null) {
+export function generateOrgUpdateData(index, suffix, registrationType = null) {
   const baseData = {
     status: 'approved'
   }
 
-  if (reprocessingType === 'input') {
+  if (registrationType === 'input') {
     return {
       ...baseData,
       regNumber: `R25SR5000${index}0912${suffix}`,
       accNumber: `R-ACC12${index}45${suffix}`,
       reprocessingType: 'input'
     }
-  } else if (reprocessingType === 'output') {
+  } else if (registrationType === 'output') {
     return {
       ...baseData,
       regNumber: `R25SR5000${index}0912${suffix}`,
       accNumber: `R-ACC12${index}45${suffix}`,
       reprocessingType: 'output'
     }
-  } else {
+  } else if (registrationType === 'exporter') {
     return {
       ...baseData,
       regNumber: `E25SR5000${index}0912${suffix}`,
       accNumber: `E-ACC12${index}45${suffix}`
+    }
+  } else if (registrationType === 'regOnlyReproc') {
+    return {
+      ...baseData,
+      regNumber: `R25SR5000${index}0912${suffix}`,
+      reprocessingType: 'input'
+    }
+  } else if (registrationType === 'regOnlyExporter') {
+    return {
+      ...baseData,
+      regNumber: `E25SR5000${index}0912${suffix}`
     }
   }
 }
@@ -241,15 +252,18 @@ export async function updateOrganisationData(
       data.registrations[index].reprocessingType = updateData.reprocessingType
     }
     data.registrations[index].registrationNumber = updateData.regNumber
-    data.registrations[index].accreditationId = data.accreditations[index].id
+    if (updateData.accNumber) {
+      data.registrations[index].accreditationId = data.accreditations[index].id
 
-    data.accreditations[index].status = updateData.status
-    data.accreditations[index].validFrom = validFrom
-    data.accreditations[index].validTo = `${currentYear + 1}-01-01`
-    if (updateData.reprocessingType) {
-      data.accreditations[index].reprocessingType = updateData.reprocessingType
+      data.accreditations[index].status = updateData.status
+      data.accreditations[index].validFrom = validFrom
+      data.accreditations[index].validTo = `${currentYear + 1}-01-01`
+      if (updateData.reprocessingType) {
+        data.accreditations[index].reprocessingType =
+          updateData.reprocessingType
+      }
+      data.accreditations[index].accreditationNumber = updateData.accNumber
     }
-    data.accreditations[index].accreditationNumber = updateData.accNumber
   })
 
   // Update email
@@ -267,6 +281,7 @@ export async function updateOrganisationData(
     registrationUpdates[registrationUpdates.length - 1].updateData.status
   data = { organisation: data }
 
+  // console.log(JSON.stringify(data))
   const patchResponse = await context.baseAPI.patch(
     `/v1/dev/organisations/${referenceNumber}`,
     JSON.stringify(data)

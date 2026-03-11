@@ -8,7 +8,8 @@ import {
   generateOrgUpdateData,
   updateOrganisationData,
   linkUser,
-  migrateFormSubmission
+  migrateFormSubmission,
+  createRegistration
 } from './shared-generator-utils.js'
 
 async function generate(options = {}) {
@@ -24,24 +25,38 @@ async function generate(options = {}) {
       context,
       i % 2 === 0
     )
+    const streets = [
+      'reprocessor input street',
+      'reprocessor output street',
+      'exporter street',
+      'registered only reprocessor'
+    ]
 
-    for (let m = 0; m < 3; m++) {
-      const streets = [
-        'reprocessor input street',
-        'reprocessor output street',
-        'exporter street'
-      ]
+    const noOfWasteProcessingTypes = streets.length
 
+    for (let m = 0; m < noOfWasteProcessingTypes; m++) {
       for (let j = 0; j < MATERIALS.length; j++) {
-        await createRegistrationAndAccreditation(context, {
-          organisation,
-          orgId,
-          referenceNumber,
-          material: MATERIALS[j].material,
-          street: streets[m],
-          isExporter: m === 2,
-          glassRecyclingProcess: MATERIALS[j].glassRecyclingProcess
-        })
+        if (m < 3) {
+          await createRegistrationAndAccreditation(context, {
+            organisation,
+            orgId,
+            referenceNumber,
+            material: MATERIALS[j].material,
+            street: streets[m],
+            isExporter: m === 2,
+            glassRecyclingProcess: MATERIALS[j].glassRecyclingProcess
+          })
+        } else {
+          await createRegistration(context, {
+            organisation,
+            orgId,
+            referenceNumber,
+            material: MATERIALS[j].material,
+            street: streets[m],
+            isExporter: false,
+            glassRecyclingProcess: MATERIALS[j].glassRecyclingProcess
+          })
+        }
       }
     }
 
@@ -49,14 +64,16 @@ async function generate(options = {}) {
     await generateAuthToken(context)
 
     const registrationUpdates = []
-    for (let j = 0; j < MATERIALS.length * 3; j++) {
+    for (let j = 0; j < MATERIALS.length * noOfWasteProcessingTypes; j++) {
       const suffix = MATERIALS[j % MATERIALS.length].suffix
-      let reprocessingType = 'input'
+      let registrationType = 'input'
 
       if (j >= MATERIALS.length && j < MATERIALS.length * 2) {
-        reprocessingType = 'output'
-      } else if (j >= MATERIALS.length * 2) {
-        reprocessingType = null
+        registrationType = 'output'
+      } else if (j >= MATERIALS.length * 2 && j < MATERIALS.length * 3) {
+        registrationType = 'exporter'
+      } else if (j >= MATERIALS.length * 3 && j < MATERIALS.length * 4) {
+        registrationType = 'regOnlyReproc'
       }
 
       registrationUpdates.push({
@@ -64,7 +81,7 @@ async function generate(options = {}) {
         updateData: generateOrgUpdateData(
           Math.floor(j / MATERIALS.length),
           suffix,
-          reprocessingType
+          registrationType
         )
       })
     }
