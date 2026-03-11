@@ -8,7 +8,8 @@ import {
   generateOrgUpdateData,
   updateOrganisationData,
   linkUser,
-  migrateFormSubmission
+  migrateFormSubmission,
+  createRegistration
 } from './shared-generator-utils.js'
 
 async function generate(options = {}) {
@@ -24,24 +25,48 @@ async function generate(options = {}) {
       context,
       i % 2 === 0
     )
-
-    for (let m = 0; m < 3; m++) {
-      const streets = [
+    let streets = []
+    if (i % 2 === 0) {
+      streets = [
         'reprocessor input street',
         'reprocessor output street',
-        'exporter street'
+        'exporter street',
+        'registered only reprocessor'
       ]
+    } else {
+      streets = [
+        'reprocessor input street',
+        'reprocessor output street',
+        'registered only exporter'
+      ]
+    }
 
+    const noOfWasteProcessingTypes = streets.length
+
+    for (let m = 0; m < noOfWasteProcessingTypes; m++) {
+      const wasteProcessingType = streets[m]
       for (let j = 0; j < MATERIALS.length; j++) {
-        await createRegistrationAndAccreditation(context, {
-          organisation,
-          orgId,
-          referenceNumber,
-          material: MATERIALS[j].material,
-          street: streets[m],
-          isExporter: m === 2,
-          glassRecyclingProcess: MATERIALS[j].glassRecyclingProcess
-        })
+        if (!wasteProcessingType.includes('registered only')) {
+          await createRegistrationAndAccreditation(context, {
+            organisation,
+            orgId,
+            referenceNumber,
+            material: MATERIALS[j].material,
+            street: streets[m],
+            isExporter: wasteProcessingType.includes('exporter'),
+            glassRecyclingProcess: MATERIALS[j].glassRecyclingProcess
+          })
+        } else {
+          await createRegistration(context, {
+            organisation,
+            orgId,
+            referenceNumber,
+            material: MATERIALS[j].material,
+            street: streets[m],
+            isExporter: wasteProcessingType.includes('exporter'),
+            glassRecyclingProcess: MATERIALS[j].glassRecyclingProcess
+          })
+        }
       }
     }
 
@@ -49,14 +74,20 @@ async function generate(options = {}) {
     await generateAuthToken(context)
 
     const registrationUpdates = []
-    for (let j = 0; j < MATERIALS.length * 3; j++) {
-      const suffix = MATERIALS[j % MATERIALS.length].suffix
-      let reprocessingType = 'input'
+    for (let j = 0; j < MATERIALS.length * noOfWasteProcessingTypes; j++) {
+      const wasteProcessingType = streets[Math.floor(j / MATERIALS.length)]
 
-      if (j >= MATERIALS.length && j < MATERIALS.length * 2) {
-        reprocessingType = 'output'
-      } else if (j >= MATERIALS.length * 2) {
-        reprocessingType = null
+      const suffix = MATERIALS[j % MATERIALS.length].suffix
+      let registrationType = 'input'
+
+      if (wasteProcessingType.includes('output')) {
+        registrationType = 'output'
+      } else if (wasteProcessingType.includes('exporter street')) {
+        registrationType = 'exporter'
+      } else if (wasteProcessingType.includes('registered only reprocessor')) {
+        registrationType = 'regOnlyReproc'
+      } else if (wasteProcessingType.includes('registered only exporter')) {
+        registrationType = 'regOnlyExporter'
       }
 
       registrationUpdates.push({
@@ -64,15 +95,17 @@ async function generate(options = {}) {
         updateData: generateOrgUpdateData(
           Math.floor(j / MATERIALS.length),
           suffix,
-          reprocessingType
+          registrationType
         )
       })
     }
 
+    const emailPrefix = i % 2 === 0 ? 'AM_AllTypes' : 'AM_ExporterRegOnly'
+
     const email = await updateOrganisationData(context, {
       referenceNumber,
       registrationUpdates,
-      emailPrefix: 'AM_AllTypes',
+      emailPrefix,
       validFrom: '2026-01-01'
     })
 

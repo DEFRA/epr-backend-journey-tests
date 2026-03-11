@@ -192,15 +192,15 @@ npm run generatedata:allMaterialsMixed
 To generate with user linking (This assumes you have Defra ID Stub and Entra Stub running locally):
 
 ```
-npm run generatedata:withUserLinking
+npm run generatedata:withLinking
 ```
 
 ```
-npm run generatedata:allMaterials:withUserLinking
+npm run generatedata:allMaterials:withLinking
 ```
 
 ```
-npm run generatedata:allMaterialsMixed:withUserLinking
+npm run generatedata:allMaterialsMixed:withLinking
 ```
 
 This will create mock approved Organisation datasets with linked users. Only to be used for local development purposes.
