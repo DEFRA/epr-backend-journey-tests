@@ -148,4 +148,4 @@ Feature: Summary Logs validation tests
       | added.valid    | 3     | 1001,4000,5000 |
       | added.invalid  | 2     | 1000,1002      |
       | added.included | 2     | 1001,5000      |
-      | added.excluded | 3     | 1000,1002,4000 |
+      | added.excluded | 2     | 1000,1002      |

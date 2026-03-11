@@ -44,7 +44,7 @@ Feature: Summary Logs - Reprocessor on Input
       | added.valid    | 4     | 1000,1001,4000,5000 |
       | added.invalid  | 1     | 1002                |
       | added.included | 3     | 1000,1001,5000      |
-      | added.excluded | 2     | 1002,4000           |
+      | added.excluded | 1     | 1002                |
 
     When I submit the uploaded summary log and initiate a new upload at the same time
     Then the summary log submission succeeds
@@ -105,24 +105,25 @@ Feature: Summary Logs - Reprocessor on Input
     When I check for the summary log status
     Then I should see the following summary log response
       | status | validated |
-  # RowIDs with 1003 and 4001 are filtered from waste balance as they don't fall within the validFrom date range
+  # RowID 1003 is ignored (date falls outside accreditation range)
+  # RowID 4001 is from REPROCESSED_LOADS which does not contribute to waste balance
   # RowID with 1001 is also adjusted
-  # RowID with 1004 is not added to the waste balance as it has PRNs issued against it already
-  # RowID with 1005 is not added to the waste balance as it is missing Pallet Weight
+  # RowID with 1004 is excluded from the waste balance as it has PRNs issued against it
+  # RowID with 1005 is excluded from the waste balance as it is missing Pallet Weight
     And the summary log has the following loads
-      | LoadType           | Count | RowIDs         |
-      | added.valid        | 3     | 1004,4002,5001 |
-      | added.invalid      | 1     | 1005           |
-      | added.included     | 2     | 1004,5001      |
-      | added.excluded     | 2     | 1005,4002      |
-      | unchanged.valid    | 3     | 1000,4000,5000 |
-      | unchanged.invalid  | 0     |                |
-      | unchanged.included | 2     | 1000,5000      |
-      | unchanged.excluded | 1     | 4000           |
-      | adjusted.valid     | 1     | 1001           |
-      | adjusted.invalid   | 1     | 1002           |
-      | adjusted.included  | 1     | 1001           |
-      | adjusted.excluded  | 1     | 1002           |
+      | LoadType           | Count | RowIDs              |
+      | added.valid        | 4     | 1004,4001,4002,5001 |
+      | added.invalid      | 1     | 1005                |
+      | added.included     | 2     | 1004,5001           |
+      | added.excluded     | 1     | 1005                |
+      | unchanged.valid    | 3     | 1000,4000,5000      |
+      | unchanged.invalid  | 0     |                      |
+      | unchanged.included | 2     | 1000,5000           |
+      | unchanged.excluded | 0     |                      |
+      | adjusted.valid     | 1     | 1001                |
+      | adjusted.invalid   | 1     | 1002                |
+      | adjusted.included  | 1     | 1001                |
+      | adjusted.excluded  | 1     | 1002                |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
