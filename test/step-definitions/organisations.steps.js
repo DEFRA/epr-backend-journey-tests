@@ -57,6 +57,13 @@ When(
         data.accreditations[j].status = orgUpdateData.status
         data.accreditations[j].validFrom = '2025-01-01'
         data.accreditations[j].validTo = `${currentYear + 1}-01-01`
+        data.accreditations[j].statusHistory = [
+          ...(data.accreditations[j].statusHistory || []),
+          {
+            status: orgUpdateData.status,
+            updatedAt: new Date().toISOString()
+          }
+        ]
         if (orgUpdateData.validFrom?.trim()) {
           data.accreditations[j].validFrom = orgUpdateData.validFrom
         }
@@ -124,6 +131,13 @@ When(
     const data = await this.response.body.json()
 
     data.accreditations[0].status = newStatus
+    data.accreditations[0].statusHistory = [
+      ...(data.accreditations[0].statusHistory || []),
+      {
+        status: newStatus,
+        updatedAt: new Date().toISOString()
+      }
+    ]
 
     const payload = { organisation: data }
     this.response = await eprBackendAPI.patch(
