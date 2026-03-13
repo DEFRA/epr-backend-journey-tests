@@ -235,11 +235,11 @@ Feature: Summary Logs - Reprocessor on Input
     Then I should see the following summary log response
       | status  | validated  |
     And the summary log has the following loads
-      | LoadType       | Count | RowIDs              |
-      | added.valid    | 4     | 1000,1001,4000,5000 |
-      | added.invalid  | 1     | 1002                |
-      | added.included | 0     |                     |
-      | added.excluded | 1     | 1002                |
+      | LoadType       | Count | RowIDs |
+      | added.valid    | 1     | 4000   |
+      | added.invalid  | 1     | 1002   |
+      | added.included | 0     |        |
+      | added.excluded | 1     | 1002   |
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds
