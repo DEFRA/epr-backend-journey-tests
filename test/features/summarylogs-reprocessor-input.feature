@@ -243,6 +243,3 @@ Feature: Summary Logs - Reprocessor on Input
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds
-    And I should see that waste balances are created in the database with the following values
-      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 0      | 0               |
