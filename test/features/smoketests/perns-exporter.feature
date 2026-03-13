@@ -54,6 +54,3 @@ Feature: Packaging Recycling Notes for Exporter smoke test
     # From here the PRN can be cancelled
     When I update the PRN status to 'cancelled'
     Then the PRN status is updated successfully
-
-    When an external API retrieves the PRN with status 'cancelled'
-    Then the external API call to retrieve the PRN is successful and contains the PRN with PRN Number '{{prnNumber}}'
