@@ -12,6 +12,7 @@ Feature: Summary Logs - Reprocessor on Output
       | reprocessingType | regNumber        | accNumber | status   | validFrom  |
       | output           | R25SR500050912PA | ACC500591 | approved | 2026-01-01 |
     Then the organisations data update succeeds
+    When I backdate the accreditation status history to "2025-12-01"
 
     When I register and authorise a User and link it to the recently migrated organisation
 

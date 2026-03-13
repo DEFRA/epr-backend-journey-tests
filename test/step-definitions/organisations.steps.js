@@ -112,6 +112,51 @@ When(
   }
 )
 
+When(
+  'I backdate the accreditation status history to {string}',
+  async function (approvedDate) {
+    const orgId = this.organisationId
+    const approved = new Date(approvedDate)
+    const created = new Date(approved)
+    created.setDate(created.getDate() - 1)
+    const createdDate = created.toISOString().split('T')[0]
+
+    for (const [, accId] of this.accreditationIds) {
+      const response = await eprBackendAPI.put(
+        `/v1/dev/organisations/${orgId}/accreditations/${accId}/status-history`,
+        JSON.stringify({
+          statusHistory: [
+            { status: 'created', updatedAt: `${createdDate}T00:00:00.000Z` },
+            { status: 'approved', updatedAt: `${approvedDate}T00:00:00.000Z` }
+          ]
+        })
+      )
+
+      expect(response.statusCode).to.equal(200)
+    }
+  }
+)
+
+When(
+  'I set the accreditation {string} status history to',
+  async function (accNumber, dataTable) {
+    const orgId = this.organisationId
+    const accId = this.accreditationIds.get(accNumber)
+
+    const statusHistory = dataTable.hashes().map((row) => ({
+      status: row.status,
+      updatedAt: `${row.updatedAt}T00:00:00.000Z`
+    }))
+
+    const response = await eprBackendAPI.put(
+      `/v1/dev/organisations/${orgId}/accreditations/${accId}/status-history`,
+      JSON.stringify({ statusHistory })
+    )
+
+    expect(response.statusCode).to.equal(200)
+  }
+)
+
 When('I request the organisations', async function () {
   this.response = await eprBackendAPI.get(
     '/v1/organisations',
