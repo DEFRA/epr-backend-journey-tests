@@ -145,11 +145,13 @@ When(
     const data = await this.response.body.json()
 
     data.accreditations[0].status = newStatus
+    const statusChangeDate = new Date(data.accreditations[0].validFrom)
+    statusChangeDate.setDate(statusChangeDate.getDate() + 1)
     data.accreditations[0].statusHistory = [
       ...(data.accreditations[0].statusHistory || []),
       {
         status: newStatus,
-        updatedAt: data.accreditations[0].validFrom
+        updatedAt: statusChangeDate.toISOString().split('T')[0]
       }
     ]
 
