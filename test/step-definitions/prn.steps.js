@@ -102,7 +102,9 @@ Then(
     const expectedPrnNumber = interpolator.interpolate(this, prnNumber)
     const prn = prns.items.find((p) => p.prnNumber === expectedPrnNumber)
     if (!prn) {
-      expect.fail(`PRN with PRN Number ${prnNumber} not found from the list`)
+      expect.fail(
+        `PRN with PRN Number ${expectedPrnNumber} not found from the list`
+      )
     }
   }
 )
