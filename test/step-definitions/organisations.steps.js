@@ -112,6 +112,27 @@ When(
   }
 )
 
+When(
+  'I update the accreditation status to {string}',
+  async function (newStatus) {
+    const orgId = this.orgResponseData?.referenceNumber
+
+    this.response = await eprBackendAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+    const data = await this.response.body.json()
+
+    data.accreditations[0].status = newStatus
+
+    const payload = { organisation: data }
+    this.response = await eprBackendAPI.patch(
+      `/v1/dev/organisations/${orgId}`,
+      JSON.stringify(payload)
+    )
+  }
+)
+
 When('I request the organisations', async function () {
   this.response = await eprBackendAPI.get(
     '/v1/organisations',

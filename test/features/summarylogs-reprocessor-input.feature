@@ -204,3 +204,45 @@ Feature: Summary Logs - Reprocessor on Input
 
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
+
+  Scenario: Summary Logs uploads when accreditation is suspended - all rows IGNORED for waste balance
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType |
+      | Reprocessor         |
+
+    Given I am logged in as a service maintainer
+    When I update the recently migrated organisations data with the following data
+      | reprocessingType | regNumber        | accNumber | status   | validFrom  |
+      | input            | R25SR500030912PA | ACC123456 | approved | 2025-02-02 |
+    Then the organisations data update succeeds
+
+    When I update the accreditation status to 'suspended'
+    Then the organisations data update succeeds
+
+    When I register and authorise a User and link it to the recently migrated organisation
+
+    Given I have organisation and registration details for summary log upload
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+
+    When I upload the file 'reprocessor-input-valid.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I submit the summary log upload completed with the response from CDP Uploader
+    Then I should receive a summary log upload accepted response
+
+    When I check for the summary log status
+    Then I should see the following summary log response
+      | status  | validated  |
+    And the summary log has the following loads
+      | LoadType       | Count | RowIDs              |
+      | added.valid    | 4     | 1000,1001,4000,5000 |
+      | added.invalid  | 1     | 1002                |
+      | added.included | 0     |                     |
+      | added.excluded | 1     | 1002                |
+
+    When I submit the uploaded summary log
+    Then the summary log submission succeeds
+    And I should see that waste balances are created in the database with the following values
+      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 0      | 0               |
