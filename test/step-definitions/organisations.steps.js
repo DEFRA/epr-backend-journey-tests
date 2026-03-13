@@ -35,6 +35,13 @@ When(
       data.registrations[i].validFrom = '2025-01-01'
       data.registrations[i].validTo = `${currentYear + 1}-01-01`
       data.registrations[i].registrationNumber = orgUpdateData.regNumber
+      data.registrations[i].statusHistory = [
+        ...(data.registrations[i].statusHistory || []),
+        {
+          status: orgUpdateData.status,
+          updatedAt: data.registrations[i].validFrom
+        }
+      ]
       if (orgUpdateData.validFrom?.trim()) {
         data.registrations[i].validFrom = orgUpdateData.validFrom
       }
@@ -61,7 +68,7 @@ When(
           ...(data.accreditations[j].statusHistory || []),
           {
             status: orgUpdateData.status,
-            updatedAt: new Date().toISOString()
+            updatedAt: data.accreditations[j].validFrom
           }
         ]
         if (orgUpdateData.validFrom?.trim()) {
@@ -105,6 +112,13 @@ When(
     }
 
     data.status = updateDataRows[0].status
+    data.statusHistory = [
+      ...(data.statusHistory || []),
+      {
+        status: updateDataRows[0].status,
+        updatedAt: data.registrations[0].validFrom
+      }
+    ]
 
     this.registrationId = data.registrations[0].id
     this.accreditationId = data.accreditations[0].id
@@ -112,7 +126,7 @@ When(
 
     data = { organisation: data }
 
-    this.response = await eprBackendAPI.patch(
+    this.response = await eprBackendAPI.put(
       `/v1/dev/organisations/${orgId}`,
       JSON.stringify(data)
     )
@@ -140,7 +154,7 @@ When(
     ]
 
     const payload = { organisation: data }
-    this.response = await eprBackendAPI.patch(
+    this.response = await eprBackendAPI.put(
       `/v1/dev/organisations/${orgId}`,
       JSON.stringify(payload)
     )
