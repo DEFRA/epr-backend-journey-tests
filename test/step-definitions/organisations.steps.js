@@ -149,7 +149,7 @@ When(
       ...(data.accreditations[0].statusHistory || []),
       {
         status: newStatus,
-        updatedAt: new Date().toISOString()
+        updatedAt: data.accreditations[0].validFrom
       }
     ]
 
