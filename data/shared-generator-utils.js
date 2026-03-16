@@ -281,7 +281,7 @@ export async function updateOrganisationData(
     registrationUpdates[registrationUpdates.length - 1].updateData.status
   data = { organisation: data }
 
-  const patchResponse = await context.baseAPI.patch(
+  const patchResponse = await context.baseAPI.put(
     `/v1/dev/organisations/${referenceNumber}`,
     JSON.stringify(data)
   )
