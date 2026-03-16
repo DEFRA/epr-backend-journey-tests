@@ -55,8 +55,7 @@ When(
 
     this.response = await eprBackendAPI.post(
       `/v1/overseas-sites/imports/${this.orsImportId}/upload-completed`,
-      JSON.stringify(uploadPayload),
-      authClient.authHeader()
+      JSON.stringify(uploadPayload)
     )
   }
 )

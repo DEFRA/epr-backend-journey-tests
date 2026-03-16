@@ -1,4 +1,5 @@
 @overseas_sites
+@overseas_sites_import
 Feature: Overseas Sites - Spreadsheet Import
 
   Background:
