@@ -252,6 +252,13 @@ export async function updateOrganisationData(
       data.registrations[index].reprocessingType = updateData.reprocessingType
     }
     data.registrations[index].registrationNumber = updateData.regNumber
+    data.registrations[index].statusHistory = [
+      ...(data.registrations[index].statusHistory || []),
+      {
+        status: updateData.status,
+        updatedAt: data.registrations[index].validFrom
+      }
+    ]
     if (updateData.accNumber) {
       data.registrations[index].accreditationId = data.accreditations[index].id
 
@@ -263,6 +270,13 @@ export async function updateOrganisationData(
           updateData.reprocessingType
       }
       data.accreditations[index].accreditationNumber = updateData.accNumber
+      data.accreditations[index].statusHistory = [
+        ...(data.accreditations[index].statusHistory || []),
+        {
+          status: updateData.status,
+          updatedAt: data.accreditations[index].validFrom
+        }
+      ]
     }
   })
 
@@ -279,6 +293,13 @@ export async function updateOrganisationData(
 
   data.status =
     registrationUpdates[registrationUpdates.length - 1].updateData.status
+  data.statusHistory = [
+    ...(data.statusHistory || []),
+    {
+      status: registrationUpdates[0].updateData.status,
+      updatedAt: data.registrations[0].validFrom
+    }
+  ]
   data = { organisation: data }
 
   const patchResponse = await context.baseAPI.put(
