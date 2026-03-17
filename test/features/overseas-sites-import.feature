@@ -5,15 +5,16 @@ Feature: Overseas Sites - Spreadsheet Import
   Background:
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
-      | Reprocessor         |
+      | Exporter            |
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
-      | reprocessingType | regNumber        | accNumber | status   | validFrom  |
-      | input            | R25SR500030912PA | ACC123456 | approved | 2025-02-02 |
+      | regNumber        | accNumber | status   | validFrom  |
+      | R25SR500030912PA | ACC123456 | approved | 2025-02-02 |
     Then the organisations data update succeeds
 
     When I register and authorise a User and link it to the recently migrated organisation
+    When I generate the ORS test spreadsheets
 
   Scenario: Upload a valid ORS spreadsheet and verify sites are created and mapped
     When I initiate an ORS import

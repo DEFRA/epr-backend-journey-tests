@@ -3,6 +3,11 @@ import { expect } from 'chai'
 import { authClient, cdpUploader, eprBackendAPI } from '../support/hooks.js'
 import config from '../config/config.js'
 import logger from '../support/logger.js'
+import {
+  createOrsSpreadsheet,
+  validOrsSites,
+  invalidOrsSites
+} from '../support/ors-spreadsheet.js'
 
 When('I initiate an ORS import', async function () {
   this.orsImportPayload = {
@@ -18,7 +23,7 @@ When('I initiate an ORS import', async function () {
 Then('the ORS import initiation succeeds', async function () {
   expect(this.response.statusCode).to.equal(201)
   this.responseData = await this.response.body.json()
-  this.orsImportId = this.responseData.importId
+  this.orsImportId = this.responseData.id
   this.uploadId = this.responseData.uploadId
 })
 
@@ -220,3 +225,25 @@ Then(
     )
   }
 )
+
+When('I generate the ORS test spreadsheets', async function () {
+  const orgId = parseInt(this.orgResponseData.orgId)
+  const [regNumber] = this.registrationIds.keys()
+  const [accNumber] = this.accreditationIds.keys()
+
+  const metadata = {
+    packagingWasteCategory: 'Paper or board',
+    orgId,
+    registrationNumber: regNumber,
+    accreditationNumber: accNumber
+  }
+
+  await createOrsSpreadsheet('resources/ors-valid.xlsx', {
+    metadata,
+    sites: validOrsSites
+  })
+  await createOrsSpreadsheet('resources/ors-invalid.xlsx', {
+    metadata,
+    sites: invalidOrsSites
+  })
+})
