@@ -42,6 +42,17 @@ When(
           updatedAt: data.registrations[i].validFrom
         }
       ]
+      data.registrations[i].statusHistory = (
+        data.registrations[i].statusHistory || []
+      ).map((entry) => {
+        if (entry.status === 'created') {
+          return {
+            ...entry,
+            updatedAt: '2024-12-31'
+          }
+        }
+        return entry
+      })
       if (orgUpdateData.validFrom?.trim()) {
         data.registrations[i].validFrom = orgUpdateData.validFrom
       }
@@ -71,6 +82,17 @@ When(
             updatedAt: data.accreditations[j].validFrom
           }
         ]
+        data.accreditations[j].statusHistory = (
+          data.accreditations[j].statusHistory || []
+        ).map((entry) => {
+          if (entry.status === 'created') {
+            return {
+              ...entry,
+              updatedAt: '2024-12-31'
+            }
+          }
+          return entry
+        })
         if (orgUpdateData.validFrom?.trim()) {
           data.accreditations[j].validFrom = orgUpdateData.validFrom
         }
@@ -121,7 +143,9 @@ When(
     ]
 
     this.registrationId = data.registrations[0].id
-    this.accreditationId = data.accreditations[0].id
+    if (data.accreditations && data.accreditations.length > 0) {
+      this.accreditationId = data.accreditations[0].id
+    }
     this.organisationId = orgId
 
     data = { organisation: data }

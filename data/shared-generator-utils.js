@@ -259,6 +259,17 @@ export async function updateOrganisationData(
         updatedAt: data.registrations[index].validFrom
       }
     ]
+    data.registrations[index].statusHistory = (
+      data.registrations[index].statusHistory || []
+    ).map((entry) => {
+      if (entry.status === 'created') {
+        return {
+          ...entry,
+          updatedAt: '2025-12-31'
+        }
+      }
+      return entry
+    })
     if (updateData.accNumber) {
       data.registrations[index].accreditationId = data.accreditations[index].id
 
@@ -277,6 +288,17 @@ export async function updateOrganisationData(
           updatedAt: data.accreditations[index].validFrom
         }
       ]
+      data.accreditations[index].statusHistory = (
+        data.accreditations[index].statusHistory || []
+      ).map((entry) => {
+        if (entry.status === 'created') {
+          return {
+            ...entry,
+            updatedAt: '2025-12-31'
+          }
+        }
+        return entry
+      })
     }
   })
 
