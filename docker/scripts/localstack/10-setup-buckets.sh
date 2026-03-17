@@ -116,6 +116,18 @@ aws s3api put-object \
   --body /etc/localstack/init/ready.d/summarylogs/missing-date-row.xlsx \
   --endpoint-url=http://localhost:4566 \
 
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key reprocessor-regonly-valid-key \
+  --body /etc/localstack/init/ready.d/summarylogs/reprocessor-regonly-valid.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
+aws s3api put-object \
+  --bucket re-ex-summary-logs \
+  --key reprocessor-regonly-invalid-key \
+  --body /etc/localstack/init/ready.d/summarylogs/reprocessor-regonly-invalid.xlsx \
+  --endpoint-url=http://localhost:4566 \
+
 # Staleness test fixtures (reuse valid file with different keys)
 aws s3api put-object \
   --bucket re-ex-summary-logs \
