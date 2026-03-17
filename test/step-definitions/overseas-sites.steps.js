@@ -9,6 +9,17 @@ import {
   invalidOrsSites
 } from '../support/ors-spreadsheet.js'
 
+When(
+  'I upload the generated file {string} via the CDP uploader',
+  async function (filename) {
+    this.response = await cdpUploader.uploadAndScan(
+      this.uploadId,
+      filename,
+      'data/'
+    )
+  }
+)
+
 When('I initiate an ORS import', async function () {
   this.orsImportPayload = {
     redirectUrl: `/v1/overseas-sites/imports`
@@ -238,11 +249,11 @@ When('I generate the ORS test spreadsheets', async function () {
     accreditationNumber: accNumber
   }
 
-  await createOrsSpreadsheet('resources/ors-valid.xlsx', {
+  await createOrsSpreadsheet('data/ors-valid.xlsx', {
     metadata,
     sites: validOrsSites
   })
-  await createOrsSpreadsheet('resources/ors-invalid.xlsx', {
+  await createOrsSpreadsheet('data/ors-invalid.xlsx', {
     metadata,
     sites: invalidOrsSites
   })

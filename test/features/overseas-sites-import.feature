@@ -20,7 +20,7 @@ Feature: Overseas Sites - Spreadsheet Import
     When I initiate an ORS import
     Then the ORS import initiation succeeds
 
-    When I upload the file 'ors-valid.xlsx' via the CDP uploader
+    When I upload the generated file 'ors-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
@@ -38,7 +38,7 @@ Feature: Overseas Sites - Spreadsheet Import
     When I initiate an ORS import
     Then the ORS import initiation succeeds
 
-    When I upload the file 'ors-valid.xlsx' via the CDP uploader
+    When I upload the generated file 'ors-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
@@ -48,7 +48,7 @@ Feature: Overseas Sites - Spreadsheet Import
     When I initiate an ORS import
     Then the ORS import initiation succeeds
 
-    When I upload the file 'ors-valid.xlsx' via the CDP uploader
+    When I upload the generated file 'ors-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
@@ -62,7 +62,7 @@ Feature: Overseas Sites - Spreadsheet Import
     When I initiate an ORS import
     Then the ORS import initiation succeeds
 
-    When I upload the file 'ors-invalid.xlsx' via the CDP uploader
+    When I upload the generated file 'ors-invalid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
