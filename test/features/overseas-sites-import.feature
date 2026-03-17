@@ -23,9 +23,6 @@ Feature: Overseas Sites - Spreadsheet Import
     When I upload the file 'ors-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
-    When I submit the ORS import upload completed with the response from CDP Uploader
-    Then I should receive an ORS import accepted response
-
     When I check the ORS import status
     Then the ORS import status should be 'completed'
     And the ORS import file result should be
@@ -44,9 +41,6 @@ Feature: Overseas Sites - Spreadsheet Import
     When I upload the file 'ors-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
-    When I submit the ORS import upload completed with the response from CDP Uploader
-    Then I should receive an ORS import accepted response
-
     When I check the ORS import status
     Then the ORS import status should be 'completed'
 
@@ -56,9 +50,6 @@ Feature: Overseas Sites - Spreadsheet Import
 
     When I upload the file 'ors-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
-
-    When I submit the ORS import upload completed with the response from CDP Uploader
-    Then I should receive an ORS import accepted response
 
     When I check the ORS import status
     Then the ORS import status should be 'completed'
@@ -73,9 +64,6 @@ Feature: Overseas Sites - Spreadsheet Import
 
     When I upload the file 'ors-invalid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
-
-    When I submit the ORS import upload completed with the response from CDP Uploader
-    Then I should receive an ORS import accepted response
 
     When I check the ORS import status
     Then the ORS import status should be 'completed'
