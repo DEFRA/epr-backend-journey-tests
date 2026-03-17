@@ -143,7 +143,9 @@ When(
     ]
 
     this.registrationId = data.registrations[0].id
-    this.accreditationId = data.accreditations[0].id
+    if (data.accreditations && data.accreditations.length > 0) {
+      this.accreditationId = data.accreditations[0].id
+    }
     this.organisationId = orgId
 
     data = { organisation: data }
