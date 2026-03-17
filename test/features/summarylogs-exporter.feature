@@ -164,3 +164,80 @@ Feature: Summary Logs - Exporter
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 79     | 79              |
+
+  Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated. Organisation is then suspended, and further adjustment takes no effect
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType |
+      | Exporter            |
+
+    Given I am logged in as a service maintainer
+    When I update the recently migrated organisations data with the following data
+      | regNumber        | accNumber | status   | validFrom  |
+      | E25SR500030913PA | ACC234567 | approved | 2025-02-02 |
+    Then the organisations data update succeeds
+
+    When I register and authorise a User and link it to the recently migrated organisation
+
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs |
+      | s3Key               | exporter-key       |
+      | fileId              | exporter-file-id   |
+      | filename            | exporter.xlsx      |
+      | fileStatus          | complete           |
+      | accreditationNumber | ACC234567          |
+      | registrationNumber  | E25SR500030913PA   |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    And the summary log submission status is 'validated'
+    When I submit the uploaded summary log
+    Then the summary log submission succeeds
+    And the summary log submission status is 'submitted'
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 30     | 30              |
+
+    When I update the accreditation status to 'suspended' at '2026-03-02'
+    Then the organisations data update succeeds
+
+    Given I have the following summary log upload data for summary log upload
+      | s3Bucket            | re-ex-summary-logs           |
+      | s3Key               | exporter-adjustments-key     |
+      | fileId              | exporter-adjustments-file-id |
+      | filename            | exporter-adjustments.xlsx    |
+      | fileStatus          | complete                     |
+      | accreditationNumber | ACC234567                    |
+      | registrationNumber  | E25SR500030913PA             |
+    When I initiate the summary log upload
+    Then the summary log upload initiation succeeds
+    When I submit the summary log upload completed
+    Then I should receive a summary log upload accepted response
+    And the summary log submission status is 'validated'
+
+    # RowId 1000 is adjusted with DATE_RECEIVED_BY_OSR removed, hence should be considered invalid and excluded and not factored in waste balance calculations
+    # (Added) Row 1004 no longer picked up as the accreditation is now suspended and the date for Row 1004 is after the suspended date
+    And the summary log has the following loads
+      | LoadType           | Count | RowIDs |
+      | added.valid        | 1     | 4001   |
+      | added.invalid      | 0     |        |
+      | added.included     | 0     |        |
+      | added.excluded     | 0     |        |
+      | unchanged.valid    | 1     | 4000   |
+      | unchanged.invalid  | 0     |        |
+      | unchanged.included | 0     |        |
+      | unchanged.excluded | 0     |        |
+      | adjusted.valid     | 1     | 1001   |
+      | adjusted.invalid   | 1     | 1000   |
+      | adjusted.included  | 1     | 1001   |
+      | adjusted.excluded  | 1     | 1000   |
+    When I submit the uploaded summary log
+    Then the summary log submission succeeds
+    And the summary log submission status is 'submitted'
+
+    # Waste balance remains the same as Row 1004 is not picked up for Waste Balance
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 30     | 30              |
