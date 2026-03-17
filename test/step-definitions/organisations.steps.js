@@ -187,6 +187,36 @@ When(
   }
 )
 
+When(
+  'I update the accreditation status to {string} at {string}',
+  async function (newStatus, date) {
+    const orgId = this.orgResponseData?.referenceNumber
+
+    this.response = await eprBackendAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+    const data = await this.response.body.json()
+
+    // data.accreditations[0].status = newStatus
+    // const statusChangeDate = new Date(data.accreditations[0].validFrom)
+    // statusChangeDate.setDate(statusChangeDate.getDate() + 1)
+    data.accreditations[0].statusHistory = [
+      ...(data.accreditations[0].statusHistory || []),
+      {
+        status: newStatus,
+        updatedAt: date //statusChangeDate.toISOString().split('T')[0]
+      }
+    ]
+
+    const payload = { organisation: data }
+    this.response = await eprBackendAPI.put(
+      `/v1/dev/organisations/${orgId}`,
+      JSON.stringify(payload)
+    )
+  }
+)
+
 When('I request the organisations', async function () {
   this.response = await eprBackendAPI.get(
     '/v1/organisations',
