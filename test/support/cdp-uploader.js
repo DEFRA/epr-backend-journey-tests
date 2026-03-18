@@ -26,7 +26,7 @@ export class CDPUploader {
     })
   }
 
-  async uploadMultipleFiles(uploadId, filenames, filePathPrefix = 'data/') {
+  async uploadMultipartForm(uploadId, fieldName, filenames, filePathPrefix) {
     const formData = new FormData()
     const mimeType =
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -34,7 +34,7 @@ export class CDPUploader {
     for (const filename of filenames) {
       const buffer = readFileSync(filePathPrefix + filename)
       const blob = new Blob([buffer], { type: mimeType })
-      formData.append('orsUpload', blob, filename)
+      formData.append(fieldName, blob, filename)
     }
 
     return await request(`${this.baseUrl}/upload-and-scan/${uploadId}`, {

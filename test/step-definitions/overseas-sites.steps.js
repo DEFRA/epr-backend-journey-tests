@@ -22,15 +22,103 @@ When(
 )
 
 When(
-  'I upload the following files via the CDP uploader',
-  async function (dataTable) {
-    const filenames = dataTable.hashes().map((row) => row.filename)
-    this.response = await cdpUploader.uploadMultipleFiles(
+  'I upload ORS file {string} via the CDP uploader',
+  async function (filename) {
+    this.response = await cdpUploader.uploadMultipartForm(
       this.uploadId,
-      filenames
+      'orsUpload',
+      [filename],
+      'data/'
     )
   }
 )
+
+When('I upload ORS files via the CDP uploader', async function (dataTable) {
+  const filenames = dataTable.hashes().map((row) => row.filename)
+  this.response = await cdpUploader.uploadMultipartForm(
+    this.uploadId,
+    'orsUpload',
+    filenames,
+    'data/'
+  )
+})
+
+const pollUntilScanned = async (uploadId) => {
+  const timeout = config.pollTimeout
+  const startTime = Date.now()
+
+  while (Date.now() - startTime < timeout) {
+    const response = await cdpUploader.status(uploadId)
+    const data = await response.body.json()
+    const fileStatus = data.form?.file?.fileStatus
+
+    if (fileStatus === 'complete' || fileStatus === 'rejected') {
+      return data.form.file
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, config.interval))
+  }
+
+  throw new Error(`Timeout waiting for CDP upload ${uploadId} to complete`)
+}
+
+const toOrsUploadField = (cdpFile) => ({
+  fileId: cdpFile.fileId,
+  filename: cdpFile.filename,
+  fileStatus: cdpFile.fileStatus,
+  s3Bucket: cdpFile.s3Bucket,
+  s3Key: cdpFile.s3Key
+})
+
+When(
+  'I submit the ORS import upload completed with the response from CDP Uploader',
+  { timeout: config.pollTimeout },
+  async function () {
+    const scannedFile = await pollUntilScanned(this.uploadId)
+
+    this.response = await eprBackendAPI.post(
+      `/v1/overseas-sites/imports/${this.orsImportId}/upload-completed`,
+      JSON.stringify({
+        form: { orsUpload: toOrsUploadField(scannedFile) }
+      })
+    )
+  }
+)
+
+When(
+  'I upload and scan the following ORS files',
+  { timeout: config.pollTimeout },
+  async function (dataTable) {
+    const filenames = dataTable.hashes().map((row) => row.filename)
+    this.scannedOrsFiles = []
+
+    for (const filename of filenames) {
+      const initResponse = await eprBackendAPI.post(
+        '/v1/overseas-sites/imports',
+        JSON.stringify({ redirectUrl: '/v1/overseas-sites/imports' }),
+        authClient.authHeader()
+      )
+      const { uploadId } = await initResponse.body.json()
+
+      await cdpUploader.uploadAndScan(uploadId, filename, 'data/')
+      const scannedFile = await pollUntilScanned(uploadId)
+      this.scannedOrsFiles.push(scannedFile)
+    }
+  }
+)
+
+When('I submit the ORS multi-file upload completed', async function () {
+  this.response = await eprBackendAPI.post(
+    `/v1/overseas-sites/imports/${this.orsImportId}/upload-completed`,
+    JSON.stringify({
+      form: { orsUpload: this.scannedOrsFiles.map(toOrsUploadField) }
+    })
+  )
+})
+
+Then('I should receive an ORS import accepted response', async function () {
+  expect(this.response.statusCode).to.equal(202)
+})
 
 When('I initiate an ORS import', async function () {
   this.orsImportPayload = {
@@ -48,49 +136,6 @@ Then('the ORS import initiation succeeds', async function () {
   this.responseData = await this.response.body.json()
   this.orsImportId = this.responseData.id
   this.uploadId = this.responseData.uploadId
-})
-
-When(
-  'I submit the ORS import upload completed with the response from CDP Uploader',
-  { timeout: config.pollTimeout },
-  async function () {
-    const timeout = config.pollTimeout
-    const startTime = Date.now()
-
-    while (Date.now() - startTime < timeout) {
-      this.response = await cdpUploader.status(this.uploadId)
-
-      this.responseData = await this.response.body.json()
-      const fileStatus = this.responseData.form?.orsUpload?.fileStatus
-      if (fileStatus === 'complete') {
-        break
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, config.interval))
-    }
-
-    const upload = this.responseData.form.orsUpload
-    const uploadPayload = {
-      form: {
-        orsUpload: {
-          fileId: upload.fileId,
-          filename: upload.filename,
-          fileStatus: upload.fileStatus,
-          s3Bucket: upload.s3Bucket,
-          s3Key: upload.s3Key
-        }
-      }
-    }
-
-    this.response = await eprBackendAPI.post(
-      `/v1/overseas-sites/imports/${this.orsImportId}/upload-completed`,
-      JSON.stringify(uploadPayload)
-    )
-  }
-)
-
-Then('I should receive an ORS import accepted response', async function () {
-  expect(this.response.statusCode).to.equal(202)
 })
 
 When(
