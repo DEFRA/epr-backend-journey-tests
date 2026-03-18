@@ -21,8 +21,6 @@ Feature: Packaging Recycling Notes for Exporter smoke test
     When I upload the file 'exporter.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
-    When I submit the summary log upload completed with the response from CDP Uploader
-    Then I should receive a summary log upload accepted response
     And the summary log submission status is 'validated'
 
     When I submit the uploaded summary log
