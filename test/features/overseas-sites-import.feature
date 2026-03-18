@@ -4,9 +4,9 @@ Feature: Overseas Sites - Spreadsheet Import
 
   Background:
     Given I create a linked and migrated organisation for the following
-      | wasteProcessingType |
-      | Exporter            |
-      | Exporter            |
+      | wasteProcessingType | material            |
+      | Exporter            | Paper or board (R3) |
+      | Exporter            | Steel (R4)          |
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
