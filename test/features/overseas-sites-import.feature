@@ -46,7 +46,7 @@ Feature: Overseas Sites - Spreadsheet Import
     When I check the ORS import status
     Then the ORS import status should be 'completed'
 
-    # Re-upload the same spreadsheet
+    # Re-upload the same spreadsheet — sites already exist so none are created
     When I initiate an ORS import
     Then the ORS import initiation succeeds
 
@@ -57,7 +57,7 @@ Feature: Overseas Sites - Spreadsheet Import
     Then the ORS import status should be 'completed'
     And the ORS import file result should be
       | Status  | SitesCreated |
-      | success | 3            |
+      | success | 0            |
     And the registration should have exactly 3 overseas site mappings
 
   Scenario: Upload spreadsheets for different registrations in one batch
