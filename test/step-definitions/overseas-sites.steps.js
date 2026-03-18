@@ -6,6 +6,7 @@ import logger from '../support/logger.js'
 import {
   createOrsSpreadsheet,
   validOrsSites,
+  validOrsSitesReg2,
   invalidOrsSites
 } from '../support/ors-spreadsheet.js'
 
@@ -19,6 +20,110 @@ When(
     )
   }
 )
+
+When(
+  'I upload ORS file {string} via the CDP uploader',
+  async function (filename) {
+    this.response = await cdpUploader.uploadMultipartForm(
+      this.uploadId,
+      'orsUpload',
+      [filename],
+      'data/'
+    )
+  }
+)
+
+When('I upload ORS files via the CDP uploader', async function (dataTable) {
+  const filenames = dataTable.hashes().map((row) => row.filename)
+  this.response = await cdpUploader.uploadMultipartForm(
+    this.uploadId,
+    'orsUpload',
+    filenames,
+    'data/'
+  )
+})
+
+const pollUntilScanned = async (uploadId) => {
+  const timeout = config.pollTimeout
+  const startTime = Date.now()
+
+  while (Date.now() - startTime < timeout) {
+    const response = await cdpUploader.status(uploadId)
+    const data = await response.body.json()
+    const fileStatus = data.form?.orsUpload?.fileStatus
+
+    if (fileStatus === 'complete' || fileStatus === 'rejected') {
+      return data.form.orsUpload
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, config.interval))
+  }
+
+  throw new Error(`Timeout waiting for CDP upload ${uploadId} to complete`)
+}
+
+const toOrsUploadField = (cdpFile) => ({
+  fileId: cdpFile.fileId,
+  filename: cdpFile.filename,
+  fileStatus: cdpFile.fileStatus,
+  s3Bucket: cdpFile.s3Bucket,
+  s3Key: cdpFile.s3Key
+})
+
+When(
+  'I submit the ORS import upload completed with the response from CDP Uploader',
+  { timeout: config.pollTimeout },
+  async function () {
+    const scannedFile = await pollUntilScanned(this.uploadId)
+
+    this.response = await eprBackendAPI.post(
+      `/v1/overseas-sites/imports/${this.orsImportId}/upload-completed`,
+      JSON.stringify({
+        form: { orsUpload: toOrsUploadField(scannedFile) }
+      })
+    )
+  }
+)
+
+When(
+  'I upload and scan the following ORS files',
+  { timeout: config.pollTimeout },
+  async function (dataTable) {
+    const filenames = dataTable.hashes().map((row) => row.filename)
+    this.scannedOrsFiles = []
+
+    for (const filename of filenames) {
+      const initResponse = await eprBackendAPI.post(
+        '/v1/overseas-sites/imports',
+        JSON.stringify({ redirectUrl: '/v1/overseas-sites/imports' }),
+        authClient.authHeader()
+      )
+      const { uploadId } = await initResponse.body.json()
+
+      await cdpUploader.uploadMultipartForm(
+        uploadId,
+        'orsUpload',
+        [filename],
+        'data/'
+      )
+      const scannedFile = await pollUntilScanned(uploadId)
+      this.scannedOrsFiles.push(scannedFile)
+    }
+  }
+)
+
+When('I submit the ORS multi-file upload completed', async function () {
+  this.response = await eprBackendAPI.post(
+    `/v1/overseas-sites/imports/${this.orsImportId}/upload-completed`,
+    JSON.stringify({
+      form: { orsUpload: this.scannedOrsFiles.map(toOrsUploadField) }
+    })
+  )
+})
+
+Then('I should receive an ORS import accepted response', async function () {
+  expect(this.response.statusCode).to.equal(202)
+})
 
 When('I initiate an ORS import', async function () {
   this.orsImportPayload = {
@@ -36,48 +141,6 @@ Then('the ORS import initiation succeeds', async function () {
   this.responseData = await this.response.body.json()
   this.orsImportId = this.responseData.id
   this.uploadId = this.responseData.uploadId
-})
-
-When(
-  'I submit the ORS import upload completed with the response from CDP Uploader',
-  { timeout: config.pollTimeout },
-  async function () {
-    const timeout = config.pollTimeout
-    const startTime = Date.now()
-
-    while (Date.now() - startTime < timeout) {
-      this.response = await cdpUploader.status(this.uploadId)
-
-      this.responseData = await this.response.body.json()
-      const fileStatus = this.responseData.form?.file?.fileStatus
-      if (fileStatus === 'complete') {
-        break
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, config.interval))
-    }
-
-    const uploadPayload = {
-      form: {
-        file: {
-          fileId: this.responseData.form.file.fileId,
-          filename: this.responseData.form.file.filename,
-          fileStatus: this.responseData.form.file.fileStatus,
-          s3Bucket: this.responseData.form.file.s3Bucket,
-          s3Key: this.responseData.form.file.s3Key
-        }
-      }
-    }
-
-    this.response = await eprBackendAPI.post(
-      `/v1/overseas-sites/imports/${this.orsImportId}/upload-completed`,
-      JSON.stringify(uploadPayload)
-    )
-  }
-)
-
-Then('I should receive an ORS import accepted response', async function () {
-  expect(this.response.statusCode).to.equal(202)
 })
 
 When(
@@ -148,64 +211,93 @@ Then(
 Then('the ORS import file result should be', async function (dataTable) {
   const expected = dataTable.hashes()[0]
 
-  expect(this.responseData.files).to.have.lengthOf(1)
-  const fileResult = this.responseData.files[0].result
+  const successfulFile = this.responseData.files.find(
+    (f) => f.result?.status === expected.Status
+  )
   // eslint-disable-next-line no-unused-expressions
-  expect(fileResult).to.not.be.null
-  expect(fileResult.status).to.equal(expected.Status)
-  expect(fileResult.sitesCreated).to.equal(parseInt(expected.SitesCreated))
+  expect(successfulFile, `Expected a file with status ${expected.Status}`).to
+    .not.be.undefined
+  expect(successfulFile.result.sitesCreated).to.equal(
+    parseInt(expected.SitesCreated)
+  )
 })
 
+Then(
+  'the ORS import should have {int} file results all successful',
+  async function (expectedFileCount) {
+    const successfulFiles = this.responseData.files.filter(
+      (f) => f.result?.status === 'success'
+    )
+    expect(successfulFiles).to.have.lengthOf(expectedFileCount)
+  }
+)
+
 Then('the ORS import file result should have errors', async function () {
-  expect(this.responseData.files).to.have.lengthOf(1)
-  const fileResult = this.responseData.files[0].result
+  const failedFile = this.responseData.files.find(
+    (f) => f.result?.status === 'failure'
+  )
   // eslint-disable-next-line no-unused-expressions
-  expect(fileResult).to.not.be.null
-  expect(fileResult.status).to.equal('failure')
-  expect(fileResult.errors).to.have.length.greaterThan(0)
+  expect(failedFile, 'Expected a file with errors').to.not.be.undefined
+  expect(failedFile.result.errors).to.have.length.greaterThan(0)
 })
+
+const verifyOverseasSites = async (orgId, registrationId, expectedSites) => {
+  const response = await eprBackendAPI.get(
+    `/v1/organisations/${orgId}`,
+    authClient.authHeader()
+  )
+  expect(response.statusCode).to.equal(200)
+  const orgData = await response.body.json()
+
+  const registration = orgData.registrations.find(
+    (r) => r.id === registrationId
+  )
+  // eslint-disable-next-line no-unused-expressions
+  expect(registration, `Expected registration ${registrationId}`).to.not.be
+    .undefined
+  // eslint-disable-next-line no-unused-expressions
+  expect(registration.overseasSites).to.not.be.undefined
+
+  for (const expected of expectedSites) {
+    const mapping = registration.overseasSites[expected.OrsId]
+    // eslint-disable-next-line no-unused-expressions
+    expect(
+      mapping,
+      `Expected overseas site mapping for ORS ID ${expected.OrsId}`
+    ).to.not.be.undefined
+    expect(mapping.overseasSiteId).to.be.a('string')
+
+    const siteResponse = await eprBackendAPI.get(
+      `/v1/overseas-sites/${mapping.overseasSiteId}`,
+      authClient.authHeader()
+    )
+    expect(siteResponse.statusCode).to.equal(200)
+    const site = await siteResponse.body.json()
+    expect(site.name).to.equal(expected.Name)
+    expect(site.country).to.equal(expected.Country)
+    expect(site.address.townOrCity).to.equal(expected.TownOrCity)
+  }
+}
 
 Then(
   'I should see the following overseas sites mapped to the registration',
   async function (dataTable) {
-    const expectedSites = dataTable.hashes()
-    const orgId = this.organisationId
-
-    this.response = await eprBackendAPI.get(
-      `/v1/organisations/${orgId}`,
-      authClient.authHeader()
+    await verifyOverseasSites(
+      this.organisationId,
+      this.registrationId,
+      dataTable.hashes()
     )
-    expect(this.response.statusCode).to.equal(200)
-    const orgData = await this.response.body.json()
+  }
+)
 
-    const registration = orgData.registrations.find(
-      (r) => r.id === this.registrationId
+Then(
+  'the registration {string} should have the following overseas sites',
+  async function (regNumber, dataTable) {
+    await verifyOverseasSites(
+      this.organisationId,
+      this.registrationIds.get(regNumber),
+      dataTable.hashes()
     )
-    // eslint-disable-next-line no-unused-expressions
-    expect(registration).to.not.be.undefined
-    // eslint-disable-next-line no-unused-expressions
-    expect(registration.overseasSites).to.not.be.undefined
-
-    for (const expected of expectedSites) {
-      const mapping = registration.overseasSites[expected.OrsId]
-      // eslint-disable-next-line no-unused-expressions
-      expect(
-        mapping,
-        `Expected overseas site mapping for ORS ID ${expected.OrsId}`
-      ).to.not.be.undefined
-      expect(mapping.overseasSiteId).to.be.a('string')
-
-      // Verify the site details via the overseas sites API
-      const siteResponse = await eprBackendAPI.get(
-        `/v1/overseas-sites/${mapping.overseasSiteId}`,
-        authClient.authHeader()
-      )
-      expect(siteResponse.statusCode).to.equal(200)
-      const site = await siteResponse.body.json()
-      expect(site.name).to.equal(expected.Name)
-      expect(site.country).to.equal(expected.Country)
-      expect(site.address.townOrCity).to.equal(expected.TownOrCity)
-    }
   }
 )
 
@@ -239,22 +331,38 @@ Then(
 
 When('I generate the ORS test spreadsheets', async function () {
   const orgId = parseInt(this.orgResponseData.orgId)
-  const [regNumber] = this.registrationIds.keys()
-  const [accNumber] = this.accreditationIds.keys()
+  const regEntries = [...this.registrationIds.keys()]
+  const accEntries = [...this.accreditationIds.keys()]
 
-  const metadata = {
+  const reg1Metadata = {
     packagingWasteCategory: 'Paper or board',
     orgId,
-    registrationNumber: regNumber,
-    accreditationNumber: accNumber
+    registrationNumber: regEntries[0],
+    accreditationNumber: accEntries[0]
   }
 
   await createOrsSpreadsheet('data/ors-valid.xlsx', {
-    metadata,
+    metadata: reg1Metadata,
     sites: validOrsSites
   })
   await createOrsSpreadsheet('data/ors-invalid.xlsx', {
-    metadata,
+    metadata: reg1Metadata,
     sites: invalidOrsSites
   })
+  await createOrsSpreadsheet('data/ors-reg1-valid.xlsx', {
+    metadata: reg1Metadata,
+    sites: validOrsSites
+  })
+
+  if (regEntries.length > 1) {
+    await createOrsSpreadsheet('data/ors-reg2-valid.xlsx', {
+      metadata: {
+        packagingWasteCategory: 'Paper or board',
+        orgId,
+        registrationNumber: regEntries[1],
+        accreditationNumber: accEntries[1]
+      },
+      sites: validOrsSitesReg2
+    })
+  }
 })

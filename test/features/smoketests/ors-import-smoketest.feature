@@ -1,0 +1,29 @@
+@smoketest
+@overseas_sites
+Feature: ORS Import smoke test
+
+  Scenario: Upload an ORS spreadsheet and verify end-to-end processing
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType |
+      | Exporter            |
+
+    Given I am logged in as a service maintainer
+    When I update the recently migrated organisations data with the following data
+      | regNumber        | accNumber | status   | validFrom  |
+      | R25SR500030912PA | ACC123456 | approved | 2025-02-02 |
+    Then the organisations data update succeeds
+
+    When I register and authorise a User and link it to the recently migrated organisation
+    When I generate the ORS test spreadsheets
+
+    When I initiate an ORS import
+    Then the ORS import initiation succeeds
+
+    When I upload ORS file 'ors-valid.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I check the ORS import status
+    Then the ORS import status should be 'completed'
+    And the ORS import file result should be
+      | Status  | SitesCreated |
+      | success | 3            |
