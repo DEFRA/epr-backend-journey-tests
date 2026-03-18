@@ -71,42 +71,6 @@ When('I submit the summary log upload completed', async function () {
   )
 })
 
-When(
-  'I submit the summary log upload completed with the response from CDP Uploader',
-  { timeout: config.pollTimeout },
-  async function () {
-    const timeout = config.pollTimeout
-    const startTime = Date.now()
-
-    while (Date.now() - startTime < timeout) {
-      this.response = await cdpUploader.status(this.uploadId)
-
-      this.responseData = await this.response.body.json()
-      const fileStatus = this.responseData.form?.file?.fileStatus
-      if (fileStatus === 'complete') {
-        break
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, config.interval))
-    }
-
-    this.summaryLog.setFileData(
-      this.responseData.form.file.s3Bucket,
-      this.responseData.form.file.s3Key,
-      this.responseData.form.file.fileId,
-      this.responseData.form.file.filename,
-      this.responseData.form.file.fileStatus
-    )
-
-    this.payload = this.summaryLog.toUploadCompletedPayload()
-
-    this.response = await eprBackendAPI.post(
-      `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${this.summaryLog.summaryLogId}/upload-completed`,
-      JSON.stringify(this.payload)
-    )
-  }
-)
-
 When('I initiate the summary log upload', async function () {
   this.initiatePayload = {
     redirectUrl: `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${this.summaryLog.summaryLogId}`
@@ -128,7 +92,12 @@ Then('the summary log upload initiation succeeds', async function () {
 When(
   'I upload the file {string} via the CDP uploader',
   async function (filename) {
-    this.response = await cdpUploader.uploadAndScan(this.uploadId, filename)
+    this.response = await cdpUploader.uploadMultipartForm(
+      this.uploadId,
+      'summaryLogUpload',
+      [filename],
+      'resources/'
+    )
   }
 )
 
@@ -479,42 +448,6 @@ Then(
           `Expected validation ${JSON.stringify(expectedResult)} but no concerns found with those values. Actual validation concern values found: ${JSON.stringify(this.responseData.validation.concerns)}`
         )
       }
-    }
-  }
-)
-
-Then(
-  'the summary log is created in the database successfully',
-  async function () {
-    if (!process.env.ENVIRONMENT) {
-      const summaryLogCollection = dbClient.collection('summary-logs')
-      const summaryLog = await summaryLogCollection.findOne({
-        _id: this.summaryLog.summaryLogId
-      })
-      expect(summaryLog._id).to.equal(this.summaryLog.summaryLogId)
-      expect(summaryLog.file.id).to.equal(this.summaryLog.fileId)
-      expect(summaryLog.file.name).to.equal(this.summaryLog.filename)
-      expect(summaryLog.file.status).to.equal(this.summaryLog.fileStatus)
-      switch (this.summaryLog.fileStatus) {
-        case 'complete':
-          expect(summaryLog.file.uri).to.equal(
-            `s3://${this.summaryLog.s3Bucket}/${this.summaryLog.s3Key}`
-          )
-          break
-        case 'rejected':
-          expect(summaryLog.validation.failures[0].code).to.equal(
-            'FILE_REJECTED'
-          )
-          break
-      }
-    } else {
-      logger.warn(
-        {
-          step_definition:
-            'Then the summary log is created in the database successfully'
-        },
-        'Skipping summary log database checks'
-      )
     }
   }
 )
