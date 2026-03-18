@@ -6,6 +6,7 @@ import logger from '../support/logger.js'
 import {
   createOrsSpreadsheet,
   validOrsSites,
+  validOrsSitesBatch2,
   invalidOrsSites
 } from '../support/ors-spreadsheet.js'
 
@@ -156,6 +157,20 @@ Then('the ORS import file result should be', async function (dataTable) {
   expect(fileResult.sitesCreated).to.equal(parseInt(expected.SitesCreated))
 })
 
+Then(
+  'the ORS import should have {int} file results all successful',
+  async function (expectedFileCount) {
+    expect(this.responseData.files).to.have.lengthOf(expectedFileCount)
+
+    for (const file of this.responseData.files) {
+      // eslint-disable-next-line no-unused-expressions
+      expect(file.result, `Expected result for file ${file.fileName}`).to.not.be
+        .null
+      expect(file.result.status).to.equal('success')
+    }
+  }
+)
+
 Then('the ORS import file result should have errors', async function () {
   expect(this.responseData.files).to.have.lengthOf(1)
   const fileResult = this.responseData.files[0].result
@@ -252,6 +267,10 @@ When('I generate the ORS test spreadsheets', async function () {
   await createOrsSpreadsheet('data/ors-valid.xlsx', {
     metadata,
     sites: validOrsSites
+  })
+  await createOrsSpreadsheet('data/ors-valid-2.xlsx', {
+    metadata,
+    sites: validOrsSitesBatch2
   })
   await createOrsSpreadsheet('data/ors-invalid.xlsx', {
     metadata,

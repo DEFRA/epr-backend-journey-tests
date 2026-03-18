@@ -58,6 +58,28 @@ Feature: Overseas Sites - Spreadsheet Import
       | success | 3            |
     And the registration should have exactly 3 overseas site mappings
 
+  Scenario: Upload multiple ORS spreadsheets in one batch and verify all sites are created
+    When I initiate an ORS import
+    Then the ORS import initiation succeeds
+
+    When I upload the generated file 'ors-valid.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I upload the generated file 'ors-valid-2.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I check the ORS import status
+    Then the ORS import status should be 'completed'
+    And the ORS import should have 2 file results all successful
+    And I should see the following overseas sites mapped to the registration
+      | OrsId | Name               | Country       | TownOrCity |
+      | 001   | Papier Recyclage   | France        | Paris      |
+      | 002   | Karton Verarbeiter | Germany       | Berlin     |
+      | 003   | Papel Reciclado    | Spain         | Madrid     |
+      | 004   | Carta Riciclata    | Italy         | Rome       |
+      | 005   | Papier Hergebruik  | Netherlands   | Amsterdam  |
+    And the registration should have exactly 5 overseas site mappings
+
   Scenario: Upload a spreadsheet with validation errors and verify error reporting
     When I initiate an ORS import
     Then the ORS import initiation succeeds
