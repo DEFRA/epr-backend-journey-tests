@@ -4,36 +4,36 @@ export const validOrsSites = [
   {
     orsId: 1,
     country: 'France',
-    name: 'Papier Recyclage',
-    line1: '12 Rue de la Paix',
-    line2: 'Batiment B',
-    townOrCity: 'Paris',
-    stateOrRegion: 'Ile-de-France',
-    postcode: '75002',
-    coordinates: '48.8698,2.3311',
+    name: 'Test Site Alpha',
+    line1: '1 Test Street',
+    line2: 'Unit 99',
+    townOrCity: 'Testville',
+    stateOrRegion: 'Test-Region-FR',
+    postcode: 'TEST-FR-001',
+    coordinates: '0.0000,0.0000',
     validFrom: '2025-01-01'
   },
   {
     orsId: 2,
     country: 'Germany',
-    name: 'Karton Verarbeiter',
-    line1: '45 Berliner Strasse',
-    townOrCity: 'Berlin',
-    stateOrRegion: 'Berlin',
-    postcode: '10115',
-    coordinates: '52.5200,13.4050',
+    name: 'Test Site Beta',
+    line1: '2 Test Street',
+    townOrCity: 'Teststadt',
+    stateOrRegion: 'Test-Region-DE',
+    postcode: 'TEST-DE-001',
+    coordinates: '0.0000,0.0000',
     validFrom: '2025-01-01'
   },
   {
     orsId: 3,
     country: 'Spain',
-    name: 'Papel Reciclado',
-    line1: '8 Calle Mayor',
-    line2: 'Planta 2',
-    townOrCity: 'Madrid',
-    stateOrRegion: 'Madrid',
-    postcode: '28013',
-    coordinates: '40.4168,-3.7038',
+    name: 'Test Site Gamma',
+    line1: '3 Test Street',
+    line2: 'Floor 0',
+    townOrCity: 'Testciudad',
+    stateOrRegion: 'Test-Region-ES',
+    postcode: 'TEST-ES-001',
+    coordinates: '0.0000,0.0000',
     validFrom: '2025-01-01'
   }
 ]
@@ -42,23 +42,23 @@ export const validOrsSitesReg2 = [
   {
     orsId: 1,
     country: 'Italy',
-    name: 'Carta Riciclata',
-    line1: '22 Via Roma',
-    townOrCity: 'Rome',
-    stateOrRegion: 'Lazio',
-    postcode: '00184',
-    coordinates: '41.9028,12.4964',
+    name: 'Test Site Delta',
+    line1: '4 Test Street',
+    townOrCity: 'Testcitt\u00e0',
+    stateOrRegion: 'Test-Region-IT',
+    postcode: 'TEST-IT-001',
+    coordinates: '0.0000,0.0000',
     validFrom: '2025-01-01'
   },
   {
     orsId: 2,
     country: 'Netherlands',
-    name: 'Papier Hergebruik',
-    line1: '10 Damrak',
-    townOrCity: 'Amsterdam',
-    stateOrRegion: 'North Holland',
-    postcode: '1012 LG',
-    coordinates: '52.3676,4.9041',
+    name: 'Test Site Epsilon',
+    line1: '5 Test Street',
+    townOrCity: 'Testdorp',
+    stateOrRegion: 'Test-Region-NL',
+    postcode: 'TEST-NL-001',
+    coordinates: '0.0000,0.0000',
     validFrom: '2025-01-01'
   }
 ]
@@ -67,21 +67,21 @@ export const invalidOrsSites = [
   {
     orsId: 1,
     country: 'France',
-    name: 'Valid Site',
-    line1: '12 Rue de la Paix',
-    townOrCity: 'Paris'
+    name: 'Test Valid Site',
+    line1: '1 Test Street',
+    townOrCity: 'Testville'
   },
   {
     orsId: 2,
     country: null,
     name: null,
-    line1: '45 Berliner Strasse',
-    townOrCity: 'Berlin'
+    line1: '2 Test Street',
+    townOrCity: 'Teststadt'
   },
   {
     orsId: 3,
     country: 'Spain',
-    name: 'Missing Address Site',
+    name: 'Test Missing Address Site',
     line1: null,
     townOrCity: null
   }

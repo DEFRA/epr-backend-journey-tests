@@ -31,10 +31,10 @@ Feature: Overseas Sites - Spreadsheet Import
       | Status  | SitesCreated |
       | success | 3            |
     And I should see the following overseas sites mapped to the registration
-      | OrsId | Name               | Country       | TownOrCity |
-      | 001   | Papier Recyclage   | France        | Paris      |
-      | 002   | Karton Verarbeiter | Germany       | Berlin     |
-      | 003   | Papel Reciclado    | Spain         | Madrid     |
+      | OrsId | Name             | Country | TownOrCity  |
+      | 001   | Test Site Alpha  | France  | Testville   |
+      | 002   | Test Site Beta   | Germany | Teststadt   |
+      | 003   | Test Site Gamma  | Spain   | Testciudad  |
 
   Scenario: Re-upload the same ORS spreadsheet and verify idempotency
     When I initiate an ORS import
@@ -74,14 +74,14 @@ Feature: Overseas Sites - Spreadsheet Import
     Then the ORS import status should be 'completed'
     And the ORS import should have 2 file results all successful
     And the registration 'R25SR500030912PA' should have the following overseas sites
-      | OrsId | Name               | Country | TownOrCity |
-      | 001   | Papier Recyclage   | France  | Paris      |
-      | 002   | Karton Verarbeiter | Germany | Berlin     |
-      | 003   | Papel Reciclado    | Spain   | Madrid     |
+      | OrsId | Name            | Country | TownOrCity |
+      | 001   | Test Site Alpha | France  | Testville  |
+      | 002   | Test Site Beta  | Germany | Teststadt  |
+      | 003   | Test Site Gamma | Spain   | Testciudad |
     And the registration 'R25SR500030913PB' should have the following overseas sites
-      | OrsId | Name              | Country     | TownOrCity |
-      | 001   | Carta Riciclata   | Italy       | Rome       |
-      | 002   | Papier Hergebruik | Netherlands | Amsterdam  |
+      | OrsId | Name                | Country     | TownOrCity |
+      | 001   | Test Site Delta     | Italy       | Testcittà  |
+      | 002   | Test Site Epsilon   | Netherlands | Testdorp   |
 
   Scenario: Upload a spreadsheet with validation errors and verify error reporting
     When I initiate an ORS import
