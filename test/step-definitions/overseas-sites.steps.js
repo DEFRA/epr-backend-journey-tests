@@ -191,92 +191,63 @@ Then('the ORS import file result should have errors', async function () {
   expect(fileResult.errors).to.have.length.greaterThan(0)
 })
 
+const verifyOverseasSites = async (orgId, registrationId, expectedSites) => {
+  const response = await eprBackendAPI.get(
+    `/v1/organisations/${orgId}`,
+    authClient.authHeader()
+  )
+  expect(response.statusCode).to.equal(200)
+  const orgData = await response.body.json()
+
+  const registration = orgData.registrations.find(
+    (r) => r.id === registrationId
+  )
+  // eslint-disable-next-line no-unused-expressions
+  expect(registration, `Expected registration ${registrationId}`).to.not.be
+    .undefined
+  // eslint-disable-next-line no-unused-expressions
+  expect(registration.overseasSites).to.not.be.undefined
+
+  for (const expected of expectedSites) {
+    const mapping = registration.overseasSites[expected.OrsId]
+    // eslint-disable-next-line no-unused-expressions
+    expect(
+      mapping,
+      `Expected overseas site mapping for ORS ID ${expected.OrsId}`
+    ).to.not.be.undefined
+    expect(mapping.overseasSiteId).to.be.a('string')
+
+    const siteResponse = await eprBackendAPI.get(
+      `/v1/overseas-sites/${mapping.overseasSiteId}`,
+      authClient.authHeader()
+    )
+    expect(siteResponse.statusCode).to.equal(200)
+    const site = await siteResponse.body.json()
+    expect(site.name).to.equal(expected.Name)
+    expect(site.country).to.equal(expected.Country)
+    expect(site.address.townOrCity).to.equal(expected.TownOrCity)
+  }
+}
+
 Then(
   'I should see the following overseas sites mapped to the registration',
   async function (dataTable) {
-    const expectedSites = dataTable.hashes()
-    const orgId = this.organisationId
-
-    this.response = await eprBackendAPI.get(
-      `/v1/organisations/${orgId}`,
-      authClient.authHeader()
+    await verifyOverseasSites(
+      this.organisationId,
+      this.registrationId,
+      dataTable.hashes()
     )
-    expect(this.response.statusCode).to.equal(200)
-    const orgData = await this.response.body.json()
-
-    const registration = orgData.registrations.find(
-      (r) => r.id === this.registrationId
-    )
-    // eslint-disable-next-line no-unused-expressions
-    expect(registration).to.not.be.undefined
-    // eslint-disable-next-line no-unused-expressions
-    expect(registration.overseasSites).to.not.be.undefined
-
-    for (const expected of expectedSites) {
-      const mapping = registration.overseasSites[expected.OrsId]
-      // eslint-disable-next-line no-unused-expressions
-      expect(
-        mapping,
-        `Expected overseas site mapping for ORS ID ${expected.OrsId}`
-      ).to.not.be.undefined
-      expect(mapping.overseasSiteId).to.be.a('string')
-
-      // Verify the site details via the overseas sites API
-      const siteResponse = await eprBackendAPI.get(
-        `/v1/overseas-sites/${mapping.overseasSiteId}`,
-        authClient.authHeader()
-      )
-      expect(siteResponse.statusCode).to.equal(200)
-      const site = await siteResponse.body.json()
-      expect(site.name).to.equal(expected.Name)
-      expect(site.country).to.equal(expected.Country)
-      expect(site.address.townOrCity).to.equal(expected.TownOrCity)
-    }
   }
 )
 
 Then(
   'the registration {string} should have the following overseas sites',
   async function (regNumber, dataTable) {
-    const expectedSites = dataTable.hashes()
-    const orgId = this.organisationId
-
-    this.response = await eprBackendAPI.get(
-      `/v1/organisations/${orgId}`,
-      authClient.authHeader()
+    await verifyOverseasSites(
+      this.organisationId,
+      this.registrationIds.get(regNumber),
+      dataTable.hashes()
     )
-    expect(this.response.statusCode).to.equal(200)
-    const orgData = await this.response.body.json()
-
-    const registrationId = this.registrationIds.get(regNumber)
-    const registration = orgData.registrations.find(
-      (r) => r.id === registrationId
-    )
-    // eslint-disable-next-line no-unused-expressions
-    expect(registration, `Expected registration for ${regNumber}`).to.not.be
-      .undefined
-    // eslint-disable-next-line no-unused-expressions
-    expect(registration.overseasSites).to.not.be.undefined
-
-    for (const expected of expectedSites) {
-      const mapping = registration.overseasSites[expected.OrsId]
-      // eslint-disable-next-line no-unused-expressions
-      expect(
-        mapping,
-        `Expected overseas site mapping for ORS ID ${expected.OrsId} on ${regNumber}`
-      ).to.not.be.undefined
-      expect(mapping.overseasSiteId).to.be.a('string')
-
-      const siteResponse = await eprBackendAPI.get(
-        `/v1/overseas-sites/${mapping.overseasSiteId}`,
-        authClient.authHeader()
-      )
-      expect(siteResponse.statusCode).to.equal(200)
-      const site = await siteResponse.body.json()
-      expect(site.name).to.equal(expected.Name)
-      expect(site.country).to.equal(expected.Country)
-      expect(site.address.townOrCity).to.equal(expected.TownOrCity)
-    }
   }
 )
 
