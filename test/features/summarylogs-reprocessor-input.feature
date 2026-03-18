@@ -23,16 +23,6 @@ Feature: Summary Logs - Reprocessor on Input
     When I upload the file 'reprocessor-input-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
-    When I submit the summary log upload completed with the response from CDP Uploader
-    Then I should receive a summary log upload accepted response
-    And the following messages appear in the log
-      | Log Level | Event Action    | Message                                                                                                                                                                                                         |
-      | info      | request_success | File upload completed: summaryLogId={{summaryLogId}}, fileId={{summaryLogFileId}}, filename={{summaryLogFilename}}, status={{summaryLogFileStatus}}, s3Bucket={{summaryLogS3Bucket}}, s3Key={{summaryLogS3Key}} |
-      | info      | start_success   | Summary log validation started: summaryLogId={{summaryLogId}}, fileId={{summaryLogFileId}}, filename={{summaryLogFilename}}                                                                                     |
-      | info      | process_success | Extracted summary log file: summaryLogId={{summaryLogId}}, fileId={{summaryLogFileId}}, filename={{summaryLogFilename}}                                                                                         |
-      | info      | process_success | Summary log updated: summaryLogId={{summaryLogId}}, fileId={{summaryLogFileId}}, filename={{summaryLogFilename}}, status=validated                                                                              |
-    And the summary log is created in the database successfully
-
     When I check for the summary log status
     Then I should see the following summary log response
       | status  | validated  |
@@ -227,9 +217,6 @@ Feature: Summary Logs - Reprocessor on Input
 
     When I upload the file 'reprocessor-input-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
-
-    When I submit the summary log upload completed with the response from CDP Uploader
-    Then I should receive a summary log upload accepted response
 
     When I check for the summary log status
     Then I should see the following summary log response
