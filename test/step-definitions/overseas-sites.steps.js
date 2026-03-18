@@ -6,7 +6,7 @@ import logger from '../support/logger.js'
 import {
   createOrsSpreadsheet,
   validOrsSites,
-  validOrsSitesBatch2,
+  validOrsSitesReg2,
   invalidOrsSites
 } from '../support/ors-spreadsheet.js'
 
@@ -17,6 +17,17 @@ When(
       this.uploadId,
       filename,
       'data/'
+    )
+  }
+)
+
+When(
+  'I upload the following files via the CDP uploader',
+  async function (dataTable) {
+    const filenames = dataTable.hashes().map((row) => row.filename)
+    this.response = await cdpUploader.uploadMultipleFiles(
+      this.uploadId,
+      filenames
     )
   }
 )
@@ -225,6 +236,51 @@ Then(
 )
 
 Then(
+  'the registration {string} should have the following overseas sites',
+  async function (regNumber, dataTable) {
+    const expectedSites = dataTable.hashes()
+    const orgId = this.organisationId
+
+    this.response = await eprBackendAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+    expect(this.response.statusCode).to.equal(200)
+    const orgData = await this.response.body.json()
+
+    const registrationId = this.registrationIds.get(regNumber)
+    const registration = orgData.registrations.find(
+      (r) => r.id === registrationId
+    )
+    // eslint-disable-next-line no-unused-expressions
+    expect(registration, `Expected registration for ${regNumber}`).to.not.be
+      .undefined
+    // eslint-disable-next-line no-unused-expressions
+    expect(registration.overseasSites).to.not.be.undefined
+
+    for (const expected of expectedSites) {
+      const mapping = registration.overseasSites[expected.OrsId]
+      // eslint-disable-next-line no-unused-expressions
+      expect(
+        mapping,
+        `Expected overseas site mapping for ORS ID ${expected.OrsId} on ${regNumber}`
+      ).to.not.be.undefined
+      expect(mapping.overseasSiteId).to.be.a('string')
+
+      const siteResponse = await eprBackendAPI.get(
+        `/v1/overseas-sites/${mapping.overseasSiteId}`,
+        authClient.authHeader()
+      )
+      expect(siteResponse.statusCode).to.equal(200)
+      const site = await siteResponse.body.json()
+      expect(site.name).to.equal(expected.Name)
+      expect(site.country).to.equal(expected.Country)
+      expect(site.address.townOrCity).to.equal(expected.TownOrCity)
+    }
+  }
+)
+
+Then(
   'the registration should have exactly {int} overseas site mappings',
   async function (expectedCount) {
     const orgId = this.organisationId
@@ -254,26 +310,38 @@ Then(
 
 When('I generate the ORS test spreadsheets', async function () {
   const orgId = parseInt(this.orgResponseData.orgId)
-  const [regNumber] = this.registrationIds.keys()
-  const [accNumber] = this.accreditationIds.keys()
+  const regEntries = [...this.registrationIds.keys()]
+  const accEntries = [...this.accreditationIds.keys()]
 
-  const metadata = {
+  const reg1Metadata = {
     packagingWasteCategory: 'Paper or board',
     orgId,
-    registrationNumber: regNumber,
-    accreditationNumber: accNumber
+    registrationNumber: regEntries[0],
+    accreditationNumber: accEntries[0]
   }
 
   await createOrsSpreadsheet('data/ors-valid.xlsx', {
-    metadata,
+    metadata: reg1Metadata,
     sites: validOrsSites
   })
-  await createOrsSpreadsheet('data/ors-valid-2.xlsx', {
-    metadata,
-    sites: validOrsSitesBatch2
-  })
   await createOrsSpreadsheet('data/ors-invalid.xlsx', {
-    metadata,
+    metadata: reg1Metadata,
     sites: invalidOrsSites
   })
+  await createOrsSpreadsheet('data/ors-reg1-valid.xlsx', {
+    metadata: reg1Metadata,
+    sites: validOrsSites
+  })
+
+  if (regEntries.length > 1) {
+    await createOrsSpreadsheet('data/ors-reg2-valid.xlsx', {
+      metadata: {
+        packagingWasteCategory: 'Paper or board',
+        orgId,
+        registrationNumber: regEntries[1],
+        accreditationNumber: accEntries[1]
+      },
+      sites: validOrsSitesReg2
+    })
+  }
 })

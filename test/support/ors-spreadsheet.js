@@ -38,9 +38,9 @@ export const validOrsSites = [
   }
 ]
 
-export const validOrsSitesBatch2 = [
+export const validOrsSitesReg2 = [
   {
-    orsId: 4,
+    orsId: 1,
     country: 'Italy',
     name: 'Carta Riciclata',
     line1: '22 Via Roma',
@@ -51,7 +51,7 @@ export const validOrsSitesBatch2 = [
     validFrom: '2025-01-01'
   },
   {
-    orsId: 5,
+    orsId: 2,
     country: 'Netherlands',
     name: 'Papier Hergebruik',
     line1: '10 Damrak',
