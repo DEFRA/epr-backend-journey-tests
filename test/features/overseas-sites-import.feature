@@ -91,5 +91,5 @@ Feature: Overseas Sites - Spreadsheet Import
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
-    Then the ORS import status should be 'completed'
+    Then the ORS import status should be 'failed'
     And the ORS import file result should have errors
