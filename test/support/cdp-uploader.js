@@ -34,7 +34,7 @@ export class CDPUploader {
     for (const filename of filenames) {
       const buffer = readFileSync(filePathPrefix + filename)
       const blob = new Blob([buffer], { type: mimeType })
-      formData.append('file', blob, filename)
+      formData.append('orsUpload', blob, filename)
     }
 
     return await request(`${this.baseUrl}/upload-and-scan/${uploadId}`, {

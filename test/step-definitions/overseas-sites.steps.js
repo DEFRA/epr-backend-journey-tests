@@ -61,7 +61,7 @@ When(
       this.response = await cdpUploader.status(this.uploadId)
 
       this.responseData = await this.response.body.json()
-      const fileStatus = this.responseData.form?.file?.fileStatus
+      const fileStatus = this.responseData.form?.orsUpload?.fileStatus
       if (fileStatus === 'complete') {
         break
       }
@@ -69,14 +69,15 @@ When(
       await new Promise((resolve) => setTimeout(resolve, config.interval))
     }
 
+    const upload = this.responseData.form.orsUpload
     const uploadPayload = {
       form: {
-        file: {
-          fileId: this.responseData.form.file.fileId,
-          filename: this.responseData.form.file.filename,
-          fileStatus: this.responseData.form.file.fileStatus,
-          s3Bucket: this.responseData.form.file.s3Bucket,
-          s3Key: this.responseData.form.file.s3Key
+        orsUpload: {
+          fileId: upload.fileId,
+          filename: upload.filename,
+          fileStatus: upload.fileStatus,
+          s3Bucket: upload.s3Bucket,
+          s3Key: upload.s3Key
         }
       }
     }
