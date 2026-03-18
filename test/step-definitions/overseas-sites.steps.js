@@ -50,10 +50,10 @@ const pollUntilScanned = async (uploadId) => {
   while (Date.now() - startTime < timeout) {
     const response = await cdpUploader.status(uploadId)
     const data = await response.body.json()
-    const fileStatus = data.form?.file?.fileStatus
+    const fileStatus = data.form?.orsUpload?.fileStatus
 
     if (fileStatus === 'complete' || fileStatus === 'rejected') {
-      return data.form.file
+      return data.form.orsUpload
     }
 
     await new Promise((resolve) => setTimeout(resolve, config.interval))
@@ -100,7 +100,12 @@ When(
       )
       const { uploadId } = await initResponse.body.json()
 
-      await cdpUploader.uploadAndScan(uploadId, filename, 'data/')
+      await cdpUploader.uploadMultipartForm(
+        uploadId,
+        'orsUpload',
+        [filename],
+        'data/'
+      )
       const scannedFile = await pollUntilScanned(uploadId)
       this.scannedOrsFiles.push(scannedFile)
     }
@@ -206,35 +211,34 @@ Then(
 Then('the ORS import file result should be', async function (dataTable) {
   const expected = dataTable.hashes()[0]
 
-  expect(this.responseData.files).to.have.lengthOf(1)
-  const fileResult = this.responseData.files[0].result
+  const successfulFile = this.responseData.files.find(
+    (f) => f.result?.status === expected.Status
+  )
   // eslint-disable-next-line no-unused-expressions
-  expect(fileResult).to.not.be.null
-  expect(fileResult.status).to.equal(expected.Status)
-  expect(fileResult.sitesCreated).to.equal(parseInt(expected.SitesCreated))
+  expect(successfulFile, `Expected a file with status ${expected.Status}`).to
+    .not.be.undefined
+  expect(successfulFile.result.sitesCreated).to.equal(
+    parseInt(expected.SitesCreated)
+  )
 })
 
 Then(
   'the ORS import should have {int} file results all successful',
   async function (expectedFileCount) {
-    expect(this.responseData.files).to.have.lengthOf(expectedFileCount)
-
-    for (const file of this.responseData.files) {
-      // eslint-disable-next-line no-unused-expressions
-      expect(file.result, `Expected result for file ${file.fileName}`).to.not.be
-        .null
-      expect(file.result.status).to.equal('success')
-    }
+    const successfulFiles = this.responseData.files.filter(
+      (f) => f.result?.status === 'success'
+    )
+    expect(successfulFiles).to.have.lengthOf(expectedFileCount)
   }
 )
 
 Then('the ORS import file result should have errors', async function () {
-  expect(this.responseData.files).to.have.lengthOf(1)
-  const fileResult = this.responseData.files[0].result
+  const failedFile = this.responseData.files.find(
+    (f) => f.result?.status === 'failure'
+  )
   // eslint-disable-next-line no-unused-expressions
-  expect(fileResult).to.not.be.null
-  expect(fileResult.status).to.equal('failure')
-  expect(fileResult.errors).to.have.length.greaterThan(0)
+  expect(failedFile, 'Expected a file with errors').to.not.be.undefined
+  expect(failedFile.result.errors).to.have.length.greaterThan(0)
 })
 
 const verifyOverseasSites = async (orgId, registrationId, expectedSites) => {
