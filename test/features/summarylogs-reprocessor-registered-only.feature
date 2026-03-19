@@ -37,6 +37,16 @@ Feature: Summary Logs - Registered Only Reprocessor
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
+    When I retrieve the report for the year 2026 and period 1
+    Then the report is successfully retrieved
+    And the report contains the following information
+      | Key                                 | Value                       |
+      | operatorCategory                    | REPROCESSOR_REGISTERED_ONLY |
+      | cadence                             | quarterly                   |
+      | sections.wasteReceived.totalTonnage | 69.34                       |
+      | sections.wasteSentOn.totalTonnage   | 49.51                       |
+      | details.material                    | paper                       |
+
 
   Scenario: Summary Logs uploads (Reprocessor, Registered Only) and fails in-sheet revalidation
     Given I have the following summary log upload data for summary log upload
