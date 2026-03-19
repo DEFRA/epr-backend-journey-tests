@@ -56,7 +56,7 @@ Feature: Summary Logs - Registered Only Reprocessor
     And I should see the following summary log validation failures
       | Code               | Location Sheet       | Location Table                  | Location Row | Location Header                             | Actual     |
       | VALUE_OUT_OF_RANGE | Received (section 1) | RECEIVED_LOADS_FOR_REPROCESSING | 4            | RECYCLABLE_PROPORTION_PERCENTAGE            | 1.22       |
-      | VALUE_OUT_OF_RANGE | Received (section 1) | RECEIVED_LOADS_FOR_REPROCESSING | 4            | NET_WEIGHT                                  | 1001       |
+      | VALUE_OUT_OF_RANGE | Received (section 1) | RECEIVED_LOADS_FOR_REPROCESSING | 4            | NET_WEIGHT                                  | -1         |
       | VALUE_OUT_OF_RANGE | Received (section 1) | RECEIVED_LOADS_FOR_REPROCESSING | 4            | TONNAGE_RECEIVED_FOR_RECYCLING              | -18.5      |
       | INVALID_TYPE       | Received (section 1) | RECEIVED_LOADS_FOR_REPROCESSING | 4            | HOW_DID_YOU_CALCULATE_RECYCLABLE_PROPORTION | invalid    |
       | INVALID_FORMAT     | Received (section 1) | RECEIVED_LOADS_FOR_REPROCESSING | 4            | MONTH_RECEIVED_FOR_REPROCESSING             | 30-06-2025 |

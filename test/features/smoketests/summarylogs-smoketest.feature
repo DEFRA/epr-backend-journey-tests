@@ -21,9 +21,6 @@ Feature: Summary Logs smoke test
     When I upload the file 'reprocessor-input-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
-    When I submit the summary log upload completed with the response from CDP Uploader
-    Then I should receive a summary log upload accepted response
-
     When I check for the summary log status
     Then I should see the following summary log response
       | status  | validated  |
@@ -60,9 +57,6 @@ Feature: Summary Logs smoke test
     When I upload the file 'reprocessor-output-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
-    When I submit the summary log upload completed with the response from CDP Uploader
-    Then I should receive a summary log upload accepted response
-
     And the summary log submission status is 'validated'
 
     When I submit the uploaded summary log
@@ -94,9 +88,6 @@ Feature: Summary Logs smoke test
 
     When I upload the file 'exporter.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
-
-    When I submit the summary log upload completed with the response from CDP Uploader
-    Then I should receive a summary log upload accepted response
 
     And the summary log submission status is 'validated'
 
