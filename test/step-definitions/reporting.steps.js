@@ -22,16 +22,21 @@ Then(
     const expectedData = dataTable.hashes()
     const reportData = await this.response.body.json()
 
+    function normalise(value) {
+      if (typeof value !== 'number') return value
+      return Number.isInteger(value) ? parseInt(value) : value.toFixed(2)
+    }
+
     for (const expectation of expectedData) {
       const actualValue = expectation.Key.split('.').reduce(
         (acc, key) => acc?.[key],
         reportData
       )
-      if (typeof actualValue === 'number' && !Number.isInteger(actualValue)) {
-        expect(actualValue.toFixed(2)).to.equal(expectation.Value)
-      } else {
-        expect(actualValue).to.equal(expectation.Value)
-      }
+      expect(normalise(actualValue)).to.equal(
+        Number.isInteger(actualValue)
+          ? parseInt(expectation.Value)
+          : expectation.Value
+      )
     }
   }
 )
