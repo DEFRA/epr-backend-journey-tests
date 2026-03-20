@@ -10,15 +10,15 @@ Feature: Overseas Sites - Admin list
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
       | regNumber        | accNumber | status   | validFrom  |
-      | R25SR500030912PA | ACC123456 | approved | 2025-02-02 |
+      | R25SR500039901PA | ACC990123 | approved | 2025-02-02 |
     Then the organisations data update succeeds
 
     When I register and authorise a User and link it to the recently migrated organisation
-    When I generate the ORS test spreadsheets
+    When I generate the admin ORS test spreadsheet
     And I initiate an ORS import
     Then the ORS import initiation succeeds
 
-    When I upload ORS file 'ors-valid.xlsx' via the CDP uploader
+    When I upload ORS file 'ors-admin-list.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
@@ -27,9 +27,9 @@ Feature: Overseas Sites - Admin list
     When I request the admin overseas sites list
     Then the admin overseas sites list should include
       | orsId | destinationCountry | overseasReprocessorName | addressLine1         | addressLine2 | cityOrTown | stateProvinceOrRegion | postcode | coordinates      | validFrom                |
-      | 001   | France             | Papier Recyclage        | 12 Rue de la Paix    | Batiment B   | Paris      | Ile-de-France         | 75002    | 48.8698,2.3311   | 2025-01-01T00:00:00.000Z |
-      | 002   | Germany            | Karton Verarbeiter      | 45 Berliner Strasse  |              | Berlin     | Berlin                | 10115    | 52.5200,13.4050  | 2025-01-01T00:00:00.000Z |
-      | 003   | Spain              | Papel Reciclado         | 8 Calle Mayor        | Planta 2     | Madrid     | Madrid                | 28013    | 40.4168,-3.7038  | 2025-01-01T00:00:00.000Z |
+      | 001   | Norway             | Nordic Paper Recovery One   | 11 Fjord Lane    | Unit 1   | Oslo       | Oslo              | 0150     | 59.9139,10.7522  | 2025-03-01T00:00:00.000Z |
+      | 002   | Sweden             | Nordic Paper Recovery Two   | 22 Harbor Street |          | Stockholm  | Stockholm County  | 11122    | 59.3293,18.0686  | 2025-03-01T00:00:00.000Z |
+      | 003   | Denmark            | Nordic Paper Recovery Three | 33 Canal Road    | Dock C   | Copenhagen | Capital Region    | 1050     | 55.6761,12.5683  | 2025-03-01T00:00:00.000Z |
 
   Scenario: Non-service maintainer cannot access admin overseas sites list
     Given I am logged in as a non-service maintainer
