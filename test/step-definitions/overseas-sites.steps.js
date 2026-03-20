@@ -10,6 +10,44 @@ import {
   invalidOrsSites
 } from '../support/ors-spreadsheet.js'
 
+const adminListOrsSites = [
+  {
+    orsId: 1,
+    country: 'Norway',
+    name: 'Nordic Paper Recovery One',
+    line1: '11 Fjord Lane',
+    line2: 'Unit 1',
+    townOrCity: 'Oslo',
+    stateOrRegion: 'Oslo',
+    postcode: '0150',
+    coordinates: '59.9139,10.7522',
+    validFrom: '2025-03-01'
+  },
+  {
+    orsId: 2,
+    country: 'Sweden',
+    name: 'Nordic Paper Recovery Two',
+    line1: '22 Harbor Street',
+    townOrCity: 'Stockholm',
+    stateOrRegion: 'Stockholm County',
+    postcode: '11122',
+    coordinates: '59.3293,18.0686',
+    validFrom: '2025-03-01'
+  },
+  {
+    orsId: 3,
+    country: 'Denmark',
+    name: 'Nordic Paper Recovery Three',
+    line1: '33 Canal Road',
+    line2: 'Dock C',
+    townOrCity: 'Copenhagen',
+    stateOrRegion: 'Capital Region',
+    postcode: '1050',
+    coordinates: '55.6761,12.5683',
+    validFrom: '2025-03-01'
+  }
+]
+
 When(
   'I upload the generated file {string} via the CDP uploader',
   async function (filename) {
@@ -366,3 +404,55 @@ When('I generate the ORS test spreadsheets', async function () {
     })
   }
 })
+
+When('I generate the admin ORS test spreadsheet', async function () {
+  const orgId = parseInt(this.orgResponseData.orgId)
+  const regEntries = [...this.registrationIds.keys()]
+  const accEntries = [...this.accreditationIds.keys()]
+
+  await createOrsSpreadsheet('data/ors-admin-list.xlsx', {
+    metadata: {
+      packagingWasteCategory: 'Paper or board',
+      orgId,
+      registrationNumber: regEntries[0],
+      accreditationNumber: accEntries[0]
+    },
+    sites: adminListOrsSites
+  })
+})
+
+When('I request the admin overseas sites list', async function () {
+  this.response = await eprBackendAPI.get(
+    '/v1/admin/overseas-sites',
+    authClient.authHeader()
+  )
+})
+
+When(
+  'I request the admin overseas sites list without authentication',
+  async function () {
+    this.response = await eprBackendAPI.get('/v1/admin/overseas-sites')
+  }
+)
+
+Then(
+  'the admin overseas sites list status should be {int}',
+  async function (statusCode) {
+    expect(this.response.statusCode).to.equal(statusCode)
+  }
+)
+
+Then(
+  'the admin overseas sites list should include',
+  async function (dataTable) {
+    expect(this.response.statusCode).to.equal(200)
+
+    const expectedRows = dataTable.hashes().map((row) => ({
+      ...row,
+      addressLine2: row.addressLine2 || null
+    }))
+
+    const responseRows = await this.response.body.json()
+    expect(responseRows).to.deep.equal(expectedRows)
+  }
+)
