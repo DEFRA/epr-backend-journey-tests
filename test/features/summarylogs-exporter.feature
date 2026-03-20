@@ -165,6 +165,30 @@ Feature: Summary Logs - Exporter
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 79     | 79              |
 
+    # Sent On sheet contribute to the report
+    When I retrieve the report for the year 2026 and period 1
+    Then the report is successfully retrieved
+    And the report contains the following information
+      | Key                                 | Value    |
+      | operatorCategory                    | EXPORTER |
+      | cadence                             | monthly  |
+      | sections.wasteReceived.totalTonnage | 0        |
+      | sections.wasteExported.totalTonnage | 0        |
+      | sections.wasteSentOn.totalTonnage   | 37       |
+      | details.material                    | paper    |
+
+    # RowId 1002, 1003 of the adjustments contribute to the report
+    When I retrieve the report for the year 2025 and period 1
+    Then the report is successfully retrieved
+    And the report contains the following information
+      | Key                                 | Value    |
+      | operatorCategory                    | EXPORTER |
+      | cadence                             | monthly  |
+      | sections.wasteReceived.totalTonnage | 54.80    |
+      | sections.wasteExported.totalTonnage | 18.83    |
+      | sections.wasteSentOn.totalTonnage   | 0        |
+      | details.material                    | paper    |
+
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated. Organisation is then suspended, and further adjustment takes no effect
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
