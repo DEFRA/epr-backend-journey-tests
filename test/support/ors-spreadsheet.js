@@ -38,6 +38,31 @@ export const validOrsSites = [
   }
 ]
 
+export const validOrsSitesReg2 = [
+  {
+    orsId: 1,
+    country: 'Italy',
+    name: 'Carta Riciclata',
+    line1: '22 Via Roma',
+    townOrCity: 'Rome',
+    stateOrRegion: 'Lazio',
+    postcode: '00184',
+    coordinates: '41.9028,12.4964',
+    validFrom: '2025-01-01'
+  },
+  {
+    orsId: 2,
+    country: 'Netherlands',
+    name: 'Papier Hergebruik',
+    line1: '10 Damrak',
+    townOrCity: 'Amsterdam',
+    stateOrRegion: 'North Holland',
+    postcode: '1012 LG',
+    coordinates: '52.3676,4.9041',
+    validFrom: '2025-01-01'
+  }
+]
+
 export const invalidOrsSites = [
   {
     orsId: 1,

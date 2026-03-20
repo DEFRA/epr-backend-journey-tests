@@ -4,13 +4,15 @@ Feature: Overseas Sites - Spreadsheet Import
 
   Background:
     Given I create a linked and migrated organisation for the following
-      | wasteProcessingType |
-      | Exporter            |
+      | wasteProcessingType | material            |
+      | Exporter            | Paper or board (R3) |
+      | Exporter            | Steel (R4)          |
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
       | regNumber        | accNumber | status   | validFrom  |
       | R25SR500030912PA | ACC123456 | approved | 2025-02-02 |
+      | R25SR500030913PB | ACC654321 | approved | 2025-02-02 |
     Then the organisations data update succeeds
 
     When I register and authorise a User and link it to the recently migrated organisation
@@ -20,7 +22,7 @@ Feature: Overseas Sites - Spreadsheet Import
     When I initiate an ORS import
     Then the ORS import initiation succeeds
 
-    When I upload the generated file 'ors-valid.xlsx' via the CDP uploader
+    When I upload ORS file 'ors-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
@@ -38,33 +40,56 @@ Feature: Overseas Sites - Spreadsheet Import
     When I initiate an ORS import
     Then the ORS import initiation succeeds
 
-    When I upload the generated file 'ors-valid.xlsx' via the CDP uploader
+    When I upload ORS file 'ors-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
     Then the ORS import status should be 'completed'
 
-    # Re-upload the same spreadsheet
+    # Re-upload the same spreadsheet — sites already exist so none are created
     When I initiate an ORS import
     Then the ORS import initiation succeeds
 
-    When I upload the generated file 'ors-valid.xlsx' via the CDP uploader
+    When I upload ORS file 'ors-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
     Then the ORS import status should be 'completed'
     And the ORS import file result should be
       | Status  | SitesCreated |
-      | success | 3            |
+      | success | 0            |
     And the registration should have exactly 3 overseas site mappings
+
+  Scenario: Upload spreadsheets for different registrations in one batch
+    When I initiate an ORS import
+    Then the ORS import initiation succeeds
+
+    When I upload ORS files via the CDP uploader
+      | filename            |
+      | ors-reg1-valid.xlsx |
+      | ors-reg2-valid.xlsx |
+    Then the upload to CDP uploader succeeds
+
+    When I check the ORS import status
+    Then the ORS import status should be 'completed'
+    And the ORS import should have 2 file results all successful
+    And the registration 'R25SR500030912PA' should have the following overseas sites
+      | OrsId | Name               | Country | TownOrCity |
+      | 001   | Papier Recyclage   | France  | Paris      |
+      | 002   | Karton Verarbeiter | Germany | Berlin     |
+      | 003   | Papel Reciclado    | Spain   | Madrid     |
+    And the registration 'R25SR500030913PB' should have the following overseas sites
+      | OrsId | Name              | Country     | TownOrCity |
+      | 001   | Carta Riciclata   | Italy       | Rome       |
+      | 002   | Papier Hergebruik | Netherlands | Amsterdam  |
 
   Scenario: Upload a spreadsheet with validation errors and verify error reporting
     When I initiate an ORS import
     Then the ORS import initiation succeeds
 
-    When I upload the generated file 'ors-invalid.xlsx' via the CDP uploader
+    When I upload ORS file 'ors-invalid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
     When I check the ORS import status
-    Then the ORS import status should be 'completed'
+    Then the ORS import status should be 'failed'
     And the ORS import file result should have errors

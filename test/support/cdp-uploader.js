@@ -1,6 +1,7 @@
 import config from '../config/config.js'
-import { request } from 'undici'
-import { createReadStream } from 'fs'
+import { request, FormData } from 'undici'
+import { createReadStream, readFileSync } from 'fs'
+import { Blob } from 'buffer'
 
 export class CDPUploader {
   constructor(baseUrl = config.cdpUploaderUri) {
@@ -22,6 +23,24 @@ export class CDPUploader {
       method: 'POST',
       headers: instanceHeaders,
       body: fileStream
+    })
+  }
+
+  async uploadMultipartForm(uploadId, fieldName, filenames, filePathPrefix) {
+    const formData = new FormData()
+    const mimeType =
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+    for (const filename of filenames) {
+      const buffer = readFileSync(filePathPrefix + filename)
+      const blob = new Blob([buffer], { type: mimeType })
+      formData.append(fieldName, blob, filename)
+    }
+
+    return await request(`${this.baseUrl}/upload-and-scan/${uploadId}`, {
+      method: 'POST',
+      headers: { ...this.defaultHeaders },
+      body: formData
     })
   }
 
