@@ -43,8 +43,8 @@ Feature: Summary Logs - Reprocessor on Input
       | Log Level | Message                                              |
       | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
     And the following audit logs are present
-      | Event Category  | Event Action | Context Keys                                 | Count | Context Values                                           |
-      | waste-reporting | submit       | summaryLogId, organisationId, registrationId | 1     | {{summaryLogId}},{{summaryLogOrgId}},{{summaryLogRegId}} |
+      | Event Category  | Event Action | Context Keys                                          | Count | Context Values                                           |
+      | waste-reporting | submit       | summaryLogId, organisationId, registrationId, fileUri | 1     | {{summaryLogId}},{{summaryLogOrgId}},{{summaryLogRegId}} |
     And I should see that waste records are created in the database with the following values
       | OrganisationId      | RegistrationId      | RowId | Type      |
       | {{summaryLogOrgId}} | {{summaryLogRegId}} | 1000  | received  |
