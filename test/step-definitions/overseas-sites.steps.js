@@ -366,3 +366,39 @@ When('I generate the ORS test spreadsheets', async function () {
     })
   }
 })
+
+When('I request the admin overseas sites list', async function () {
+  this.response = await eprBackendAPI.get(
+    '/v1/admin/overseas-sites',
+    authClient.authHeader()
+  )
+})
+
+When(
+  'I request the admin overseas sites list without authentication',
+  async function () {
+    this.response = await eprBackendAPI.get('/v1/admin/overseas-sites')
+  }
+)
+
+Then(
+  'the admin overseas sites list status should be {int}',
+  async function (statusCode) {
+    expect(this.response.statusCode).to.equal(statusCode)
+  }
+)
+
+Then(
+  'the admin overseas sites list should include',
+  async function (dataTable) {
+    expect(this.response.statusCode).to.equal(200)
+
+    const expectedRows = dataTable.hashes().map((row) => ({
+      ...row,
+      addressLine2: row.addressLine2 || null
+    }))
+
+    const responseRows = await this.response.body.json()
+    expect(responseRows).to.deep.equal(expectedRows)
+  }
+)
