@@ -24,6 +24,8 @@ Feature: ORS Import smoke test
 
     When I check the ORS import status
     Then the ORS import status should be 'completed'
-    And the ORS import file result should be
-      | Status  | SitesCreated |
-      | success | 3            |
+    And I should see the following overseas sites mapped to the registration
+      | OrsId | Name               | Country       | TownOrCity |
+      | 001   | Papier Recyclage   | France        | Paris      |
+      | 002   | Karton Verarbeiter | Germany       | Berlin     |
+      | 003   | Papel Reciclado    | Spain         | Madrid     |
