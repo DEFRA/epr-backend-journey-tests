@@ -467,16 +467,38 @@ Then(
       }
     })
 
-    expect(responseRows).to.have.length(expectedRows.length)
+    const resolveRegistrationId = (row) => {
+      const registrationNumber = row.registrationNumber
+      if (registrationNumber && this.registrationIds?.has(registrationNumber)) {
+        return String(this.registrationIds.get(registrationNumber))
+      }
+
+      if (row.registrationId) {
+        return String(row.registrationId)
+      }
+
+      if (this.registrationId) {
+        return String(this.registrationId)
+      }
+
+      return null
+    }
+
+    const toCompositeKey = (row) =>
+      `${String(row.orsId)}::${resolveRegistrationId(row) ?? ''}`
+
+    const responseRowsByCompositeKey = new Map(
+      responseRows.map((row) => [toCompositeKey(row), row])
+    )
 
     for (const expectedRow of expectedRows) {
-      const responseRow = responseRows.find(
-        (row) => String(row.orsId) === String(expectedRow.orsId)
+      const responseRow = responseRowsByCompositeKey.get(
+        toCompositeKey(expectedRow)
       )
 
       expect(
         responseRow,
-        `Missing row for ORS ID ${expectedRow.orsId}`
+        `Missing row for ORS ID ${expectedRow.orsId} and registration ID ${resolveRegistrationId(expectedRow)}`
       ).to.not.equal(undefined)
 
       for (const [key, expectedValue] of Object.entries(expectedRow)) {
