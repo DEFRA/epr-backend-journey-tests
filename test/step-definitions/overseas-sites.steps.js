@@ -1,6 +1,11 @@
 import { Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { authClient, cdpUploader, eprBackendAPI } from '../support/hooks.js'
+import {
+  authClient,
+  cdpUploader,
+  eprBackendAPI,
+  interpolator
+} from '../support/hooks.js'
 import config from '../config/config.js'
 import logger from '../support/logger.js'
 import {
@@ -447,12 +452,50 @@ Then(
   async function (dataTable) {
     expect(this.response.statusCode).to.equal(200)
 
-    const expectedRows = dataTable.hashes().map((row) => ({
-      ...row,
-      addressLine2: row.addressLine2 || null
-    }))
-
     const responseRows = await this.response.body.json()
-    expect(responseRows).to.deep.equal(expectedRows)
+    const expectedRows = dataTable.hashes().map((row) => {
+      const interpolatedRow = Object.fromEntries(
+        Object.entries(row).map(([key, value]) => [
+          key,
+          interpolator.interpolate(this, value)
+        ])
+      )
+
+      return {
+        ...interpolatedRow,
+        addressLine2: interpolatedRow.addressLine2 || null
+      }
+    })
+
+    expect(responseRows).to.have.length(expectedRows.length)
+
+    for (const expectedRow of expectedRows) {
+      const responseRow = responseRows.find(
+        (row) => String(row.orsId) === String(expectedRow.orsId)
+      )
+
+      expect(
+        responseRow,
+        `Missing row for ORS ID ${expectedRow.orsId}`
+      ).to.not.equal(undefined)
+
+      for (const [key, expectedValue] of Object.entries(expectedRow)) {
+        if (expectedValue === '{{any}}') {
+          expect(responseRow[key], `${key} should be populated`).to.not.equal(
+            null
+          )
+          expect(
+            String(responseRow[key]).trim(),
+            `${key} should be populated`
+          ).to.not.equal('')
+          continue
+        }
+
+        expect(
+          String(responseRow[key]),
+          `Mismatch for ${key} on ORS ${expectedRow.orsId}`
+        ).to.equal(String(expectedValue))
+      }
+    }
   }
 )
