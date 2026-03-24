@@ -138,3 +138,25 @@ Feature: Packaging Recycling Notes transitions for Exporter
 
     When an external API retrieves the PRN with status 'cancelled'
     Then the external API call to retrieve the PRN is successful and contains the PRN with PRN Number '{{prnNumber}}'
+
+    When I update the accreditation status to 'suspended' at '2026-03-02'
+    Then the organisations data update succeeds
+
+    # We create another PRN after the accreditation is suspended
+    When I create a PRN with the following details
+      | organisationId | testId                |
+      | name           | Test Organisation Ltd |
+      | tradingName    | Trading Name          |
+      | issuerNotes    | Testing               |
+      | tonnage        | 5                     |
+    Then the PRN is successfully created
+
+    When I update the PRN status to 'awaiting_authorisation'
+    Then the PRN status is updated successfully
+    And the following audit logs are present
+      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                         | Count |
+      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, awaiting_authorisation | 1     |
+
+    # Should not be allowed to issue PRN
+    When I update the PRN status to 'awaiting_acceptance'
+    Then I should receive a 403 error response 'Cannot issue a PRN on a suspended accreditation'
