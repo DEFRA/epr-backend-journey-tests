@@ -134,3 +134,13 @@ Feature: Summary Logs - Reprocessor on Output
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 9.25   | 9.25            |
+
+    When I retrieve the 'monthly' report for the year 2026 and period 1
+    Then the report is successfully retrieved
+    And the report contains the following information
+      | Key                                 | Value       |
+      | operatorCategory                    | REPROCESSOR |
+      | cadence                             | monthly     |
+      | sections.wasteReceived.totalTonnage | 106.11      |
+      | sections.wasteSentOn.totalTonnage   | 40          |
+      | details.material                    | steel       |
