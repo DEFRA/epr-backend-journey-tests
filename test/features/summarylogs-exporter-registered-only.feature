@@ -34,11 +34,24 @@ Feature: Summary Logs - Registered Only Exporter
       | added.invalid  | 0     |                                                                                     |
       | added.included | 0     |                                                                                     |
       | added.excluded | 0     |                                                                                     |
-    And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName                   | added.valid.count | added.invalid.count | added.included.count | added.excluded.count |
-      | received        | Received (section 1)        | 5                 | 0                   | 0                    | 0                    |
-      | exported        | Exported (sections 2 and 3) | 5                 | 0                   | 0                    | 0                    |
-      | sentOn          | Sent on (section 4)         | 5                 | 0                   | 0                    | 0                    |
+    And the summary log has the following loads for the received waste record type
+      | LoadType       | Count | RowIDs                    |
+      | added.valid    | 5     | 1000,1001,1002,1003,1004 |
+      | added.invalid  | 0     |                           |
+      | added.included | 0     |                           |
+      | added.excluded | 0     |                           |
+    And the summary log has the following loads for the exported waste record type
+      | LoadType       | Count | RowIDs                    |
+      | added.valid    | 5     | 2000,2001,2002,2003,2004 |
+      | added.invalid  | 0     |                           |
+      | added.included | 0     |                           |
+      | added.excluded | 0     |                           |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType       | Count | RowIDs                    |
+      | added.valid    | 5     | 4000,4001,4002,4003,4004 |
+      | added.invalid  | 0     |                           |
+      | added.included | 0     |                           |
+      | added.excluded | 0     |                           |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'

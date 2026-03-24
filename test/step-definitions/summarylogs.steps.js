@@ -340,47 +340,34 @@ Then('the summary log has the following loads', async function (dataTable) {
 })
 
 Then(
-  'the summary log loadsByWasteRecordType contains the following waste record types',
-  async function (dataTable) {
-    const expectedEntries = dataTable.hashes()
-
-    expect(this.responseData.loadsByWasteRecordType).to.be.an('array')
-
-    expect(this.responseData.loadsByWasteRecordType).to.have.lengthOf(
-      expectedEntries.length,
-      `Expected ${expectedEntries.length} loadsByWasteRecordType entries but got ${this.responseData.loadsByWasteRecordType.length}. ` +
-        `Actual: ${JSON.stringify(this.responseData.loadsByWasteRecordType.map((e) => e.wasteRecordType))}`
+  'the summary log has the following loads for the {word} waste record type',
+  async function (wasteRecordType, dataTable) {
+    const entry = this.responseData.loadsByWasteRecordType?.find(
+      (item) => item.wasteRecordType === wasteRecordType
     )
 
-    for (const expectedEntry of expectedEntries) {
-      const entry = this.responseData.loadsByWasteRecordType.find(
-        (item) => item.wasteRecordType === expectedEntry.WasteRecordType
+    if (!entry) {
+      expect.fail(
+        `Expected loadsByWasteRecordType entry for '${wasteRecordType}' ` +
+          `but not found. Actual entries: ${JSON.stringify(this.responseData.loadsByWasteRecordType?.map((e) => e.wasteRecordType))}`
       )
+    }
 
-      if (!entry) {
-        expect.fail(
-          `Expected loadsByWasteRecordType entry for wasteRecordType '${expectedEntry.WasteRecordType}' ` +
-            `but not found. Actual entries: ${JSON.stringify(this.responseData.loadsByWasteRecordType.map((e) => e.wasteRecordType))}`
-        )
-      }
+    const expectedLoads = dataTable.hashes()
 
-      expect(entry.sheetName).to.equal(
-        expectedEntry.SheetName,
-        `sheetName mismatch for wasteRecordType '${expectedEntry.WasteRecordType}'`
+    for (const expectedLoad of expectedLoads) {
+      const actualLoadType = expectedLoad.LoadType.split('.').reduce(
+        (acc, key) => acc?.[key],
+        entry
       )
-
-      // Assert on any additional columns using dot-path access
-      for (const [column, expectedValue] of Object.entries(expectedEntry)) {
-        if (column === 'WasteRecordType' || column === 'SheetName') continue
-
-        const actualValue = column
-          .split('.')
-          .reduce((acc, key) => acc?.[key], entry)
-        expect(actualValue).to.equal(
-          parseInt(expectedValue),
-          `${expectedEntry.WasteRecordType}.${column}`
-        )
-      }
+      expect(actualLoadType.count).to.equal(
+        parseInt(expectedLoad.Count),
+        `Failed at ${wasteRecordType}.${expectedLoad.LoadType}`
+      )
+      expect(actualLoadType.rowIds.join(',')).to.equal(
+        expectedLoad.RowIDs,
+        `Failed at ${wasteRecordType}.${expectedLoad.LoadType}`
+      )
     }
   }
 )

@@ -63,11 +63,24 @@ Feature: Summary Logs - Reprocessor on Output
       | added.invalid  | 0     |                               |
       | added.included | 1     | 3000                          |
       | added.excluded | 0     |                               |
-    And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName | added.valid.count | added.invalid.count | added.included.count | added.excluded.count |
-      | received        | Received  | 3                 | 0                   | 0                    | 0                    |
-      | processed       | Processed | 1                 | 0                   | 1                    | 0                    |
-      | sentOn          | Sent on   | 2                 | 0                   | 0                    | 0                    |
+    And the summary log has the following loads for the received waste record type
+      | LoadType       | Count | RowIDs         |
+      | added.valid    | 3     | 1000,1001,1002 |
+      | added.invalid  | 0     |                |
+      | added.included | 0     |                |
+      | added.excluded | 0     |                |
+    And the summary log has the following loads for the processed waste record type
+      | LoadType       | Count | RowIDs |
+      | added.valid    | 1     | 3000   |
+      | added.invalid  | 0     |        |
+      | added.included | 1     | 3000   |
+      | added.excluded | 0     |        |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType       | Count | RowIDs    |
+      | added.valid    | 2     | 5000,5001 |
+      | added.invalid  | 0     |           |
+      | added.included | 0     |           |
+      | added.excluded | 0     |           |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -114,11 +127,48 @@ Feature: Summary Logs - Reprocessor on Output
       | adjusted.invalid   | 0     |                     |
       | adjusted.included  | 1     | 3000                |
       | adjusted.excluded  | 0     |                     |
-    And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName | added.valid.count | added.invalid.count | added.included.count | added.excluded.count | unchanged.valid.count | unchanged.invalid.count | unchanged.included.count | unchanged.excluded.count | adjusted.valid.count | adjusted.invalid.count | adjusted.included.count | adjusted.excluded.count |
-      | received        | Received  | 1                 | 0                   | 0                    | 0                    | 3                     | 0                       | 0                        | 0                        | 0                    | 0                      | 0                       | 0                       |
-      | processed       | Processed | 1                 | 2                   | 1                    | 2                    | 0                     | 0                       | 0                        | 0                        | 1                    | 0                      | 1                       | 0                       |
-      | sentOn          | Sent on   | 1                 | 0                   | 0                    | 0                    | 2                     | 0                       | 0                        | 0                        | 0                    | 0                      | 0                       | 0                       |
+    And the summary log has the following loads for the received waste record type
+      | LoadType           | Count | RowIDs         |
+      | added.valid        | 1     | 1003           |
+      | added.invalid      | 0     |                |
+      | added.included     | 0     |                |
+      | added.excluded     | 0     |                |
+      | unchanged.valid    | 3     | 1000,1001,1002 |
+      | unchanged.invalid  | 0     |                |
+      | unchanged.included | 0     |                |
+      | unchanged.excluded | 0     |                |
+      | adjusted.valid     | 0     |                |
+      | adjusted.invalid   | 0     |                |
+      | adjusted.included  | 0     |                |
+      | adjusted.excluded  | 0     |                |
+    And the summary log has the following loads for the processed waste record type
+      | LoadType           | Count | RowIDs    |
+      | added.valid        | 1     | 3002      |
+      | added.invalid      | 2     | 3003,3004 |
+      | added.included     | 1     | 3002      |
+      | added.excluded     | 2     | 3003,3004 |
+      | unchanged.valid    | 0     |           |
+      | unchanged.invalid  | 0     |           |
+      | unchanged.included | 0     |           |
+      | unchanged.excluded | 0     |           |
+      | adjusted.valid     | 1     | 3000      |
+      | adjusted.invalid   | 0     |           |
+      | adjusted.included  | 1     | 3000      |
+      | adjusted.excluded  | 0     |           |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType           | Count | RowIDs    |
+      | added.valid        | 1     | 5002      |
+      | added.invalid      | 0     |           |
+      | added.included     | 0     |           |
+      | added.excluded     | 0     |           |
+      | unchanged.valid    | 2     | 5000,5001 |
+      | unchanged.invalid  | 0     |           |
+      | unchanged.included | 0     |           |
+      | unchanged.excluded | 0     |           |
+      | adjusted.valid     | 0     |           |
+      | adjusted.invalid   | 0     |           |
+      | adjusted.included  | 0     |           |
+      | adjusted.excluded  | 0     |           |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'

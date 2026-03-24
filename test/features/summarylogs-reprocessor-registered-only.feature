@@ -34,10 +34,18 @@ Feature: Summary Logs - Registered Only Reprocessor
       | added.invalid  | 0     |                                                   |
       | added.included | 0     |                                                   |
       | added.excluded | 0     |                                                   |
-    And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName | added.valid.count | added.invalid.count | added.included.count | added.excluded.count |
-      | received        | Received  | 5                 | 0                   | 0                    | 0                    |
-      | sentOn          | Sent on   | 5                 | 0                   | 0                    | 0                    |
+    And the summary log has the following loads for the received waste record type
+      | LoadType       | Count | RowIDs                    |
+      | added.valid    | 5     | 1000,1001,1002,1003,1004 |
+      | added.invalid  | 0     |                           |
+      | added.included | 0     |                           |
+      | added.excluded | 0     |                           |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType       | Count | RowIDs                    |
+      | added.valid    | 5     | 5000,5001,5002,5003,5004 |
+      | added.invalid  | 0     |                           |
+      | added.included | 0     |                           |
+      | added.excluded | 0     |                           |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
