@@ -1,6 +1,11 @@
 import { Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { authClient, cdpUploader, eprBackendAPI } from '../support/hooks.js'
+import {
+  authClient,
+  cdpUploader,
+  eprBackendAPI,
+  interpolator
+} from '../support/hooks.js'
 import config from '../config/config.js'
 import logger from '../support/logger.js'
 import {
@@ -9,6 +14,44 @@ import {
   validOrsSitesReg2,
   invalidOrsSites
 } from '../support/ors-spreadsheet.js'
+
+const adminListOrsSites = [
+  {
+    orsId: 1,
+    country: 'Norway',
+    name: 'Nordic Paper Recovery One',
+    line1: '11 Fjord Lane',
+    line2: 'Unit 1',
+    townOrCity: 'Oslo',
+    stateOrRegion: 'Oslo',
+    postcode: '0150',
+    coordinates: '59.9139,10.7522',
+    validFrom: '2025-03-01'
+  },
+  {
+    orsId: 2,
+    country: 'Sweden',
+    name: 'Nordic Paper Recovery Two',
+    line1: '22 Harbor Street',
+    townOrCity: 'Stockholm',
+    stateOrRegion: 'Stockholm County',
+    postcode: '11122',
+    coordinates: '59.3293,18.0686',
+    validFrom: '2025-03-01'
+  },
+  {
+    orsId: 3,
+    country: 'Denmark',
+    name: 'Nordic Paper Recovery Three',
+    line1: '33 Canal Road',
+    line2: 'Dock C',
+    townOrCity: 'Copenhagen',
+    stateOrRegion: 'Capital Region',
+    postcode: '1050',
+    coordinates: '55.6761,12.5683',
+    validFrom: '2025-03-01'
+  }
+]
 
 When(
   'I upload the generated file {string} via the CDP uploader',
@@ -366,3 +409,115 @@ When('I generate the ORS test spreadsheets', async function () {
     })
   }
 })
+
+When('I generate the admin ORS test spreadsheet', async function () {
+  const orgId = parseInt(this.orgResponseData.orgId)
+  const regEntries = [...this.registrationIds.keys()]
+  const accEntries = [...this.accreditationIds.keys()]
+
+  await createOrsSpreadsheet('data/ors-admin-list.xlsx', {
+    metadata: {
+      packagingWasteCategory: 'Paper or board',
+      orgId,
+      registrationNumber: regEntries[0],
+      accreditationNumber: accEntries[0]
+    },
+    sites: adminListOrsSites
+  })
+})
+
+When('I request the admin overseas sites list', async function () {
+  this.response = await eprBackendAPI.get(
+    '/v1/admin/overseas-sites',
+    authClient.authHeader()
+  )
+})
+
+When(
+  'I request the admin overseas sites list without authentication',
+  async function () {
+    this.response = await eprBackendAPI.get('/v1/admin/overseas-sites')
+  }
+)
+
+Then(
+  'the admin overseas sites list status should be {int}',
+  async function (statusCode) {
+    expect(this.response.statusCode).to.equal(statusCode)
+  }
+)
+
+Then(
+  'the admin overseas sites list should include',
+  async function (dataTable) {
+    expect(this.response.statusCode).to.equal(200)
+
+    const responseRows = await this.response.body.json()
+    const expectedRows = dataTable.hashes().map((row) => {
+      const interpolatedRow = Object.fromEntries(
+        Object.entries(row).map(([key, value]) => [
+          key,
+          interpolator.interpolate(this, value)
+        ])
+      )
+
+      return {
+        ...interpolatedRow,
+        addressLine2: interpolatedRow.addressLine2 || null
+      }
+    })
+
+    const resolveRegistrationId = (row) => {
+      const registrationNumber = row.registrationNumber
+      if (registrationNumber && this.registrationIds?.has(registrationNumber)) {
+        return String(this.registrationIds.get(registrationNumber))
+      }
+
+      if (row.registrationId) {
+        return String(row.registrationId)
+      }
+
+      if (this.registrationId) {
+        return String(this.registrationId)
+      }
+
+      return null
+    }
+
+    const toCompositeKey = (row) =>
+      `${String(row.orsId)}::${resolveRegistrationId(row) ?? ''}`
+
+    const responseRowsByCompositeKey = new Map(
+      responseRows.map((row) => [toCompositeKey(row), row])
+    )
+
+    for (const expectedRow of expectedRows) {
+      const responseRow = responseRowsByCompositeKey.get(
+        toCompositeKey(expectedRow)
+      )
+
+      expect(
+        responseRow,
+        `Missing row for ORS ID ${expectedRow.orsId} and registration ID ${resolveRegistrationId(expectedRow)}`
+      ).to.not.equal(undefined)
+
+      for (const [key, expectedValue] of Object.entries(expectedRow)) {
+        if (expectedValue === '{{any}}') {
+          expect(responseRow[key], `${key} should be populated`).to.not.equal(
+            null
+          )
+          expect(
+            String(responseRow[key]).trim(),
+            `${key} should be populated`
+          ).to.not.equal('')
+          continue
+        }
+
+        expect(
+          String(responseRow[key]),
+          `Mismatch for ${key} on ORS ${expectedRow.orsId}`
+        ).to.equal(String(expectedValue))
+      }
+    }
+  }
+)
