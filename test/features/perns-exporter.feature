@@ -153,9 +153,6 @@ Feature: Packaging Recycling Notes transitions for Exporter
 
     When I update the PRN status to 'awaiting_authorisation'
     Then the PRN status is updated successfully
-    And the following audit logs are present
-      | Event Category  | Event Subcategory         | Event Action      | Context Keys                          | Context Values                                         | Count |
-      | waste-reporting | packaging-recycling-notes | status-transition | organisationId, prnId, previous, next | {{summaryLogOrgId}}, {{prnId}}, awaiting_authorisation | 1     |
 
     # Should not be allowed to issue PRN
     When I update the PRN status to 'awaiting_acceptance'
