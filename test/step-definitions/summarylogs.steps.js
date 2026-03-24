@@ -340,6 +340,39 @@ Then('the summary log has the following loads', async function (dataTable) {
 })
 
 Then(
+  'the summary log has the following loads for the {word} waste record type',
+  async function (wasteRecordType, dataTable) {
+    const entry = this.responseData.loadsByWasteRecordType?.find(
+      (item) => item.wasteRecordType === wasteRecordType
+    )
+
+    if (!entry) {
+      expect.fail(
+        `Expected loadsByWasteRecordType entry for '${wasteRecordType}' ` +
+          `but not found. Actual entries: ${JSON.stringify(this.responseData.loadsByWasteRecordType?.map((e) => e.wasteRecordType))}`
+      )
+    }
+
+    const expectedLoads = dataTable.hashes()
+
+    for (const expectedLoad of expectedLoads) {
+      const actualLoadType = expectedLoad.LoadType.split('.').reduce(
+        (acc, key) => acc?.[key],
+        entry
+      )
+      expect(actualLoadType.count).to.equal(
+        parseInt(expectedLoad.Count),
+        `Failed at ${wasteRecordType}.${expectedLoad.LoadType}`
+      )
+      expect(actualLoadType.rowIds.join(',')).to.equal(
+        expectedLoad.RowIDs,
+        `Failed at ${wasteRecordType}.${expectedLoad.LoadType}`
+      )
+    }
+  }
+)
+
+Then(
   'I should receive a summary log upload accepted response',
   async function () {
     expect(this.response.statusCode).to.equal(202)

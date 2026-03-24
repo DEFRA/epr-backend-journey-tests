@@ -96,6 +96,18 @@ Feature: Summary Logs - Exporter
       | added.invalid  | 1     | 1003           |
       | added.included | 2     | 1000,1001      |
       | added.excluded | 1     | 1003           |
+    And the summary log has the following loads for the exported waste record type
+      | LoadType       | Count | RowIDs    |
+      | added.valid    | 2     | 1000,1001 |
+      | added.invalid  | 1     | 1003      |
+      | added.included | 2     | 1000,1001 |
+      | added.excluded | 1     | 1003      |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType       | Count | RowIDs |
+      | added.valid    | 1     | 4000   |
+      | added.invalid  | 0     |        |
+      | added.included | 0     |        |
+      | added.excluded | 0     |        |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -145,6 +157,34 @@ Feature: Summary Logs - Exporter
       | adjusted.invalid   | 1     | 1000      |
       | adjusted.included  | 1     | 1001      |
       | adjusted.excluded  | 1     | 1000      |
+    And the summary log has the following loads for the exported waste record type
+      | LoadType           | Count | RowIDs |
+      | added.valid        | 1     | 1004   |
+      | added.invalid      | 0     |        |
+      | added.included     | 1     | 1004   |
+      | added.excluded     | 0     |        |
+      | unchanged.valid    | 0     |        |
+      | unchanged.invalid  | 0     |        |
+      | unchanged.included | 0     |        |
+      | unchanged.excluded | 0     |        |
+      | adjusted.valid     | 1     | 1001   |
+      | adjusted.invalid   | 1     | 1000   |
+      | adjusted.included  | 1     | 1001   |
+      | adjusted.excluded  | 1     | 1000   |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType           | Count | RowIDs |
+      | added.valid        | 1     | 4001   |
+      | added.invalid      | 0     |        |
+      | added.included     | 0     |        |
+      | added.excluded     | 0     |        |
+      | unchanged.valid    | 1     | 4000   |
+      | unchanged.invalid  | 0     |        |
+      | unchanged.included | 0     |        |
+      | unchanged.excluded | 0     |        |
+      | adjusted.valid     | 0     |        |
+      | adjusted.invalid   | 0     |        |
+      | adjusted.included  | 0     |        |
+      | adjusted.excluded  | 0     |        |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -172,9 +212,9 @@ Feature: Summary Logs - Exporter
       | Key                                 | Value    |
       | operatorCategory                    | EXPORTER |
       | cadence                             | monthly  |
-      | sections.wasteReceived.totalTonnage | 0        |
-      | sections.wasteExported.totalTonnage | 0        |
-      | sections.wasteSentOn.totalTonnage   | 37       |
+      | recyclingActivity.totalTonnageReceived | 0        |
+      | exportActivity.totalTonnageReceivedForExporting | 0        |
+      | wasteSent.tonnageSentToExporter   | 37       |
       | details.material                    | paper    |
 
     # RowId 1002, 1003 of the adjustments contribute to the report
@@ -184,9 +224,9 @@ Feature: Summary Logs - Exporter
       | Key                                 | Value    |
       | operatorCategory                    | EXPORTER |
       | cadence                             | monthly  |
-      | sections.wasteReceived.totalTonnage | 54.80    |
-      | sections.wasteExported.totalTonnage | 18.83    |
-      | sections.wasteSentOn.totalTonnage   | 0        |
+      | recyclingActivity.totalTonnageReceived | 54.80    |
+      | exportActivity.totalTonnageReceivedForExporting | 18.83    |
+      | wasteSent.tonnageSentToExporter   | 0        |
       | details.material                    | paper    |
 
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated. Organisation is then suspended, and further adjustment takes no effect
@@ -256,6 +296,34 @@ Feature: Summary Logs - Exporter
       | adjusted.invalid   | 1     | 1000   |
       | adjusted.included  | 1     | 1001   |
       | adjusted.excluded  | 1     | 1000   |
+    And the summary log has the following loads for the exported waste record type
+      | LoadType           | Count | RowIDs |
+      | added.valid        | 0     |        |
+      | added.invalid      | 0     |        |
+      | added.included     | 0     |        |
+      | added.excluded     | 0     |        |
+      | unchanged.valid    | 0     |        |
+      | unchanged.invalid  | 0     |        |
+      | unchanged.included | 0     |        |
+      | unchanged.excluded | 0     |        |
+      | adjusted.valid     | 1     | 1001   |
+      | adjusted.invalid   | 1     | 1000   |
+      | adjusted.included  | 1     | 1001   |
+      | adjusted.excluded  | 1     | 1000   |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType           | Count | RowIDs |
+      | added.valid        | 1     | 4001   |
+      | added.invalid      | 0     |        |
+      | added.included     | 0     |        |
+      | added.excluded     | 0     |        |
+      | unchanged.valid    | 1     | 4000   |
+      | unchanged.invalid  | 0     |        |
+      | unchanged.included | 0     |        |
+      | unchanged.excluded | 0     |        |
+      | adjusted.valid     | 0     |        |
+      | adjusted.invalid   | 0     |        |
+      | adjusted.included  | 0     |        |
+      | adjusted.excluded  | 0     |        |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
