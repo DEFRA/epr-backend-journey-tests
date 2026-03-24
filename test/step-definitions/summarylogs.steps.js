@@ -340,6 +340,56 @@ Then('the summary log has the following loads', async function (dataTable) {
 })
 
 Then(
+  'the summary log loadsByWasteRecordType contains the following waste record types',
+  async function (dataTable) {
+    const expectedEntries = dataTable.hashes()
+
+    expect(this.responseData.loadsByWasteRecordType).to.be.an('array')
+
+    expect(this.responseData.loadsByWasteRecordType).to.have.lengthOf(
+      expectedEntries.length,
+      `Expected ${expectedEntries.length} loadsByWasteRecordType entries but got ${this.responseData.loadsByWasteRecordType.length}. ` +
+        `Actual: ${JSON.stringify(this.responseData.loadsByWasteRecordType.map((e) => e.wasteRecordType))}`
+    )
+
+    for (const expectedEntry of expectedEntries) {
+      const entry = this.responseData.loadsByWasteRecordType.find(
+        (item) => item.wasteRecordType === expectedEntry.WasteRecordType
+      )
+
+      if (!entry) {
+        expect.fail(
+          `Expected loadsByWasteRecordType entry for wasteRecordType '${expectedEntry.WasteRecordType}' ` +
+            `but not found. Actual entries: ${JSON.stringify(this.responseData.loadsByWasteRecordType.map((e) => e.wasteRecordType))}`
+        )
+      }
+
+      expect(entry.sheetName).to.equal(
+        expectedEntry.SheetName,
+        `sheetName mismatch for wasteRecordType '${expectedEntry.WasteRecordType}'`
+      )
+
+      // Verify structural shape: each entry must have added, unchanged, adjusted
+      for (const status of ['added', 'unchanged', 'adjusted']) {
+        // eslint-disable-next-line no-unused-expressions
+        expect(entry[status], `${expectedEntry.WasteRecordType}.${status}`).to
+          .not.be.undefined
+        for (const key of ['valid', 'invalid', 'included', 'excluded']) {
+          expect(
+            entry[status][key],
+            `${expectedEntry.WasteRecordType}.${status}.${key}`
+          ).to.have.property('count')
+          expect(
+            entry[status][key],
+            `${expectedEntry.WasteRecordType}.${status}.${key}`
+          ).to.have.property('rowIds')
+        }
+      }
+    }
+  }
+)
+
+Then(
   'I should receive a summary log upload accepted response',
   async function () {
     expect(this.response.statusCode).to.equal(202)

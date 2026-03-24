@@ -34,6 +34,10 @@ Feature: Summary Logs - Registered Only Reprocessor
       | added.invalid  | 0     |                                                   |
       | added.included | 0     |                                                   |
       | added.excluded | 0     |                                                   |
+    And the summary log loadsByWasteRecordType contains the following waste record types
+      | WasteRecordType | SheetName |
+      | received        | Received  |
+      | sentOn          | Sent on   |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'

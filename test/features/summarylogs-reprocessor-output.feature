@@ -63,6 +63,11 @@ Feature: Summary Logs - Reprocessor on Output
       | added.invalid  | 0     |                               |
       | added.included | 1     | 3000                          |
       | added.excluded | 0     |                               |
+    And the summary log loadsByWasteRecordType contains the following waste record types
+      | WasteRecordType | SheetName |
+      | received        | Received  |
+      | processed       | Processed |
+      | sentOn          | Sent on   |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -109,6 +114,11 @@ Feature: Summary Logs - Reprocessor on Output
       | adjusted.invalid   | 0     |                     |
       | adjusted.included  | 1     | 3000                |
       | adjusted.excluded  | 0     |                     |
+    And the summary log loadsByWasteRecordType contains the following waste record types
+      | WasteRecordType | SheetName |
+      | received        | Received  |
+      | processed       | Processed |
+      | sentOn          | Sent on   |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'

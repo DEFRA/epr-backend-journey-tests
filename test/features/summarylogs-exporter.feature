@@ -96,6 +96,10 @@ Feature: Summary Logs - Exporter
       | added.invalid  | 1     | 1003           |
       | added.included | 2     | 1000,1001      |
       | added.excluded | 1     | 1003           |
+    And the summary log loadsByWasteRecordType contains the following waste record types
+      | WasteRecordType | SheetName |
+      | exported        | Exported  |
+      | sentOn          | Sent on   |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -145,6 +149,10 @@ Feature: Summary Logs - Exporter
       | adjusted.invalid   | 1     | 1000      |
       | adjusted.included  | 1     | 1001      |
       | adjusted.excluded  | 1     | 1000      |
+    And the summary log loadsByWasteRecordType contains the following waste record types
+      | WasteRecordType | SheetName |
+      | exported        | Exported  |
+      | sentOn          | Sent on   |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -256,6 +264,10 @@ Feature: Summary Logs - Exporter
       | adjusted.invalid   | 1     | 1000   |
       | adjusted.included  | 1     | 1001   |
       | adjusted.excluded  | 1     | 1000   |
+    And the summary log loadsByWasteRecordType contains the following waste record types
+      | WasteRecordType | SheetName |
+      | exported        | Exported  |
+      | sentOn          | Sent on   |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
