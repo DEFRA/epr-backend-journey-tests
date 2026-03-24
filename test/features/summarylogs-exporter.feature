@@ -172,9 +172,9 @@ Feature: Summary Logs - Exporter
       | Key                                 | Value    |
       | operatorCategory                    | EXPORTER |
       | cadence                             | monthly  |
-      | sections.wasteReceived.totalTonnage | 0        |
-      | sections.wasteExported.totalTonnage | 0        |
-      | sections.wasteSentOn.totalTonnage   | 37       |
+      | recyclingActivity.totalTonnageReceived | 0        |
+      | exportActivity.totalTonnageReceivedForExporting | 0        |
+      | wasteSent.tonnageSentToExporter   | 37       |
       | details.material                    | paper    |
 
     # RowId 1002, 1003 of the adjustments contribute to the report
@@ -184,9 +184,9 @@ Feature: Summary Logs - Exporter
       | Key                                 | Value    |
       | operatorCategory                    | EXPORTER |
       | cadence                             | monthly  |
-      | sections.wasteReceived.totalTonnage | 54.80    |
-      | sections.wasteExported.totalTonnage | 18.83    |
-      | sections.wasteSentOn.totalTonnage   | 0        |
+      | recyclingActivity.totalTonnageReceived | 54.80    |
+      | exportActivity.totalTonnageReceivedForExporting | 18.83    |
+      | wasteSent.tonnageSentToExporter   | 0        |
       | details.material                    | paper    |
 
   Scenario: Summary Logs uploads (Exporter) and succeeds, with waste balance calculated. Organisation is then suspended, and further adjustment takes no effect

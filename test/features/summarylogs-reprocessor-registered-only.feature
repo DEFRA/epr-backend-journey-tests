@@ -43,8 +43,8 @@ Feature: Summary Logs - Registered Only Reprocessor
       | Key                                 | Value                       |
       | operatorCategory                    | REPROCESSOR_REGISTERED_ONLY |
       | cadence                             | quarterly                   |
-      | sections.wasteReceived.totalTonnage | 69.34                       |
-      | sections.wasteSentOn.totalTonnage   | 49.51                       |
+      | recyclingActivity.totalTonnageReceived | 69.34                       |
+      | wasteSent.tonnageSentToReprocessor   | 49.51                       |
       | details.material                    | paper                       |
 
 

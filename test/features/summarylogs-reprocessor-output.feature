@@ -141,6 +141,6 @@ Feature: Summary Logs - Reprocessor on Output
       | Key                                 | Value       |
       | operatorCategory                    | REPROCESSOR |
       | cadence                             | monthly     |
-      | sections.wasteReceived.totalTonnage | 106.11      |
-      | sections.wasteSentOn.totalTonnage   | 40          |
+      | recyclingActivity.totalTonnageReceived | 106.11      |
+      | wasteSent.tonnageSentToReprocessor   | 40          |
       | details.material                    | steel       |
