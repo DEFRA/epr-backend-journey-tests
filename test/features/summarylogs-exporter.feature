@@ -166,7 +166,7 @@ Feature: Summary Logs - Exporter
       | {{summaryLogAccId}} | 79     | 79              |
 
     # Sent On sheet contribute to the report
-    When I retrieve the report for the year 2026 and period 1
+    When I retrieve the 'monthly' report for the year 2026 and period 1
     Then the report is successfully retrieved
     And the report contains the following information
       | Key                                 | Value    |
@@ -178,7 +178,7 @@ Feature: Summary Logs - Exporter
       | details.material                    | paper    |
 
     # RowId 1002, 1003 of the adjustments contribute to the report
-    When I retrieve the report for the year 2025 and period 1
+    When I retrieve the 'monthly' report for the year 2025 and period 1
     Then the report is successfully retrieved
     And the report contains the following information
       | Key                                 | Value    |

@@ -3,10 +3,10 @@ import { defraIdStub, eprBackendAPI } from '../support/hooks.js'
 import { expect } from 'chai'
 
 When(
-  'I retrieve the report for the year {int} and period {int}',
-  async function (year, period) {
+  'I retrieve the {string} report for the year {int} and period {int}',
+  async function (cadence, year, period) {
     this.response = await eprBackendAPI.get(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${period}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}`,
       defraIdStub.authHeader(this.userId)
     )
   }

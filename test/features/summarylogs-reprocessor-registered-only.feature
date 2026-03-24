@@ -37,7 +37,7 @@ Feature: Summary Logs - Registered Only Reprocessor
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
-    When I retrieve the report for the year 2026 and period 1
+    When I retrieve the 'quarterly' report for the year 2026 and period 1
     Then the report is successfully retrieved
     And the report contains the following information
       | Key                                 | Value                       |
