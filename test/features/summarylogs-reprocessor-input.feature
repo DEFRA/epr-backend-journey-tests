@@ -36,10 +36,10 @@ Feature: Summary Logs - Reprocessor on Input
       | added.included | 3     | 1000,1001,5000      |
       | added.excluded | 1     | 1002                |
     And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName |
-      | received        | Received  |
-      | processed       | Processed |
-      | sentOn          | Sent on   |
+      | WasteRecordType | SheetName | added.valid.count | added.invalid.count | added.included.count | added.excluded.count |
+      | received        | Received  | 2                 | 1                   | 2                    | 1                    |
+      | processed       | Processed | 1                 | 0                   | 0                    | 0                    |
+      | sentOn          | Sent on   | 1                 | 0                   | 1                    | 0                    |
 
     When I submit the uploaded summary log and initiate a new upload at the same time
     Then the summary log submission succeeds
@@ -120,10 +120,10 @@ Feature: Summary Logs - Reprocessor on Input
       | adjusted.included  | 1     | 1001                |
       | adjusted.excluded  | 1     | 1002                |
     And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName |
-      | received        | Received  |
-      | processed       | Processed |
-      | sentOn          | Sent on   |
+      | WasteRecordType | SheetName | added.valid.count | added.invalid.count | added.included.count | added.excluded.count | unchanged.valid.count | unchanged.invalid.count | unchanged.included.count | unchanged.excluded.count | adjusted.valid.count | adjusted.invalid.count | adjusted.included.count | adjusted.excluded.count |
+      | received        | Received  | 1                 | 1                   | 1                    | 1                    | 1                     | 0                       | 1                        | 0                        | 1                    | 1                      | 1                       | 1                       |
+      | processed       | Processed | 2                 | 0                   | 0                    | 0                    | 1                     | 0                       | 0                        | 0                        | 0                    | 0                      | 0                       | 0                       |
+      | sentOn          | Sent on   | 1                 | 0                   | 1                    | 0                    | 1                     | 0                       | 1                        | 0                        | 0                    | 0                      | 0                       | 0                       |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -238,10 +238,10 @@ Feature: Summary Logs - Reprocessor on Input
       | added.included | 0     |        |
       | added.excluded | 1     | 1002   |
     And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName |
-      | received        | Received  |
-      | processed       | Processed |
-      | sentOn          | Sent on   |
+      | WasteRecordType | SheetName | added.valid.count | added.invalid.count | added.included.count | added.excluded.count |
+      | received        | Received  | 0                 | 1                   | 0                    | 1                    |
+      | processed       | Processed | 1                 | 0                   | 0                    | 0                    |
+      | sentOn          | Sent on   | 0                 | 0                   | 0                    | 0                    |
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds

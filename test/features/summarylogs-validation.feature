@@ -150,7 +150,7 @@ Feature: Summary Logs validation tests
       | added.included | 2     | 1001,5000      |
       | added.excluded | 2     | 1000,1002      |
     And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName |
-      | received        | Received  |
-      | processed       | Processed |
-      | sentOn          | Sent on   |
+      | WasteRecordType | SheetName | added.valid.count | added.invalid.count | added.included.count | added.excluded.count |
+      | received        | Received  | 1                 | 2                   | 1                    | 2                    |
+      | processed       | Processed | 1                 | 0                   | 0                    | 0                    |
+      | sentOn          | Sent on   | 1                 | 0                   | 1                    | 0                    |

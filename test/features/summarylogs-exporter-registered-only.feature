@@ -35,10 +35,10 @@ Feature: Summary Logs - Registered Only Exporter
       | added.included | 0     |                                                                                     |
       | added.excluded | 0     |                                                                                     |
     And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName                  |
-      | received        | Received (section 1)       |
-      | exported        | Exported (sections 2 and 3) |
-      | sentOn          | Sent on (section 4)        |
+      | WasteRecordType | SheetName                   | added.valid.count | added.invalid.count | added.included.count | added.excluded.count |
+      | received        | Received (section 1)        | 5                 | 0                   | 0                    | 0                    |
+      | exported        | Exported (sections 2 and 3) | 5                 | 0                   | 0                    | 0                    |
+      | sentOn          | Sent on (section 4)         | 5                 | 0                   | 0                    | 0                    |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'

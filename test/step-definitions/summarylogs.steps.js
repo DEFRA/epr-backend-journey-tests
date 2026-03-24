@@ -369,21 +369,17 @@ Then(
         `sheetName mismatch for wasteRecordType '${expectedEntry.WasteRecordType}'`
       )
 
-      // Verify structural shape: each entry must have added, unchanged, adjusted
-      for (const status of ['added', 'unchanged', 'adjusted']) {
-        // eslint-disable-next-line no-unused-expressions
-        expect(entry[status], `${expectedEntry.WasteRecordType}.${status}`).to
-          .not.be.undefined
-        for (const key of ['valid', 'invalid', 'included', 'excluded']) {
-          expect(
-            entry[status][key],
-            `${expectedEntry.WasteRecordType}.${status}.${key}`
-          ).to.have.property('count')
-          expect(
-            entry[status][key],
-            `${expectedEntry.WasteRecordType}.${status}.${key}`
-          ).to.have.property('rowIds')
-        }
+      // Assert on any additional columns using dot-path access
+      for (const [column, expectedValue] of Object.entries(expectedEntry)) {
+        if (column === 'WasteRecordType' || column === 'SheetName') continue
+
+        const actualValue = column
+          .split('.')
+          .reduce((acc, key) => acc?.[key], entry)
+        expect(actualValue).to.equal(
+          parseInt(expectedValue),
+          `${expectedEntry.WasteRecordType}.${column}`
+        )
       }
     }
   }

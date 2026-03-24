@@ -64,10 +64,10 @@ Feature: Summary Logs - Reprocessor on Output
       | added.included | 1     | 3000                          |
       | added.excluded | 0     |                               |
     And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName |
-      | received        | Received  |
-      | processed       | Processed |
-      | sentOn          | Sent on   |
+      | WasteRecordType | SheetName | added.valid.count | added.invalid.count | added.included.count | added.excluded.count |
+      | received        | Received  | 3                 | 0                   | 0                    | 0                    |
+      | processed       | Processed | 1                 | 0                   | 1                    | 0                    |
+      | sentOn          | Sent on   | 2                 | 0                   | 0                    | 0                    |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -115,10 +115,10 @@ Feature: Summary Logs - Reprocessor on Output
       | adjusted.included  | 1     | 3000                |
       | adjusted.excluded  | 0     |                     |
     And the summary log loadsByWasteRecordType contains the following waste record types
-      | WasteRecordType | SheetName |
-      | received        | Received  |
-      | processed       | Processed |
-      | sentOn          | Sent on   |
+      | WasteRecordType | SheetName | added.valid.count | added.invalid.count | added.included.count | added.excluded.count | unchanged.valid.count | unchanged.invalid.count | unchanged.included.count | unchanged.excluded.count | adjusted.valid.count | adjusted.invalid.count | adjusted.included.count | adjusted.excluded.count |
+      | received        | Received  | 1                 | 0                   | 0                    | 0                    | 3                     | 0                       | 0                        | 0                        | 0                    | 0                      | 0                       | 0                       |
+      | processed       | Processed | 1                 | 2                   | 1                    | 2                    | 0                     | 0                       | 0                        | 0                        | 1                    | 0                      | 1                       | 0                       |
+      | sentOn          | Sent on   | 1                 | 0                   | 0                    | 0                    | 2                     | 0                       | 0                        | 0                        | 0                    | 0                      | 0                       | 0                       |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
