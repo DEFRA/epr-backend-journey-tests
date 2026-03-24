@@ -241,6 +241,7 @@ Feature: Summary Logs - Reprocessor on Input
       | WasteRecordType | SheetName |
       | received        | Received  |
       | processed       | Processed |
+      | sentOn          | Sent on   |
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds
