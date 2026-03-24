@@ -1,8 +1,9 @@
-import { Then, When } from '@cucumber/cucumber'
+import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import {
   authClient,
   cdpUploader,
+  dbClient,
   eprBackendAPI,
   interpolator
 } from '../support/hooks.js'
@@ -52,6 +53,13 @@ const adminListOrsSites = [
     validFrom: '2025-03-01'
   }
 ]
+
+Given(
+  'there are no existing overseas sites in the admin list',
+  async function () {
+    await dbClient.collection('overseas-sites').deleteMany({})
+  }
+)
 
 When(
   'I upload the generated file {string} via the CDP uploader',
@@ -446,6 +454,17 @@ When(
 )
 
 When(
+  'I request the admin overseas sites list with all records',
+  async function () {
+    this.adminOverseasSitesListBody = undefined
+    this.response = await eprBackendAPI.get(
+      '/v1/admin/overseas-sites?all=true',
+      authClient.authHeader()
+    )
+  }
+)
+
+When(
   'I request the admin overseas sites list without authentication',
   async function () {
     this.adminOverseasSitesListBody = undefined
@@ -487,7 +506,14 @@ Then(
 
       return {
         ...interpolatedRow,
-        addressLine2: interpolatedRow.addressLine2 || null
+        ...(Object.hasOwn(interpolatedRow, 'addressLine2')
+          ? {
+              addressLine2:
+                interpolatedRow.addressLine2 === ''
+                  ? null
+                  : interpolatedRow.addressLine2
+            }
+          : {})
       }
     })
 
@@ -555,6 +581,23 @@ Then(
     expect(responseBody.pagination).to.deep.equal({
       page,
       pageSize: 2,
+      totalItems,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1
+    })
+  }
+)
+
+Then(
+  'the admin overseas sites pagination should be page {int} of {int} with page size {int} and {int} total items',
+  async function (page, totalPages, pageSize, totalItems) {
+    expect(this.response.statusCode).to.equal(200)
+
+    const responseBody = await getAdminOverseasSitesListBody(this)
+    expect(responseBody.pagination).to.deep.equal({
+      page,
+      pageSize,
       totalItems,
       totalPages,
       hasNextPage: page < totalPages,
