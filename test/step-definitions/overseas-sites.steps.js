@@ -427,6 +427,7 @@ When('I generate the admin ORS test spreadsheet', async function () {
 })
 
 When('I request the admin overseas sites list', async function () {
+  this.adminOverseasSitesListBody = undefined
   this.response = await eprBackendAPI.get(
     '/v1/admin/overseas-sites',
     authClient.authHeader()
@@ -434,11 +435,31 @@ When('I request the admin overseas sites list', async function () {
 })
 
 When(
+  'I request the admin overseas sites list with page {int} and page size {int}',
+  async function (page, pageSize) {
+    this.adminOverseasSitesListBody = undefined
+    this.response = await eprBackendAPI.get(
+      `/v1/admin/overseas-sites?page=${page}&pageSize=${pageSize}`,
+      authClient.authHeader()
+    )
+  }
+)
+
+When(
   'I request the admin overseas sites list without authentication',
   async function () {
+    this.adminOverseasSitesListBody = undefined
     this.response = await eprBackendAPI.get('/v1/admin/overseas-sites')
   }
 )
+
+const getAdminOverseasSitesListBody = async (world) => {
+  if (!world.adminOverseasSitesListBody) {
+    world.adminOverseasSitesListBody = await world.response.body.json()
+  }
+
+  return world.adminOverseasSitesListBody
+}
 
 Then(
   'the admin overseas sites list status should be {int}',
@@ -452,7 +473,10 @@ Then(
   async function (dataTable) {
     expect(this.response.statusCode).to.equal(200)
 
-    const responseRows = await this.response.body.json()
+    const responseBody = await getAdminOverseasSitesListBody(this)
+    const responseRows = Array.isArray(responseBody)
+      ? responseBody
+      : responseBody.rows
     const expectedRows = dataTable.hashes().map((row) => {
       const interpolatedRow = Object.fromEntries(
         Object.entries(row).map(([key, value]) => [
@@ -519,5 +543,22 @@ Then(
         ).to.equal(String(expectedValue))
       }
     }
+  }
+)
+
+Then(
+  'the admin overseas sites pagination should be page {int} of {int} with {int} total items',
+  async function (page, totalPages, totalItems) {
+    expect(this.response.statusCode).to.equal(200)
+
+    const responseBody = await getAdminOverseasSitesListBody(this)
+    expect(responseBody.pagination).to.deep.equal({
+      page,
+      pageSize: 2,
+      totalItems,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1
+    })
   }
 )

@@ -36,6 +36,41 @@ Feature: Overseas Sites - Admin list
     When I request the admin overseas sites list
     Then I should receive a 403 error response 'Insufficient scope'
 
+  Scenario: Service maintainer can paginate overseas site mappings for admin
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType | material            |
+      | Exporter            | Paper or board (R3) |
+
+    Given I am logged in as a service maintainer
+    When I update the recently migrated organisations data with the following data
+      | regNumber        | accNumber | status   | validFrom  |
+      | R25SR500039901PA | ACC990123 | approved | 2025-02-02 |
+    Then the organisations data update succeeds
+
+    When I register and authorise a User and link it to the recently migrated organisation
+    When I generate the admin ORS test spreadsheet
+    And I initiate an ORS import
+    Then the ORS import initiation succeeds
+
+    When I upload ORS file 'ors-admin-list.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I check the ORS import status
+    Then the ORS import status should be 'completed'
+
+    When I request the admin overseas sites list with page 1 and page size 2
+    Then the admin overseas sites pagination should be page 1 of 2 with 3 total items
+    And the admin overseas sites list should include
+      | orsId | registrationNumber |
+      | 001   | R25SR500039901PA   |
+      | 002   | R25SR500039901PA   |
+
+    When I request the admin overseas sites list with page 2 and page size 2
+    Then the admin overseas sites pagination should be page 2 of 2 with 3 total items
+    And the admin overseas sites list should include
+      | orsId | registrationNumber |
+      | 003   | R25SR500039901PA   |
+
   Scenario: Unauthenticated request is rejected for admin overseas sites list
     When I request the admin overseas sites list without authentication
     Then the admin overseas sites list status should be 401
