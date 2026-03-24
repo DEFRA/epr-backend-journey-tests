@@ -71,7 +71,7 @@ const auth = {
 }
 
 const defraId = {
-  local: withProxy ? 'http://defra-id-stub:3200' : 'http://localhost:3200',
+  local: 'http://defra-id-stub:3200',
   env: `https://cdp-defra-id-stub.${environment}.cdp-int.defra.cloud`
 }
 
