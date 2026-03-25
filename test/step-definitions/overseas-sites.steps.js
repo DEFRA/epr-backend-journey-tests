@@ -1,8 +1,9 @@
-import { Then, When } from '@cucumber/cucumber'
+import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import {
   authClient,
   cdpUploader,
+  dbClient,
   eprBackendAPI,
   interpolator
 } from '../support/hooks.js'
@@ -52,6 +53,13 @@ const adminListOrsSites = [
     validFrom: '2025-03-01'
   }
 ]
+
+Given(
+  'there are no existing overseas sites in the admin list',
+  async function () {
+    await dbClient.collection('overseas-sites').deleteMany({})
+  }
+)
 
 When(
   'I upload the generated file {string} via the CDP uploader',
@@ -427,6 +435,7 @@ When('I generate the admin ORS test spreadsheet', async function () {
 })
 
 When('I request the admin overseas sites list', async function () {
+  this.adminOverseasSitesListBody = undefined
   this.response = await eprBackendAPI.get(
     '/v1/admin/overseas-sites',
     authClient.authHeader()
@@ -434,11 +443,42 @@ When('I request the admin overseas sites list', async function () {
 })
 
 When(
+  'I request the admin overseas sites list with page {int} and page size {int}',
+  async function (page, pageSize) {
+    this.adminOverseasSitesListBody = undefined
+    this.response = await eprBackendAPI.get(
+      `/v1/admin/overseas-sites?page=${page}&pageSize=${pageSize}`,
+      authClient.authHeader()
+    )
+  }
+)
+
+When(
+  'I request the admin overseas sites list with all records',
+  async function () {
+    this.adminOverseasSitesListBody = undefined
+    this.response = await eprBackendAPI.get(
+      '/v1/admin/overseas-sites?all=true',
+      authClient.authHeader()
+    )
+  }
+)
+
+When(
   'I request the admin overseas sites list without authentication',
   async function () {
+    this.adminOverseasSitesListBody = undefined
     this.response = await eprBackendAPI.get('/v1/admin/overseas-sites')
   }
 )
+
+const getAdminOverseasSitesListBody = async (world) => {
+  if (!world.adminOverseasSitesListBody) {
+    world.adminOverseasSitesListBody = await world.response.body.json()
+  }
+
+  return world.adminOverseasSitesListBody
+}
 
 Then(
   'the admin overseas sites list status should be {int}',
@@ -452,7 +492,10 @@ Then(
   async function (dataTable) {
     expect(this.response.statusCode).to.equal(200)
 
-    const responseRows = await this.response.body.json()
+    const responseBody = await getAdminOverseasSitesListBody(this)
+    const responseRows = Array.isArray(responseBody)
+      ? responseBody
+      : responseBody.rows
     const expectedRows = dataTable.hashes().map((row) => {
       const interpolatedRow = Object.fromEntries(
         Object.entries(row).map(([key, value]) => [
@@ -463,7 +506,14 @@ Then(
 
       return {
         ...interpolatedRow,
-        addressLine2: interpolatedRow.addressLine2 || null
+        ...(Object.hasOwn(interpolatedRow, 'addressLine2')
+          ? {
+              addressLine2:
+                interpolatedRow.addressLine2 === ''
+                  ? null
+                  : interpolatedRow.addressLine2
+            }
+          : {})
       }
     })
 
@@ -519,5 +569,39 @@ Then(
         ).to.equal(String(expectedValue))
       }
     }
+  }
+)
+
+Then(
+  'the admin overseas sites pagination should be page {int} of {int} with {int} total items',
+  async function (page, totalPages, totalItems) {
+    expect(this.response.statusCode).to.equal(200)
+
+    const responseBody = await getAdminOverseasSitesListBody(this)
+    expect(responseBody.pagination).to.deep.equal({
+      page,
+      pageSize: 2,
+      totalItems,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1
+    })
+  }
+)
+
+Then(
+  'the admin overseas sites pagination should be page {int} of {int} with page size {int} and {int} total items',
+  async function (page, totalPages, pageSize, totalItems) {
+    expect(this.response.statusCode).to.equal(200)
+
+    const responseBody = await getAdminOverseasSitesListBody(this)
+    expect(responseBody.pagination).to.deep.equal({
+      page,
+      pageSize,
+      totalItems,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1
+    })
   }
 )
