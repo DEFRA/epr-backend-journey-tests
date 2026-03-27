@@ -16,13 +16,21 @@ export function generateInputReceivedRow(material) {
     H: faker.helpers.arrayElement(EWC_CODES), // Column H: EWC Code
     I: faker.helpers.arrayElement(material.wasteDescriptions), // Column I
     J: faker.helpers.arrayElement(YES_NO), // Column J: PRN issued
-    K: faker.number.float({ min: 50, max: 500, precision: 0.01 }), // Column K: Gross weight
-    L: faker.number.float({ min: 5.0, max: 30, precision: 0.01 }), // Column L: Tare weight
-    M: faker.number.float({ min: 5.0, max: 10, precision: 0.01 }), // Column M: Pallet weight
+    K: parseFloat(
+      faker.number.float({ min: 50, max: 500, precision: 0.01 }).toFixed(2)
+    ), // Column K: Gross weight
+    L: parseFloat(
+      faker.number.float({ min: 5.0, max: 30, precision: 0.01 }).toFixed(2)
+    ), // Column L: Tare weight
+    M: parseFloat(
+      faker.number.float({ min: 5.0, max: 10, precision: 0.01 }).toFixed(2)
+    ), // Column M: Pallet weight
     O: faker.helpers.arrayElement(YES_NO), // Column O: Pallet weight
     P: faker.helpers.arrayElement(RECYCLABLE_PROPORTION_METHODS), // Column P
-    Q: faker.number.float({ min: 5, max: 10, precision: 0.01 }), // Column Q
-    R: faker.number.float({ min: 0.05, max: 0.8 }), // Column R
+    Q: parseFloat(
+      faker.number.float({ min: 5, max: 10, precision: 0.01 }).toFixed(2)
+    ), // Column Q
+    R: parseFloat(faker.number.float({ min: 0.05, max: 0.8 }).toFixed(2)), // Column R
 
     // Section 2
     X: faker.company.name(), // Supplier name
@@ -50,7 +58,9 @@ export function generateInputReprocessedRow() {
     G: date.toLocaleDateString('en-GB'), // Date load left site
     H: faker.word.verb(), // Description of product
     I: faker.helpers.arrayElement(YES_NO), // End of waste standards?
-    J: faker.number.float({ min: 50, max: 500, precision: 0.01 }), // Product tonnage
+    J: parseFloat(
+      faker.number.float({ min: 50, max: 500, precision: 0.01 }).toFixed(2)
+    ), // Product tonnage
     K: `WB-${faker.number.int({ min: 10000, max: 999999 })}`, // Weighbridge ticket number  or scales reference
     L: faker.company.name(), // Haulier name
     M: faker.vehicle.vrm(), // Haulier vehicle registration
@@ -66,7 +76,9 @@ export function generateInputSentOnRow(material) {
   return {
     // Section 5
     G: date.toLocaleDateString('en-GB'), // Date load left site
-    H: faker.number.float({ min: 5, max: 20, precision: 0.01 }), // Tonnage of UK packaging waste sent on
+    H: parseFloat(
+      faker.number.float({ min: 5, max: 20, precision: 0.01 }).toFixed(2)
+    ), // Tonnage of UK packaging waste sent on
 
     // Section 6
     M: 'Reprocessor', // Final destination facility type
