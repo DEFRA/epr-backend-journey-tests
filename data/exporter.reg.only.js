@@ -20,7 +20,9 @@ export function generateRegOnlyReceivedRow() {
     K: faker.internet.email(), // Column K: Supplier email
     L: faker.phone.number(), // Column L: Supplier phone number
     M: faker.helpers.arrayElement(ACTIVITIES), // Column M: Activities carried out by supplier on the packaging waste (For example, sorting)
-    N: faker.number.float({ min: 20, max: 50, precision: 0.01 }), // Column N: Net weight
+    N: parseFloat(
+      faker.number.float({ min: 20, max: 50, precision: 0.01 }).toFixed(2)
+    ), // Column N: Net weight
     O: faker.helpers.arrayElement(RECYCLABLE_PROPORTION_METHODS), // Column O: How did you calculate the recyclable proportion?
     P: faker.number.float({ min: 0.05, max: 0.8 }) // Column P: Recyclable Percentage
   }
@@ -34,7 +36,9 @@ export function generateRegOnlyExportedRow() {
 
   return {
     // Section 2
-    G: faker.number.float({ min: 1, max: 5, precision: 0.01 }), // Tonnage of UK packaging waste exported
+    G: parseFloat(
+      faker.number.float({ min: 1, max: 5, precision: 0.01 }).toFixed(2)
+    ), // Tonnage of UK packaging waste exported
     H: date.toLocaleDateString('en-GB'), // Date of export
     I: faker.number.int({ min: 100, max: 999 }), // Registered overseas reprocessor's ID
     J: faker.helpers.arrayElement(BASEL_CODES), // Basel export code
@@ -59,7 +63,9 @@ export function generateRegOnlySentOnRow() {
   return {
     // Section 4
     G: date.toLocaleDateString('en-GB'), // Date load left site
-    H: faker.number.float({ min: 5, max: 20, precision: 0.01 }), // Tonnage of UK packaging waste sent on
+    H: parseFloat(
+      faker.number.float({ min: 5, max: 20, precision: 0.01 }).toFixed(2)
+    ), // Tonnage of UK packaging waste sent on
     I: 'Exporter', // Final destination facility type
     J: faker.company.name(), // Final destination facility name
     K: faker.location.streetAddress(), // First line of final destination facility address
