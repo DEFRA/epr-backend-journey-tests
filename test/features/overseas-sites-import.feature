@@ -9,6 +9,7 @@ Feature: Overseas Sites - Spreadsheet Import
       | Exporter            | Steel (R4)          |
 
     Given I am logged in as a service maintainer
+    And there are no existing overseas sites
     When I update the recently migrated organisations data with the following data
       | regNumber        | accNumber | status   | validFrom  |
       | R25SR500030912PA | ACC123456 | approved | 2025-02-02 |
