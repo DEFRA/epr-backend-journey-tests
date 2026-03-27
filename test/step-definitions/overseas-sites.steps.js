@@ -454,6 +454,23 @@ When(
 )
 
 When(
+  'I request the admin overseas sites list filtered by registration number {string} with page {int} and page size {int}',
+  async function (registrationNumber, page, pageSize) {
+    this.adminOverseasSitesListBody = undefined
+    const query = new URLSearchParams({
+      registrationNumber,
+      page: String(page),
+      pageSize: String(pageSize)
+    })
+
+    this.response = await eprBackendAPI.get(
+      `/v1/admin/overseas-sites?${query.toString()}`,
+      authClient.authHeader()
+    )
+  }
+)
+
+When(
   'I request the admin overseas sites list with all records',
   async function () {
     this.adminOverseasSitesListBody = undefined
