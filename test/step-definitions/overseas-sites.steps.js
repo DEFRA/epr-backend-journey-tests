@@ -55,7 +55,7 @@ const adminListOrsSites = [
 ]
 
 Given(
-  'there are no existing overseas sites in the admin list',
+  /there are no existing overseas sites(?: in the admin list)?/,
   async function () {
     await dbClient.collection('overseas-sites').deleteMany({})
   }
