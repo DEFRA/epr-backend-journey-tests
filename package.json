@@ -26,6 +26,9 @@
     "generate:spreadsheet:input": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=reprocessorInput",
     "generate:spreadsheet:output": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=reprocessorOutput",
     "generate:spreadsheet:exporter": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=exporter",
+    "generate:spreadsheet:regOnlyExporter": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=regOnlyExporter",
+    "generate:spreadsheet:regOnlyReprocessor": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=regOnlyReprocessor",
+    "generate:spreadsheet:ors": "node ./data/ors-spreadsheet-generator.js",
     "test": "cucumber-js ; npm run report",
     "test:tagged": "cucumber-js --tags",
     "format": "prettier --write 'test/**/*.js' '**/*.{js,md,json,config.js}'",
@@ -36,37 +39,31 @@
     "report:publish": "npm run report; ./bin/publish-tests.sh"
   },
   "dependencies": {
-    "allure-commandline": "2.36.0",
-    "allure-js-commons": "3.4.5",
-    "csv-parse": "6.1.0",
+    "allure-commandline": "2.38.1",
+    "allure-js-commons": "3.6.0",
+    "csv-parse": "6.2.1",
     "esm-module-alias": "2.2.1",
     "exceljs": "4.4.0",
-    "global-agent": "4.1.2",
+    "global-agent": "4.1.3",
     "pino": "10.3.1",
-    "undici": "7.22.0"
+    "undici": "7.24.5"
   },
   "devDependencies": {
     "@babel/core": "7.29.0",
     "@babel/eslint-parser": "7.28.6",
-    "@babel/preset-env": "7.29.0",
-    "@cucumber/cucumber": "12.6.0",
-    "@cucumber/messages": "32.0.1",
+    "@babel/preset-env": "7.29.2",
+    "@cucumber/cucumber": "12.7.0",
+    "@cucumber/messages": "32.2.0",
     "@faker-js/faker": "10.3.0",
-    "allure-cucumberjs": "3.4.5",
+    "allure-cucumberjs": "3.6.0",
     "chai": "6.2.2",
-    "eslint": "9.39.2",
+    "eslint": "9.39.4",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.5",
     "husky": "9.1.7",
-    "lint-staged": "16.2.7",
+    "lint-staged": "16.4.0",
     "mongodb": "7.1.0",
-    "neostandard": "0.12.2",
+    "neostandard": "0.13.0",
     "prettier": "3.8.1"
-  },
-  "overrides": {
-    "minimatch@3": "3.1.5",
-    "minimatch@5": "5.1.9",
-    "minimatch@9": "9.0.9",
-    "minimatch@10": "10.2.4"
   }
 }

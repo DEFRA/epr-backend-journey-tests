@@ -22,7 +22,9 @@ export function generateExportedRow(material) {
 
   if (interimSite === 'Yes') {
     interimSiteId = faker.number.int({ min: 100, max: 999 })
-    interimSiteTonnage = faker.number.float({ min: 1, max: 5, precision: 0.01 })
+    interimSiteTonnage = parseFloat(
+      faker.number.float({ min: 1, max: 5, precision: 0.01 }).toFixed(2)
+    )
   }
 
   return {
@@ -31,14 +33,24 @@ export function generateExportedRow(material) {
     H: faker.helpers.arrayElement(EWC_CODES), // Column H: EWC Code
     I: faker.helpers.arrayElement(material.wasteDescriptions), // Column I: Waste description
     J: faker.helpers.arrayElement(YES_NO), // Column J: PRN issued
-    K: faker.number.float({ min: 50, max: 500, precision: 0.01 }), // Column K: Gross weight
-    L: faker.number.float({ min: 5.0, max: 30, precision: 0.01 }), // Column L: Tare weight
-    M: faker.number.float({ min: 5.0, max: 10, precision: 0.01 }), // Column M: Pallet weight
+    K: parseFloat(
+      faker.number.float({ min: 50, max: 500, precision: 0.01 }).toFixed(2)
+    ), // Column K: Gross weight
+    L: parseFloat(
+      faker.number.float({ min: 5.0, max: 30, precision: 0.01 }).toFixed(2)
+    ), // Column L: Tare weight
+    M: parseFloat(
+      faker.number.float({ min: 5.0, max: 10, precision: 0.01 }).toFixed(2)
+    ), // Column M: Pallet weight
     O: faker.helpers.arrayElement(YES_NO), // Column O: Baling wire protocol
     P: faker.helpers.arrayElement(RECYCLABLE_PROPORTION_METHODS), // Column P: How did you calculate the recyclable proportion?
-    Q: faker.number.float({ min: 5, max: 10, precision: 0.01 }), // Column Q: Weight of non-target material and contaminants
-    R: faker.number.float({ min: 0.05, max: 0.8 }), // Column R: Recyclable Percentage
-    T: faker.number.float({ min: 1, max: 5, precision: 0.01 }), // Column T: Tonnage of UK packaging waste exported
+    Q: parseFloat(
+      faker.number.float({ min: 5, max: 10, precision: 0.01 }).toFixed(2)
+    ), // Column Q: Weight of non-target material and contaminants
+    R: parseFloat(faker.number.float({ min: 0.05, max: 0.8 }).toFixed(2)), // Column R: Recyclable Percentage
+    T: parseFloat(
+      faker.number.float({ min: 1, max: 5, precision: 0.01 }).toFixed(2)
+    ), // Column T: Tonnage of UK packaging waste exported
     U: dateOfExport.toLocaleDateString('en-GB'), // Column U: Date of export
     V: faker.helpers.arrayElement(BASEL_CODES), // basel export code
     W: faker.number.int({ min: 3000000000, max: 4000000000 }), // customs code (HS code)
@@ -91,7 +103,9 @@ export function generateExportedRow(material) {
       faker.number.int({ min: 100, max: 999 }), // Customs declaration form reference number
     BI: faker.company.name() + ' Limited', // Approved overseas reprocessor's site name
     BJ: reprocessorCountry.name + '-' + reprocessorCountry.code, // Approved overseas reprocessor's country
-    BK: faker.number.float({ min: 1, max: 5, precision: 0.01 }) // If not exported through an interim site, tonnage of UK packaging waste received by overseas reprocessor
+    BK: parseFloat(
+      faker.number.float({ min: 1, max: 5, precision: 0.01 }).toFixed(2)
+    ) // If not exported through an interim site, tonnage of UK packaging waste received by overseas reprocessor
   }
 }
 
@@ -102,7 +116,9 @@ export function generateSentOnRow(material) {
   return {
     // Section 4
     G: date.toLocaleDateString('en-GB'), // Date load left site
-    H: faker.number.float({ min: 5, max: 20, precision: 0.01 }), // Tonnage of UK packaging waste sent on
+    H: parseFloat(
+      faker.number.float({ min: 5, max: 20, precision: 0.01 }).toFixed(2)
+    ), // Tonnage of UK packaging waste sent on
     I: 'Exporter', // Final destination facility type
     J: faker.company.name(), // Final destination facility name
     K: faker.location.streetAddress(), // First line of final destination facility address

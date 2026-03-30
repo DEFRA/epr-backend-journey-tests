@@ -21,8 +21,6 @@ Feature: Packaging Recycling Notes for Exporter smoke test
     When I upload the file 'exporter.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
 
-    When I submit the summary log upload completed with the response from CDP Uploader
-    Then I should receive a summary log upload accepted response
     And the summary log submission status is 'validated'
 
     When I submit the uploaded summary log
@@ -54,6 +52,3 @@ Feature: Packaging Recycling Notes for Exporter smoke test
     # From here the PRN can be cancelled
     When I update the PRN status to 'cancelled'
     Then the PRN status is updated successfully
-
-    When an external API retrieves the PRN with status 'cancelled'
-    Then the external API call to retrieve the PRN is successful and contains the PRN with PRN Number '{{prnNumber}}'

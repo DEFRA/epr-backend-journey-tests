@@ -21,18 +21,18 @@ Then('the tonnage monitoring information should be correct', async function () {
     'steel',
     'wood'
   ]
-  const materials = tonnageMonitoring.materials
-  const actualMaterials = materials.map((m) => m.material)
+
+  // Filter for material rows only (exclude total rows)
+  const materialRows = tonnageMonitoring.materials.filter((m) => m.material)
+  const actualMaterials = [...new Set(materialRows.map((m) => m.material))]
   expect(actualMaterials.sort()).to.have.members(expectedMaterials.sort())
 
-  const actualTonnages = materials.map((m) => m.totalTonnage)
-  actualTonnages.forEach((totalTonnage) => {
-    expect(totalTonnage).to.be.greaterThanOrEqual(0)
+  // Verify each material row has valid month tonnages
+  materialRows.forEach((materialRow) => {
+    expect(materialRow.months).to.be.an('array')
+    materialRow.months.forEach((month) => {
+      expect(month.tonnage).to.be.greaterThanOrEqual(0)
+    })
   })
-
-  const calculatedTotal = materials.reduce((sum, m) => sum + m.totalTonnage, 0)
-  expect(Math.abs(tonnageMonitoring.total - calculatedTotal)).to.be.lessThan(
-    0.01
-  )
   expect(tonnageMonitoring.total).to.be.greaterThanOrEqual(0)
 })

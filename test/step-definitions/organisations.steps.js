@@ -25,6 +25,7 @@ When(
 
     let data = this.responseData
 
+    let accreditationIndex = 0
     this.registrationIds = new Map()
     this.accreditationIds = new Map()
 
@@ -34,41 +35,91 @@ When(
       data.registrations[i].validFrom = '2025-01-01'
       data.registrations[i].validTo = `${currentYear + 1}-01-01`
       data.registrations[i].registrationNumber = orgUpdateData.regNumber
-      data.registrations[i].accreditationId = data.accreditations[i].id
-      data.accreditations[i].status = orgUpdateData.status
-      data.accreditations[i].validFrom = '2025-01-01'
-      data.accreditations[i].validTo = `${currentYear + 1}-01-01`
+      data.registrations[i].statusHistory = [
+        ...(data.registrations[i].statusHistory || []),
+        {
+          status: orgUpdateData.status,
+          updatedAt: data.registrations[i].validFrom
+        }
+      ]
+      data.registrations[i].statusHistory = (
+        data.registrations[i].statusHistory || []
+      ).map((entry) => {
+        if (entry.status === 'created') {
+          return {
+            ...entry,
+            updatedAt: '2024-12-31'
+          }
+        }
+        return entry
+      })
       if (orgUpdateData.validFrom?.trim()) {
         data.registrations[i].validFrom = orgUpdateData.validFrom
-        data.accreditations[i].validFrom = orgUpdateData.validFrom
       }
       if (orgUpdateData.reprocessingType?.trim()) {
         data.registrations[i].reprocessingType = orgUpdateData.reprocessingType
-        data.accreditations[i].reprocessingType = orgUpdateData.reprocessingType
       }
       if (orgUpdateData.glassRecyclingProcess?.trim()) {
         data.registrations[i].glassRecyclingProcess = [
-          orgUpdateData.glassRecyclingProcess
-        ]
-        data.accreditations[i].glassRecyclingProcess = [
           orgUpdateData.glassRecyclingProcess
         ]
       }
       if (orgUpdateData.submittedToRegulator?.trim()) {
         data.registrations[i].submittedToRegulator =
           orgUpdateData.submittedToRegulator
-        data.accreditations[i].submittedToRegulator =
-          orgUpdateData.submittedToRegulator
       }
-      data.accreditations[i].accreditationNumber = orgUpdateData.accNumber
+
+      if (!orgUpdateData.withoutAccreditation) {
+        const j = accreditationIndex
+        data.registrations[i].accreditationId = data.accreditations[j].id
+        data.accreditations[j].status = orgUpdateData.status
+        data.accreditations[j].validFrom = '2025-01-01'
+        data.accreditations[j].validTo = `${currentYear + 1}-01-01`
+        data.accreditations[j].statusHistory = [
+          ...(data.accreditations[j].statusHistory || []),
+          {
+            status: orgUpdateData.status,
+            updatedAt: data.accreditations[j].validFrom
+          }
+        ]
+        data.accreditations[j].statusHistory = (
+          data.accreditations[j].statusHistory || []
+        ).map((entry) => {
+          if (entry.status === 'created') {
+            return {
+              ...entry,
+              updatedAt: '2024-12-31'
+            }
+          }
+          return entry
+        })
+        if (orgUpdateData.validFrom?.trim()) {
+          data.accreditations[j].validFrom = orgUpdateData.validFrom
+        }
+        if (orgUpdateData.reprocessingType?.trim()) {
+          data.accreditations[j].reprocessingType =
+            orgUpdateData.reprocessingType
+        }
+        if (orgUpdateData.glassRecyclingProcess?.trim()) {
+          data.accreditations[j].glassRecyclingProcess = [
+            orgUpdateData.glassRecyclingProcess
+          ]
+        }
+        data.accreditations[j].accreditationNumber = orgUpdateData.accNumber
+        if (orgUpdateData.submittedToRegulator?.trim()) {
+          data.accreditations[j].submittedToRegulator =
+            orgUpdateData.submittedToRegulator
+        }
+        this.accreditationIds.set(
+          orgUpdateData.accNumber,
+          data.accreditations[j].id
+        )
+        accreditationIndex++
+      }
 
       this.registrationIds.set(
         orgUpdateData.regNumber,
         data.registrations[i].id
-      )
-      this.accreditationIds.set(
-        orgUpdateData.accNumber,
-        data.accreditations[i].id
       )
     }
 
@@ -83,16 +134,85 @@ When(
     }
 
     data.status = updateDataRows[0].status
+    data.statusHistory = [
+      ...(data.statusHistory || []),
+      {
+        status: updateDataRows[0].status,
+        updatedAt: data.registrations[0].validFrom
+      }
+    ]
 
     this.registrationId = data.registrations[0].id
-    this.accreditationId = data.accreditations[0].id
+    if (data.accreditations && data.accreditations.length > 0) {
+      this.accreditationId = data.accreditations[0].id
+    }
     this.organisationId = orgId
 
     data = { organisation: data }
 
-    this.response = await eprBackendAPI.patch(
+    this.response = await eprBackendAPI.put(
       `/v1/dev/organisations/${orgId}`,
       JSON.stringify(data)
+    )
+  }
+)
+
+When(
+  'I update the accreditation status to {string}',
+  async function (newStatus) {
+    const orgId = this.orgResponseData?.referenceNumber
+
+    this.response = await eprBackendAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+    const data = await this.response.body.json()
+
+    data.accreditations[0].status = newStatus
+    const statusChangeDate = new Date(data.accreditations[0].validFrom)
+    statusChangeDate.setDate(statusChangeDate.getDate() + 1)
+    data.accreditations[0].statusHistory = [
+      ...(data.accreditations[0].statusHistory || []),
+      {
+        status: newStatus,
+        updatedAt: statusChangeDate.toISOString().split('T')[0]
+      }
+    ]
+
+    const payload = { organisation: data }
+    this.response = await eprBackendAPI.put(
+      `/v1/dev/organisations/${orgId}`,
+      JSON.stringify(payload)
+    )
+  }
+)
+
+When(
+  'I update the accreditation status to {string} at {string}',
+  async function (newStatus, date) {
+    const orgId = this.orgResponseData?.referenceNumber
+
+    this.response = await eprBackendAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+    const data = await this.response.body.json()
+
+    // data.accreditations[0].status = newStatus
+    // const statusChangeDate = new Date(data.accreditations[0].validFrom)
+    // statusChangeDate.setDate(statusChangeDate.getDate() + 1)
+    data.accreditations[0].statusHistory = [
+      ...(data.accreditations[0].statusHistory || []),
+      {
+        status: newStatus,
+        updatedAt: date //statusChangeDate.toISOString().split('T')[0]
+      }
+    ]
+
+    const payload = { organisation: data }
+    this.response = await eprBackendAPI.put(
+      `/v1/dev/organisations/${orgId}`,
+      JSON.stringify(payload)
     )
   }
 )

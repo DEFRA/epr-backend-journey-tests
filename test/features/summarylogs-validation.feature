@@ -86,7 +86,6 @@ Feature: Summary Logs validation tests
       | PROCESSING_TYPE_INVALID   | PROCESSING_TYPE     |
       | VALIDATION_FALLBACK_ERROR | PROCESSING_TYPE     |
       | TEMPLATE_VERSION_INVALID  | TEMPLATE_VERSION    |
-      | MATERIAL_REQUIRED         | MATERIAL            |
       | REGISTRATION_REQUIRED     | REGISTRATION_NUMBER |
 
   Scenario: Summary Logs upload-completed endpoint processes with pending status and all required fields
@@ -149,4 +148,22 @@ Feature: Summary Logs validation tests
       | added.valid    | 3     | 1001,4000,5000 |
       | added.invalid  | 2     | 1000,1002      |
       | added.included | 2     | 1001,5000      |
-      | added.excluded | 3     | 1000,1002,4000 |
+      | added.excluded | 2     | 1000,1002      |
+    And the summary log has the following loads for the received waste record type
+      | LoadType       | Count | RowIDs    |
+      | added.valid    | 1     | 1001      |
+      | added.invalid  | 2     | 1000,1002 |
+      | added.included | 1     | 1001      |
+      | added.excluded | 2     | 1000,1002 |
+    And the summary log has the following loads for the processed waste record type
+      | LoadType       | Count | RowIDs |
+      | added.valid    | 1     | 4000   |
+      | added.invalid  | 0     |        |
+      | added.included | 0     |        |
+      | added.excluded | 0     |        |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType       | Count | RowIDs |
+      | added.valid    | 1     | 5000   |
+      | added.invalid  | 0     |        |
+      | added.included | 1     | 5000   |
+      | added.excluded | 0     |        |

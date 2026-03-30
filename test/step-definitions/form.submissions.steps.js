@@ -56,24 +56,26 @@ Given(
       )
       expect(this.response.statusCode).to.equal(201)
 
-      this.accreditation = new Accreditation(orgId, refNo)
-      this.accreditation.postcode = this.registration.postcode
-      this.payload =
-        dataRow.wasteProcessingType === 'Reprocessor'
-          ? this.accreditation.toReprocessorPayload(
-              this.material,
-              this.glassRecyclingProcess
-            )
-          : this.accreditation.toExporterPayload(
-              this.material,
-              this.glassRecyclingProcess
-            )
+      if (!dataRow.withoutAccreditation) {
+        this.accreditation = new Accreditation(orgId, refNo)
+        this.accreditation.postcode = this.registration.postcode
+        this.payload =
+          dataRow.wasteProcessingType === 'Reprocessor'
+            ? this.accreditation.toReprocessorPayload(
+                this.material,
+                this.glassRecyclingProcess
+              )
+            : this.accreditation.toExporterPayload(
+                this.material,
+                this.glassRecyclingProcess
+              )
 
-      this.response = await eprBackendAPI.post(
-        '/v1/apply/accreditation',
-        JSON.stringify(this.payload)
-      )
-      expect(this.response.statusCode).to.equal(201)
+        this.response = await eprBackendAPI.post(
+          '/v1/apply/accreditation',
+          JSON.stringify(this.payload)
+        )
+        expect(this.response.statusCode).to.equal(201)
+      }
     }
 
     this.response = await eprBackendAPI.post(

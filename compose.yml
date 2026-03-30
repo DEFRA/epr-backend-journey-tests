@@ -91,7 +91,7 @@ services:
       MOCK_VIRUS_RESULT_DELAY: 3
       SQS_ENDPOINT: http://localstack:4566
       S3_ENDPOINT: http://localstack:4566
-      CONSUMER_BUCKETS: re-ex-summary-logs
+      CONSUMER_BUCKETS: re-ex-summary-logs,re-ex-overseas-sites
     networks:
       - cdp-tenant
 
@@ -173,8 +173,9 @@ services:
       DEFRA_ID_OIDC_WELL_KNOWN_URL: http://defra-id-stub:3200/cdp-defra-id-stub/.well-known/openid-configuration
       ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://entra-stub:3010/.well-known/openid-configuration
       FEATURE_FLAG_DEV_ENDPOINTS: true
-      FEATURE_FLAG_PACKAGING_RECYCLING_NOTES_EXTERNAL_API: true
-      FEATURE_FLAG_PACKAGING_RECYCLING_NOTES: true
+      FEATURE_FLAG_OVERSEAS_SITES: true
+      FEATURE_FLAG_REPORTS: true
+      FEATURE_FLAG_REGISTERED_ONLY: true
       GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
       LOCALSTACK_ENDPOINT: http://localstack:4566
       LOG_FORMAT: ecs

@@ -43,7 +43,7 @@ Feature: Summary Logs - Reprocessor on Output
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
 
-  Scenario: Summary Logs uploads (Reprocessor Output) and succeeds, with waste balance calculated for Sent On
+  Scenario: Summary Logs uploads (Reprocessor Output) and succeeds, with waste balance calculated
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs               |
       | s3Key               | reprocessor-output-valid-key     |
@@ -62,7 +62,25 @@ Feature: Summary Logs - Reprocessor on Output
       | added.valid    | 6     | 1000,1001,1002,3000,5000,5001 |
       | added.invalid  | 0     |                               |
       | added.included | 1     | 3000                          |
-      | added.excluded | 5     | 1000,1001,1002,5000,5001      |
+      | added.excluded | 0     |                               |
+    And the summary log has the following loads for the received waste record type
+      | LoadType       | Count | RowIDs         |
+      | added.valid    | 3     | 1000,1001,1002 |
+      | added.invalid  | 0     |                |
+      | added.included | 0     |                |
+      | added.excluded | 0     |                |
+    And the summary log has the following loads for the processed waste record type
+      | LoadType       | Count | RowIDs |
+      | added.valid    | 1     | 3000   |
+      | added.invalid  | 0     |        |
+      | added.included | 1     | 3000   |
+      | added.excluded | 0     |        |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType       | Count | RowIDs    |
+      | added.valid    | 2     | 5000,5001 |
+      | added.invalid  | 0     |           |
+      | added.included | 0     |           |
+      | added.excluded | 0     |           |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -91,23 +109,66 @@ Feature: Summary Logs - Reprocessor on Output
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the summary log submission status is 'validated'
-    # RowIDs with 3001, 1003, 5002 are filtered from waste balance as they don't fall within the validFrom date range
+    # RowID 3001 is ignored (date falls outside accreditation range)
+    # RowIDs 1003, 5002 are from non-contributing tables (no waste balance classification)
     # RowIDs with 3003, 3004 are excluded from waste balance as they are missing certain mandatory fields
     # RowID with 3000 is also adjusted
     And the summary log has the following loads
-      | LoadType           | Count | RowIDs                   |
-      | added.valid        | 1     | 3002                     |
-      | added.invalid      | 2     | 3003,3004                |
-      | added.included     | 1     | 3002                     |
-      | added.excluded     | 2     | 3003,3004                |
+      | LoadType           | Count | RowIDs              |
+      | added.valid        | 3     | 1003,3002,5002      |
+      | added.invalid      | 2     | 3003,3004           |
+      | added.included     | 1     | 3002                |
+      | added.excluded     | 2     | 3003,3004           |
       | unchanged.valid    | 5     | 1000,1001,1002,5000,5001 |
       | unchanged.invalid  | 0     |                          |
       | unchanged.included | 0     |                          |
-      | unchanged.excluded | 5     | 1000,1001,1002,5000,5001 |
-      | adjusted.valid     | 1     | 3000                     |
-      | adjusted.invalid   | 0     |                          |
-      | adjusted.included  | 1     | 3000                     |
-      | adjusted.excluded  | 0     |                          |
+      | unchanged.excluded | 0     |                          |
+      | adjusted.valid     | 1     | 3000                |
+      | adjusted.invalid   | 0     |                     |
+      | adjusted.included  | 1     | 3000                |
+      | adjusted.excluded  | 0     |                     |
+    And the summary log has the following loads for the received waste record type
+      | LoadType           | Count | RowIDs         |
+      | added.valid        | 1     | 1003           |
+      | added.invalid      | 0     |                |
+      | added.included     | 0     |                |
+      | added.excluded     | 0     |                |
+      | unchanged.valid    | 3     | 1000,1001,1002 |
+      | unchanged.invalid  | 0     |                |
+      | unchanged.included | 0     |                |
+      | unchanged.excluded | 0     |                |
+      | adjusted.valid     | 0     |                |
+      | adjusted.invalid   | 0     |                |
+      | adjusted.included  | 0     |                |
+      | adjusted.excluded  | 0     |                |
+    And the summary log has the following loads for the processed waste record type
+      | LoadType           | Count | RowIDs    |
+      | added.valid        | 1     | 3002      |
+      | added.invalid      | 2     | 3003,3004 |
+      | added.included     | 1     | 3002      |
+      | added.excluded     | 2     | 3003,3004 |
+      | unchanged.valid    | 0     |           |
+      | unchanged.invalid  | 0     |           |
+      | unchanged.included | 0     |           |
+      | unchanged.excluded | 0     |           |
+      | adjusted.valid     | 1     | 3000      |
+      | adjusted.invalid   | 0     |           |
+      | adjusted.included  | 1     | 3000      |
+      | adjusted.excluded  | 0     |           |
+    And the summary log has the following loads for the sentOn waste record type
+      | LoadType           | Count | RowIDs    |
+      | added.valid        | 1     | 5002      |
+      | added.invalid      | 0     |           |
+      | added.included     | 0     |           |
+      | added.excluded     | 0     |           |
+      | unchanged.valid    | 2     | 5000,5001 |
+      | unchanged.invalid  | 0     |           |
+      | unchanged.included | 0     |           |
+      | unchanged.excluded | 0     |           |
+      | adjusted.valid     | 0     |           |
+      | adjusted.invalid   | 0     |           |
+      | adjusted.included  | 0     |           |
+      | adjusted.excluded  | 0     |           |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -133,3 +194,13 @@ Feature: Summary Logs - Reprocessor on Output
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 9.25   | 9.25            |
+
+    When I retrieve the 'monthly' report for the year 2026 and period 1
+    Then the report is successfully retrieved
+    And the report contains the following information
+      | Key                                 | Value       |
+      | operatorCategory                    | REPROCESSOR |
+      | cadence                             | monthly     |
+      | recyclingActivity.totalTonnageReceived | 106.11      |
+      | wasteSent.tonnageSentToReprocessor   | 40          |
+      | details.material                    | steel       |
