@@ -105,7 +105,10 @@ Then(
         ? expectation.Value
         : Number(expectation.Value)
 
-      if (typeof actualValue === 'number' && typeof expectedValue === 'number') {
+      if (
+        typeof actualValue === 'number' &&
+        typeof expectedValue === 'number'
+      ) {
         expect(actualValue).to.equal(expectedValue)
       } else {
         expect(String(actualValue)).to.equal(String(expectedValue))
