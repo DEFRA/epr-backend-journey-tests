@@ -44,21 +44,21 @@ Feature: Reports PATCH endpoint
 
   Scenario: PATCH with freePernTonnage succeeds for an in_progress report
     When I patch the 'monthly' report for the year 2026 and period 1 with
-      | freePernTonnage | 5 |
+      | freePernTonnage | 0 |
     Then the report patch succeeds
     And the patched report contains the following information
-      | Key            | Value |
-      | prn.freeTonnage | 5     |
+      | Key             | Value |
+      | prn.freeTonnage | 0     |
 
   Scenario: PATCH with both prnRevenue and freePernTonnage succeeds
     When I patch the 'monthly' report for the year 2026 and period 1 with
       | prnRevenue      | 1576.12 |
-      | freePernTonnage | 5       |
+      | freePernTonnage | 0       |
     Then the report patch succeeds
     And the patched report contains the following information
       | Key              | Value   |
       | prn.totalRevenue | 1576.12 |
-      | prn.freeTonnage  | 5       |
+      | prn.freeTonnage  | 0       |
 
   Scenario: PATCH with negative prnRevenue returns 422
     When I patch the 'monthly' report for the year 2026 and period 1 with
@@ -69,10 +69,10 @@ Feature: Reports PATCH endpoint
     When I patch the 'monthly' report for the year 2026 and period 1 with empty body
     Then I should receive a 422 error response '"value" must have at least 1 key'
 
-  Scenario: PATCH for a non-existent report returns 404
-    When I patch the 'monthly' report for the year 2020 and period 1 with
+  Scenario: PATCH for a non-existent period returns 404
+    When I patch the 'monthly' report for the year 2026 and period 12 with
       | prnRevenue | 100 |
-    Then I should receive a 404 error response 'No report found for monthly period 1 of 2020'
+    Then I should receive a 404 error response 'No report found for monthly period 12 of 2026'
 
   Scenario: Existing supportingInformation PATCH still works unchanged
     When I patch the 'monthly' report for the year 2026 and period 1 with
