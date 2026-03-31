@@ -59,6 +59,10 @@ runs:
         node-version-file: .nvmrc
         cache: npm
 
+    - name: Upgrade npm
+      run: npm install -g npm@11.12.1
+      shell: bash
+
     - name: Install
       run: npm ci
       shell: bash
