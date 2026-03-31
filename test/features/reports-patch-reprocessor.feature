@@ -17,7 +17,7 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
 
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs   |
-      | s3Key               | reprocessor-key      |
+      | s3Key               | reprocessor-input-valid-key |
       | fileId              | reprocessor-file-id  |
       | filename            | reprocessor.xlsx     |
       | fileStatus          | complete             |

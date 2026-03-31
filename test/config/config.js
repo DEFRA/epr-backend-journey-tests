@@ -16,7 +16,7 @@ if (environment === 'prod') {
 }
 
 const interval = process.env.ENVIRONMENT ? 2000 : 500
-const pollTimeout = 60000
+const pollTimeout = process.env.ENVIRONMENT ? 60000 : 30000
 
 const api = {
   local: withProxy ? 'http://epr-backend:3001' : 'http://localhost:3001',
