@@ -10,7 +10,7 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
       | reprocessingType | regNumber        | accNumber | status   |
-      | input            | R25SR500030913PA | ACC234568 | approved |
+      | input            | R25SR500030912PA | ACC123456 | approved |
     Then the organisations data update succeeds
 
     When I register and authorise a User and link it to the recently migrated organisation
@@ -21,8 +21,8 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | fileId              | reprocessor-file-id  |
       | filename            | reprocessor.xlsx     |
       | fileStatus          | complete             |
-      | accreditationNumber | ACC234568            |
-      | registrationNumber  | R25SR500030913PA     |
+      | accreditationNumber | ACC123456            |
+      | registrationNumber  | R25SR500030912PA     |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
