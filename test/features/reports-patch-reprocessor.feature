@@ -9,8 +9,8 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
 
     Given I am logged in as a service maintainer
     When I update the recently migrated organisations data with the following data
-      | regNumber        | accNumber | status   |
-      | R25SR500030913PA | ACC234568 | approved |
+      | reprocessingType | regNumber        | accNumber | status   |
+      | input            | R25SR500030913PA | ACC234568 | approved |
     Then the organisations data update succeeds
 
     When I register and authorise a User and link it to the recently migrated organisation
