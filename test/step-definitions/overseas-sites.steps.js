@@ -418,6 +418,31 @@ When('I generate the ORS test spreadsheets', async function () {
   }
 })
 
+When(
+  'I generate the ORS test spreadsheet with the following data',
+  async function (dataTable) {
+    const orgId = parseInt(this.orgResponseData.orgId)
+    const regEntries = [...this.registrationIds.keys()]
+    const accEntries = [...this.accreditationIds.keys()]
+
+    const validOrsSites = dataTable
+      .hashes()
+      .map((row) => ({ ...row, orsId: parseInt(row.orsId, 10) }))
+
+    const regMetadata = {
+      packagingWasteCategory: 'Paper or board',
+      orgId,
+      registrationNumber: regEntries[0],
+      accreditationNumber: accEntries[0]
+    }
+
+    await createOrsSpreadsheet('data/ors-valid.xlsx', {
+      metadata: regMetadata,
+      sites: validOrsSites
+    })
+  }
+)
+
 When('I generate the admin ORS test spreadsheet', async function () {
   const orgId = parseInt(this.orgResponseData.orgId)
   const regEntries = [...this.registrationIds.keys()]
