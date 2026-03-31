@@ -42,18 +42,18 @@ Feature: Reports PATCH endpoint
       | Key              | Value   |
       | prn.totalRevenue | 1576.12 |
 
-  Scenario: PATCH with freePernTonnage succeeds for an in_progress report
+  Scenario: PATCH with freeTonnage succeeds for an in_progress report
     When I patch the 'monthly' report for the year 2026 and period 1 with
-      | freePernTonnage | 0 |
+      | freeTonnage | 0 |
     Then the report patch succeeds
     And the patched report contains the following information
       | Key             | Value |
       | prn.freeTonnage | 0     |
 
-  Scenario: PATCH with both prnRevenue and freePernTonnage succeeds
+  Scenario: PATCH with both prnRevenue and freeTonnage succeeds
     When I patch the 'monthly' report for the year 2026 and period 1 with
       | prnRevenue      | 1576.12 |
-      | freePernTonnage | 0       |
+      | freeTonnage | 0       |
     Then the report patch succeeds
     And the patched report contains the following information
       | Key              | Value   |
@@ -85,7 +85,7 @@ Feature: Reports PATCH endpoint
   Scenario: GET after PATCH returns updated PRN data
     When I patch the 'monthly' report for the year 2026 and period 1 with
       | prnRevenue      | 3000 |
-      | freePernTonnage | 0    |
+      | freeTonnage | 0    |
     Then the report patch succeeds
     When I retrieve the 'monthly' report for the year 2026 and period 1
     Then the report is successfully retrieved
