@@ -52,7 +52,7 @@ Feature: Reports PATCH endpoint
 
   Scenario: PATCH with both prnRevenue and freeTonnage succeeds
     When I patch the 'monthly' report for the year 2026 and period 1 with
-      | prnRevenue      | 1576.12 |
+      | prnRevenue  | 1576.12 |
       | freeTonnage | 0       |
     Then the report patch succeeds
     And the patched report contains the following information
@@ -84,7 +84,7 @@ Feature: Reports PATCH endpoint
 
   Scenario: GET after PATCH returns updated PRN data
     When I patch the 'monthly' report for the year 2026 and period 1 with
-      | prnRevenue      | 3000 |
+      | prnRevenue  | 3000 |
       | freeTonnage | 0    |
     Then the report patch succeeds
     When I retrieve the 'monthly' report for the year 2026 and period 1
