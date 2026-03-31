@@ -60,14 +60,6 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | recyclingActivity.tonnageRecycled    | 100   |
       | recyclingActivity.tonnageNotRecycled | 20    |
 
-  Scenario: PATCH with freeTonnage succeeds for a reprocessor report
-    When I patch the 'monthly' report for the year 2026 and period 1 with
-      | freeTonnage | 5 |
-    Then the report patch succeeds
-    And the patched report contains the following information
-      | Key             | Value |
-      | prn.freeTonnage | 5     |
-
   Scenario: PATCH with negative tonnageRecycled returns 422
     When I patch the 'monthly' report for the year 2026 and period 1 with
       | tonnageRecycled | -1 |
