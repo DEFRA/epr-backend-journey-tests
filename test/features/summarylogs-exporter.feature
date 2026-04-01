@@ -232,7 +232,7 @@ Feature: Summary Logs - Exporter
       | operatorCategory                    | EXPORTER |
       | cadence                             | monthly  |
       | recyclingActivity.totalTonnageReceived | 0        |
-      | exportActivity.totalTonnageReceivedForExporting | 0        |
+      | exportActivity.totalTonnageExported | 0        |
       | wasteSent.tonnageSentToExporter   | 37       |
       | details.material                    | paper    |
 
@@ -244,7 +244,7 @@ Feature: Summary Logs - Exporter
       | operatorCategory                    | EXPORTER |
       | cadence                             | monthly  |
       | recyclingActivity.totalTonnageReceived | 54.80    |
-      | exportActivity.totalTonnageReceivedForExporting | 18.83    |
+      | exportActivity.totalTonnageExported | 18.83    |
       | wasteSent.tonnageSentToExporter   | 0        |
       | details.material                    | paper    |
 
