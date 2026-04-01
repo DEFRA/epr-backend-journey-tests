@@ -53,7 +53,8 @@ async function generateSpreadsheetData(options = {}) {
     numberOfRows = 10,
     materialSuffix = null,
     accNumber,
-    regNumber
+    regNumber,
+    sheets = null
   } = options
 
   try {
@@ -158,9 +159,15 @@ async function generateSpreadsheetData(options = {}) {
       logger.warn('Cover sheet not found')
     }
 
-    for (const worksheet of worksheets) {
+    for (const [index, worksheet] of worksheets.entries()) {
       const sheet = workbook.getWorksheet(worksheet.name)
       if (sheet) {
+        if (sheets !== null && !sheets.includes(index)) {
+          logger.info(
+            `Skipping ${worksheet.name} (sheet ${index} not in SHEETS)`
+          )
+          continue
+        }
         logger.info(`Generating data for ${worksheet.name}...`)
 
         let currentRow = 4 // Start from row 4
@@ -224,11 +231,13 @@ async function generateSpreadsheetData(options = {}) {
     const safeAcc = sanitiseFilenameComponent(accreditationNumber)
     const safeReg = sanitiseFilenameComponent(registrationNumber)
 
+    const sheetsSuffix = sheets !== null ? `_sheets${sheets.join('-')}` : ''
+
     let outputFile
     if (!wasteProcessingType.startsWith('regOnly')) {
-      outputFile = `./data/${safeType}_${safeAcc}_${safeReg}.xlsx`
+      outputFile = `./data/${safeType}_${safeAcc}_${safeReg}${sheetsSuffix}.xlsx`
     } else {
-      outputFile = `./data/${safeType}_${safeReg}.xlsx`
+      outputFile = `./data/${safeType}_${safeReg}${sheetsSuffix}.xlsx`
     }
     await workbook.xlsx.writeFile(outputFile)
 
@@ -260,6 +269,10 @@ if (process.env.REG_NUMBER) {
   options.regNumber = process.env.REG_NUMBER
 }
 
+if (process.env.SHEETS) {
+  options.sheets = process.env.SHEETS.split(',').map(Number)
+}
+
 args.forEach((arg) => {
   if (arg.startsWith('--material=')) {
     options.materialSuffix = arg.split('=')[1]
@@ -271,6 +284,8 @@ args.forEach((arg) => {
     options.accNumber = arg.split('=')[1]
   } else if (arg.startsWith('--regNumber=')) {
     options.regNumber = arg.split('=')[1]
+  } else if (arg.startsWith('--sheets=')) {
+    options.sheets = arg.split('=')[1].split(',').map(Number)
   }
 })
 

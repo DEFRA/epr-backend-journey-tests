@@ -59,6 +59,10 @@ runs:
         node-version-file: .nvmrc
         cache: npm
 
+    - name: Upgrade npm
+      run: npm install -g npm@11.12.1
+      shell: bash
+
     - name: Install
       run: npm ci
       shell: bash
@@ -78,7 +82,7 @@ runs:
         docker compose up --wait-timeout 300 -d --quiet-pull
 
     - name: Start docker compose
-      if : steps.service-branch.outputs.exists != 'true'
+      if: steps.service-branch.outputs.exists != 'true'
       shell: bash
       run: |
         EPR_BACKEND=${{ inputs.epr-backend }} \

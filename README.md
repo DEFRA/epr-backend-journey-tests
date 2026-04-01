@@ -250,6 +250,22 @@ ROWS=20 MATERIAL=ST REG_NUMBER=reg-number-123 ACC_NUMBER=acc-number-123 npm run 
 
 For glass, material is GR or GO (Glass Re-melt, Glass Other). Plastic is PL, Aluminium is AL, Fibre is FB, Steel is ST, Paper is PO and Wood is WO.
 
+To dynamically populate the spreadsheet, you can use the SHEETS environment variable (0 indexed) to specify which sheets to populate according to its index.
+
+For example, with Reprocessor on Output, to populate only the first sheet (Received) and leave the others empty
+
+```
+SHEETS=0 ROWS=5 npm run generate:spreadsheet:output
+```
+
+To populate the first and third sheets (Reprocessor on Input example) only
+
+```
+SHEETS=0,2 npm run generate:spreadsheet:input
+```
+
+Note that the Cover sheet does not count as the first sheet as the Cover sheet is always mandatory.
+
 Also note that you do not need to pass in an Accreditation Number for Registered Only spreadsheets as it would not be used.
 
 ## What is tested in this test suite
