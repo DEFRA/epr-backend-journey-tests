@@ -18,6 +18,7 @@ Feature: Packaging Recycling Notes for Exporter smoke test
       | orsId | country | name                     | line1             | line2      | townOrCity | stateOrRegion | postcode | coordinates     | validFrom  |
       | 124   | France  | Papier Recyclage         | 12 Rue de la Paix | Batiment B | Paris      | Ile-de-France | 75002    | 48.8698,2.3311  | 2025-01-01 |
       | 099   | Norway  | Nordic Paper Recovery One | 11 Fjord Lane     | Unit 1     | Oslo       | Oslo          | 0150     | 59.9139,10.7522 | 2025-01-01 |
+      | 512   | Germany | German Recycling GmbH    | 45 Industriestr   |            | Berlin     | Berlin        | 10115    | 52.5200,13.4050 | 2025-01-01 |
 
     When I initiate an ORS import
     Then the ORS import initiation succeeds
