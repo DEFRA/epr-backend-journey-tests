@@ -104,6 +104,47 @@ Feature: Overseas Sites - Admin list
       | 002   | R25SR500039901PA   |
       | 003   | R25SR500039901PA   |
 
+  Scenario: Service maintainer can filter overseas site mappings by registration number before pagination
+    Given I create a linked and migrated organisation for the following
+      | wasteProcessingType | material            |
+      | Exporter            | Paper or board (R3) |
+      | Exporter            | Steel (R4)          |
+
+    Given I am logged in as a service maintainer
+    And there are no existing overseas sites in the admin list
+    When I update the recently migrated organisations data with the following data
+      | regNumber        | accNumber | status   | validFrom  |
+      | R25SR500039901PA | ACC990123 | approved | 2025-02-02 |
+      | R25SR500039902PB | ACC990124 | approved | 2025-02-02 |
+    Then the organisations data update succeeds
+
+    When I register and authorise a User and link it to the recently migrated organisation
+    And I generate the ORS test spreadsheets
+    And I initiate an ORS import
+    Then the ORS import initiation succeeds
+
+    When I upload ORS files via the CDP uploader
+      | filename            |
+      | ors-reg1-valid.xlsx |
+      | ors-reg2-valid.xlsx |
+    Then the upload to CDP uploader succeeds
+
+    When I check the ORS import status
+    Then the ORS import status should be 'completed'
+
+    When I request the admin overseas sites list filtered by registration number '039901' with page 1 and page size 2
+    Then the admin overseas sites pagination should be page 1 of 2 with 3 total items
+    And the admin overseas sites list should include
+      | orsId | registrationNumber |
+      | 001   | R25SR500039901PA   |
+      | 002   | R25SR500039901PA   |
+
+    When I request the admin overseas sites list filtered by registration number '039901' with page 2 and page size 2
+    Then the admin overseas sites pagination should be page 2 of 2 with 3 total items
+    And the admin overseas sites list should include
+      | orsId | registrationNumber |
+      | 003   | R25SR500039901PA   |
+
   Scenario: Unauthenticated request is rejected for admin overseas sites list
     When I request the admin overseas sites list without authentication
     Then the admin overseas sites list status should be 401
