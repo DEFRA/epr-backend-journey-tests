@@ -14,6 +14,21 @@ Feature: Packaging Recycling Notes for Exporter smoke test
 
     When I register and authorise a User and link it to the recently migrated organisation
 
+    When I generate the ORS test spreadsheet with the following data
+      | orsId | country | name                     | line1             | line2      | townOrCity | stateOrRegion | postcode | coordinates     | validFrom  |
+      | 124   | France  | Papier Recyclage         | 12 Rue de la Paix | Batiment B | Paris      | Ile-de-France | 75002    | 48.8698,2.3311  | 2025-01-01 |
+      | 099   | Norway  | Nordic Paper Recovery One | 11 Fjord Lane     | Unit 1     | Oslo       | Oslo          | 0150     | 59.9139,10.7522 | 2025-01-01 |
+      | 512   | Germany | German Recycling GmbH    | 45 Industriestr   |            | Berlin     | Berlin        | 10115    | 52.5200,13.4050 | 2025-01-01 |
+
+    When I initiate an ORS import
+    Then the ORS import initiation succeeds
+
+    When I upload ORS file 'ors-valid.xlsx' via the CDP uploader
+    Then the upload to CDP uploader succeeds
+
+    When I check the ORS import status
+    Then the ORS import status should be 'completed'
+
     Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
