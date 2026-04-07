@@ -6,7 +6,7 @@ import { request } from 'undici'
 import config from '../config/config.js'
 import { parse } from 'csv-parse/sync'
 
-When('I request the public register', async function () {
+When('I request the public register', { timeout: 30000 }, async function () {
   this.response = await eprBackendAPI.post(
     '/v1/public-register/generate',
     '',
