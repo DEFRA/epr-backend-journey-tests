@@ -21,7 +21,7 @@ name: epr-backend-journey-tests
 
 services:
   mongodb:
-    image: mongo:7.0.28
+    image: mongo:7.0.31
     networks:
       - cdp-tenant
     ports:
@@ -35,7 +35,7 @@ services:
       retries: 3
 
   localstack:
-    image: localstack/localstack:3.2.0
+    image: localstack/localstack:3.8.1
     environment:
       - LOCALSTACK_HOST=127.0.0.1
       - SERVICES=s3,sqs,sns,dynamodb
@@ -56,7 +56,7 @@ services:
       - cdp-tenant
 
   redis:
-    image: redis:7.2.11-alpine3.21
+    image: redis:7.4.8-alpine3.21
     ports:
       - '6379:6379'
     restart: always
