@@ -30,6 +30,7 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
     And the summary log submission status is 'validated'
     When I submit the uploaded summary log
     Then the summary log submission succeeds
+    And the summary log submission status is 'submitted'
 
     When I create the report for the year 2026 and period 1
     Then the report is successfully created
