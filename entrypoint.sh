@@ -12,7 +12,7 @@ fi
 # Best-effort cleanup of every orgId the test suite created. Runs regardless
 # of pass/fail — we still want to delete data from failed runs. See PAE-1194.
 cleanup_created_orgs() {
-  id_file="${CLEANUP_ID_FILE:-test-artifacts/created-org-ids.txt}"
+  id_file="test-artifacts/created-org-ids.txt"
   if [ ! -s "$id_file" ]; then
     echo "cleanup: no IDs to clean up"
     return 0

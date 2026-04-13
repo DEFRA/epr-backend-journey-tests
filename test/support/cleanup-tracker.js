@@ -3,8 +3,9 @@ import path from 'node:path'
 import logger from './logger.js'
 
 const cleanupFilePath = path.resolve(
-  process.env.CLEANUP_ID_FILE ??
-    path.join(process.cwd(), 'test-artifacts', 'created-org-ids.txt')
+  process.cwd(),
+  'test-artifacts',
+  'created-org-ids.txt'
 )
 
 function ensureDir() {
