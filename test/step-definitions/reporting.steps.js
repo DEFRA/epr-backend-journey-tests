@@ -42,10 +42,10 @@ Then(
 )
 
 When(
-  'I create the report for the year {int} and period {int}',
-  async function (year, period) {
+  'I create the {string} report for the year {int} and period {int}',
+  async function (cadence, year, period) {
     this.response = await eprBackendAPI.post(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/monthly/${period}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}`,
       '',
       defraIdStub.authHeader(this.userId)
     )
