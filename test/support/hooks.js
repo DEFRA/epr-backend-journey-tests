@@ -1,9 +1,4 @@
-import {
-  After,
-  AfterAll,
-  BeforeAll,
-  setDefaultTimeout
-} from '@cucumber/cucumber'
+import { After, AfterAll, BeforeAll } from '@cucumber/cucumber'
 import fs from 'node:fs'
 import config from '../config/config.js'
 
@@ -13,6 +8,7 @@ import { AuthClient } from '../support/auth.js'
 import { CDPUploader } from '../support/cdp-uploader.js'
 import { DefraIdStub } from '../support/defra-id-stub.js'
 import Users from '../support/users.js'
+import { resetTracker } from './cleanup-tracker.js'
 import { Interpolator } from './interpolator.js'
 
 let agent
@@ -27,6 +23,7 @@ let cognitoAuth
 let users
 
 BeforeAll({ timeout: 15000 }, async function () {
+  resetTracker()
   dbConnector = config.dbConnector
   dbClient = await dbConnector.connect()
   eprBackendAPI = new EprBackendApi()
@@ -39,10 +36,6 @@ BeforeAll({ timeout: 15000 }, async function () {
   cognitoAuth = config.cognitoAuth
   await cognitoAuth.generateToken()
   setGlobalDispatcher(agent)
-  // Increase timeout to 30s when running Smoke test
-  if (process.env.ENVIRONMENT) {
-    setDefaultTimeout(30000)
-  }
 })
 
 AfterAll(async function () {

@@ -11,4 +11,5 @@ coverage
 allure-report/
 allure-results/
 FAILED
+test-artifacts/
 data/*.xlsx
