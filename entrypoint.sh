@@ -36,10 +36,10 @@ cleanup_created_orgs() {
   return 0
 }
 
+trap 'cleanup_created_orgs' EXIT
+
 npm run test:tagged @smoketest
 test_exit_code=$?
-
-cleanup_created_orgs
 
 npm run report:publish
 publish_exit_code=$?
