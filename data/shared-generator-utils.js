@@ -4,6 +4,7 @@ import {
   Organisation,
   Registration
 } from '../test/support/generator.js'
+import { trackCreatedOrgId } from '../test/support/cleanup-tracker.js'
 import logger from '../test/support/logger.js'
 import config from '../test/config/config.js'
 import { FormData, setGlobalDispatcher } from 'undici'
@@ -56,10 +57,12 @@ export async function createOrganisation(context, isNonRegistered) {
   await assertSuccessResponse(orgResponse, '/v1/apply/organisation')
 
   const responseData = await orgResponse.body.json()
+  const orgId = `${responseData.orgId}`
+  trackCreatedOrgId(orgId)
   return {
     organisation,
     referenceNumber: responseData.referenceNumber,
-    orgId: `${responseData.orgId}`
+    orgId
   }
 }
 
