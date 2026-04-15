@@ -34,4 +34,4 @@ Feature: Summary Logs file download
 
   Scenario: Summary log file download returns 404 for non-existent summary log
     When I download a non-existent summary log file
-    Then I should receive a 404 error response 'Not Found'
+    Then I should receive a 404 error response 'Summary log file not found'
