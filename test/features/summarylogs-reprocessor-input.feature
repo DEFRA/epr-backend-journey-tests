@@ -58,8 +58,8 @@ Feature: Summary Logs - Reprocessor on Input
     Then the summary log submission succeeds
     And the new upload attempt succeeds
     And the following messages appear in the log
-      | Log Level | Message                                              |
-      | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
+      | Log Level | Event Action    | Message                                              |
+      | info      | process_success | Summary log submitted: summaryLogId={{summaryLogId}} |
     And the following audit logs are present
       | Event Category  | Event Action | Context Keys                                 | Count | Context Values                                           |
       | waste-reporting | submit       | summaryLogId, organisationId, registrationId | 1     | {{summaryLogId}},{{summaryLogOrgId}},{{summaryLogRegId}} |
