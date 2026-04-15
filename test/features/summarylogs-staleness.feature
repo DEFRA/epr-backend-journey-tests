@@ -53,8 +53,8 @@ Feature: Summary Logs test (Staleness detection)
     And I submit the uploaded summary log
     Then the summary log submission succeeds
     And the following messages appear in the log
-      | Log Level | Message                                              |
-      | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
+      | Log Level | Event Action    | Message                                              |
+      | info      | process_success | Summary log submitted: summaryLogId={{summaryLogId}} |
 
     # User B tries to submit file 2 - rejected because preview is now stale
     When I return to the 'second' upload
