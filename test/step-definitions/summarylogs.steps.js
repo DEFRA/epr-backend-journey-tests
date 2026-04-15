@@ -1,6 +1,7 @@
 import { Given, Then, When } from '@cucumber/cucumber'
 import {
   eprBackendAPI,
+  authClient,
   dbClient,
   defraIdStub,
   cdpUploader,
@@ -699,4 +700,27 @@ Then('the submitted summary log should not have an expiry', async function () {
     })
     expect(summaryLog.expiresAt).to.equal(null)
   }
+})
+
+When('I download the summary log file', async function () {
+  const { summaryLogId, orgId, regId } = this.summaryLog
+  this.response = await eprBackendAPI.get(
+    `/v1/organisations/${orgId}/registrations/${regId}/summary-logs/${summaryLogId}/file`,
+    authClient.authHeader()
+  )
+})
+
+Then('the summary log file download redirects to S3', function () {
+  expect(this.response.statusCode).to.equal(302)
+  expect(this.response.responseHeaders.location).to.include(
+    're-ex-summary-logs'
+  )
+})
+
+When('I download a non-existent summary log file', async function () {
+  const nonExistentId = '000000000000000000000000'
+  this.response = await eprBackendAPI.get(
+    `/v1/organisations/${nonExistentId}/registrations/${nonExistentId}/summary-logs/${nonExistentId}/file`,
+    authClient.authHeader()
+  )
 })
