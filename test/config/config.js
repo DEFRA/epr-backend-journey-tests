@@ -25,8 +25,8 @@ const api = {
   headers: xApiKey ? { 'x-api-key': xApiKey } : {}
 }
 
-const localstackHost = {
-  local: withProxy ? 'localstack' : 'localhost'
+const awsEmulatorHost = {
+  local: withProxy ? 'floci' : 'localhost'
 }
 
 const proxy = process.env.HTTP_PROXY
@@ -147,7 +147,7 @@ export default {
   defraIdUri,
   dockerLogParser,
   interval,
-  localstackHost,
+  awsEmulatorHost,
   mongoUri,
   pollTimeout,
   testLogs,

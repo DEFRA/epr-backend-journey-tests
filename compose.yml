@@ -2,11 +2,12 @@
 # Docker Compose file for starting up the service for testing in GitHub workflow
 # This template provides comparable infrastructure to the real environment.
 #   - mongodb
-#   - localstack (s3, sqs, sns)
+#   - floci (s3, sqs, sns, dynamodb) — LocalStack-compatible AWS emulator
 #   - zap
 #
-# Both mongo and localstack have init scripts included for setting up resources
-# on startup. These scripts are in docker/scripts.
+# Mongo has init scripts that run on startup. Floci's resources (buckets,
+# queues, fixtures) are created by the one-shot floci-init container, which
+# other services wait on via service_completed_successfully.
 #
 # It also includes a selenium-chrome container for running the browser headless.
 #
@@ -34,24 +35,33 @@ services:
       start_period: 5s
       retries: 3
 
-  localstack:
-    image: localstack/localstack:3.8.1
+  floci:
+    image: hectorvent/floci:1.5.3
     environment:
-      - LOCALSTACK_HOST=127.0.0.1
-      - SERVICES=s3,sqs,sns,dynamodb
-      - LS_LOG=WARN
-    env_file:
-      - ./docker/config/defaults.env
-    volumes:
-      - ./docker/scripts/localstack:/etc/localstack/init/ready.d
+      FLOCI_HOSTNAME: floci
+      FLOCI_DEFAULT_REGION: eu-west-2
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
     ports:
-      - '4566:4566' # LocalStack Gateway
-      - '4510-4559:4510-4559' # external services port range
-    healthcheck:
-      test: ['CMD', 'test', '-f', '/tmp/READY']
-      interval: 5s
-      start_period: 5s
-      retries: 10
+      - '4566:4566'
+    networks:
+      - cdp-tenant
+
+  floci-init:
+    image: amazon/aws-cli:2.17.43
+    entrypoint: /bin/sh
+    command: /setup/init.sh
+    depends_on:
+      floci:
+        condition: service_started
+    environment:
+      AWS_ENDPOINT_URL: http://floci:4566
+      AWS_REGION: eu-west-2
+      AWS_DEFAULT_REGION: eu-west-2
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    volumes:
+      - ./docker/scripts/floci:/setup:ro
     networks:
       - cdp-tenant
 
@@ -73,8 +83,8 @@ services:
     ports:
       - '7337:7337'
     depends_on:
-      localstack:
-        condition: service_healthy
+      floci-init:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     env_file:
@@ -89,8 +99,8 @@ services:
       USE_SINGLE_INSTANCE_CACHE: true
       MOCK_VIRUS_SCAN_ENABLED: true
       MOCK_VIRUS_RESULT_DELAY: 3
-      SQS_ENDPOINT: http://localstack:4566
-      S3_ENDPOINT: http://localstack:4566
+      SQS_ENDPOINT: http://floci:4566
+      S3_ENDPOINT: http://floci:4566
       CONSUMER_BUCKETS: re-ex-summary-logs,re-ex-overseas-sites
     networks:
       - cdp-tenant
@@ -168,7 +178,7 @@ services:
       APP_BASE_URL: http://epr-backend:3001
       AUDIT_ENABLED: true
       CDP_UPLOADER_URL: http://cdp-uploader:7337
-      COMMAND_QUEUE_SQS_ENDPOINT: http://localstack:4566
+      COMMAND_QUEUE_SQS_ENDPOINT: http://floci:4566
       DEFRA_ID_CLIENT_ID: 63983fc2-cfff-45bb-8ec2-959e21062b9a
       DEFRA_ID_OIDC_WELL_KNOWN_URL: http://defra-id-stub:3200/cdp-defra-id-stub/.well-known/openid-configuration
       ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://entra-stub:3010/.well-known/openid-configuration
@@ -176,7 +186,7 @@ services:
       FEATURE_FLAG_ORS_WASTE_BALANCE_VALIDATION: true
       FEATURE_FLAG_REPORTS: true
       GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
-      LOCALSTACK_ENDPOINT: http://localstack:4566
+      LOCALSTACK_ENDPOINT: http://floci:4566
       LOG_FORMAT: ecs
       MONGO_URI: mongodb://mongodb:27017/
       NODE_ENV: development
@@ -184,7 +194,7 @@ services:
       PACKAGING_RECYCLING_NOTES_EXTERNAL_API_JWKS_URL: http://cognito-stub:9229/local_4D8shcYm/.well-known/jwks.json
       PORT: 3001
       SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
-      SQS_ENDPOINT: http://localstack:4566
+      SQS_ENDPOINT: http://floci:4566
     ports:
       - '3001:3001'
     depends_on:
@@ -194,8 +204,8 @@ services:
         condition: service_started
       entra-stub:
         condition: service_healthy
-      localstack:
-        condition: service_healthy
+      floci-init:
+        condition: service_completed_successfully
       mongodb:
         condition: service_healthy
     healthcheck:

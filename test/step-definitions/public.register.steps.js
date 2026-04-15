@@ -20,7 +20,7 @@ When('I retrieve the public register file', async function () {
   const url = new URL(this.publicRegisterUrl)
 
   if (!process.env.ENVIRONMENT) {
-    url.host = config.localstackHost.local
+    url.host = config.awsEmulatorHost.local
   }
 
   const publicRegisterFile = await request(url.href)
