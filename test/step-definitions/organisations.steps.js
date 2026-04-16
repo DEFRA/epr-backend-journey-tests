@@ -217,7 +217,7 @@ When(
   }
 )
 
-When('I request the organisations', { timeout: 30000 }, async function () {
+When('I request the organisations', async function () {
   this.response = await eprBackendAPI.get(
     '/v1/organisations',
     authClient.authHeader()
