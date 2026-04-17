@@ -35,7 +35,7 @@ services:
       retries: 3
 
   localstack:
-    image: localstack/localstack:3.8.1
+    image: localstack/localstack:4.14.0
     environment:
       - LOCALSTACK_HOST=127.0.0.1
       - SERVICES=s3,sqs,sns,dynamodb
