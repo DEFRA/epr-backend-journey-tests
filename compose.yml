@@ -56,7 +56,7 @@ services:
       - cdp-tenant
 
   redis:
-    image: redis:7.4.8-alpine3.21
+    image: redis:8.0.5-alpine3.21
     ports:
       - '6379:6379'
     restart: always
