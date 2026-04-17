@@ -2,7 +2,7 @@
 # Docker Compose file for starting up the service for testing in GitHub workflow
 # This template provides comparable infrastructure to the real environment.
 #   - mongodb
-#   - floci (s3, sqs, sns, dynamodb) — LocalStack-compatible AWS emulator
+#   - floci (s3, sqs, sns) — AWS emulator
 #   - zap
 #
 # Mongo has init scripts that run on startup. Floci's resources (buckets,
@@ -101,8 +101,7 @@ services:
       MOCK_VIRUS_RESULT_DELAY: 3
       SQS_ENDPOINT: http://floci:4566
       S3_ENDPOINT: http://floci:4566
-      # Floci requires path-form queue URLs (/<account>/<name>) for ReceiveMessage;
-      # LocalStack tolerated the bare-name default shipped in cdp-uploader config.
+      # Floci requires path-form queue URLs (/<account>/<name>) for ReceiveMessage.
       SQS_SCAN_RESULTS: http://floci:4566/000000000000/cdp-clamav-results
       SQS_SCAN_RESULTS_CALLBACK: http://floci:4566/000000000000/cdp-uploader-scan-results-callback.fifo
       SQS_DOWNLOAD_REQUESTS: http://floci:4566/000000000000/cdp-uploader-download-requests
