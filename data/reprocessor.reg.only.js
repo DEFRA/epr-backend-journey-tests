@@ -6,11 +6,14 @@ import {
 
 // Generate a single row for "Received" sections
 export function generateRegOnlyReprocessorReceivedRow() {
-  const date = faker.date.recent({ days: 20 })
+  const date = new Date()
+  const month = String(date.getMonth()).padStart(2, '0') // getMonth() is 0-indexed, so no +1 needed
+  const year =
+    date.getMonth() === 0 ? date.getFullYear() - 1 : date.getFullYear() // handle January → previous year
 
   return {
     // Section 1
-    G: `01/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`, // Month received
+    G: `01/${month}/${year}`, // Month received
     H: parseFloat(
       faker.number.float({ min: 20, max: 50, precision: 0.01 }).toFixed(2)
     ), // Net weight
