@@ -36,6 +36,7 @@
     "format:check": "prettier --check 'test/**/*.js' '**/*.{js,md,json,config.js}'",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:types": "tsc -p jsconfig.typecheck.json",
     "report": "allure generate allure-results --single-file --clean",
     "report:publish": "npm run report; ./bin/publish-tests.sh"
   },
