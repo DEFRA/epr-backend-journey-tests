@@ -48,7 +48,7 @@ services:
       - cdp-tenant
 
   floci-init:
-    image: amazon/aws-cli:2.17.43
+    image: amazon/aws-cli:2.34.31
     entrypoint: /bin/sh
     command: /setup/init.sh
     depends_on:
@@ -147,7 +147,7 @@ services:
 
   # Copies cognito seed files into a volume so cognito-stub has its own copies
   cognito-stub-init:
-    image: alpine:3.23.3
+    image: alpine:3.23.4
     volumes:
       - ./compose/cognito-local/clients.json:/seed/clients.json:ro
       - ./compose/cognito-local/local_4D8shcYm.json:/seed/local_4D8shcYm.json:ro
