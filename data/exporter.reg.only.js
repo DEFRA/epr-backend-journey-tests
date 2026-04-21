@@ -9,11 +9,14 @@ import {
 
 // Generate a single row for "Received" section
 export function generateRegOnlyReceivedRow() {
-  const date = faker.date.recent({ days: 20 })
+  const date = new Date()
+  const month = String(date.getMonth()).padStart(2, '0') // getMonth() is 0-indexed, so no +1 needed
+  const year =
+    date.getMonth() === 0 ? date.getFullYear() - 1 : date.getFullYear() // handle January → previous year
 
   return {
     // Section 1
-    G: `01/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`, // Column G: Date received for export
+    G: `01/${month}/${year}`, // Column G: Date received for export
     H: faker.company.name(), // Column H: Supplier name
     I: faker.location.streetAddress(), // Column I: First line of supplier address
     J: faker.location.zipCode(), // Column J: Supplier postcode

@@ -234,6 +234,31 @@ export async function updateOrganisationData(
     validFrom = '2026-01-01'
   }
 ) {
+  const siteResponse = await context.baseAPI.post(
+    '/v1/overseas-sites',
+    JSON.stringify({
+      name: 'Test Overseas Reprocessor',
+      address: {
+        line1: '1 Test Street',
+        townOrCity: 'Test City'
+      },
+      country: 'Germany',
+      validFrom: '2024-01-01'
+    }),
+    context.authClient.authHeader()
+  )
+  const site = await assertSuccessResponseWithBody(
+    siteResponse,
+    'POST /v1/overseas-sites'
+  )
+
+  const overseasSites = {}
+  for (let i = 400; i <= 700; i++) {
+    overseasSites[String(i).padStart(3, '0')] = {
+      overseasSiteId: site.id
+    }
+  }
+
   const getOrgResponse = await context.baseAPI.get(
     `/v1/organisations/${referenceNumber}`,
     context.authClient.authHeader()
@@ -273,6 +298,9 @@ export async function updateOrganisationData(
       }
       return entry
     })
+    if (data.registrations[index].wasteProcessingType === 'exporter') {
+      data.registrations[index].overseasSites = overseasSites
+    }
     if (updateData.accNumber) {
       data.registrations[index].accreditationId = data.accreditations[index].id
 
@@ -381,4 +409,14 @@ async function assertSuccessResponse(response, context) {
       `${context}: expected 2xx but got ${response.statusCode}\n${JSON.stringify(body, null, 2)}`
     )
   }
+}
+
+async function assertSuccessResponseWithBody(response, context) {
+  const body = await response.body.json()
+  if (response.statusCode < 200 || response.statusCode >= 300) {
+    throw new Error(
+      `${context}: expected 2xx but got ${response.statusCode}\n${JSON.stringify(body, null, 2)}`
+    )
+  }
+  return body
 }
