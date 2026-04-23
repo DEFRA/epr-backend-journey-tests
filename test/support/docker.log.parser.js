@@ -41,13 +41,13 @@ export class DockerLogParser {
 
   runDockerCommand = async function (latestTimestamp) {
     const { stdout: psOutput } = await execAsync(
-      `docker ps --filter "name=${this.containerName}" --format "{{.ID}}" | head -1`
+      `docker ps --filter "label=com.docker.compose.service=${this.containerName}" --format "{{.ID}}" | head -1`
     )
     const containerId = psOutput.trim()
 
     if (!containerId) {
       throw new Error(
-        `No running container found with name in: ${this.containerName}`
+        `No running container found for compose service: ${this.containerName}`
       )
     }
 
