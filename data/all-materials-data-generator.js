@@ -22,7 +22,7 @@ async function generate(options = {}) {
   for (let i = 0; i < 10; i++) {
     let wasteProcessingType = 'exp'
     let isNonRegistered = false
-    let reprocessingType = null
+    let reprocessingType = 'exporter'
 
     if (i % 2 === 0) {
       isNonRegistered = true
