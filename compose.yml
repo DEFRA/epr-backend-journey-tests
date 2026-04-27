@@ -13,6 +13,7 @@
 #
 # The services being tested can either be started up here using the latest
 # builds from dockerhub.
+#
 # In the example each service has a .env config file in docker/config/
 # Services can reference each other by their container names.
 # e.g. http://cdp-example-node-backend:3001/
