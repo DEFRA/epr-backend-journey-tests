@@ -268,6 +268,14 @@ Note that the Cover sheet does not count as the first sheet as the Cover sheet i
 
 Also note that you do not need to pass in an Accreditation Number for Registered Only spreadsheets as it would not be used.
 
+To append more rows on an existing generated spreadsheet, you can use the `FILENAME` environment variable to specify the filename and `ROW_OFFSET` environment variable to specify the number of rows to offset the new rows from.
+
+For example, for a previous spreadsheet that has 10 rows generated, you can append 10 more rows to it by the following command:
+
+```
+FILENAME=./data/filename.xlsx ROW_OFFSET=10 ROWS=10 MATERIAL=AL REG_NUMBER=R25SR500000912AL ACC_NUMBER=ACC123456 npm run generate:spreadsheet:input
+```
+
 ## What is tested in this test suite
 
 | Test type               | Local / PR Checks | Test environment |
