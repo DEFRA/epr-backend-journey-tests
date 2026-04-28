@@ -54,7 +54,9 @@ async function generateSpreadsheetData(options = {}) {
     materialSuffix = null,
     accNumber,
     regNumber,
-    sheets = null
+    sheets = null,
+    filename = null,
+    rowOffset = 0
   } = options
 
   try {
@@ -136,27 +138,33 @@ async function generateSpreadsheetData(options = {}) {
       ]
     }
 
+    if (filename !== null) {
+      templateFile = filename
+    }
+
     // Create workbook and read the template
     const workbook = new ExcelJS.Workbook()
     await workbook.xlsx.readFile(templateFile)
 
-    // Update the Cover sheet
-    const coverSheet = workbook.getWorksheet('Cover')
-    if (coverSheet) {
-      coverSheet.getCell('E7').value = material.dropdownValue
-      coverSheet.getCell('E10').value = registrationNumber
-      if (!wasteProcessingType.startsWith('regOnly')) {
-        coverSheet.getCell('E13').value = accreditationNumber
-        logger.info(
-          `Updated Cover sheet -- Material: ${material.material}, Registration: ${registrationNumber}, Accreditation: ${accreditationNumber}`
-        )
+    // Update the Cover sheet only if we are using the default template
+    if (filename === null) {
+      const coverSheet = workbook.getWorksheet('Cover')
+      if (coverSheet) {
+        coverSheet.getCell('E7').value = material.dropdownValue
+        coverSheet.getCell('E10').value = registrationNumber
+        if (!wasteProcessingType.startsWith('regOnly')) {
+          coverSheet.getCell('E13').value = accreditationNumber
+          logger.info(
+            `Updated Cover sheet -- Material: ${material.material}, Registration: ${registrationNumber}, Accreditation: ${accreditationNumber}`
+          )
+        } else {
+          logger.info(
+            `Updated Cover sheet -- Material: ${material.material}, Registration: ${registrationNumber}`
+          )
+        }
       } else {
-        logger.info(
-          `Updated Cover sheet -- Material: ${material.material}, Registration: ${registrationNumber}`
-        )
+        logger.warn('Cover sheet not found')
       }
-    } else {
-      logger.warn('Cover sheet not found')
     }
 
     for (const [index, worksheet] of worksheets.entries()) {
@@ -170,13 +178,13 @@ async function generateSpreadsheetData(options = {}) {
         }
         logger.info(`Generating data for ${worksheet.name}...`)
 
-        let currentRow = 4 // Start from row 4
+        let currentRow = 4 + rowOffset // Start from row 4
 
-        for (let i = 0; i < numberOfRows; i++) {
+        for (let i = rowOffset; i < numberOfRows + rowOffset; i++) {
           const rowData = worksheet.fn(material)
 
           // Fix an issue where first row formula is not populated
-          if (i === 0) {
+          if (i === 0 || rowOffset > 0) {
             if (worksheet.name === 'Exported (sections 1, 2 and 3)') {
               rowData.N = rowData.K - (rowData.L + rowData.M)
             } else if (wasteProcessingType === 'reprocessorOutput') {
@@ -189,7 +197,7 @@ async function generateSpreadsheetData(options = {}) {
               wasteProcessingType === 'reprocessorInput' &&
               worksheet.name === 'Received (sections 1, 2 and 3)'
             ) {
-              rowData.N = rowData.K - (rowData.L + rowData.M)
+              rowData.N = rowData.K - rowData.L - rowData.M
             } else if (
               wasteProcessingType === 'regOnlyExporter' &&
               worksheet.name === 'Received (section 1)'
@@ -222,7 +230,7 @@ async function generateSpreadsheetData(options = {}) {
         }
 
         logger.info(
-          `Generated ${numberOfRows} rows for ${worksheet.name} (rows 4-${currentRow - 1})`
+          `Generated ${numberOfRows} rows for ${worksheet.name} (rows ${4 + rowOffset}-${currentRow - 1})`
         )
       }
     }
@@ -273,6 +281,14 @@ if (process.env.SHEETS) {
   options.sheets = process.env.SHEETS.split(',').map(Number)
 }
 
+if (process.env.FILENAME) {
+  options.filename = process.env.FILENAME
+}
+
+if (process.env.ROW_OFFSET) {
+  options.rowOffset = parseInt(process.env.ROW_OFFSET, 10)
+}
+
 args.forEach((arg) => {
   if (arg.startsWith('--material=')) {
     options.materialSuffix = arg.split('=')[1]
@@ -286,6 +302,10 @@ args.forEach((arg) => {
     options.regNumber = arg.split('=')[1]
   } else if (arg.startsWith('--sheets=')) {
     options.sheets = arg.split('=')[1].split(',').map(Number)
+  } else if (arg.startsWith('--filename=')) {
+    options.filename = arg.split('=')[1].split(',').map(Number)
+  } else if (arg.startsWith('--rowOffset=')) {
+    options.rowOffset = arg.split('=')[1].split(',').map(Number)
   }
 })
 
