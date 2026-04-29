@@ -26,7 +26,6 @@
     ]
   },
   "submittedToRegulator": "ea",
-  "formSubmissionTime": "2025-08-22T19:34:44.944Z",
   "formSubmission": {
     "id": "6507f1f77bcf86cd79943901",
     "time": "2025-08-22T19:34:44.944Z"
@@ -48,7 +47,6 @@
       ],
       "submittedToRegulator": "ea",
       "orgName": "ACME ltd",
-      "formSubmissionTime": "2025-08-20T19:34:44.944Z",
       "formSubmission": {
         "id": "6507f1f77bcf86cd79943902",
         "time": "2025-08-20T19:34:44.944Z"
@@ -153,7 +151,6 @@
       ],
       "submittedToRegulator": "ea",
       "orgName": "ACME ltd",
-      "formSubmissionTime": "2025-08-21T19:34:44.944Z",
       "formSubmission": {
         "id": "68f6a147c117aec8a1ab7494",
         "time": "2025-08-21T19:34:44.944Z"
@@ -200,7 +197,6 @@
   "accreditations": [
     {
       "id": "68f6a147c117aec8a1ab7495",
-      "formSubmissionTime": "2025-08-20T21:34:44.944Z",
       "formSubmission": {
         "id": "68f6a147c117aec8a1ab7495",
         "time": "2025-08-20T21:34:44.944Z"
@@ -285,7 +281,6 @@
     },
     {
       "id": "68f6a147c117aec8a1ab7496",
-      "formSubmissionTime": "2025-08-21T21:34:44.944Z",
       "formSubmission": {
         "id": "68f6a147c117aec8a1ab7496",
         "time": "2025-08-21T21:34:44.944Z"
@@ -370,7 +365,6 @@
     },
     {
       "id": "68f6a147c117aec8a1ab7494",
-      "formSubmissionTime": "2025-08-22T21:34:44.944Z",
       "formSubmission": {
         "id": "68f6a147c117aec8a1ab7494",
         "time": "2025-08-22T21:34:44.944Z"
