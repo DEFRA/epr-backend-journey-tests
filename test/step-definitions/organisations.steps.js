@@ -224,6 +224,18 @@ When('I request the organisations', async function () {
   )
 })
 
+When(
+  'I request the organisations with the following parameters',
+  async function (dataTable) {
+    const [row] = dataTable.hashes()
+    const params = new URLSearchParams(row).toString()
+    this.response = await eprBackendAPI.get(
+      '/v1/organisations?' + params,
+      authClient.authHeader()
+    )
+  }
+)
+
 When('I request the recently migrated organisation', async function () {
   const orgId = this.orgResponseData?.referenceNumber
   this.response = await eprBackendAPI.get(
@@ -306,6 +318,19 @@ When(
 Then('I should receive a valid organisations response', async function () {
   expect(this.response.statusCode).to.equal(200)
 })
+
+Then(
+  'I should receive {int} organisations in the response',
+  validateOrganisationsAmount
+)
+Then(
+  'I should receive {int} organisation in the response',
+  validateOrganisationsAmount
+)
+async function validateOrganisationsAmount(orgAmount) {
+  this.responseData = await this.response.body.json()
+  expect(this.responseData.items.length).to.equal(orgAmount)
+}
 
 Then(
   'I should receive a successful update organisations response',
