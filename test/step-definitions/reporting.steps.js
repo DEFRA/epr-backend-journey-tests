@@ -141,7 +141,6 @@ Then('the report is successfully unsubmitted', async function () {
 When(
   'I unsubmit the {string} report for the year {int} and period {int}',
   async function (cadence, year, period) {
-    // /v1/organisations/{organisationId}/registrations/{registrationId}/reports/{year}/{cadence}/{period}/unsubmit
     this.response = await eprBackendAPI.post(
       `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/unsubmit`,
       '',
