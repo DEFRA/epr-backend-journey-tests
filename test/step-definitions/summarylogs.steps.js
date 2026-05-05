@@ -102,6 +102,18 @@ When(
   }
 )
 
+When(
+  'I upload the file {string} via the CDP uploader with path {string}',
+  async function (filename, filepath) {
+    this.response = await cdpUploader.uploadMultipartForm(
+      this.uploadId,
+      'summaryLogUpload',
+      [filename],
+      `resources/${filepath}/`
+    )
+  }
+)
+
 Then('the upload to CDP uploader succeeds', async function () {
   expect(this.response.statusCode).to.equal(302)
 })
