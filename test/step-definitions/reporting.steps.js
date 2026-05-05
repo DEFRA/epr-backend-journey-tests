@@ -1,5 +1,5 @@
 import { When, Then } from '@cucumber/cucumber'
-import { defraIdStub, eprBackendAPI } from '../support/hooks.js'
+import { authClient, defraIdStub, eprBackendAPI } from '../support/hooks.js'
 import { expect } from 'chai'
 
 When(
@@ -114,5 +114,38 @@ Then(
         expect(String(actualValue)).to.equal(String(expectedValue))
       }
     }
+  }
+)
+
+When(
+  'I update the the {string} report for the year {int} and period {int} with status {string} and version {int}',
+  async function (cadence, year, period, status, version) {
+    this.response = await eprBackendAPI.post(
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/status`,
+      JSON.stringify({ status, version }),
+      defraIdStub.authHeader(this.userId)
+    )
+  }
+)
+
+Then('the report status is successfully updated', async function () {
+  expect(this.response.statusCode).to.equal(200)
+})
+
+Then('the report is successfully unsubmitted', async function () {
+  expect(this.response.statusCode).to.equal(200)
+  const responseData = await this.response.body.json()
+  expect(responseData.status).to.equal('ready_to_submit')
+})
+
+When(
+  'I unsubmit the {string} report for the year {int} and period {int}',
+  async function (cadence, year, period) {
+    // /v1/organisations/{organisationId}/registrations/{registrationId}/reports/{year}/{cadence}/{period}/unsubmit
+    this.response = await eprBackendAPI.post(
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/unsubmit`,
+      '',
+      authClient.authHeader()
+    )
   }
 )
