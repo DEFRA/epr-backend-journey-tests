@@ -118,7 +118,7 @@ Then(
 )
 
 When(
-  'I update the the {string} report for the year {int} and period {int} with status {string} and version {int}',
+  'I update the {string} report for the year {int} and period {int} with status {string} and version {int}',
   async function (cadence, year, period, status, version) {
     this.response = await eprBackendAPI.post(
       `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/status`,

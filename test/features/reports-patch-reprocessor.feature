@@ -78,11 +78,10 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | recyclingActivity.tonnageNotRecycled | 20    |
       | prn.totalRevenue                     | 123.4 |
       | prn.freeTonnage                      | 0     |
-    When I update the the 'monthly' report for the year 2026 and period 1 with status 'ready_to_submit' and version 2
+    When I update the 'monthly' report for the year 2026 and period 1 with status 'ready_to_submit' and version 2
     Then the report status is successfully updated
-    When I update the the 'monthly' report for the year 2026 and period 1 with status 'submitted' and version 3
+    When I update the 'monthly' report for the year 2026 and period 1 with status 'submitted' and version 3
     Then the report status is successfully updated
 
-    Given I am logged in as a service maintainer
     When I unsubmit the 'monthly' report for the year 2026 and period 1
     Then the report is successfully unsubmitted
