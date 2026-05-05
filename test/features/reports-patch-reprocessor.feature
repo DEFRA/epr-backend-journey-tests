@@ -65,8 +65,7 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | tonnageRecycled | -1 |
     Then I should receive a 422 error response '"tonnageRecycled" must be greater than or equal to 0'
 
-    @allpatch
-  Scenario: PATCH with all fields succeeds (with submission) for a reprocessor report
+  Scenario: PATCH with all fields succeeds (with submission and unsubmission) for a reprocessor report
     When I patch the 'monthly' report for the year 2026 and period 1 with
       | tonnageRecycled    | 100.5 |
       | tonnageNotRecycled | 20    |
