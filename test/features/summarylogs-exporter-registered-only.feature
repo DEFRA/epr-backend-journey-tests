@@ -17,52 +17,52 @@ Feature: Summary Logs - Registered Only Exporter
 
   Scenario: Summary Logs uploads (Registered only) and creates a Waste Record
     Given I have the following summary log upload data for summary log upload
-      | s3Bucket            | re-ex-summary-logs                |
-      | s3Key               | exporter-regonly-valid-key         |
-      | fileId              | exporter-regonly-valid-file-id     |
-      | filename            | exporter-regonly-valid.xlsx        |
-      | fileStatus          | complete                           |
-      | registrationNumber  | E25SR500030912PA                   |
+      | s3Bucket            | re-ex-summary-logs             |
+      | s3Key               | exporter-regonly-valid-key     |
+      | fileId              | exporter-regonly-valid-file-id |
+      | filename            | exporter-regonly-valid.xlsx    |
+      | fileStatus          | complete                       |
+      | registrationNumber  | E25SR500030912PA               |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
     And the summary log submission status is 'validated'
     And the summary log has the following loads
-      | LoadType       | Count | RowIDs                                                                              |
-      | added.valid    | 15    | 1000,1001,1002,1003,1004,2000,2001,2002,2003,2004,4000,4001,4002,4003,4004         |
-      | added.invalid  | 0     |                                                                                     |
-      | added.included | 0     |                                                                                     |
-      | added.excluded | 0     |                                                                                     |
+      | LoadType       | Count | RowIDs                                                                     |
+      | added.valid    | 15    | 1000,1001,1002,1003,1004,2000,2001,2002,2003,2004,4000,4001,4002,4003,4004 |
+      | added.invalid  | 0     |                                                                            |
+      | added.included | 0     |                                                                            |
+      | added.excluded | 0     |                                                                            |
     And the summary log has the following loads for the received waste record type
-      | LoadType       | Count | RowIDs                    |
+      | LoadType       | Count | RowIDs                   |
       | added.valid    | 5     | 1000,1001,1002,1003,1004 |
-      | added.invalid  | 0     |                           |
-      | added.included | 0     |                           |
-      | added.excluded | 0     |                           |
+      | added.invalid  | 0     |                          |
+      | added.included | 0     |                          |
+      | added.excluded | 0     |                          |
     And the summary log has the following loads for the exported waste record type
-      | LoadType       | Count | RowIDs                    |
+      | LoadType       | Count | RowIDs                   |
       | added.valid    | 5     | 2000,2001,2002,2003,2004 |
-      | added.invalid  | 0     |                           |
-      | added.included | 0     |                           |
-      | added.excluded | 0     |                           |
+      | added.invalid  | 0     |                          |
+      | added.included | 0     |                          |
+      | added.excluded | 0     |                          |
     And the summary log has the following loads for the sentOn waste record type
-      | LoadType       | Count | RowIDs                    |
+      | LoadType       | Count | RowIDs                   |
       | added.valid    | 5     | 4000,4001,4002,4003,4004 |
-      | added.invalid  | 0     |                           |
-      | added.included | 0     |                           |
-      | added.excluded | 0     |                           |
+      | added.invalid  | 0     |                          |
+      | added.included | 0     |                          |
+      | added.excluded | 0     |                          |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
 
   Scenario: Summary Logs uploads (Exporter, Registered Only) and fails in-sheet revalidation
     Given I have the following summary log upload data for summary log upload
-      | s3Bucket   | re-ex-summary-logs                  |
-      | s3Key      | exporter-regonly-invalid-key         |
-      | fileId     | exporter-regonly-invalid-file-id     |
-      | filename   | exporter-regonly-invalid.xlsx        |
-      | fileStatus | complete                             |
+      | s3Bucket   | re-ex-summary-logs               |
+      | s3Key      | exporter-regonly-invalid-key     |
+      | fileId     | exporter-regonly-invalid-file-id |
+      | filename   | exporter-regonly-invalid.xlsx    |
+      | fileStatus | complete                         |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
