@@ -28,10 +28,7 @@ Feature: Summary Logs - Exporter
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
+    And the summary log submission status is 'invalid'
     And I should see the following summary log validation failures
       | Code               | Location Sheet                 | Location Table            | Location Row | Location Header                             | Actual                                                                                                             |
       | INVALID_DATE       | Exported (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_EXPORT | 4            | DATE_OF_EXPORT                              | TBC                                                                                                                |

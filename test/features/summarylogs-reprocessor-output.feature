@@ -29,10 +29,7 @@ Feature: Summary Logs - Reprocessor on Output
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
+    And the summary log submission status is 'invalid'
     And I should see the following summary log validation failures
       | Code               | Location Sheet                  | Location Table    | Location Row | Location Header                        | Actual     |
       | INVALID_DATE       | Reprocessed (sections 3 and 4)  | REPROCESSED_LOADS | 4            | DATE_LOAD_LEFT_SITE                    | 30-06-2025 |

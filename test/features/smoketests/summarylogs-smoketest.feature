@@ -20,10 +20,7 @@ Feature: Summary Logs smoke test
 
     When I upload the file 'reprocessor-input-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
-
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status  | validated  |
+    And the summary log submission status is 'validated'
     And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 6 and sheet "Received (sections 1, 2 and 3)"
       | Type  | Code           | Header   | Column |
       | error | FIELD_REQUIRED | EWC_CODE | H      |
