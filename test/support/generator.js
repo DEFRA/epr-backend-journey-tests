@@ -177,7 +177,7 @@ export class Organisation {
       ',' +
       this.postcode
 
-    this.companyName = fakerEN_GB.company.name() + ' Limited'
+    this.companyName = `${fakerEN_GB.company.name()} Limited ${fakerEN_GB.string.alphanumeric(8)}`
 
     this.numberOfNations = Math.floor(Math.random() * nations.length) + 1
   }
@@ -280,7 +280,7 @@ export class Registration {
       ? `${orgId}`
       : `${fakerEN_GB.number.int({ min: 500000, max: 999999 })}`
     this.jobTitle = fakerEN_GB.person.jobTitle()
-    this.companyName = fakerEN_GB.company.name() + ' Limited'
+    this.companyName = `${fakerEN_GB.company.name()} Limited ${fakerEN_GB.string.alphanumeric(8)}`
 
     this.fileId1 = fakerEN_GB.string.uuid()
     this.fileId2 = fakerEN_GB.string.uuid()
