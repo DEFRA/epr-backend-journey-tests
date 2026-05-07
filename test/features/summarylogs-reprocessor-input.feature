@@ -22,10 +22,8 @@ Feature: Summary Logs - Reprocessor on Input
 
     When I upload the file 'reprocessor-input-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
+    And the summary log submission status is 'validated'
 
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status  | validated  |
     And I should see the following summary log validation concerns for table "RECEIVED_LOADS_FOR_REPROCESSING", row 6 and sheet "Received (sections 1, 2 and 3)"
       | Type  | Code           | Header   | Column |
       | error | FIELD_REQUIRED | EWC_CODE | H      |
@@ -86,9 +84,7 @@ Feature: Summary Logs - Reprocessor on Input
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
+    And the summary log submission status is 'invalid'
     And I should see the following summary log validation failures
       | Code                   | Location Sheet | Location Table                  | Location Row ID |
       | SEQUENTIAL_ROW_REMOVED | Received       | RECEIVED_LOADS_FOR_REPROCESSING | 1001            |
@@ -109,10 +105,7 @@ Feature: Summary Logs - Reprocessor on Input
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | validated |
+    And the summary log submission status is 'validated'
   # RowID 1003 is ignored (date falls outside accreditation range)
   # RowID 4001 is from REPROCESSED_LOADS which does not contribute to waste balance
   # RowID with 1001 is also adjusted
@@ -210,10 +203,8 @@ Feature: Summary Logs - Reprocessor on Input
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
+    And the summary log submission status is 'invalid'
 
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
     And I should see the following summary log validation failures
       | Code               | Location Sheet                 | Location Table                  | Location Row | Location Header                             | Actual            |
       | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 6            | RECYCLABLE_PROPORTION_PERCENTAGE            | 1.75              |
@@ -243,10 +234,8 @@ Feature: Summary Logs - Reprocessor on Input
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
+    And the summary log submission status is 'invalid'
 
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
     And I should see the following summary log validation failures
       | Code               | Location Sheet                | Location Table  | Location Row | Location Header                       | Actual     |
       | INVALID_DATE       | Sent on (sections 5, 6 and 7) | SENT_ON_LOADS   | 4            | DATE_LOAD_LEFT_SITE                   | 30-02-2025 |
@@ -277,10 +266,7 @@ Feature: Summary Logs - Reprocessor on Input
 
     When I upload the file 'reprocessor-input-valid.xlsx' via the CDP uploader
     Then the upload to CDP uploader succeeds
-
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status  | validated  |
+    And the summary log submission status is 'validated'
     And the summary log has the following loads
       | LoadType       | Count | RowIDs |
       | added.valid    | 1     | 4000   |
