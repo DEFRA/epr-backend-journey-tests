@@ -180,6 +180,32 @@ async function generateSpreadsheetData(options = {}) {
 
         let currentRow = 4 + rowOffset // Start from row 4
 
+        let targetCols = ['B']
+        if (
+          worksheet.name === 'Received (sections 1, 2 and 3)' ||
+          worksheet.name === 'Received (sections 1 and 2)' ||
+          worksheet.name === 'Exported (sections 1, 2 and 3)'
+        ) {
+          targetCols = ['B', 'N', 'S']
+        } else if (worksheet.name === 'Reprocessed (sections 3 and 4)') {
+          targetCols = ['B', 'J']
+        } else if (worksheet.name === 'Received (section 1)') {
+          targetCols = ['B', 'G', 'K', 'Q']
+        }
+        workbook.eachSheet((sheet) => {
+          sheet.eachRow((row) => {
+            targetCols.forEach((col) => {
+              const cell = row.getCell(col)
+              if (
+                cell.type === ExcelJS.ValueType.Formula ||
+                cell.type === ExcelJS.ValueType.SharedFormula
+              ) {
+                cell.value = cell.result ?? null
+              }
+            })
+          })
+        })
+
         for (let i = rowOffset; i < numberOfRows + rowOffset; i++) {
           const rowData = worksheet.fn(material)
 
@@ -211,6 +237,67 @@ async function generateSpreadsheetData(options = {}) {
             }
           }
 
+          if (wasteProcessingType === 'reprocessorInput') {
+            if (worksheet.name === 'Received (sections 1, 2 and 3)') {
+              rowData.B = `${1000 + i}`
+              rowData.N = rowData.K - rowData.L - rowData.M
+              if (rowData.O === 'Yes') {
+                rowData.S = (rowData.N - rowData.Q) * 0.9985 * rowData.R
+              } else {
+                rowData.S = (rowData.N - rowData.Q) * rowData.R
+              }
+            } else if (worksheet.name === 'Reprocessed (section 4)') {
+              rowData.B = `${4000 + i}`
+            } else if (worksheet.name === 'Sent on (sections 5, 6 and 7)') {
+              rowData.B = `${5000 + i}`
+            }
+          } else if (wasteProcessingType === 'reprocessorOutput') {
+            if (worksheet.name === 'Received (sections 1 and 2)') {
+              rowData.B = `${1000 + i}`
+              rowData.N = rowData.K - (rowData.L + rowData.M)
+              if (rowData.O === 'Yes') {
+                rowData.S = (rowData.N - rowData.Q) * 0.9985 * rowData.R
+              } else {
+                rowData.S = (rowData.N - rowData.Q) * rowData.R
+              }
+            } else if (worksheet.name === 'Reprocessed (sections 3 and 4)') {
+              rowData.B = `${3000 + i}`
+              rowData.J = rowData.H * rowData.I
+            } else if (worksheet.name === 'Sent on (sections 5 and 6)') {
+              rowData.B = `${5000 + i}`
+            }
+          } else if (wasteProcessingType === 'exporter') {
+            if (worksheet.name === 'Exported (sections 1, 2 and 3)') {
+              rowData.B = `${1000 + i}`
+              rowData.N = rowData.K - (rowData.L + rowData.M)
+              if (rowData.O === 'Yes') {
+                rowData.S = (rowData.N - rowData.Q) * 0.9985 * rowData.R
+              } else {
+                rowData.S = (rowData.N - rowData.Q) * rowData.R
+              }
+            } else if (worksheet.name === 'Sent on (sections 4 and 5)') {
+              rowData.B = `${4000 + i}`
+            }
+          } else if (
+            wasteProcessingType === 'regOnlyReprocessor' &&
+            worksheet.name === 'Received (section 1)'
+          ) {
+            rowData.B = `${1000 + i}`
+            rowData.K = rowData.H * rowData.J
+          } else if (worksheet.name === 'Sent on (section 2)') {
+            rowData.B = `${5000 + i}`
+          } else if (
+            wasteProcessingType === 'regOnlyExporter' &&
+            worksheet.name === 'Received (section 1)'
+          ) {
+            rowData.B = `${1000 + i}`
+            rowData.Q = rowData.N * rowData.P
+          } else if (worksheet.name === 'Exported (sections 2 and 3)') {
+            rowData.B = `${2000 + i}`
+          } else if (worksheet.name === 'Sent on (section 4)') {
+            rowData.B = `${4000 + i}`
+          }
+
           // Insert data only into specified columns
           Object.entries(rowData).forEach(([columnLetter, value]) => {
             const cell = sheet.getCell(`${columnLetter}${currentRow}`)
@@ -218,7 +305,7 @@ async function generateSpreadsheetData(options = {}) {
             const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/
             if (typeof value === 'string' && dateRegex.test(value)) {
               const [day, month, year] = value.split('/')
-              const parsed = new Date(year, month - 1, day)
+              const parsed = new Date(year, month - 1, day, 12, 0, 0)
               if (!isNaN(parsed)) {
                 cell.value = parsed
                 cell.numFmt = 'dd/mm/yyyy'
@@ -288,7 +375,6 @@ if (process.env.FILENAME) {
 if (process.env.ROW_OFFSET) {
   options.rowOffset = parseInt(process.env.ROW_OFFSET, 10)
 }
-
 args.forEach((arg) => {
   if (arg.startsWith('--material=')) {
     options.materialSuffix = arg.split('=')[1]
@@ -303,9 +389,9 @@ args.forEach((arg) => {
   } else if (arg.startsWith('--sheets=')) {
     options.sheets = arg.split('=')[1].split(',').map(Number)
   } else if (arg.startsWith('--filename=')) {
-    options.filename = arg.split('=')[1].split(',').map(Number)
+    options.filename = arg.split('=')[1]
   } else if (arg.startsWith('--rowOffset=')) {
-    options.rowOffset = arg.split('=')[1].split(',').map(Number)
+    options.rowOffset = parseInt(arg.split('=')[1], 10)
   }
 })
 
