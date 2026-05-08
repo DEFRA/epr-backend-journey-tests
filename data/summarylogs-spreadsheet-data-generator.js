@@ -82,61 +82,68 @@ async function generateSpreadsheetData(options = {}) {
       regNumber || generateRegNumber(wasteProcessingType, material.suffix)
     const accreditationNumber = accNumber || generateAccNumber(material.suffix)
 
-    let templateFile
-    let worksheets
-
-    if (wasteProcessingType === 'exporter') {
-      templateFile = './data/exporter.template.xlsx'
-      worksheets = [
-        { name: 'Exported (sections 1, 2 and 3)', fn: generateExportedRow },
-        { name: 'Sent on (sections 4 and 5)', fn: generateSentOnRow }
-      ]
-    } else if (wasteProcessingType === 'reprocessorOutput') {
-      templateFile = './data/reprocessor.output.template.xlsx'
-      worksheets = [
-        { name: 'Received (sections 1 and 2)', fn: generateReceivedRow },
-        {
-          name: 'Reprocessed (sections 3 and 4)',
-          fn: generateOutputReprocessedRow
-        },
-        { name: 'Sent on (sections 5 and 6)', fn: generateOutputSentOnRow }
-      ]
-    } else if (wasteProcessingType === 'reprocessorInput') {
-      templateFile = './data/reprocessor.input.template.xlsx'
-      worksheets = [
-        {
-          name: 'Received (sections 1, 2 and 3)',
-          fn: generateInputReceivedRow
-        },
-        {
-          name: 'Reprocessed (section 4)',
-          fn: generateInputReprocessedRow
-        },
-        { name: 'Sent on (sections 5, 6 and 7)', fn: generateInputSentOnRow }
-      ]
-    } else if (wasteProcessingType === 'regOnlyExporter') {
-      templateFile = './data/exporter.reg.only.template.xlsx'
-      worksheets = [
-        { name: 'Received (section 1)', fn: generateRegOnlyReceivedRow },
-        { name: 'Exported (sections 2 and 3)', fn: generateRegOnlyExportedRow },
-        {
-          name: 'Sent on (section 4)',
-          fn: generateRegOnlySentOnRow
-        }
-      ]
-    } else if (wasteProcessingType === 'regOnlyReprocessor') {
-      templateFile = './data/reprocessor.reg.only.template.xlsx'
-      worksheets = [
-        {
-          name: 'Received (section 1)',
-          fn: generateRegOnlyReprocessorReceivedRow
-        },
-        {
-          name: 'Sent on (section 2)',
-          fn: generateRegOnlyReprocessorSentOnRow
-        }
-      ]
+    const PROCESSING_TYPE_CONFIG = {
+      exporter: {
+        templateFile: './data/exporter.template.xlsx',
+        worksheets: [
+          { name: 'Exported (sections 1, 2 and 3)', fn: generateExportedRow },
+          { name: 'Sent on (sections 4 and 5)', fn: generateSentOnRow }
+        ]
+      },
+      reprocessorOutput: {
+        templateFile: './data/reprocessor.output.template.xlsx',
+        worksheets: [
+          { name: 'Received (sections 1 and 2)', fn: generateReceivedRow },
+          {
+            name: 'Reprocessed (sections 3 and 4)',
+            fn: generateOutputReprocessedRow
+          },
+          { name: 'Sent on (sections 5 and 6)', fn: generateOutputSentOnRow }
+        ]
+      },
+      reprocessorInput: {
+        templateFile: './data/reprocessor.input.template.xlsx',
+        worksheets: [
+          {
+            name: 'Received (sections 1, 2 and 3)',
+            fn: generateInputReceivedRow
+          },
+          { name: 'Reprocessed (section 4)', fn: generateInputReprocessedRow },
+          { name: 'Sent on (sections 5, 6 and 7)', fn: generateInputSentOnRow }
+        ]
+      },
+      regOnlyExporter: {
+        templateFile: './data/exporter.reg.only.template.xlsx',
+        worksheets: [
+          { name: 'Received (section 1)', fn: generateRegOnlyReceivedRow },
+          {
+            name: 'Exported (sections 2 and 3)',
+            fn: generateRegOnlyExportedRow
+          },
+          { name: 'Sent on (section 4)', fn: generateRegOnlySentOnRow }
+        ]
+      },
+      regOnlyReprocessor: {
+        templateFile: './data/reprocessor.reg.only.template.xlsx',
+        worksheets: [
+          {
+            name: 'Received (section 1)',
+            fn: generateRegOnlyReprocessorReceivedRow
+          },
+          {
+            name: 'Sent on (section 2)',
+            fn: generateRegOnlyReprocessorSentOnRow
+          }
+        ]
+      }
     }
+
+    const config = PROCESSING_TYPE_CONFIG[wasteProcessingType]
+    if (!config) {
+      throw new Error(`Unknown wasteProcessingType: ${wasteProcessingType}`)
+    }
+
+    let { templateFile, worksheets } = config
 
     if (filename !== null) {
       templateFile = filename
@@ -237,65 +244,70 @@ async function generateSpreadsheetData(options = {}) {
             }
           }
 
-          if (wasteProcessingType === 'reprocessorInput') {
-            if (worksheet.name === 'Received (sections 1, 2 and 3)') {
-              rowData.B = `${1000 + i}`
-              rowData.N = rowData.K - rowData.L - rowData.M
-              if (rowData.O === 'Yes') {
-                rowData.S = (rowData.N - rowData.Q) * 0.9985 * rowData.R
-              } else {
-                rowData.S = (rowData.N - rowData.Q) * rowData.R
-              }
-            } else if (worksheet.name === 'Reprocessed (section 4)') {
-              rowData.B = `${4000 + i}`
-            } else if (worksheet.name === 'Sent on (sections 5, 6 and 7)') {
-              rowData.B = `${5000 + i}`
+          function calculateTonnage(rowData) {
+            rowData.N = rowData.K - (rowData.L + rowData.M)
+            if (rowData.O === 'Yes') {
+              rowData.S = (rowData.N - rowData.Q) * 0.9985 * rowData.R
+            } else {
+              rowData.S = (rowData.N - rowData.Q) * rowData.R
             }
-          } else if (wasteProcessingType === 'reprocessorOutput') {
-            if (worksheet.name === 'Received (sections 1 and 2)') {
-              rowData.B = `${1000 + i}`
-              rowData.N = rowData.K - (rowData.L + rowData.M)
-              if (rowData.O === 'Yes') {
-                rowData.S = (rowData.N - rowData.Q) * 0.9985 * rowData.R
-              } else {
-                rowData.S = (rowData.N - rowData.Q) * rowData.R
-              }
-            } else if (worksheet.name === 'Reprocessed (sections 3 and 4)') {
-              rowData.B = `${3000 + i}`
-              rowData.J = rowData.H * rowData.I
-            } else if (worksheet.name === 'Sent on (sections 5 and 6)') {
-              rowData.B = `${5000 + i}`
+          }
+
+          const WORKSHEET_CONFIG = {
+            reprocessorInput: {
+              'Received (sections 1, 2 and 3)': {
+                rowId: 1000,
+                tonnage: calculateTonnage
+              },
+              'Reprocessed (section 4)': { rowId: 4000 },
+              'Sent on (sections 5, 6 and 7)': { rowId: 5000 }
+            },
+            reprocessorOutput: {
+              'Received (sections 1 and 2)': {
+                rowId: 1000,
+                tonnage: calculateTonnage
+              },
+              'Reprocessed (sections 3 and 4)': {
+                rowId: 3000,
+                tonnage: (r) => {
+                  r.J = r.H * r.I
+                }
+              },
+              'Sent on (sections 5 and 6)': { rowId: 5000 }
+            },
+            exporter: {
+              'Exported (sections 1, 2 and 3)': {
+                rowId: 1000,
+                tonnage: calculateTonnage
+              },
+              'Sent on (sections 4 and 5)': { rowId: 4000 }
+            },
+            regOnlyReprocessor: {
+              'Received (section 1)': {
+                rowId: 1000,
+                tonnage: (r) => {
+                  r.K = r.H * r.J
+                }
+              },
+              'Sent on (section 2)': { rowId: 5000 }
+            },
+            regOnlyExporter: {
+              'Received (section 1)': {
+                rowId: 1000,
+                tonnage: (r) => {
+                  r.Q = r.N * r.P
+                }
+              },
+              'Exported (sections 2 and 3)': { rowId: 2000 },
+              'Sent on (section 4)': { rowId: 4000 }
             }
-          } else if (wasteProcessingType === 'exporter') {
-            if (worksheet.name === 'Exported (sections 1, 2 and 3)') {
-              rowData.B = `${1000 + i}`
-              rowData.N = rowData.K - (rowData.L + rowData.M)
-              if (rowData.O === 'Yes') {
-                rowData.S = (rowData.N - rowData.Q) * 0.9985 * rowData.R
-              } else {
-                rowData.S = (rowData.N - rowData.Q) * rowData.R
-              }
-            } else if (worksheet.name === 'Sent on (sections 4 and 5)') {
-              rowData.B = `${4000 + i}`
-            }
-          } else if (
-            wasteProcessingType === 'regOnlyReprocessor' &&
-            worksheet.name === 'Received (section 1)'
-          ) {
-            rowData.B = `${1000 + i}`
-            rowData.K = rowData.H * rowData.J
-          } else if (worksheet.name === 'Sent on (section 2)') {
-            rowData.B = `${5000 + i}`
-          } else if (
-            wasteProcessingType === 'regOnlyExporter' &&
-            worksheet.name === 'Received (section 1)'
-          ) {
-            rowData.B = `${1000 + i}`
-            rowData.Q = rowData.N * rowData.P
-          } else if (worksheet.name === 'Exported (sections 2 and 3)') {
-            rowData.B = `${2000 + i}`
-          } else if (worksheet.name === 'Sent on (section 4)') {
-            rowData.B = `${4000 + i}`
+          }
+
+          // Apply config
+          const config = WORKSHEET_CONFIG[wasteProcessingType]?.[worksheet.name]
+          if (config) {
+            rowData.B = `${config.rowId + i}`
+            config.tonnage?.(rowData)
           }
 
           // Insert data only into specified columns
