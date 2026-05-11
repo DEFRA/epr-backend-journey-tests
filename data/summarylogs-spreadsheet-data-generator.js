@@ -216,34 +216,6 @@ async function generateSpreadsheetData(options = {}) {
         for (let i = rowOffset; i < numberOfRows + rowOffset; i++) {
           const rowData = worksheet.fn(material)
 
-          // Fix an issue where first row formula is not populated
-          if (i === 0 || rowOffset > 0) {
-            if (worksheet.name === 'Exported (sections 1, 2 and 3)') {
-              rowData.N = rowData.K - (rowData.L + rowData.M)
-            } else if (wasteProcessingType === 'reprocessorOutput') {
-              if (worksheet.name === 'Received (sections 1 and 2)') {
-                rowData.N = rowData.K - (rowData.L + rowData.M)
-              } else if (worksheet.name === 'Reprocessed (sections 3 and 4)') {
-                rowData.J = rowData.H * rowData.I
-              }
-            } else if (
-              wasteProcessingType === 'reprocessorInput' &&
-              worksheet.name === 'Received (sections 1, 2 and 3)'
-            ) {
-              rowData.N = rowData.K - rowData.L - rowData.M
-            } else if (
-              wasteProcessingType === 'regOnlyExporter' &&
-              worksheet.name === 'Received (section 1)'
-            ) {
-              rowData.Q = rowData.N * rowData.P
-            } else if (
-              wasteProcessingType === 'regOnlyReprocessor' &&
-              worksheet.name === 'Received (section 1)'
-            ) {
-              rowData.K = rowData.H * rowData.J
-            }
-          }
-
           function calculateTonnage(rowData) {
             rowData.N = rowData.K - (rowData.L + rowData.M)
             if (rowData.O === 'Yes') {
