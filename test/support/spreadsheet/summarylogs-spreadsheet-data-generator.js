@@ -1,11 +1,12 @@
 import ExcelJS from 'exceljs'
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import logger from '../logger.js'
 import { MATERIALS } from './shared-spreadsheet-values.js'
 import {
   PROCESSING_TYPE_CONFIG,
   WORKSHEET_CONFIG
 } from './spreadsheet-config.js'
+import { fileURLToPath } from 'url'
+import pino from 'pino'
 
 function sanitiseFilenameComponent(input) {
   if (typeof input !== 'string') {
@@ -30,7 +31,7 @@ function generateAccNumber(suffix) {
   return `ACC${random}${suffix}`
 }
 
-async function generateSpreadsheetData(options = {}) {
+export async function generateSpreadsheetData(options = {}) {
   const {
     wasteProcessingType,
     numberOfRows = 10,
@@ -39,8 +40,15 @@ async function generateSpreadsheetData(options = {}) {
     regNumber,
     sheets = null,
     filename = null,
-    rowOffset = 0
+    rowOffset = 0,
+    silentLogging = false
   } = options
+
+  const logger = pino({})
+
+  if (silentLogging) {
+    logger.level = 'silent'
+  }
 
   try {
     logger.info('Reading spreadsheet template...')
@@ -182,13 +190,15 @@ async function generateSpreadsheetData(options = {}) {
 
     let outputFile
     if (!wasteProcessingType.startsWith('regOnly')) {
-      outputFile = `./data/${safeType}_${safeAcc}_${safeReg}${sheetsSuffix}.xlsx`
+      outputFile = `data/${safeType}_${safeAcc}_${safeReg}${sheetsSuffix}.xlsx`
     } else {
-      outputFile = `./data/${safeType}_${safeReg}${sheetsSuffix}.xlsx`
+      outputFile = `data/${safeType}_${safeReg}${sheetsSuffix}.xlsx`
     }
     await workbook.xlsx.writeFile(outputFile)
 
     logger.info(`Successfully generated spreadsheet: ${outputFile}`)
+
+    return outputFile
   } catch (error) {
     logger.error('Error generating spreadsheet:', error.message)
     logger.error(error.stack)
@@ -247,4 +257,6 @@ args.forEach((arg) => {
   }
 })
 
-generateSpreadsheetData(options)
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  generateSpreadsheetData(options)
+}
