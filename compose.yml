@@ -199,7 +199,7 @@ services:
       PACKAGING_RECYCLING_NOTES_EXTERNAL_API_CLIENT_ID: 5357lgchj0h0fuomqyas5r87u
       PACKAGING_RECYCLING_NOTES_EXTERNAL_API_JWKS_URL: http://cognito-stub:9229/local_4D8shcYm/.well-known/jwks.json
       PORT: 3001
-      SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk"]'
+      SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk","niea@test.gov.uk"]'
       SERVICE_MAINTAINER_WRITE_EMAILS: '["ea@test.gov.uk"]'
       SUPPORT_EMAILS: '[]'
       SQS_ENDPOINT: http://floci:4566

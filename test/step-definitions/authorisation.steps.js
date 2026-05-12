@@ -161,6 +161,26 @@ When(
   }
 )
 
+Given('I am logged in as a read-only service maintainer', async function () {
+  let payload, urlSuffix
+  if (process.env.ENVIRONMENT === 'test') {
+    payload = new FormData()
+    payload.append('client_id', config.auth.clientId)
+    payload.append('client_secret', config.auth.clientSecret)
+    payload.append('username', config.auth.username)
+    payload.append('password', config.auth.password)
+    payload.append('scope', config.auth.scope)
+    payload.append('grant_type', config.auth.grantType)
+    urlSuffix = ''
+  } else {
+    const clientId = 'clientId'
+    const username = 'niea@test.gov.uk'
+    payload = JSON.stringify({ clientId, username })
+    urlSuffix = '/sign'
+  }
+  await authClient.generateToken(payload, urlSuffix)
+})
+
 Given('I am logged in as a service maintainer', async function () {
   let payload, urlSuffix
   if (process.env.ENVIRONMENT === 'test') {
