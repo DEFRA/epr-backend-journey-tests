@@ -207,7 +207,7 @@ This will create mock approved Organisation datasets with linked users. Only to 
 
 ### Running the spreadsheet generator for epr-backend
 
-There is a built-in spreadsheet generator that can be used to generate a spreadsheet for Summary Logs. Please open the file in Excel (Or equivalent) and save it at least once after the file is generated for it to be readable by the service.
+There is a built-in spreadsheet generator that can be used to generate a spreadsheet for Summary Logs.
 
 Three generators are available:
 
