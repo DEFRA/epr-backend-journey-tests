@@ -22,4 +22,4 @@ Feature: Automated scaling test for Summary Logs Reprocessor on Input
       | accNumber           | ACC123456        |
       | numberOfRows        | 2000             |
       | materialSuffix      | PA               |
-      | iterations          | 10               |
+      | maxTotalRows        | 8000             |

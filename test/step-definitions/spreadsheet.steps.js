@@ -17,7 +17,7 @@ When(
 
     const data = dataTable.rowsHash()
     const numRows = parseInt(data.numberOfRows)
-    const iterations = parseInt(data.iterations)
+    const maxTotalRows = parseInt(data.maxTotalRows)
 
     const options = {
       wasteProcessingType: data.wasteProcessingType,
@@ -29,9 +29,9 @@ When(
       silentLogging: true
     }
 
-    for (let i = 0; i < iterations; i++) {
+    while (options.rowOffset <= maxTotalRows) {
       logger.info(
-        `Iteration ${i + 1} of ${iterations}, ${numRows + options.rowOffset} rows (per worksheet)`
+        `Uploading Summary Logs with ${numRows + options.rowOffset} rows (per worksheet)`
       )
 
       const file = await generateSpreadsheetData(options)
@@ -130,7 +130,7 @@ When(
           )
           if (filteredLogs.length > 0) {
             expect.fail(
-              `Submission failed at iteration: ${i + 1} of ${iterations} and ${numRows + options.rowOffset} rows (per worksheet)`
+              `Submission failed at ${numRows + options.rowOffset} rows (per worksheet), target max rows: ${maxTotalRows}`
             )
           }
         }
