@@ -1,28 +1,12 @@
 import ExcelJS from 'exceljs'
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import logger from '../test/support/logger.js'
 import { MATERIALS } from './shared-spreadsheet-values.js'
-import { generateSentOnRow, generateExportedRow } from './exporter.js'
 import {
-  generateOutputSentOnRow,
-  generateReceivedRow,
-  generateOutputReprocessedRow
-} from './reprocessor-output.js'
-
-import {
-  generateInputSentOnRow,
-  generateInputReceivedRow,
-  generateInputReprocessedRow
-} from './reprocessor-input.js'
-import {
-  generateRegOnlyExportedRow,
-  generateRegOnlyReceivedRow,
-  generateRegOnlySentOnRow
-} from './exporter.reg.only.js'
-import {
-  generateRegOnlyReprocessorReceivedRow,
-  generateRegOnlyReprocessorSentOnRow
-} from './reprocessor.reg.only.js'
+  PROCESSING_TYPE_CONFIG,
+  WORKSHEET_CONFIG
+} from './spreadsheet-config.js'
+import { fileURLToPath } from 'url'
+import pino from 'pino'
 
 function sanitiseFilenameComponent(input) {
   if (typeof input !== 'string') {
@@ -47,7 +31,7 @@ function generateAccNumber(suffix) {
   return `ACC${random}${suffix}`
 }
 
-async function generateSpreadsheetData(options = {}) {
+export async function generateSpreadsheetData(options = {}) {
   const {
     wasteProcessingType,
     numberOfRows = 10,
@@ -56,8 +40,15 @@ async function generateSpreadsheetData(options = {}) {
     regNumber,
     sheets = null,
     filename = null,
-    rowOffset = 0
+    rowOffset = 0,
+    silentLogging = false
   } = options
+
+  const logger = pino({})
+
+  if (silentLogging) {
+    logger.level = 'silent'
+  }
 
   try {
     logger.info('Reading spreadsheet template...')
@@ -82,61 +73,12 @@ async function generateSpreadsheetData(options = {}) {
       regNumber || generateRegNumber(wasteProcessingType, material.suffix)
     const accreditationNumber = accNumber || generateAccNumber(material.suffix)
 
-    let templateFile
-    let worksheets
-
-    if (wasteProcessingType === 'exporter') {
-      templateFile = './data/exporter.template.xlsx'
-      worksheets = [
-        { name: 'Exported (sections 1, 2 and 3)', fn: generateExportedRow },
-        { name: 'Sent on (sections 4 and 5)', fn: generateSentOnRow }
-      ]
-    } else if (wasteProcessingType === 'reprocessorOutput') {
-      templateFile = './data/reprocessor.output.template.xlsx'
-      worksheets = [
-        { name: 'Received (sections 1 and 2)', fn: generateReceivedRow },
-        {
-          name: 'Reprocessed (sections 3 and 4)',
-          fn: generateOutputReprocessedRow
-        },
-        { name: 'Sent on (sections 5 and 6)', fn: generateOutputSentOnRow }
-      ]
-    } else if (wasteProcessingType === 'reprocessorInput') {
-      templateFile = './data/reprocessor.input.template.xlsx'
-      worksheets = [
-        {
-          name: 'Received (sections 1, 2 and 3)',
-          fn: generateInputReceivedRow
-        },
-        {
-          name: 'Reprocessed (section 4)',
-          fn: generateInputReprocessedRow
-        },
-        { name: 'Sent on (sections 5, 6 and 7)', fn: generateInputSentOnRow }
-      ]
-    } else if (wasteProcessingType === 'regOnlyExporter') {
-      templateFile = './data/exporter.reg.only.template.xlsx'
-      worksheets = [
-        { name: 'Received (section 1)', fn: generateRegOnlyReceivedRow },
-        { name: 'Exported (sections 2 and 3)', fn: generateRegOnlyExportedRow },
-        {
-          name: 'Sent on (section 4)',
-          fn: generateRegOnlySentOnRow
-        }
-      ]
-    } else if (wasteProcessingType === 'regOnlyReprocessor') {
-      templateFile = './data/reprocessor.reg.only.template.xlsx'
-      worksheets = [
-        {
-          name: 'Received (section 1)',
-          fn: generateRegOnlyReprocessorReceivedRow
-        },
-        {
-          name: 'Sent on (section 2)',
-          fn: generateRegOnlyReprocessorSentOnRow
-        }
-      ]
+    const config = PROCESSING_TYPE_CONFIG[wasteProcessingType]
+    if (!config) {
+      throw new Error(`Unknown wasteProcessingType: ${wasteProcessingType}`)
     }
+
+    let { templateFile, worksheets } = config
 
     if (filename !== null) {
       templateFile = filename
@@ -180,35 +122,40 @@ async function generateSpreadsheetData(options = {}) {
 
         let currentRow = 4 + rowOffset // Start from row 4
 
+        let targetCols = ['B']
+        if (
+          worksheet.name === 'Received (sections 1, 2 and 3)' ||
+          worksheet.name === 'Received (sections 1 and 2)' ||
+          worksheet.name === 'Exported (sections 1, 2 and 3)'
+        ) {
+          targetCols = ['B', 'N', 'S']
+        } else if (worksheet.name === 'Reprocessed (sections 3 and 4)') {
+          targetCols = ['B', 'J']
+        } else if (worksheet.name === 'Received (section 1)') {
+          targetCols = ['B', 'G', 'K', 'Q']
+        }
+        workbook.eachSheet((sheet) => {
+          sheet.eachRow((row) => {
+            targetCols.forEach((col) => {
+              const cell = row.getCell(col)
+              if (
+                cell.type === ExcelJS.ValueType.Formula ||
+                cell.type === ExcelJS.ValueType.SharedFormula
+              ) {
+                cell.value = cell.result ?? null
+              }
+            })
+          })
+        })
+
         for (let i = rowOffset; i < numberOfRows + rowOffset; i++) {
           const rowData = worksheet.fn(material)
 
-          // Fix an issue where first row formula is not populated
-          if (i === 0 || rowOffset > 0) {
-            if (worksheet.name === 'Exported (sections 1, 2 and 3)') {
-              rowData.N = rowData.K - (rowData.L + rowData.M)
-            } else if (wasteProcessingType === 'reprocessorOutput') {
-              if (worksheet.name === 'Received (sections 1 and 2)') {
-                rowData.N = rowData.K - (rowData.L + rowData.M)
-              } else if (worksheet.name === 'Reprocessed (sections 3 and 4)') {
-                rowData.J = rowData.H * rowData.I
-              }
-            } else if (
-              wasteProcessingType === 'reprocessorInput' &&
-              worksheet.name === 'Received (sections 1, 2 and 3)'
-            ) {
-              rowData.N = rowData.K - rowData.L - rowData.M
-            } else if (
-              wasteProcessingType === 'regOnlyExporter' &&
-              worksheet.name === 'Received (section 1)'
-            ) {
-              rowData.Q = rowData.N * rowData.P
-            } else if (
-              wasteProcessingType === 'regOnlyReprocessor' &&
-              worksheet.name === 'Received (section 1)'
-            ) {
-              rowData.K = rowData.H * rowData.J
-            }
+          // Retrieve worksheet configuration and calculate formula
+          const config = WORKSHEET_CONFIG[wasteProcessingType]?.[worksheet.name]
+          if (config) {
+            rowData.B = `${config.rowId + i}`
+            config.tonnage?.(rowData)
           }
 
           // Insert data only into specified columns
@@ -218,7 +165,7 @@ async function generateSpreadsheetData(options = {}) {
             const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/
             if (typeof value === 'string' && dateRegex.test(value)) {
               const [day, month, year] = value.split('/')
-              const parsed = new Date(year, month - 1, day)
+              const parsed = new Date(year, month - 1, day, 12, 0, 0)
               if (!isNaN(parsed)) {
                 cell.value = parsed
                 cell.numFmt = 'dd/mm/yyyy'
@@ -243,13 +190,15 @@ async function generateSpreadsheetData(options = {}) {
 
     let outputFile
     if (!wasteProcessingType.startsWith('regOnly')) {
-      outputFile = `./data/${safeType}_${safeAcc}_${safeReg}${sheetsSuffix}.xlsx`
+      outputFile = `data/${safeType}_${safeAcc}_${safeReg}${sheetsSuffix}.xlsx`
     } else {
-      outputFile = `./data/${safeType}_${safeReg}${sheetsSuffix}.xlsx`
+      outputFile = `data/${safeType}_${safeReg}${sheetsSuffix}.xlsx`
     }
     await workbook.xlsx.writeFile(outputFile)
 
     logger.info(`Successfully generated spreadsheet: ${outputFile}`)
+
+    return outputFile
   } catch (error) {
     logger.error('Error generating spreadsheet:', error.message)
     logger.error(error.stack)
@@ -288,7 +237,6 @@ if (process.env.FILENAME) {
 if (process.env.ROW_OFFSET) {
   options.rowOffset = parseInt(process.env.ROW_OFFSET, 10)
 }
-
 args.forEach((arg) => {
   if (arg.startsWith('--material=')) {
     options.materialSuffix = arg.split('=')[1]
@@ -303,10 +251,12 @@ args.forEach((arg) => {
   } else if (arg.startsWith('--sheets=')) {
     options.sheets = arg.split('=')[1].split(',').map(Number)
   } else if (arg.startsWith('--filename=')) {
-    options.filename = arg.split('=')[1].split(',').map(Number)
+    options.filename = arg.split('=')[1]
   } else if (arg.startsWith('--rowOffset=')) {
-    options.rowOffset = arg.split('=')[1].split(',').map(Number)
+    options.rowOffset = parseInt(arg.split('=')[1], 10)
   }
 })
 
-generateSpreadsheetData(options)
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  generateSpreadsheetData(options)
+}
