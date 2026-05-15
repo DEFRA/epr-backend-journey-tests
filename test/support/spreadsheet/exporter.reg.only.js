@@ -43,14 +43,14 @@ export function generateRegOnlyExportedRow() {
       faker.number.float({ min: 1, max: 5, precision: 0.01 }).toFixed(2)
     ), // Tonnage of UK packaging waste exported
     H: date.toLocaleDateString('en-GB'), // Date of export
-    I: faker.number.int({ min: 100, max: 999 }), // Registered overseas reprocessor's ID
+    I: 100, // Registered overseas reprocessor's ID
     J: faker.helpers.arrayElement(BASEL_CODES), // Basel export code
     K: faker.helpers.arrayElement(YES_NO), // Was the waste refused by the recipient destination?
     L: faker.helpers.arrayElement(YES_NO), // Was the waste stopped during the course of export?
     M: repatriatedDate.toLocaleDateString('en-GB'), // Date that the stopped or refused waste was repatriated
 
     // Section 3
-    R: faker.company.name() + ' Limited', // Registered oveseas reprocessor's site name
+    R: faker.company.name() + ' Limited', // Registered overseas reprocessor's site name
     S: reprocessorCountry.name + '-' + reprocessorCountry.code, // Approved overseas reprocessor's country
     T: faker.number.int({ min: 3000000000, max: 4000000000 }), // customs code (HS code)
     U:
