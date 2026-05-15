@@ -252,9 +252,8 @@ export async function updateOrganisationData(
     'POST /v1/overseas-sites'
   )
 
-  const overseasSites = {}
-  for (let i = 0; i <= 999; i++) {
-    overseasSites[String(i).padStart(3, '0')] = {
+  const overseasSites = {
+    100: {
       overseasSiteId: site.id
     }
   }

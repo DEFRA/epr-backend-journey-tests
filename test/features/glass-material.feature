@@ -72,9 +72,7 @@ Feature: Glass material schema validation
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
+    And the summary log submission status is 'invalid'
 
     And I should see the following summary log validation failures
       | Code              | Location Sheet | Location Row | Actual      |
@@ -104,9 +102,7 @@ Feature: Glass material schema validation
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
+    And the summary log submission status is 'invalid'
 
     And I should see the following summary log validation failures
       | Code              | Location Sheet | Location Row | Actual        |
@@ -136,9 +132,7 @@ Feature: Glass material schema validation
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | validated |
+    And the summary log submission status is 'validated'
 
   Scenario: Glass Recycling should allow Glass Other Summary Logs upload if organisation is for Glass Other
     Given I create a linked and migrated organisation for the following
@@ -164,9 +158,7 @@ Feature: Glass material schema validation
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
 
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | validated |
+    And the summary log submission status is 'validated'
 
   Scenario: Glass migration should split Glass (Both) into Glass Remelt and Glass Other
     Given I create a linked and migrated organisation for the following

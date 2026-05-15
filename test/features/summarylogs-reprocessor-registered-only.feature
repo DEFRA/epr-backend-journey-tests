@@ -71,10 +71,8 @@ Feature: Summary Logs - Registered Only Reprocessor
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
+    And the summary log submission status is 'invalid'
 
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
     And I should see the following summary log validation failures
       | Code               | Location Sheet       | Location Table                  | Location Row | Location Header                             | Actual     |
       | VALUE_OUT_OF_RANGE | Received (section 1) | RECEIVED_LOADS_FOR_REPROCESSING | 4            | RECYCLABLE_PROPORTION_PERCENTAGE            | 1.22       |

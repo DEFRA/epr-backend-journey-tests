@@ -30,9 +30,7 @@ Feature: Summary Logs validation tests
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
+    Then the summary log submission status is 'invalid'
     And I should see the following summary log validation failures
       | Code               | Location Sheet                 | Location Table                  | Actual |
       | VALUE_OUT_OF_RANGE | Received (sections 1, 2 and 3) | RECEIVED_LOADS_FOR_REPROCESSING | 100    |
@@ -52,9 +50,7 @@ Feature: Summary Logs validation tests
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | invalid |
+    Then the summary log submission status is 'invalid'
     And I should see the following summary log validation failures
       | Code               | Location Sheet                 | Location Table |
       | TABLE_UNRECOGNISED | Received (sections 1, 2 and 3) | INVALID_TABLE  |
@@ -71,9 +67,7 @@ Feature: Summary Logs validation tests
       | fileStatus | complete                 |
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status   | invalid  |
+    Then the summary log submission status is 'invalid'
     And I should see that a summary log is created in the database with the following values
       | s3Bucket   | re-ex-summary-logs       |
       | s3Key      | invalid-test-upload-key  |
@@ -140,9 +134,7 @@ Feature: Summary Logs validation tests
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status  | validated  |
+    Then the summary log submission status is 'validated'
     And the summary log has the following loads
       | LoadType       | Count | RowIDs         |
       | added.valid    | 3     | 1001,4000,5000 |

@@ -4,8 +4,16 @@ Feature: Organisations endpoint
   Scenario: Ensure that organisations endpoint returns a response
     Given I am logged in as a service maintainer
     And I have access to the get organisations endpoint
-    When I request the organisations
+    When I request the organisations with the following parameters
+      | page | pageSize |
+      | 1    | 1        |
     Then I should receive a valid organisations response
+    And I should receive 1 organisation in the response
+    When I request the organisations with the following parameters
+      | search              | page | pageSize |
+      | invalidOrganisation | 1    | 1        |
+    Then I should receive a valid organisations response
+    And I should receive 0 organisations in the response
 
   Scenario: Organisations PUT endpoint returns an error response when no payload is supplied
     Given I am logged in as a service maintainer

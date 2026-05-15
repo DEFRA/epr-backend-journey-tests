@@ -58,7 +58,7 @@ export function generateExportedRow(material) {
       faker.string.alpha({ count: 4, casing: 'upper' }) +
       faker.number.int({ min: 1000000, max: 10000000 }), // Container or trailer number / IMO vessel if bulk shipment
     Y: faker.date.recent({ days: 2 }).toLocaleDateString('en-GB'), // Date received by approved overseas reprocessor
-    Z: faker.number.int({ min: 400, max: 700 }), // Approved overseas reprocessor's ID
+    Z: 100, // Approved overseas reprocessor's ID
     AA: interimSite, // Did you export the waste through an interim site? (If yes, provide information for AB and AC)
     AB: interimSiteId, // Interim Site ID (If applicable)
     AC: interimSiteTonnage, // If exported through an interim site, tonnage of UK packaging waste received by overseas reprocessor
