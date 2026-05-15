@@ -161,6 +161,22 @@ When(
   }
 )
 
+Given('I am logged in as a read-only service maintainer', async function () {
+  const clientId = 'clientId'
+  const username = 'niea@test.gov.uk'
+  const payload = JSON.stringify({ clientId, username })
+  const urlSuffix = '/sign'
+  await authClient.generateToken(payload, urlSuffix)
+})
+
+Given('I am logged in as a support only service maintainer', async function () {
+  const clientId = 'clientId'
+  const username = 'nrw@test.gov.uk'
+  const payload = JSON.stringify({ clientId, username })
+  const urlSuffix = '/sign'
+  await authClient.generateToken(payload, urlSuffix)
+})
+
 Given('I am logged in as a service maintainer', async function () {
   let payload, urlSuffix
   if (process.env.ENVIRONMENT === 'test') {
