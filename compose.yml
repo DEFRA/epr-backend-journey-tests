@@ -201,7 +201,7 @@ services:
       PORT: 3001
       SERVICE_MAINTAINER_EMAILS: '["ea@test.gov.uk","niea@test.gov.uk"]'
       SERVICE_MAINTAINER_WRITE_EMAILS: '["ea@test.gov.uk"]'
-      SUPPORT_EMAILS: '[]'
+      SUPPORT_EMAILS: '["nrw@test.gov.uk"]'
       SQS_ENDPOINT: http://floci:4566
     ports:
       - '3001:3001'
