@@ -16,7 +16,8 @@ export class Interpolator {
       '{{publicRegisterUrl}}': context.publicRegisterUrl,
       '{{version}}': context.version,
       '{{prnId}}': context.prnId,
-      '{{prnNumber}}': context.prnNumber
+      '{{prnNumber}}': context.prnNumber,
+      '{{reportToday}}': new Date().toLocaleDateString('en-GB')
     }
 
     expectedMessage = Object.entries(replacements).reduce(
