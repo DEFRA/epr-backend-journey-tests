@@ -15,10 +15,10 @@ Then(`the response status code is {int}`, async function (statusCode) {
 })
 
 When(
-  `I search system logs for the user with sub-category {string}`,
+  `I search system logs for the organisation with sub-category {string}`,
   async function (subCategory) {
     const query = new URLSearchParams({
-      userId: this.userId,
+      organisationId: String(this.orgResponseData.referenceNumber),
       subCategory
     })
     this.response = await eprBackendAPI.get(
