@@ -1,4 +1,4 @@
-import { URLSearchParams } from 'node:url'
+import { URLSearchParams } from 'url'
 import { Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { authClient, defraIdStub, eprBackendAPI } from '../support/hooks.js'
