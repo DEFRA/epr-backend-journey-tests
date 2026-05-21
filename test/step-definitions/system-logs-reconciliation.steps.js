@@ -1,4 +1,3 @@
-import { URLSearchParams } from 'url'
 import { Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { authClient, defraIdStub, eprBackendAPI } from '../support/hooks.js'
@@ -18,12 +17,14 @@ Then(`the response status code is {int}`, async function (statusCode) {
 When(
   `I search system logs for the organisation with sub-category {string}`,
   async function (subCategory) {
-    const query = new URLSearchParams({
-      organisationId: String(this.orgResponseData.referenceNumber),
+    const organisationId = encodeURIComponent(
+      String(this.orgResponseData.referenceNumber)
+    )
+    const search = `organisationId=${organisationId}&subCategory=${encodeURIComponent(
       subCategory
-    })
+    )}`
     this.response = await eprBackendAPI.get(
-      `/v1/system-logs/search?${query}`,
+      `/v1/system-logs/search?${search}`,
       authClient.authHeader()
     )
     expect(this.response.statusCode).to.equal(200)
