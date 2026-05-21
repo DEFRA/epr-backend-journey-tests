@@ -39,7 +39,6 @@
     "setup:husky": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module",
     "test:smoketest": "cucumber-js --tags \"@smoketest\" ; npm run report",
     "test:tagged": "cucumber-js --tags",
-    "test:unit": "vitest run",
     "test": "cucumber-js --tags \"not @smoketest and not @localonly\" ; npm run report"
   },
   "dependencies": {
@@ -72,7 +71,6 @@
     "mongodb": "7.1.0",
     "neostandard": "0.13.0",
     "prettier": "3.8.1",
-    "typescript": "5.9.3",
-    "vitest": "4.1.2"
+    "typescript": "5.9.3"
   }
 }
