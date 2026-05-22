@@ -17,7 +17,7 @@ Feature: System logs - Defra ID reconciliation
   Scenario: Reconciliation system log is created when user discovers organisations
     When the user discovers their organisations
     Then the response status code is 200
-    When I search system logs for the user's email with sub-category 'defra-id-reconciliation'
+    When I search system logs for the organisation with sub-category 'defra-id-reconciliation'
     Then I receive exactly 1 system log
     And the system log event action is 'organisations-discovered'
     And the system log context includes a linked organisation
