@@ -14,7 +14,15 @@ export class AuthClient {
       headers: instanceHeaders,
       body: payload
     })
-    const responseJson = await response.body.json()
+    /**
+     * @typedef {Object} AuthResponse
+     * @property {string} access_token
+     * @property {string} token_type
+     * @property {number} expires_in
+     */
+    const responseJson = /** @type {AuthResponse} */ (
+      await response.body.json()
+    )
     this.accessToken = responseJson.access_token
   }
 
