@@ -141,7 +141,7 @@ export async function createRegistrationAndAccreditation(
     orgId,
     referenceNumber,
     material,
-    street,
+    street = undefined,
     isExporter,
     glassRecyclingProcess
   }
