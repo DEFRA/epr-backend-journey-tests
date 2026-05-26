@@ -183,6 +183,8 @@ services:
       ADMIN_UI_ENTRA_CLIENT_ID: clientId
       APP_BASE_URL: http://epr-backend:3001
       AUDIT_ENABLED: true
+      BASIC_AUTH_USERNAME: basicAuthUsername
+      BASIC_AUTH_PASSWORD: basicAuthPassword
       CDP_UPLOADER_URL: http://cdp-uploader:7337
       COMMAND_QUEUE_SQS_ENDPOINT: http://floci:4566
       DEFRA_ID_CLIENT_ID: 63983fc2-cfff-45bb-8ec2-959e21062b9a

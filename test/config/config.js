@@ -70,6 +70,17 @@ const auth = {
   grantType: 'password'
 }
 
+const basicAuth = {
+  username:
+    environment === 'test'
+      ? process.env.BASIC_AUTH_USERNAME
+      : 'basicAuthUsername',
+  password:
+    environment === 'test'
+      ? process.env.BASIC_AUTH_PASSWORD
+      : 'basicAuthPassword'
+}
+
 const defraId = {
   local: 'http://defra-id-stub:3200',
   env: `https://cdp-defra-id-stub.${environment}.cdp-int.defra.cloud`
@@ -141,6 +152,7 @@ export default {
   apiUri,
   auth,
   authUri,
+  basicAuth,
   cdpUploaderUri,
   cognitoAuth,
   dbConnector,

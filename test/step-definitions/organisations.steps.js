@@ -1,6 +1,6 @@
 import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { authClient, eprBackendAPI } from '../support/hooks.js'
+import { authClient, basicAuth, eprBackendAPI } from '../support/hooks.js'
 import { Organisations } from '../support/generator.js'
 import { fakerEN_GB } from '@faker-js/faker'
 
@@ -232,6 +232,18 @@ When(
     this.response = await eprBackendAPI.get(
       '/v1/organisations?' + params,
       authClient.authHeader()
+    )
+  }
+)
+
+When(
+  'I request the organisations with the following parameters via basic auth',
+  async function (dataTable) {
+    const [row] = dataTable.hashes()
+    const params = new URLSearchParams(row).toString()
+    this.response = await eprBackendAPI.get(
+      '/v1/organisations?' + params,
+      basicAuth.authHeader()
     )
   }
 )

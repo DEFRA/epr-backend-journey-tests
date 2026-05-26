@@ -10,11 +10,13 @@ import { DefraIdStub } from '../support/defra-id-stub.js'
 import Users from '../support/users.js'
 import { resetTracker } from './cleanup-tracker.js'
 import { Interpolator } from './interpolator.js'
+import { BasicAuth } from '../support/basic-auth.js'
 
 let agent
 let dbConnector
 let dbClient
 let authClient
+let basicAuth
 let eprBackendAPI
 let interpolator
 let defraIdStub
@@ -28,6 +30,7 @@ BeforeAll({ timeout: 15000 }, async function () {
   dbClient = await dbConnector.connect()
   eprBackendAPI = new EprBackendApi()
   authClient = new AuthClient()
+  basicAuth = new BasicAuth()
   defraIdStub = new DefraIdStub()
   users = new Users()
   interpolator = new Interpolator()
@@ -53,6 +56,7 @@ After(async function (scenario) {
 
 export {
   authClient,
+  basicAuth,
   cdpUploader,
   cognitoAuth,
   dbClient,
