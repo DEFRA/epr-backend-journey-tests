@@ -24,7 +24,7 @@ Then(
 
     function normalise(value) {
       if (typeof value !== 'number') return value
-      return Number.isInteger(value) ? parseInt(value) : value.toFixed(2)
+      return Number.isInteger(value) ? value : value.toFixed(2)
     }
 
     for (const expectation of expectedData) {
