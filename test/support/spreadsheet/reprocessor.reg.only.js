@@ -14,9 +14,7 @@ export function generateRegOnlyReprocessorReceivedRow() {
   return {
     // Section 1
     G: `01/${month}/${year}`, // Month received
-    H: parseFloat(
-      faker.number.float({ min: 20, max: 50, precision: 0.01 }).toFixed(2)
-    ), // Net weight
+    H: parseFloat(faker.number.float({ min: 20, max: 50 }).toFixed(2)), // Net weight
     I: faker.helpers.arrayElement(RECYCLABLE_PROPORTION_METHODS), // How did you calculate the recyclable proportion?
     J: parseFloat(faker.number.float({ min: 0.05, max: 0.8 }).toFixed(2)), // Recyclable Proportion (Percentage)
     L: faker.company.name(), // Supplier name
@@ -34,9 +32,7 @@ export function generateRegOnlyReprocessorSentOnRow() {
   return {
     // Section 2
     G: date.toLocaleDateString('en-GB'), // Date load left site
-    H: parseFloat(
-      faker.number.float({ min: 5, max: 20, precision: 0.01 }).toFixed(2)
-    ), // Tonnage of UK packaging waste sent on
+    H: parseFloat(faker.number.float({ min: 5, max: 20 }).toFixed(2)), // Tonnage of UK packaging waste sent on
     I: 'Reprocessor', // Final destination facility type
     J: faker.company.name(), // Final destination facility name
     K: faker.location.streetAddress(), // First line of final destination facility address
