@@ -45,7 +45,7 @@ export function generateExportedRow(material) {
     V: faker.helpers.arrayElement(BASEL_CODES), // basel export code
     W: faker.number.int({ min: 3000000000, max: 4000000000 }), // customs code (HS code)
     X:
-      faker.string.alpha({ count: 4, casing: 'upper' }) +
+      faker.string.alpha({ length: 4, casing: 'upper' }) +
       faker.number.int({ min: 1000000, max: 10000000 }), // Container or trailer number / IMO vessel if bulk shipment
     Y: faker.date.recent({ days: 2 }).toLocaleDateString('en-GB'), // Date received by approved overseas reprocessor
     Z: 100, // Approved overseas reprocessor's ID

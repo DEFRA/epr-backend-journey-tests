@@ -116,9 +116,11 @@ const mongoUri = 'mongodb://localhost:27017/epr-backend'
 
 const testLogs = !withoutLogs && !environment
 
-let globalUndiciAgent = agent
+let globalUndiciAgent
 if (withExternalProxy || withProxy || process.env.HTTP_PROXY) {
   globalUndiciAgent = proxy
+} else {
+  globalUndiciAgent = agent
 }
 
 const dbConnector = !environment ? database.mongo : database.stub

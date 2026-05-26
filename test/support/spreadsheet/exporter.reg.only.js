@@ -50,7 +50,7 @@ export function generateRegOnlyExportedRow() {
     S: reprocessorCountry.name + '-' + reprocessorCountry.code, // Approved overseas reprocessor's country
     T: faker.number.int({ min: 3000000000, max: 4000000000 }), // customs code (HS code)
     U:
-      faker.string.alpha({ count: 4, casing: 'upper' }) +
+      faker.string.alpha({ length: 4, casing: 'upper' }) +
       faker.number.int({ min: 1000000, max: 10000000 }) // Container or trailer number / IMO vessel if bulk shipment
   }
 }
