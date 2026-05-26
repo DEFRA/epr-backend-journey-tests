@@ -15,11 +15,16 @@ Then(`the response status code is {int}`, async function (statusCode) {
 })
 
 When(
-  `I search system logs for the user's email with sub-category {string}`,
+  `I search system logs for the organisation with sub-category {string}`,
   async function (subCategory) {
-    this.response = await eprBackendAPI.post(
-      '/v1/system-logs/search',
-      JSON.stringify({ email: this.email, subCategory }),
+    const organisationId = encodeURIComponent(
+      String(this.orgResponseData.referenceNumber)
+    )
+    const search = `organisationId=${organisationId}&subCategory=${encodeURIComponent(
+      subCategory
+    )}`
+    this.response = await eprBackendAPI.get(
+      `/v1/system-logs/search?${search}`,
       authClient.authHeader()
     )
     expect(this.response.statusCode).to.equal(200)
