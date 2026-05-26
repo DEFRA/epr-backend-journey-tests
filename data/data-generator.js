@@ -52,6 +52,7 @@ async function generate(options = {}) {
         orgId,
         referenceNumber,
         material,
+        street: undefined,
         isExporter: wasteProcessingType === 'exporter',
         glassRecyclingProcess
       })
@@ -61,6 +62,7 @@ async function generate(options = {}) {
         orgId,
         referenceNumber,
         material,
+        street: undefined,
         isExporter: wasteProcessingType === 'regOnlyExporter',
         glassRecyclingProcess
       })
