@@ -186,7 +186,7 @@ export async function generateAuthToken(context) {
   await context.authClient.generateToken(payload, urlSuffix)
 }
 
-export function generateOrgUpdateData(index, suffix, registrationType = null) {
+export function generateOrgUpdateData(index, suffix, registrationType = '') {
   const baseData = {
     status: 'approved'
   }
