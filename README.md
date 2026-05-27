@@ -207,7 +207,7 @@ This will create mock approved Organisation datasets with linked users. Only to 
 
 ### Running the spreadsheet generator for epr-backend
 
-There is a built-in spreadsheet generator that can be used to generate a spreadsheet for Summary Logs. Please open the file in Excel (Or equivalent) and save it at least once after the file is generated for it to be readable by the service.
+There is a built-in spreadsheet generator that can be used to generate a spreadsheet for Summary Logs.
 
 Three generators are available:
 
@@ -267,6 +267,14 @@ SHEETS=0,2 npm run generate:spreadsheet:input
 Note that the Cover sheet does not count as the first sheet as the Cover sheet is always mandatory.
 
 Also note that you do not need to pass in an Accreditation Number for Registered Only spreadsheets as it would not be used.
+
+To append more rows on an existing generated spreadsheet, you can use the `FILENAME` environment variable to specify the filename and `ROW_OFFSET` environment variable to specify the number of rows to offset the new rows from.
+
+For example, for a previous spreadsheet that has 10 rows generated, you can append 10 more rows to it by the following command:
+
+```
+FILENAME=./data/filename.xlsx ROW_OFFSET=10 ROWS=10 MATERIAL=AL REG_NUMBER=R25SR500000912AL ACC_NUMBER=ACC123456 npm run generate:spreadsheet:input
+```
 
 ## What is tested in this test suite
 

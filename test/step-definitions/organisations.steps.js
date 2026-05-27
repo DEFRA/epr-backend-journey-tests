@@ -1,6 +1,6 @@
 import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
-import { authClient, eprBackendAPI } from '../support/hooks.js'
+import { authClient, basicAuth, eprBackendAPI } from '../support/hooks.js'
 import { Organisations } from '../support/generator.js'
 import { fakerEN_GB } from '@faker-js/faker'
 
@@ -217,12 +217,36 @@ When(
   }
 )
 
-When('I request the organisations', { timeout: 30000 }, async function () {
+When('I request the organisations', async function () {
   this.response = await eprBackendAPI.get(
     '/v1/organisations',
     authClient.authHeader()
   )
 })
+
+When(
+  'I request the organisations with the following parameters',
+  async function (dataTable) {
+    const [row] = dataTable.hashes()
+    const params = new URLSearchParams(row).toString()
+    this.response = await eprBackendAPI.get(
+      '/v1/organisations?' + params,
+      authClient.authHeader()
+    )
+  }
+)
+
+When(
+  'I request the organisations with the following parameters via basic auth',
+  async function (dataTable) {
+    const [row] = dataTable.hashes()
+    const params = new URLSearchParams(row).toString()
+    this.response = await eprBackendAPI.get(
+      '/v1/organisations?' + params,
+      basicAuth.authHeader()
+    )
+  }
+)
 
 When('I request the recently migrated organisation', async function () {
   const orgId = this.orgResponseData?.referenceNumber
@@ -306,6 +330,22 @@ When(
 Then('I should receive a valid organisations response', async function () {
   expect(this.response.statusCode).to.equal(200)
 })
+
+Then(
+  'I should receive {int} organisations in the response',
+  validateOrganisationsAmount
+)
+Then(
+  'I should receive {int} organisation in the response',
+  validateOrganisationsAmount
+)
+/**
+ * @this {import('@cucumber/cucumber').IWorld & { response: any, responseData: any }}
+ */
+async function validateOrganisationsAmount(orgAmount) {
+  this.responseData = await this.response.body.json()
+  expect(this.responseData.items.length).to.equal(orgAmount)
+}
 
 Then(
   'I should receive a successful update organisations response',

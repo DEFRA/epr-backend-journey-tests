@@ -16,13 +16,13 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
     When I register and authorise a User and link it to the recently migrated organisation
 
     Given I have the following summary log upload data for summary log upload
-      | s3Bucket            | re-ex-summary-logs   |
+      | s3Bucket            | re-ex-summary-logs          |
       | s3Key               | reprocessor-input-valid-key |
-      | fileId              | reprocessor-file-id  |
-      | filename            | reprocessor.xlsx     |
-      | fileStatus          | complete             |
-      | accreditationNumber | ACC123456            |
-      | registrationNumber  | R25SR500030912PA     |
+      | fileId              | reprocessor-file-id         |
+      | filename            | reprocessor.xlsx            |
+      | fileStatus          | complete                    |
+      | accreditationNumber | ACC123456                   |
+      | registrationNumber  | R25SR500030912PA            |
     When I initiate the summary log upload
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
@@ -40,7 +40,7 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | tonnageRecycled | 100.5 |
     Then the report patch succeeds
     And the patched report contains the following information
-      | Key                              | Value |
+      | Key                               | Value |
       | recyclingActivity.tonnageRecycled | 100.5 |
 
   Scenario: PATCH with tonnageNotRecycled succeeds for a reprocessor report
@@ -48,7 +48,7 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | tonnageNotRecycled | 20 |
     Then the report patch succeeds
     And the patched report contains the following information
-      | Key                                 | Value |
+      | Key                                  | Value |
       | recyclingActivity.tonnageNotRecycled | 20    |
 
   Scenario: PATCH with both tonnageRecycled and tonnageNotRecycled succeeds
@@ -57,7 +57,7 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | tonnageNotRecycled | 20  |
     Then the report patch succeeds
     And the patched report contains the following information
-      | Key                                 | Value |
+      | Key                                  | Value |
       | recyclingActivity.tonnageRecycled    | 100   |
       | recyclingActivity.tonnageNotRecycled | 20    |
 
@@ -65,3 +65,24 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
     When I patch the 'monthly' report for the year 2026 and period 1 with
       | tonnageRecycled | -1 |
     Then I should receive a 422 error response '"tonnageRecycled" must be greater than or equal to 0'
+
+  Scenario: PATCH with all fields succeeds (with submission and unsubmission) for a reprocessor report
+    When I patch the 'monthly' report for the year 2026 and period 1 with
+      | tonnageRecycled    | 100.5 |
+      | tonnageNotRecycled | 20    |
+      | prnRevenue         | 123.4 |
+      | freeTonnage        | 0     |
+    Then the report patch succeeds
+    And the patched report contains the following information
+      | Key                                  | Value |
+      | recyclingActivity.tonnageRecycled    | 100.5 |
+      | recyclingActivity.tonnageNotRecycled | 20    |
+      | prn.totalRevenue                     | 123.4 |
+      | prn.freeTonnage                      | 0     |
+    When I update the 'monthly' report for the year 2026 and period 1 with status 'ready_to_submit' and version 2
+    Then the report status is successfully updated
+    When I update the 'monthly' report for the year 2026 and period 1 with status 'submitted' and version 3
+    Then the report status is successfully updated
+
+    When I unsubmit the 'monthly' report for the year 2026 and period 1
+    Then the report is successfully unsubmitted

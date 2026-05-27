@@ -15,29 +15,31 @@
     "components": "test/components"
   },
   "scripts": {
-    "postinstall": "npm run setup:husky",
-    "setup:husky": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module",
     "clean": "rm -rf allure-results && rm -rf allure-report",
-    "generatedata": "node ./data/data-generator.js",
-    "generatedata:withLinking": "node ./data/data-generator.js --with-linking",
-    "generatedata:allMaterials": "node ./data/all-materials-data-generator.js ",
-    "generatedata:allMaterials:withLinking": "node ./data/all-materials-data-generator.js --with-linking",
-    "generatedata:allMaterialsMixed": "node ./data/all-materials-mixed-data-generator.js",
-    "generatedata:allMaterialsMixed:withLinking": "node ./data/all-materials-mixed-data-generator.js --with-linking",
-    "generate:spreadsheet:input": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=reprocessorInput",
-    "generate:spreadsheet:output": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=reprocessorOutput",
-    "generate:spreadsheet:exporter": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=exporter",
-    "generate:spreadsheet:regOnlyExporter": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=regOnlyExporter",
-    "generate:spreadsheet:regOnlyReprocessor": "node ./data/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=regOnlyReprocessor",
-    "generate:spreadsheet:ors": "node ./data/ors-spreadsheet-generator.js",
-    "test": "cucumber-js ; npm run report",
-    "test:tagged": "cucumber-js --tags",
-    "format": "prettier --write 'test/**/*.js' '**/*.{js,md,json,config.js}'",
     "format:check": "prettier --check 'test/**/*.js' '**/*.{js,md,json,config.js}'",
-    "lint": "eslint .",
+    "format": "prettier --write 'test/**/*.js' '**/*.{js,md,json,config.js}'",
+    "generate:spreadsheet:exporter": "node test/support/spreadsheet/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=exporter",
+    "generate:spreadsheet:input": "node test/support/spreadsheet/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=reprocessorInput",
+    "generate:spreadsheet:ors": "node ./data/ors-spreadsheet-generator.js",
+    "generate:spreadsheet:output": "node test/support/spreadsheet/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=reprocessorOutput",
+    "generate:spreadsheet:regOnlyExporter": "node test/support/spreadsheet/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=regOnlyExporter",
+    "generate:spreadsheet:regOnlyReprocessor": "node test/support/spreadsheet/summarylogs-spreadsheet-data-generator.js --wasteProcessingType=regOnlyReprocessor",
+    "generatedata:allMaterials:withLinking": "node ./data/all-materials-data-generator.js --with-linking",
+    "generatedata:allMaterials": "node ./data/all-materials-data-generator.js ",
+    "generatedata:allMaterialsMixed:withLinking": "node ./data/all-materials-mixed-data-generator.js --with-linking",
+    "generatedata:allMaterialsMixed": "node ./data/all-materials-mixed-data-generator.js",
+    "generatedata:withLinking": "node ./data/data-generator.js --with-linking",
+    "generatedata": "node ./data/data-generator.js",
     "lint:fix": "eslint . --fix",
+    "lint:types": "tsc -p jsconfig.typecheck.json",
+    "lint": "eslint .",
+    "postinstall": "npm run setup:husky",
+    "report:publish": "npm run report; ./bin/publish-tests.sh",
     "report": "allure generate allure-results --single-file --clean",
-    "report:publish": "npm run report; ./bin/publish-tests.sh"
+    "setup:husky": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module",
+    "test:smoketest": "cucumber-js --tags \"@smoketest\" ; npm run report",
+    "test:tagged": "cucumber-js --tags",
+    "test": "cucumber-js --tags \"not @smoketest and not @localonly\" ; npm run report"
   },
   "dependencies": {
     "allure-commandline": "2.38.1",
@@ -49,6 +51,10 @@
     "pino": "10.3.1",
     "undici": "7.24.5"
   },
+  "overrides": {
+    "tmp": "0.2.6",
+    "uuid": "14.0.0"
+  },
   "devDependencies": {
     "@babel/core": "7.29.0",
     "@babel/eslint-parser": "7.28.6",
@@ -56,6 +62,7 @@
     "@cucumber/cucumber": "12.7.0",
     "@cucumber/messages": "32.2.0",
     "@faker-js/faker": "10.3.0",
+    "@types/node": "25.9.1",
     "allure-cucumberjs": "3.6.0",
     "chai": "6.2.2",
     "eslint": "9.39.4",
@@ -65,6 +72,7 @@
     "lint-staged": "16.4.0",
     "mongodb": "7.1.0",
     "neostandard": "0.13.0",
-    "prettier": "3.8.1"
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
   }
 }

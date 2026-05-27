@@ -1,9 +1,4 @@
-import {
-  After,
-  AfterAll,
-  BeforeAll,
-  setDefaultTimeout
-} from '@cucumber/cucumber'
+import { After, AfterAll, BeforeAll } from '@cucumber/cucumber'
 import fs from 'node:fs'
 import config from '../config/config.js'
 
@@ -13,12 +8,15 @@ import { AuthClient } from '../support/auth.js'
 import { CDPUploader } from '../support/cdp-uploader.js'
 import { DefraIdStub } from '../support/defra-id-stub.js'
 import Users from '../support/users.js'
+import { resetTracker } from './cleanup-tracker.js'
 import { Interpolator } from './interpolator.js'
+import { BasicAuth } from '../support/basic-auth.js'
 
 let agent
 let dbConnector
 let dbClient
 let authClient
+let basicAuth
 let eprBackendAPI
 let interpolator
 let defraIdStub
@@ -27,10 +25,12 @@ let cognitoAuth
 let users
 
 BeforeAll({ timeout: 15000 }, async function () {
+  resetTracker()
   dbConnector = config.dbConnector
   dbClient = await dbConnector.connect()
   eprBackendAPI = new EprBackendApi()
   authClient = new AuthClient()
+  basicAuth = new BasicAuth()
   defraIdStub = new DefraIdStub()
   users = new Users()
   interpolator = new Interpolator()
@@ -39,10 +39,6 @@ BeforeAll({ timeout: 15000 }, async function () {
   cognitoAuth = config.cognitoAuth
   await cognitoAuth.generateToken()
   setGlobalDispatcher(agent)
-  // Increase timeout to 30s when running Smoke test
-  if (process.env.ENVIRONMENT) {
-    setDefaultTimeout(30000)
-  }
 })
 
 AfterAll(async function () {
@@ -52,7 +48,7 @@ AfterAll(async function () {
 })
 
 After(async function (scenario) {
-  if (scenario.result.status === 'FAILED') {
+  if (scenario.result && scenario.result.status === 'FAILED') {
     const failureMessage = `${new Date().toISOString()} - FAILED: ${scenario.pickle.name} - ${scenario.result.message}\n`
     await fs.appendFileSync('FAILED', failureMessage)
   }
@@ -60,6 +56,7 @@ After(async function (scenario) {
 
 export {
   authClient,
+  basicAuth,
   cdpUploader,
   cognitoAuth,
   dbClient,

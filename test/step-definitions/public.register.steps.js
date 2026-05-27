@@ -6,7 +6,7 @@ import { request } from 'undici'
 import config from '../config/config.js'
 import { parse } from 'csv-parse/sync'
 
-When('I request the public register', { timeout: 30000 }, async function () {
+When('I request the public register', async function () {
   this.response = await eprBackendAPI.post(
     '/v1/public-register/generate',
     '',
@@ -20,7 +20,7 @@ When('I retrieve the public register file', async function () {
   const url = new URL(this.publicRegisterUrl)
 
   if (!process.env.ENVIRONMENT) {
-    url.host = config.localstackHost.local
+    url.host = config.awsEmulatorHost.local
   }
 
   const publicRegisterFile = await request(url.href)
@@ -29,11 +29,13 @@ When('I retrieve the public register file', async function () {
   this.rawCsvText = csvText
 
   // Parse CSV with from_line: 2 to skip the first "Generated at" row
-  const records = parse(csvText, {
-    columns: true,
-    // eslint-disable-next-line camelcase
-    from_line: 2
-  })
+  const records = /** @type {Record<string, string>[]} */ (
+    parse(csvText, {
+      columns: true,
+      // eslint-disable-next-line camelcase
+      from_line: 2
+    })
+  )
 
   this.mapsData = records.map((row) => new Map(Object.entries(row)))
 })

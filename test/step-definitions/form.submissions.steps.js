@@ -6,6 +6,7 @@ import {
   Organisation,
   Registration
 } from '../support/generator.js'
+import { trackCreatedOrgId } from '../support/cleanup-tracker.js'
 
 Given(
   `I create a linked and migrated organisation for the following`,
@@ -30,6 +31,7 @@ Given(
 
     const orgId = this.orgResponseData?.orgId
     const refNo = this.orgResponseData?.referenceNumber
+    trackCreatedOrgId(orgId)
 
     for (const dataRow of dataRows) {
       this.material = 'Paper or board (R3)'

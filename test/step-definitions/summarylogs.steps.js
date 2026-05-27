@@ -1,6 +1,7 @@
 import { Given, Then, When } from '@cucumber/cucumber'
 import {
   eprBackendAPI,
+  authClient,
   dbClient,
   defraIdStub,
   cdpUploader,
@@ -136,82 +137,6 @@ Then('the organisations data update succeeds', async function () {
 Then('the organisations data update fails', async function () {
   expect(this.response.statusCode).to.equal(422)
 })
-
-When(
-  'I check for the summary log status',
-  { timeout: config.pollTimeout },
-  async function () {
-    const summaryLogId = this.summaryLog.summaryLogId
-    const url = `/v1/organisations/${this.summaryLog.orgId}/registrations/${this.summaryLog.regId}/summary-logs/${summaryLogId}`
-
-    // Transient statuses that indicate processing is still in progress
-    const transientStatuses = ['preprocessing', 'validating']
-    const timeout = config.pollTimeout
-    const startTime = Date.now()
-
-    while (Date.now() - startTime < timeout) {
-      this.response = await eprBackendAPI.get(
-        url,
-        defraIdStub.authHeader(this.userId)
-      )
-
-      // If the response is not 200, stop polling and return the error response
-      if (this.response.statusCode !== 200) {
-        return
-      }
-
-      // Parse response to check status
-      const responseData = await this.response.body.json()
-      const currentStatus = responseData.status
-
-      // If status is stable (not transient), we're done
-      if (!transientStatuses.includes(currentStatus)) {
-        logger.info(
-          {
-            summaryLogId,
-            status: currentStatus,
-            elapsedMs: Date.now() - startTime
-          },
-          'Summary log validation completed'
-        )
-        // Store response data for later assertions since body can only be read once
-        this.responseData = responseData
-        return
-      }
-
-      // Status is still transient, wait before polling again
-      logger.debug(
-        {
-          summaryLogId,
-          status: currentStatus,
-          elapsedMs: Date.now() - startTime
-        },
-        'Summary log validation in progress, waiting...'
-      )
-
-      await new Promise((resolve) => setTimeout(resolve, config.interval))
-    }
-
-    // Timeout reached - make one final request and store the response
-    this.response = await eprBackendAPI.get(
-      url,
-      defraIdStub.authHeader(this.userId)
-    )
-    if (this.response.statusCode === 200) {
-      this.responseData = await this.response.body.json()
-    }
-
-    logger.warn(
-      {
-        summaryLogId,
-        timeout,
-        status: this.responseData?.status,
-        elapsedMs: Date.now() - startTime
-      },
-      'Timeout waiting for summary log validation to complete'
-    )
-  }
-)
 
 When(
   'I submit the uploaded summary log and initiate a new upload at the same time',
@@ -376,20 +301,6 @@ Then(
   'I should receive a summary log upload accepted response',
   async function () {
     expect(this.response.statusCode).to.equal(202)
-  }
-)
-
-Then(
-  'I should see the following summary log response',
-  async function (dataTable) {
-    const expectedResults = dataTable.rowsHash()
-    expect(this.response.statusCode).to.equal(200)
-
-    // responseData is already parsed in the status check step
-    if (!this.responseData) {
-      this.responseData = await this.response.body.json()
-    }
-    expect(this.responseData.status).to.equal(expectedResults.status)
   }
 )
 
@@ -699,4 +610,27 @@ Then('the submitted summary log should not have an expiry', async function () {
     })
     expect(summaryLog.expiresAt).to.equal(null)
   }
+})
+
+When('I download the summary log file', async function () {
+  const { summaryLogId, orgId, regId } = this.summaryLog
+  this.response = await eprBackendAPI.get(
+    `/v1/organisations/${orgId}/registrations/${regId}/summary-logs/${summaryLogId}/file`,
+    authClient.authHeader()
+  )
+})
+
+Then('the summary log file download redirects to S3', function () {
+  expect(this.response.statusCode).to.equal(302)
+  expect(this.response.responseHeaders.location).to.include(
+    're-ex-summary-logs'
+  )
+})
+
+When('I download a non-existent summary log file', async function () {
+  const nonExistentId = '000000000000000000000000'
+  this.response = await eprBackendAPI.get(
+    `/v1/organisations/${nonExistentId}/registrations/${nonExistentId}/summary-logs/${nonExistentId}/file`,
+    authClient.authHeader()
+  )
 })

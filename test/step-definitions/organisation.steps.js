@@ -1,6 +1,7 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import { Organisation } from '../support/generator.js'
+import { trackCreatedOrgId } from '../support/cleanup-tracker.js'
 import { dbClient, eprBackendAPI } from '../support/hooks.js'
 import logger from '../support/logger.js'
 
@@ -65,6 +66,7 @@ Then(
   async function () {
     expect(this.response.statusCode).to.equal(200)
     this.orgResponseData = await this.response.body.json()
+    trackCreatedOrgId(this.orgResponseData?.orgId)
     expect(this.orgResponseData.orgId).to.match(/^\d{6}$/)
     expect(this.orgResponseData.referenceNumber).to.match(/^[0-9a-f]{24}$/i)
     expect(this.orgResponseData.orgName).to.equal(this.organisation.companyName)

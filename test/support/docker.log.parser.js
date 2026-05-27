@@ -20,14 +20,12 @@ export class DockerLogParser {
     const currentTimestamp = new Date(
       now.getTime() - logsLookBackInSeconds * 1000
     )
-      .toISOString()
-      .slice(0, 19)
 
     // We take the latest timestamp between the test start time and the current time
     // This is so to prevent an edge case where a test is re-run quickly between runs and we only care about the logs
     // from the existing test start time
     const latestTimestamp = new Date(
-      Math.max(new Date(this.testStartTime), new Date(currentTimestamp))
+      Math.max(this.testStartTime.getTime(), currentTimestamp.getTime())
     )
       .toISOString()
       .slice(0, 19)
@@ -41,13 +39,13 @@ export class DockerLogParser {
 
   runDockerCommand = async function (latestTimestamp) {
     const { stdout: psOutput } = await execAsync(
-      `docker ps --filter "name=${this.containerName}" --format "{{.ID}}" | head -1`
+      `docker ps --filter "label=com.docker.compose.service=${this.containerName}" --format "{{.ID}}" | head -1`
     )
     const containerId = psOutput.trim()
 
     if (!containerId) {
       throw new Error(
-        `No running container found with name in: ${this.containerName}`
+        `No running container found for compose service: ${this.containerName}`
       )
     }
 

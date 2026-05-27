@@ -4,6 +4,7 @@ import {
   Organisation,
   Registration
 } from '../test/support/generator.js'
+import { trackCreatedOrgId } from '../test/support/cleanup-tracker.js'
 import logger from '../test/support/logger.js'
 import config from '../test/config/config.js'
 import { FormData, setGlobalDispatcher } from 'undici'
@@ -56,13 +57,19 @@ export async function createOrganisation(context, isNonRegistered) {
   await assertSuccessResponse(orgResponse, '/v1/apply/organisation')
 
   const responseData = await orgResponse.body.json()
+  const orgId = `${responseData.orgId}`
+  trackCreatedOrgId(orgId)
   return {
     organisation,
     referenceNumber: responseData.referenceNumber,
-    orgId: `${responseData.orgId}`
+    orgId
   }
 }
 
+/**
+ * @param {any} context
+ * @param {{ organisation: any, orgId: any, referenceNumber: any, material: any, street: string | undefined, isExporter: any, glassRecyclingProcess: any }} params
+ */
 export async function createRegistration(
   context,
   {
@@ -131,6 +138,10 @@ export async function createAccreditation(
   await assertSuccessResponse(accResponse, '/v1/apply/accreditation')
 }
 
+/**
+ * @param {any} context
+ * @param {{ organisation: any, orgId: any, referenceNumber: any, material: any, street: string | undefined, isExporter: any, glassRecyclingProcess: any }} params
+ */
 export async function createRegistrationAndAccreditation(
   context,
   {
@@ -183,7 +194,7 @@ export async function generateAuthToken(context) {
   await context.authClient.generateToken(payload, urlSuffix)
 }
 
-export function generateOrgUpdateData(index, suffix, registrationType = null) {
+export function generateOrgUpdateData(index, suffix, registrationType = '') {
   const baseData = {
     status: 'approved'
   }
@@ -231,6 +242,30 @@ export async function updateOrganisationData(
     validFrom = '2026-01-01'
   }
 ) {
+  const siteResponse = await context.baseAPI.post(
+    '/v1/overseas-sites',
+    JSON.stringify({
+      name: 'Test Overseas Reprocessor',
+      address: {
+        line1: '1 Test Street',
+        townOrCity: 'Test City'
+      },
+      country: 'Germany',
+      validFrom: '2024-01-01'
+    }),
+    context.authClient.authHeader()
+  )
+  const site = await assertSuccessResponseWithBody(
+    siteResponse,
+    'POST /v1/overseas-sites'
+  )
+
+  const overseasSites = {
+    100: {
+      overseasSiteId: site.id
+    }
+  }
+
   const getOrgResponse = await context.baseAPI.get(
     `/v1/organisations/${referenceNumber}`,
     context.authClient.authHeader()
@@ -270,6 +305,9 @@ export async function updateOrganisationData(
       }
       return entry
     })
+    if (data.registrations[index].wasteProcessingType === 'exporter') {
+      data.registrations[index].overseasSites = overseasSites
+    }
     if (updateData.accNumber) {
       data.registrations[index].accreditationId = data.accreditations[index].id
 
@@ -378,4 +416,14 @@ async function assertSuccessResponse(response, context) {
       `${context}: expected 2xx but got ${response.statusCode}\n${JSON.stringify(body, null, 2)}`
     )
   }
+}
+
+async function assertSuccessResponseWithBody(response, context) {
+  const body = await response.body.json()
+  if (response.statusCode < 200 || response.statusCode >= 300) {
+    throw new Error(
+      `${context}: expected 2xx but got ${response.statusCode}\n${JSON.stringify(body, null, 2)}`
+    )
+  }
+  return body
 }

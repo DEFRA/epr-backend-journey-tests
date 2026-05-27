@@ -22,7 +22,7 @@ async function generate(options = {}) {
   for (let i = 0; i < 10; i++) {
     let wasteProcessingType = 'exp'
     let isNonRegistered = false
-    let reprocessingType = null
+    let reprocessingType = 'exporter'
 
     if (i % 2 === 0) {
       isNonRegistered = true
@@ -47,6 +47,7 @@ async function generate(options = {}) {
         orgId,
         referenceNumber,
         material: MATERIALS[j].material,
+        street: undefined,
         isExporter: i % 2 !== 0 && i % 3 !== 0,
         glassRecyclingProcess: MATERIALS[j].glassRecyclingProcess
       })

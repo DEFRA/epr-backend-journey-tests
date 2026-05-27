@@ -27,9 +27,7 @@ Feature: Summary Logs test (Staleness detection)
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | validated |
+    And the summary log submission status is 'validated'
     And I call this upload 'first'
 
     # User B uploads and validates file 2 (both coexist - no blocking)
@@ -43,9 +41,7 @@ Feature: Summary Logs test (Staleness detection)
     Then the summary log upload initiation succeeds
     When I submit the summary log upload completed
     Then I should receive a summary log upload accepted response
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | validated |
+    And the summary log submission status is 'validated'
     And I call this upload 'second'
 
     # User A submits file 1 successfully
@@ -53,8 +49,8 @@ Feature: Summary Logs test (Staleness detection)
     And I submit the uploaded summary log
     Then the summary log submission succeeds
     And the following messages appear in the log
-      | Log Level | Message                                              |
-      | info      | Summary log submitted: summaryLogId={{summaryLogId}} |
+      | Log Level | Event Action    | Message                                              |
+      | info      | process_success | Summary log submitted: summaryLogId={{summaryLogId}} |
 
     # User B tries to submit file 2 - rejected because preview is now stale
     When I return to the 'second' upload
@@ -62,6 +58,4 @@ Feature: Summary Logs test (Staleness detection)
     Then I should receive a 409 error response 'Waste records have changed since preview was generated. Please re-upload.'
 
     # Verify stale summary log is marked as superseded
-    When I check for the summary log status
-    Then I should see the following summary log response
-      | status | superseded |
+    Then the summary log submission status is 'superseded'

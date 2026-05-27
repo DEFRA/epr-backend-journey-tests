@@ -6,14 +6,15 @@ import {
 
 // Generate a single row for "Received" sections
 export function generateRegOnlyReprocessorReceivedRow() {
-  const date = faker.date.recent({ days: 20 })
+  const date = new Date()
+  const month = String(date.getMonth()).padStart(2, '0') // getMonth() is 0-indexed, so no +1 needed
+  const year =
+    date.getMonth() === 0 ? date.getFullYear() - 1 : date.getFullYear() // handle January → previous year
 
   return {
     // Section 1
-    G: `01/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`, // Month received
-    H: parseFloat(
-      faker.number.float({ min: 20, max: 50, precision: 0.01 }).toFixed(2)
-    ), // Net weight
+    G: `01/${month}/${year}`, // Month received
+    H: parseFloat(faker.number.float({ min: 20, max: 50 }).toFixed(2)), // Net weight
     I: faker.helpers.arrayElement(RECYCLABLE_PROPORTION_METHODS), // How did you calculate the recyclable proportion?
     J: parseFloat(faker.number.float({ min: 0.05, max: 0.8 }).toFixed(2)), // Recyclable Proportion (Percentage)
     L: faker.company.name(), // Supplier name
@@ -31,9 +32,7 @@ export function generateRegOnlyReprocessorSentOnRow() {
   return {
     // Section 2
     G: date.toLocaleDateString('en-GB'), // Date load left site
-    H: parseFloat(
-      faker.number.float({ min: 5, max: 20, precision: 0.01 }).toFixed(2)
-    ), // Tonnage of UK packaging waste sent on
+    H: parseFloat(faker.number.float({ min: 5, max: 20 }).toFixed(2)), // Tonnage of UK packaging waste sent on
     I: 'Reprocessor', // Final destination facility type
     J: faker.company.name(), // Final destination facility name
     K: faker.location.streetAddress(), // First line of final destination facility address

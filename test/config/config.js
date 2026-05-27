@@ -25,8 +25,8 @@ const api = {
   headers: xApiKey ? { 'x-api-key': xApiKey } : {}
 }
 
-const localstackHost = {
-  local: withProxy ? 'localstack' : 'localhost'
+const awsEmulatorHost = {
+  local: withProxy ? 'floci' : 'localhost'
 }
 
 const proxy = process.env.HTTP_PROXY
@@ -70,6 +70,17 @@ const auth = {
   grantType: 'password'
 }
 
+const basicAuth = {
+  username:
+    environment === 'test'
+      ? process.env.BASIC_AUTH_USERNAME
+      : 'basicAuthUsername',
+  password:
+    environment === 'test'
+      ? process.env.BASIC_AUTH_PASSWORD
+      : 'basicAuthPassword'
+}
+
 const defraId = {
   local: 'http://defra-id-stub:3200',
   env: `https://cdp-defra-id-stub.${environment}.cdp-int.defra.cloud`
@@ -80,7 +91,6 @@ const cdpUploader = {
   env: `https://cdp-uploader.${environment}.cdp-int.defra.cloud`
 }
 
-/** @type CognitoAuthConfig */
 const cognitoAuthParams = {
   url: withProxy ? 'http://cognito-stub:9229' : 'http://localhost:9229',
   envUrl: process.env.COGNITO_URL,
@@ -106,9 +116,11 @@ const mongoUri = 'mongodb://localhost:27017/epr-backend'
 
 const testLogs = !withoutLogs && !environment
 
-let globalUndiciAgent = agent
+let globalUndiciAgent
 if (withExternalProxy || withProxy || process.env.HTTP_PROXY) {
   globalUndiciAgent = proxy
+} else {
+  globalUndiciAgent = agent
 }
 
 const dbConnector = !environment ? database.mongo : database.stub
@@ -141,13 +153,14 @@ export default {
   apiUri,
   auth,
   authUri,
+  basicAuth,
   cdpUploaderUri,
   cognitoAuth,
   dbConnector,
   defraIdUri,
   dockerLogParser,
   interval,
-  localstackHost,
+  awsEmulatorHost,
   mongoUri,
   pollTimeout,
   testLogs,
