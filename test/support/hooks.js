@@ -48,7 +48,7 @@ AfterAll(async function () {
 })
 
 After(async function (scenario) {
-  if (scenario.result.status === 'FAILED') {
+  if (scenario.result && scenario.result.status === 'FAILED') {
     const failureMessage = `${new Date().toISOString()} - FAILED: ${scenario.pickle.name} - ${scenario.result.message}\n`
     await fs.appendFileSync('FAILED', failureMessage)
   }

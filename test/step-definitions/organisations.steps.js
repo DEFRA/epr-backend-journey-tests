@@ -339,6 +339,9 @@ Then(
   'I should receive {int} organisation in the response',
   validateOrganisationsAmount
 )
+/**
+ * @this {import('@cucumber/cucumber').IWorld & { response: any, responseData: any }}
+ */
 async function validateOrganisationsAmount(orgAmount) {
   this.responseData = await this.response.body.json()
   expect(this.responseData.items.length).to.equal(orgAmount)
