@@ -66,6 +66,10 @@ export async function createOrganisation(context, isNonRegistered) {
   }
 }
 
+/**
+ * @param {any} context
+ * @param {{ organisation: any, orgId: any, referenceNumber: any, material: any, street: string | undefined, isExporter: any, glassRecyclingProcess: any }} params
+ */
 export async function createRegistration(
   context,
   {
@@ -134,6 +138,10 @@ export async function createAccreditation(
   await assertSuccessResponse(accResponse, '/v1/apply/accreditation')
 }
 
+/**
+ * @param {any} context
+ * @param {{ organisation: any, orgId: any, referenceNumber: any, material: any, street: string | undefined, isExporter: any, glassRecyclingProcess: any }} params
+ */
 export async function createRegistrationAndAccreditation(
   context,
   {
@@ -186,7 +194,7 @@ export async function generateAuthToken(context) {
   await context.authClient.generateToken(payload, urlSuffix)
 }
 
-export function generateOrgUpdateData(index, suffix, registrationType = null) {
+export function generateOrgUpdateData(index, suffix, registrationType = '') {
   const baseData = {
     status: 'approved'
   }

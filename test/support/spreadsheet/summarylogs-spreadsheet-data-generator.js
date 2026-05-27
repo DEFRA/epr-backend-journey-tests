@@ -138,10 +138,7 @@ export async function generateSpreadsheetData(options = {}) {
           sheet.eachRow((row) => {
             targetCols.forEach((col) => {
               const cell = row.getCell(col)
-              if (
-                cell.type === ExcelJS.ValueType.Formula ||
-                cell.type === ExcelJS.ValueType.SharedFormula
-              ) {
+              if (cell.type === ExcelJS.ValueType.Formula) {
                 cell.value = cell.result ?? null
               }
             })
@@ -164,12 +161,9 @@ export async function generateSpreadsheetData(options = {}) {
             cell.value = value
             const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/
             if (typeof value === 'string' && dateRegex.test(value)) {
-              const [day, month, year] = value.split('/')
-              const parsed = new Date(year, month - 1, day, 12, 0, 0)
-              if (!isNaN(parsed)) {
-                cell.value = parsed
-                cell.numFmt = 'dd/mm/yyyy'
-              }
+              const [day, month, year] = value.split('/').map(Number)
+              cell.value = new Date(year, month - 1, day, 12, 0, 0)
+              cell.numFmt = 'dd/mm/yyyy'
             }
           })
 

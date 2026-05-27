@@ -2,7 +2,6 @@ import { request } from 'undici'
 import config from '../config/config.js'
 
 class CognitoAuth {
-  /** @param {CognitoAuthConfig} config */
   constructor(config = {}) {
     this.url = config.envUrl
     this.clientId = config.clientId

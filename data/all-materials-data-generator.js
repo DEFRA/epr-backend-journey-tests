@@ -47,6 +47,7 @@ async function generate(options = {}) {
         orgId,
         referenceNumber,
         material: MATERIALS[j].material,
+        street: undefined,
         isExporter: i % 2 !== 0 && i % 3 !== 0,
         glassRecyclingProcess: MATERIALS[j].glassRecyclingProcess
       })

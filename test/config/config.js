@@ -91,7 +91,6 @@ const cdpUploader = {
   env: `https://cdp-uploader.${environment}.cdp-int.defra.cloud`
 }
 
-/** @type CognitoAuthConfig */
 const cognitoAuthParams = {
   url: withProxy ? 'http://cognito-stub:9229' : 'http://localhost:9229',
   envUrl: process.env.COGNITO_URL,
@@ -117,9 +116,11 @@ const mongoUri = 'mongodb://localhost:27017/epr-backend'
 
 const testLogs = !withoutLogs && !environment
 
-let globalUndiciAgent = agent
+let globalUndiciAgent
 if (withExternalProxy || withProxy || process.env.HTTP_PROXY) {
   globalUndiciAgent = proxy
+} else {
+  globalUndiciAgent = agent
 }
 
 const dbConnector = !environment ? database.mongo : database.stub

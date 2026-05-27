@@ -20,14 +20,12 @@ export class DockerLogParser {
     const currentTimestamp = new Date(
       now.getTime() - logsLookBackInSeconds * 1000
     )
-      .toISOString()
-      .slice(0, 19)
 
     // We take the latest timestamp between the test start time and the current time
     // This is so to prevent an edge case where a test is re-run quickly between runs and we only care about the logs
     // from the existing test start time
     const latestTimestamp = new Date(
-      Math.max(new Date(this.testStartTime), new Date(currentTimestamp))
+      Math.max(this.testStartTime.getTime(), currentTimestamp.getTime())
     )
       .toISOString()
       .slice(0, 19)
