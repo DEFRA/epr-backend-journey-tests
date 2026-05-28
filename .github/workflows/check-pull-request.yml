@@ -44,17 +44,19 @@ jobs:
     name: Lint Types - Tests
     runs-on: ubuntu-latest
     needs: pr-prep
-    continue-on-error: true
-    permissions:
-      contents: read
-      pull-requests: write
     steps:
-      - uses: DEFRA/epr-re-ex-service/.github/actions/lint-types-tests@main
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          npm-script: lint:types
-          include-globs: |
-            test/**/*.js
-            data/**/*.js
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm install -g npm@11.12.1
+      - run: |
+          npm ci --ignore-scripts
+          npm run lint:types
 
   docker-build:
     name: Docker Build
