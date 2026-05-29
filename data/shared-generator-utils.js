@@ -67,7 +67,7 @@ export async function createOrganisation(context, isNonRegistered) {
 }
 
 /**
- * @param {any} context
+ * @param {GeneratorContext} context
  * @param {{ organisation: any, orgId: any, referenceNumber: any, material: any, street: string | undefined, isExporter: any, glassRecyclingProcess: any }} params
  */
 export async function createRegistration(
@@ -139,7 +139,7 @@ export async function createAccreditation(
 }
 
 /**
- * @param {any} context
+ * @param {GeneratorContext} context
  * @param {{ organisation: any, orgId: any, referenceNumber: any, material: any, street: string | undefined, isExporter: any, glassRecyclingProcess: any }} params
  */
 export async function createRegistrationAndAccreditation(
