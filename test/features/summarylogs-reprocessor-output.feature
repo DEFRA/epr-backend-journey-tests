@@ -115,7 +115,7 @@ Feature: Summary Logs - Reprocessor on Output
       | added.valid        | 3     | 1003,3002,5002      |
       | added.invalid      | 2     | 3003,3004           |
       | added.included     | 1     | 3002                |
-      | added.excluded     | 2     | 3003,3004           |
+      | added.excluded     | 3     | 3001,3003,3004      |
       | unchanged.valid    | 5     | 1000,1001,1002,5000,5001 |
       | unchanged.invalid  | 0     |                          |
       | unchanged.included | 0     |                          |
@@ -139,11 +139,11 @@ Feature: Summary Logs - Reprocessor on Output
       | adjusted.included  | 0     |                |
       | adjusted.excluded  | 0     |                |
     And the summary log has the following loads for the processed waste record type
-      | LoadType           | Count | RowIDs    |
-      | added.valid        | 1     | 3002      |
-      | added.invalid      | 2     | 3003,3004 |
-      | added.included     | 1     | 3002      |
-      | added.excluded     | 2     | 3003,3004 |
+      | LoadType           | Count | RowIDs         |
+      | added.valid        | 1     | 3002           |
+      | added.invalid      | 2     | 3003,3004      |
+      | added.included     | 1     | 3002           |
+      | added.excluded     | 3     | 3001,3003,3004 |
       | unchanged.valid    | 0     |           |
       | unchanged.invalid  | 0     |           |
       | unchanged.included | 0     |           |

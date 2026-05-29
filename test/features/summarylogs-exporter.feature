@@ -111,13 +111,13 @@ Feature: Summary Logs - Exporter
       | added.valid    | 3     | 1000,1001,4000 |
       | added.invalid  | 1     | 1003           |
       | added.included | 2     | 1000,1001      |
-      | added.excluded | 1     | 1003           |
+      | added.excluded | 2     | 1002,1003      |
     And the summary log has the following loads for the exported waste record type
       | LoadType       | Count | RowIDs    |
       | added.valid    | 2     | 1000,1001 |
       | added.invalid  | 1     | 1003      |
       | added.included | 2     | 1000,1001 |
-      | added.excluded | 1     | 1003      |
+      | added.excluded | 2     | 1002,1003 |
     And the summary log has the following loads for the sentOn waste record type
       | LoadType       | Count | RowIDs |
       | added.valid    | 1     | 4000   |
@@ -159,34 +159,35 @@ Feature: Summary Logs - Exporter
     And the summary log submission status is 'validated'
 
     # RowId 1000 is adjusted with DATE_RECEIVED_BY_OSR removed, hence should be considered invalid and excluded and not factored in waste balance calculations
+    # RowIds 1002 and 1003 are re-submitted with dates before accreditation validFrom (2025-02-02), so they are IGNORED and show as adjusted.excluded
     And the summary log has the following loads
-      | LoadType           | Count | RowIDs    |
-      | added.valid        | 2     | 1004,4001 |
-      | added.invalid      | 0     |           |
-      | added.included     | 1     | 1004      |
-      | added.excluded     | 0     |           |
-      | unchanged.valid    | 1     | 4000      |
-      | unchanged.invalid  | 0     |           |
-      | unchanged.included | 0     |           |
-      | unchanged.excluded | 0     |           |
-      | adjusted.valid     | 1     | 1001      |
-      | adjusted.invalid   | 1     | 1000      |
-      | adjusted.included  | 1     | 1001      |
-      | adjusted.excluded  | 1     | 1000      |
+      | LoadType           | Count | RowIDs         |
+      | added.valid        | 2     | 1004,4001      |
+      | added.invalid      | 0     |                |
+      | added.included     | 1     | 1004           |
+      | added.excluded     | 0     |                |
+      | unchanged.valid    | 1     | 4000           |
+      | unchanged.invalid  | 0     |                |
+      | unchanged.included | 0     |                |
+      | unchanged.excluded | 0     |                |
+      | adjusted.valid     | 1     | 1001           |
+      | adjusted.invalid   | 1     | 1000           |
+      | adjusted.included  | 1     | 1001           |
+      | adjusted.excluded  | 3     | 1000,1002,1003 |
     And the summary log has the following loads for the exported waste record type
-      | LoadType           | Count | RowIDs |
-      | added.valid        | 1     | 1004   |
-      | added.invalid      | 0     |        |
-      | added.included     | 1     | 1004   |
-      | added.excluded     | 0     |        |
-      | unchanged.valid    | 0     |        |
-      | unchanged.invalid  | 0     |        |
-      | unchanged.included | 0     |        |
-      | unchanged.excluded | 0     |        |
-      | adjusted.valid     | 1     | 1001   |
-      | adjusted.invalid   | 1     | 1000   |
-      | adjusted.included  | 1     | 1001   |
-      | adjusted.excluded  | 1     | 1000   |
+      | LoadType           | Count | RowIDs         |
+      | added.valid        | 1     | 1004           |
+      | added.invalid      | 0     |                |
+      | added.included     | 1     | 1004           |
+      | added.excluded     | 0     |                |
+      | unchanged.valid    | 0     |                |
+      | unchanged.invalid  | 0     |                |
+      | unchanged.included | 0     |                |
+      | unchanged.excluded | 0     |                |
+      | adjusted.valid     | 1     | 1001           |
+      | adjusted.invalid   | 1     | 1000           |
+      | adjusted.included  | 1     | 1001           |
+      | adjusted.excluded  | 3     | 1000,1002,1003 |
     And the summary log has the following loads for the sentOn waste record type
       | LoadType           | Count | RowIDs |
       | added.valid        | 1     | 4001   |
@@ -317,34 +318,35 @@ Feature: Summary Logs - Exporter
 
     # RowId 1000 is adjusted with DATE_RECEIVED_BY_OSR removed, hence should be considered invalid and excluded and not factored in waste balance calculations
     # (Added) Row 1004 no longer picked up as the accreditation is now suspended and the date for Row 1004 is after the suspended date
+    # RowIds 1002 and 1003 are re-submitted with dates before accreditation validFrom (2025-02-02), so they are IGNORED and show as adjusted.excluded
     And the summary log has the following loads
-      | LoadType           | Count | RowIDs |
-      | added.valid        | 1     | 4001   |
-      | added.invalid      | 0     |        |
-      | added.included     | 0     |        |
-      | added.excluded     | 0     |        |
-      | unchanged.valid    | 1     | 4000   |
-      | unchanged.invalid  | 0     |        |
-      | unchanged.included | 0     |        |
-      | unchanged.excluded | 0     |        |
-      | adjusted.valid     | 1     | 1001   |
-      | adjusted.invalid   | 1     | 1000   |
-      | adjusted.included  | 1     | 1001   |
-      | adjusted.excluded  | 1     | 1000   |
+      | LoadType           | Count | RowIDs         |
+      | added.valid        | 1     | 4001           |
+      | added.invalid      | 0     |                |
+      | added.included     | 0     |                |
+      | added.excluded     | 1     | 1004           |
+      | unchanged.valid    | 1     | 4000           |
+      | unchanged.invalid  | 0     |                |
+      | unchanged.included | 0     |                |
+      | unchanged.excluded | 0     |                |
+      | adjusted.valid     | 1     | 1001           |
+      | adjusted.invalid   | 1     | 1000           |
+      | adjusted.included  | 1     | 1001           |
+      | adjusted.excluded  | 3     | 1000,1002,1003 |
     And the summary log has the following loads for the exported waste record type
-      | LoadType           | Count | RowIDs |
-      | added.valid        | 0     |        |
-      | added.invalid      | 0     |        |
-      | added.included     | 0     |        |
-      | added.excluded     | 0     |        |
-      | unchanged.valid    | 0     |        |
-      | unchanged.invalid  | 0     |        |
-      | unchanged.included | 0     |        |
-      | unchanged.excluded | 0     |        |
-      | adjusted.valid     | 1     | 1001   |
-      | adjusted.invalid   | 1     | 1000   |
-      | adjusted.included  | 1     | 1001   |
-      | adjusted.excluded  | 1     | 1000   |
+      | LoadType           | Count | RowIDs         |
+      | added.valid        | 0     |                |
+      | added.invalid      | 0     |                |
+      | added.included     | 0     |                |
+      | added.excluded     | 1     | 1004           |
+      | unchanged.valid    | 0     |                |
+      | unchanged.invalid  | 0     |                |
+      | unchanged.included | 0     |                |
+      | unchanged.excluded | 0     |                |
+      | adjusted.valid     | 1     | 1001           |
+      | adjusted.invalid   | 1     | 1000           |
+      | adjusted.included  | 1     | 1001           |
+      | adjusted.excluded  | 3     | 1000,1002,1003 |
     And the summary log has the following loads for the sentOn waste record type
       | LoadType           | Count | RowIDs |
       | added.valid        | 1     | 4001   |
