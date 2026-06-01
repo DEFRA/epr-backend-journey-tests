@@ -10,6 +10,12 @@ inputs:
   journey-test-pr:
     description: is this action being called from a pr in this repo?
     default: 'false'
+  waste-balance-ledger:
+    description: value for FEATURE_FLAG_WASTE_BALANCE_LEDGER in the backend under test
+    default: 'false'
+  artifact-suffix:
+    description: suffix appended to uploaded artifact names to keep concurrent runs distinct
+    default: ''
 
 runs:
   using: 'composite'
@@ -79,6 +85,7 @@ runs:
       shell: bash
       run: |
         EPR_BACKEND=${{ steps.docker-branch.outputs.image }} \
+        FEATURE_FLAG_WASTE_BALANCE_LEDGER=${{ inputs.waste-balance-ledger }} \
         docker compose up --wait-timeout 300 -d --quiet-pull
 
     - name: Start docker compose
@@ -86,6 +93,7 @@ runs:
       shell: bash
       run: |
         EPR_BACKEND=${{ inputs.epr-backend }} \
+        FEATURE_FLAG_WASTE_BALANCE_LEDGER=${{ inputs.waste-balance-ledger }} \
         docker compose up --wait-timeout 300 -d --quiet-pull
 
     - name: Wait for services to be ready
@@ -111,14 +119,14 @@ runs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: allure-report
+        name: allure-report${{ inputs.artifact-suffix }}
         path: ./allure-report
 
     - name: Upload docker compose logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: docker-compose-logs
+        name: docker-compose-logs${{ inputs.artifact-suffix }}
         path: ./logs.txt
 
     - name: Fail this step if FAILED file exists
