@@ -69,9 +69,10 @@ Feature: Summary Logs - Reprocessor on Input
       | {{summaryLogOrgId}} | {{summaryLogRegId}} | 4000  | processed |
       | {{summaryLogOrgId}} | {{summaryLogRegId}} | 5000  | sentOn    |
     And the submitted summary log should not have an expiry
-    And I should see that waste balances are created in the database with the following values
-      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 361.62 | 361.62          |
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 361.62 | 361.62          |
 
     # Summary Logs uploads and fails validation for removed row on second upload. This depends on the previous steps being executed
     Given I have the following summary log upload data for summary log upload
@@ -183,10 +184,6 @@ Feature: Summary Logs - Reprocessor on Input
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4002  | processed |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5000  | sentOn    |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5001  | sentOn    |
-    And I should see that waste balances are created in the database with the following values
-      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 386.51 | 386.51          |
-
     When I retrieve the waste balance for the organisation
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |

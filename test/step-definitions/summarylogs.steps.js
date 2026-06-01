@@ -551,57 +551,6 @@ Then(
   }
 )
 
-Then(
-  'I should see that waste balances are created in the database with the following values',
-  async function (dataTable) {
-    if (!process.env.ENVIRONMENT) {
-      const wasteBalancesCollection = dbClient.collection('waste-balances')
-      const expectedWasteBalances = dataTable.hashes()
-      const expectedOrgId = interpolator.interpolate(
-        this,
-        expectedWasteBalances[0].OrganisationId
-      )
-      const expectedAccId = interpolator.interpolate(
-        this,
-        expectedWasteBalances[0].AccreditationId
-      )
-      const wasteBalances = await wasteBalancesCollection
-        .find({
-          organisationId: expectedOrgId,
-          accreditationId: expectedAccId
-        })
-        .toArray()
-      expect(wasteBalances.length).to.equal(expectedWasteBalances.length)
-
-      for (const expectedWasteBalance of expectedWasteBalances) {
-        const matchingRecord = wasteBalances.find(
-          (wasteBalance) =>
-            wasteBalance.organisationId === expectedOrgId &&
-            wasteBalance.accreditationId === expectedAccId &&
-            parseFloat(wasteBalance.amount).toFixed(2) ===
-              parseFloat(expectedWasteBalance.Amount).toFixed(2) &&
-            parseFloat(wasteBalance.availableAmount).toFixed(2) ===
-              parseFloat(expectedWasteBalance.AvailableAmount).toFixed(2)
-        )
-
-        if (!matchingRecord) {
-          expect.fail(
-            `Expected record: ${interpolator.interpolate(this, JSON.stringify(expectedWasteBalance))}, but no waste balances found with those values. Actual waste balances found: ${JSON.stringify(wasteBalances)}`
-          )
-        }
-      }
-    } else {
-      logger.warn(
-        {
-          step_definition:
-            'Then I should see that waste balances are created in the database with the following values'
-        },
-        'Skipping waste balances database checks'
-      )
-    }
-  }
-)
-
 Then('the submitted summary log should not have an expiry', async function () {
   if (!process.env.ENVIRONMENT) {
     const summaryLogsCollection = dbClient.collection('summary-logs')
