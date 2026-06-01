@@ -89,9 +89,10 @@ Feature: Summary Logs - Reprocessor on Output
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 3000  | processed |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5000  | sentOn    |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5001  | sentOn    |
-    And I should see that waste balances are created in the database with the following values
-      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 3      | 3               |
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 3      | 3               |
 
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs                     |
@@ -183,10 +184,6 @@ Feature: Summary Logs - Reprocessor on Output
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5000  | sentOn    |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5001  | sentOn    |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 5002  | sentOn    |
-    And I should see that waste balances are created in the database with the following values
-      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 9.25   | 9.25            |
-
     When I retrieve the waste balance for the organisation
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
