@@ -136,9 +136,6 @@ Feature: Summary Logs - Exporter
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | sentOn    |
     ## RowId 1000 = 10, RowId 1001 = 20, hence WB = 30. 1001 and 1002 are valid rows
     # RowId 1003 is invalid as it does not have all mandatory fields completed
-    And I should see that waste balances are created in the database with the following values
-      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 30     | 30              |
     When I retrieve the waste balance for the organisation
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
@@ -214,9 +211,6 @@ Feature: Summary Logs - Exporter
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 1004  | exported  |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4000  | sentOn    |
       | {{summaryLogOrgId}} | {{summaryLogRegId}}  | 4001  | sentOn    |
-    And I should see that waste balances are created in the database with the following values
-      | OrganisationId      | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogOrgId}} | {{summaryLogAccId}} | 79     | 79              |
     When I retrieve the waste balance for the organisation
     Then I should see the following waste balance
       | AccreditationId     | Amount | AvailableAmount |
