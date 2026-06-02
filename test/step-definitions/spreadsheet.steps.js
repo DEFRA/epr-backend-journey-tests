@@ -18,23 +18,25 @@ When(
     const data = dataTable.rowsHash()
     const numRows = parseInt(data.numberOfRows)
     const maxTotalRows = parseInt(data.maxTotalRows)
+    const rowOffset = parseInt(data.rowOffset)
 
     const options = {
+      filename: this.filename,
       wasteProcessingType: data.wasteProcessingType,
       numberOfRows: numRows,
       materialSuffix: data.materialSuffix,
       accNumber: data.accNumber,
       regNumber: data.regNumber,
-      rowOffset: 0,
+      rowOffset,
       silentLogging: true
     }
 
-    while (options.rowOffset <= maxTotalRows) {
+    while (options.rowOffset < maxTotalRows) {
       logger.info(
         `Uploading Summary Logs with ${numRows + options.rowOffset} rows (per worksheet)`
       )
 
-      const file = await generateSpreadsheetData(options)
+      this.filename = await generateSpreadsheetData(options)
 
       this.summaryLog = new SummaryLog()
       this.summaryLog.orgId = this.organisationId
@@ -58,7 +60,7 @@ When(
       this.response = await cdpUploader.uploadMultipartForm(
         this.uploadId,
         'summaryLogUpload',
-        [file],
+        [this.filename],
         ''
       )
 
@@ -138,7 +140,7 @@ When(
         await new Promise((resolve) => setTimeout(resolve, config.interval))
       }
 
-      options.filename = file
+      options.filename = this.filename
       options.rowOffset += numRows
     }
   }

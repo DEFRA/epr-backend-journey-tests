@@ -94,6 +94,15 @@ Feature: Summary Logs - Reprocessor on Output
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 3      | 3               |
 
+    # Migrate current Summary Log to ledger, see that the waste balance is not affected before and after adjustment
+    When I migrate the Summary Log to ledger
+    Then the Summary Log migration to ledger succeeds
+
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 3      | 3               |
+
     Given I have the following summary log upload data for summary log upload
       | s3Bucket            | re-ex-summary-logs                     |
       | s3Key               | reprocessor-output-adjustments-key     |
