@@ -22,4 +22,17 @@ Feature: Automated scaling test for Summary Logs Reprocessor on Input
       | accNumber           | ACC123456        |
       | numberOfRows        | 2000             |
       | materialSuffix      | PA               |
-      | maxTotalRows        | 8000             |
+      | maxTotalRows        | 6000             |
+      | rowOffset           | 0                |
+
+    When I migrate the Summary Log to ledger
+    Then the Summary Log migration to ledger succeeds
+
+    When I generate the Summary Log spreadsheets and upload with the following
+      | wasteProcessingType | reprocessorInput |
+      | regNumber           | R25SR500030912PA |
+      | accNumber           | ACC123456        |
+      | numberOfRows        | 2000             |
+      | materialSuffix      | PA               |
+      | maxTotalRows        | 12000            |
+      | rowOffset           | 6000             |

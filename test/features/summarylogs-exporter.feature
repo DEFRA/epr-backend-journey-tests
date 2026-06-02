@@ -293,6 +293,15 @@ Feature: Summary Logs - Exporter
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 30     | 30              |
 
+    # Migrate current Summary Log to ledger, see that the waste balance is not affected before and after adjustment
+    When I migrate the Summary Log to ledger
+    Then the Summary Log migration to ledger succeeds
+
+    When I retrieve the waste balance for the organisation
+    Then I should see the following waste balance
+      | AccreditationId     | Amount | AvailableAmount |
+      | {{summaryLogAccId}} | 30     | 30              |
+
     When I update the accreditation status to 'suspended' at '2026-03-02'
     Then the organisations data update succeeds
 
