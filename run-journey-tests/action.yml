@@ -22,7 +22,7 @@ runs:
   steps:
     - name: Checkout repository if not called by Journey Test PR
       if: inputs.journey-test-pr == 'false'
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         repository: DEFRA/epr-backend-journey-tests
         ref: ${{inputs.branch}}
@@ -43,7 +43,7 @@ runs:
 
     - name: Checkout epr-backend repository if it is Journey Test PR and there is a matching service branch
       if: inputs.journey-test-pr != 'false' && steps.service-branch.outputs.exists == 'true'
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         repository: DEFRA/epr-backend
         ref: ${{steps.service-branch.outputs.ref}}
@@ -60,7 +60,7 @@ runs:
         docker build -t $IMAGE_TAG .
         echo "image=$EPR_BACKEND_SHA" >> $GITHUB_OUTPUT
 
-    - uses: actions/setup-node@v5
+    - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
       with:
         node-version-file: .nvmrc
         cache: npm
@@ -117,14 +117,14 @@ runs:
 
     - name: Upload allure report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: allure-report${{ inputs.artifact-suffix }}
         path: ./allure-report
 
     - name: Upload docker compose logs
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: docker-compose-logs${{ inputs.artifact-suffix }}
         path: ./logs.txt
