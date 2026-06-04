@@ -34,7 +34,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm install -g npm@11.12.1
       - run: |
           npm ci --ignore-scripts
           npm run format:check
@@ -53,7 +52,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm install -g npm@11.12.1
       - run: |
           npm ci --ignore-scripts
           npm run lint:types
