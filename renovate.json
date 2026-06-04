@@ -1,5 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>DEFRA/epr-re-ex-service//renovate-presets/default"],
-  "enabledManagers": ["dockerfile", "docker-compose"]
+  "enabledManagers": ["dockerfile", "docker-compose", "nvm", "custom.regex"]
 }
