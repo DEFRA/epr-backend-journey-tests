@@ -2,6 +2,7 @@ import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from 'chai'
 import {
   authClient,
+  basicAuth,
   cdpUploader,
   dbClient,
   eprBackendAPI,
@@ -467,6 +468,24 @@ When('I request the admin overseas sites list', async function () {
   )
 })
 
+When('I request the overseas sites list via basic auth', async function () {
+  this.adminOverseasSitesListBody = undefined
+  this.response = await eprBackendAPI.get(
+    '/v1/overseas-sites',
+    basicAuth.authHeader()
+  )
+})
+
+When(
+  'I request the overseas sites by id {string} via basic auth',
+  async function (id) {
+    this.response = await eprBackendAPI.get(
+      `/v1/overseas-sites/${id}`,
+      basicAuth.authHeader()
+    )
+  }
+)
+
 When(
   'I request the admin overseas sites list with page {int} and page size {int}',
   async function (page, pageSize) {
@@ -521,6 +540,10 @@ const getAdminOverseasSitesListBody = async (world) => {
 
   return world.adminOverseasSitesListBody
 }
+
+Then('I should receive a valid overseas site list response', async function () {
+  expect(this.response.statusCode).to.equal(200)
+})
 
 Then(
   'the admin overseas sites list status should be {int}',
