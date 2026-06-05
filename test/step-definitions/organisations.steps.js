@@ -256,6 +256,17 @@ When('I request the recently migrated organisation', async function () {
   )
 })
 
+When(
+  'I request the recently migrated organisation via basic auth',
+  async function () {
+    const orgId = this.orgResponseData?.referenceNumber
+    this.response = await eprBackendAPI.get(
+      `/v1/organisations/${orgId}`,
+      basicAuth.authHeader()
+    )
+  }
+)
+
 When('I request the organisations with id {string}', async function (orgId) {
   this.response = await eprBackendAPI.get(
     `/v1/organisations/${orgId}`,
