@@ -32,7 +32,7 @@ Feature: Reports PATCH endpoint
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
 
-    When I create the report for the year 2026 and period 1
+    When I create the 'monthly' report for the year 2026 and period 1
     Then the report is successfully created
 
   Scenario: PATCH with prnRevenue succeeds for an in_progress report
