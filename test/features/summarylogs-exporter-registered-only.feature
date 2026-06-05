@@ -56,6 +56,15 @@ Feature: Summary Logs - Registered Only Exporter
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
 
+    When I create the 'quarterly' report for the year 2026 and period 1
+    Then the report is successfully created
+
+    When I retrieve the 'quarterly' report for the year 2026 and period 1
+    Then the report is successfully retrieved
+    And the report contains the following information
+      | Key                 | Value    |
+      | wasteProcessingType | exporter |
+
   Scenario: Summary Logs uploads (Exporter, Registered Only) and fails in-sheet revalidation
     Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs               |

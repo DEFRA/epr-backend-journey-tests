@@ -30,7 +30,7 @@ Feature: Public register endpoint
     When I submit the uploaded summary log
     Then the summary log submission succeeds
 
-    When I create the report for the year 2026 and period 1
+    When I create the 'monthly' report for the year 2026 and period 1
     Then the report is successfully created
 
     When I patch the 'monthly' report for the year 2026 and period 1 with
