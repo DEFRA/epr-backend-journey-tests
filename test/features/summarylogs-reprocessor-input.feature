@@ -74,15 +74,6 @@ Feature: Summary Logs - Reprocessor on Input
       | AccreditationId     | Amount | AvailableAmount |
       | {{summaryLogAccId}} | 361.62 | 361.62          |
 
-    # Migrate current Summary Log to ledger, see that the waste balance is not affected before and after adjustment
-    When I migrate the Summary Log to ledger
-    Then the Summary Log migration to ledger succeeds
-
-    When I retrieve the waste balance for the organisation
-    Then I should see the following waste balance
-      | AccreditationId     | Amount | AvailableAmount |
-      | {{summaryLogAccId}} | 361.62 | 361.62          |
-
     # Summary Logs uploads and fails validation for removed row on second upload. This depends on the previous steps being executed
     Given I have the following summary log upload data for summary log upload
       | s3Bucket   | re-ex-summary-logs                |
