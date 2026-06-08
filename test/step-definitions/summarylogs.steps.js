@@ -583,15 +583,3 @@ When('I download a non-existent summary log file', async function () {
     authClient.authHeader()
   )
 })
-
-When('I migrate the Summary Log to ledger', async function () {
-  this.response = await eprBackendAPI.post(
-    `/v1/dev/organisations/${this.summaryLog.orgId}/accreditations/${this.accreditationId}/promote-to-ledger`,
-    '',
-    authClient.authHeader()
-  )
-})
-
-Then('the Summary Log migration to ledger succeeds', async function () {
-  expect(this.response.statusCode).to.equal(200)
-})
