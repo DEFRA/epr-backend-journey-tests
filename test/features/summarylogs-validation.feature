@@ -159,3 +159,10 @@ Feature: Summary Logs validation tests
       | added.invalid  | 0     |        |
       | added.included | 1     | 5000   |
       | added.excluded | 0     |        |
+    And the summary log has the following reporting period loads
+      | Key                                                 | Value  |
+      | openPeriodLoads.added.balanceAffecting.count        | 2      |
+      | openPeriodLoads.added.balanceAffecting.tonnageDelta | 309.99 |
+      | openPeriodLoads.added.nonBalanceAffecting.count     | 2      |
+      | openPeriodLoads.adjusted.balanceAffecting.count     | 0      |
+      | closedPeriodLoads.added.balanceAffecting.count      | 0      |

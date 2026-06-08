@@ -245,6 +245,29 @@ Then(
   }
 )
 
+Then(
+  'the summary log has the following reporting period loads',
+  async function (dataTable) {
+    const expectedData = dataTable.hashes()
+    const loadsByReportingPeriod = this.responseData.loadsByReportingPeriod
+
+    // eslint-disable-next-line no-unused-expressions
+    expect(loadsByReportingPeriod).to.not.be.undefined
+
+    for (const expectation of expectedData) {
+      const actual = expectation.Key.split('.').reduce(
+        (acc, key) => acc?.[key],
+        loadsByReportingPeriod
+      )
+
+      expect(actual).to.equal(
+        Number(expectation.Value),
+        `Failed at ${expectation.Key}: expected ${expectation.Value}, got ${actual}`
+      )
+    }
+  }
+)
+
 Then('the summary log has the following loads', async function (dataTable) {
   const expectedLoads = dataTable.hashes()
 

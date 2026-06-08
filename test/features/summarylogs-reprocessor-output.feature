@@ -78,6 +78,13 @@ Feature: Summary Logs - Reprocessor on Output
       | added.invalid  | 0     |           |
       | added.included | 0     |           |
       | added.excluded | 0     |           |
+    And the summary log has the following reporting period loads
+      | Key                                                 | Value |
+      | openPeriodLoads.added.balanceAffecting.count        | 1     |
+      | openPeriodLoads.added.balanceAffecting.tonnageDelta | 3     |
+      | openPeriodLoads.added.nonBalanceAffecting.count     | 5     |
+      | openPeriodLoads.adjusted.balanceAffecting.count     | 0     |
+      | closedPeriodLoads.added.balanceAffecting.count      | 0     |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -167,6 +174,15 @@ Feature: Summary Logs - Reprocessor on Output
       | adjusted.invalid   | 0     |           |
       | adjusted.included  | 0     |           |
       | adjusted.excluded  | 0     |           |
+    And the summary log has the following reporting period loads
+      | Key                                                    | Value |
+      | openPeriodLoads.added.balanceAffecting.count           | 1     |
+      | openPeriodLoads.added.balanceAffecting.tonnageDelta    | 4.25  |
+      | openPeriodLoads.added.nonBalanceAffecting.count        | 3     |
+      | openPeriodLoads.adjusted.balanceAffecting.count        | 1     |
+      | openPeriodLoads.adjusted.balanceAffecting.tonnageDelta | 2     |
+      | openPeriodLoads.adjusted.nonBalanceAffecting.count     | 0     |
+      | closedPeriodLoads.added.balanceAffecting.count         | 0     |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
