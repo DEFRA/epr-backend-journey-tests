@@ -33,7 +33,7 @@ Feature: Authentication tests
 
   Scenario: Should not allow re-linking of linked organisation
     When the User is linked to the recently migrated organisation
-    Then I should receive a 409 error response 'Organisation is not in an approvable state'
+    Then I should receive a 409 error response 'Organisation is already linked'
 
   Scenario: Auth errors are logged when a different user tries to access a recently linked organisation
     When I register and authorise a new User with email 'anothertest123456@testuserz.com'
