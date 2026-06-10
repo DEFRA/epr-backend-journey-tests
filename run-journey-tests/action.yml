@@ -10,9 +10,6 @@ inputs:
   journey-test-pr:
     description: is this action being called from a pr in this repo?
     default: 'false'
-  waste-balance-ledger:
-    description: value for FEATURE_FLAG_WASTE_BALANCE_LEDGER in the backend under test
-    default: 'false'
   artifact-suffix:
     description: suffix appended to uploaded artifact names to keep concurrent runs distinct
     default: ''
@@ -85,7 +82,6 @@ runs:
       shell: bash
       run: |
         EPR_BACKEND=${{ steps.docker-branch.outputs.image }} \
-        FEATURE_FLAG_WASTE_BALANCE_LEDGER=${{ inputs.waste-balance-ledger }} \
         docker compose up --wait-timeout 300 -d --quiet-pull
 
     - name: Start docker compose
@@ -93,7 +89,6 @@ runs:
       shell: bash
       run: |
         EPR_BACKEND=${{ inputs.epr-backend }} \
-        FEATURE_FLAG_WASTE_BALANCE_LEDGER=${{ inputs.waste-balance-ledger }} \
         docker compose up --wait-timeout 300 -d --quiet-pull
 
     - name: Wait for services to be ready
