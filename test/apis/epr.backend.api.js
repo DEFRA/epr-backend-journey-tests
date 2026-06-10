@@ -21,6 +21,18 @@ export class EprBackendApi {
     return { statusCode, responseHeaders, body }
   }
 
+  async delete(endpoint, headers = {}) {
+    const {
+      statusCode,
+      headers: responseHeaders,
+      body
+    } = await request(`${eprBackendUrl}${endpoint}`, {
+      method: 'DELETE',
+      headers: { ...this.defaultHeaders, ...headers }
+    })
+    return { statusCode, responseHeaders, body }
+  }
+
   async post(endpoint, data, headers = {}) {
     return await this.#call('POST', endpoint, data, headers)
   }
