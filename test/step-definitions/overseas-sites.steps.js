@@ -5,6 +5,7 @@ import {
   basicAuth,
   cdpUploader,
   dbClient,
+  defraIdStub,
   eprBackendAPI,
   interpolator
 } from '../support/hooks.js'
@@ -668,5 +669,63 @@ Then(
       hasNextPage: page < totalPages,
       hasPreviousPage: page > 1
     })
+  }
+)
+
+const accreditationOverseasSitesPath = (world) =>
+  `/v1/organisations/${world.organisationId}/registrations/${world.registrationId}/accreditations/${world.accreditationId}/overseas-sites`
+
+When('I request the overseas sites for the accreditation', async function () {
+  this.response = await eprBackendAPI.get(
+    accreditationOverseasSitesPath(this),
+    defraIdStub.authHeader(this.userId)
+  )
+})
+
+When(
+  'I request the overseas sites for the accreditation without authentication',
+  async function () {
+    this.response = await eprBackendAPI.get(
+      accreditationOverseasSitesPath(this)
+    )
+  }
+)
+
+Then(
+  'the accreditation overseas sites status should be {int}',
+  async function (statusCode) {
+    expect(this.response.statusCode).to.equal(statusCode)
+  }
+)
+
+Then(
+  'the accreditation overseas sites response should be keyed by ORS id with the following sites',
+  async function (dataTable) {
+    expect(this.response.statusCode).to.equal(200)
+    const body = await this.response.body.json()
+
+    const expectedRows = dataTable.hashes()
+    expect(Object.keys(body).sort()).to.deep.equal(
+      expectedRows.map((row) => row.orsId).sort()
+    )
+
+    for (const expected of expectedRows) {
+      const entry = body[expected.orsId]
+      // eslint-disable-next-line no-unused-expressions
+      expect(entry, `Expected an entry keyed by ORS id ${expected.orsId}`).to
+        .not.be.undefined
+      expect(entry.name).to.equal(expected.name)
+      expect(entry.country).to.equal(expected.country)
+      expect(entry.address.townOrCity).to.equal(expected.townOrCity)
+      expect(entry.coordinates).to.equal(expected.coordinates)
+
+      if (expected.validFrom === '') {
+        // eslint-disable-next-line no-unused-expressions
+        expect(entry.validFrom, `ORS ${expected.orsId} is unapproved`).to.be
+          .null
+      } else {
+        expect(entry.validFrom).to.equal(expected.validFrom)
+      }
+    }
   }
 )
