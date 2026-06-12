@@ -124,6 +124,13 @@ Feature: Summary Logs - Exporter
       | added.invalid  | 0     |        |
       | added.included | 0     |        |
       | added.excluded | 0     |        |
+    And the summary log has the following reporting period loads
+      | Key                                                 | Value |
+      | openPeriodLoads.added.balanceAffecting.count        | 2     |
+      | openPeriodLoads.added.balanceAffecting.tonnageDelta | 30    |
+      | openPeriodLoads.added.nonBalanceAffecting.count     | 2     |
+      | openPeriodLoads.adjusted.balanceAffecting.count     | 0     |
+      | closedPeriodLoads.added.balanceAffecting.count      | 0     |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -199,6 +206,15 @@ Feature: Summary Logs - Exporter
       | adjusted.invalid   | 0     |        |
       | adjusted.included  | 0     |        |
       | adjusted.excluded  | 0     |        |
+    And the summary log has the following reporting period loads
+      | Key                                                    | Value |
+      | openPeriodLoads.added.balanceAffecting.count           | 1     |
+      | openPeriodLoads.added.balanceAffecting.tonnageDelta    | 49    |
+      | openPeriodLoads.added.nonBalanceAffecting.count        | 1     |
+      | openPeriodLoads.adjusted.balanceAffecting.count        | 2     |
+      | openPeriodLoads.adjusted.balanceAffecting.tonnageDelta | 0     |
+      | openPeriodLoads.adjusted.nonBalanceAffecting.count     | 0     |
+      | closedPeriodLoads.added.balanceAffecting.count         | 0     |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -355,6 +371,14 @@ Feature: Summary Logs - Exporter
       | adjusted.invalid   | 0     |        |
       | adjusted.included  | 0     |        |
       | adjusted.excluded  | 0     |        |
+    And the summary log has the following reporting period loads
+      | Key                                                    | Value |
+      | openPeriodLoads.added.balanceAffecting.count           | 0     |
+      | openPeriodLoads.added.balanceAffecting.tonnageDelta    | 0     |
+      | openPeriodLoads.added.nonBalanceAffecting.count        | 1     |
+      | openPeriodLoads.adjusted.balanceAffecting.count        | 2     |
+      | openPeriodLoads.adjusted.balanceAffecting.tonnageDelta | 0     |
+      | closedPeriodLoads.added.balanceAffecting.count         | 0     |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'

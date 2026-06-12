@@ -51,6 +51,13 @@ Feature: Summary Logs - Reprocessor on Input
       | added.invalid  | 0     |        |
       | added.included | 1     | 5000   |
       | added.excluded | 0     |        |
+    And the summary log has the following reporting period loads
+      | Key                                                 | Value  |
+      | openPeriodLoads.added.balanceAffecting.count        | 3      |
+      | openPeriodLoads.added.balanceAffecting.tonnageDelta | 361.62 |
+      | openPeriodLoads.added.nonBalanceAffecting.count     | 2      |
+      | openPeriodLoads.adjusted.balanceAffecting.count     | 0      |
+      | closedPeriodLoads.added.balanceAffecting.count      | 0      |
 
     When I submit the uploaded summary log and initiate a new upload at the same time
     Then the summary log submission succeeds
@@ -168,6 +175,15 @@ Feature: Summary Logs - Reprocessor on Input
       | adjusted.invalid   | 0     |        |
       | adjusted.included  | 0     |        |
       | adjusted.excluded  | 0     |        |
+    And the summary log has the following reporting period loads
+      | Key                                                    | Value |
+      | openPeriodLoads.added.balanceAffecting.count           | 1     |
+      | openPeriodLoads.added.balanceAffecting.tonnageDelta    | -50   |
+      | openPeriodLoads.added.nonBalanceAffecting.count        | 4     |
+      | openPeriodLoads.adjusted.balanceAffecting.count        | 1     |
+      | openPeriodLoads.adjusted.balanceAffecting.tonnageDelta | 74.89 |
+      | openPeriodLoads.adjusted.nonBalanceAffecting.count     | 1     |
+      | closedPeriodLoads.added.balanceAffecting.count         | 0     |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -288,6 +304,13 @@ Feature: Summary Logs - Reprocessor on Input
       | added.invalid  | 0     |        |
       | added.included | 0     |        |
       | added.excluded | 1     | 5000   |
+    And the summary log has the following reporting period loads
+      | Key                                                 | Value |
+      | openPeriodLoads.added.balanceAffecting.count        | 0     |
+      | openPeriodLoads.added.balanceAffecting.tonnageDelta | 0     |
+      | openPeriodLoads.added.nonBalanceAffecting.count     | 2     |
+      | openPeriodLoads.adjusted.balanceAffecting.count     | 0     |
+      | closedPeriodLoads.added.balanceAffecting.count      | 0     |
 
     When I submit the uploaded summary log
     Then the summary log submission succeeds
