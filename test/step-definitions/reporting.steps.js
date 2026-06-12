@@ -6,7 +6,7 @@ When(
   'I retrieve the {string} report for the year {int}, period {int} and submissionNumber {int}',
   async function (cadence, year, period, submissionNumber) {
     this.response = await eprBackendAPI.get(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/${submissionNumber}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}`,
       defraIdStub.authHeader(this.userId)
     )
   }
@@ -45,7 +45,7 @@ When(
   'I create the {string} report for the year {int}, period {int} and submissionNumber {int}',
   async function (cadence, year, period, submissionNumber) {
     this.response = await eprBackendAPI.post(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/${submissionNumber}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}`,
       '',
       defraIdStub.authHeader(this.userId)
     )
@@ -67,7 +67,7 @@ When(
     }
 
     this.response = await eprBackendAPI.patch(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/${submissionNumber}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}`,
       JSON.stringify(payload),
       defraIdStub.authHeader(this.userId)
     )
@@ -78,7 +78,7 @@ When(
   'I patch the {string} report for the year {int}, period {int} and submissionNumber {int} with empty body',
   async function (cadence, year, period, submissionNumber) {
     this.response = await eprBackendAPI.patch(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/${submissionNumber}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}`,
       JSON.stringify({}),
       defraIdStub.authHeader(this.userId)
     )
@@ -121,7 +121,7 @@ When(
   'I update the {string} report for the year {int}, period {int} and submissionNumber {int} with status {string} and version {int}',
   async function (cadence, year, period, submissionNumber, status, version) {
     this.response = await eprBackendAPI.post(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/${submissionNumber}/status`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}/status`,
       JSON.stringify({ status, version }),
       defraIdStub.authHeader(this.userId)
     )
@@ -142,7 +142,7 @@ When(
   'I unsubmit the {string} report for the year {int}, period {int} and submissionNumber {int}',
   async function (cadence, year, period, submissionNumber) {
     this.response = await eprBackendAPI.post(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/${submissionNumber}/unsubmit`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}/unsubmit`,
       '',
       authClient.authHeader()
     )
