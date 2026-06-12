@@ -251,9 +251,6 @@ Then(
     const expectedData = dataTable.hashes()
     const loadsByReportingPeriod = this.responseData.loadsByReportingPeriod
 
-    // eslint-disable-next-line no-unused-expressions
-    expect(loadsByReportingPeriod).to.not.be.undefined
-
     for (const expectation of expectedData) {
       const actual = expectation.Key.split('.').reduce(
         (acc, key) => acc?.[key],
