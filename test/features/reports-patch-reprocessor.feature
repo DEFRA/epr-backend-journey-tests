@@ -32,11 +32,11 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
 
-    When I create the 'monthly' report for the year 2026 and period 1
+    When I create the 'monthly' report for the year 2026, period 1 and submissionNumber 1
     Then the report is successfully created
 
   Scenario: PATCH with tonnageRecycled succeeds for a reprocessor report
-    When I patch the 'monthly' report for the year 2026 and period 1 with
+    When I patch the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with
       | tonnageRecycled | 100.5 |
     Then the report patch succeeds
     And the patched report contains the following information
@@ -44,7 +44,7 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | recyclingActivity.tonnageRecycled | 100.5 |
 
   Scenario: PATCH with tonnageNotRecycled succeeds for a reprocessor report
-    When I patch the 'monthly' report for the year 2026 and period 1 with
+    When I patch the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with
       | tonnageNotRecycled | 20 |
     Then the report patch succeeds
     And the patched report contains the following information
@@ -52,7 +52,7 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | recyclingActivity.tonnageNotRecycled | 20    |
 
   Scenario: PATCH with both tonnageRecycled and tonnageNotRecycled succeeds
-    When I patch the 'monthly' report for the year 2026 and period 1 with
+    When I patch the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with
       | tonnageRecycled    | 100 |
       | tonnageNotRecycled | 20  |
     Then the report patch succeeds
@@ -62,12 +62,12 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | recyclingActivity.tonnageNotRecycled | 20    |
 
   Scenario: PATCH with negative tonnageRecycled returns 422
-    When I patch the 'monthly' report for the year 2026 and period 1 with
+    When I patch the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with
       | tonnageRecycled | -1 |
     Then I should receive a 422 error response '"tonnageRecycled" must be greater than or equal to 0'
 
   Scenario: PATCH with all fields succeeds (with submission and unsubmission) for a reprocessor report
-    When I patch the 'monthly' report for the year 2026 and period 1 with
+    When I patch the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with
       | tonnageRecycled    | 100.5 |
       | tonnageNotRecycled | 20    |
       | prnRevenue         | 123.4 |
@@ -79,10 +79,10 @@ Feature: Reports PATCH endpoint for Reprocessor organisations
       | recyclingActivity.tonnageNotRecycled | 20    |
       | prn.totalRevenue                     | 123.4 |
       | prn.freeTonnage                      | 0     |
-    When I update the 'monthly' report for the year 2026 and period 1 with status 'ready_to_submit' and version 2
+    When I update the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with status 'ready_to_submit' and version 2
     Then the report status is successfully updated
-    When I update the 'monthly' report for the year 2026 and period 1 with status 'submitted' and version 3
+    When I update the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with status 'submitted' and version 3
     Then the report status is successfully updated
 
-    When I unsubmit the 'monthly' report for the year 2026 and period 1
+    When I unsubmit the 'monthly' report for the year 2026, period 1 and submissionNumber 1
     Then the report is successfully unsubmitted

@@ -9,7 +9,7 @@ Feature: Authorisation tests for non-write service maintainers
     Then I should receive a 403 error response 'Insufficient scope'
 
   Scenario: Read only user does not have access to unsubmit report
-    When I unsubmit the 'monthly' report for the year 2026 and period 1
+    When I unsubmit the 'monthly' report for the year 2026, period 1 and submissionNumber 1
     Then I should receive a 403 error response 'Insufficient scope'
 
   Scenario: Read only user does not have access to update organisations
@@ -38,7 +38,7 @@ Feature: Authorisation tests for non-write service maintainers
       Then I should receive a 403 error response 'Insufficient scope'
 
     Scenario: Support only user does not have access to unsubmit report
-      When I unsubmit the 'monthly' report for the year 2026 and period 1
+      When I unsubmit the 'monthly' report for the year 2026, period 1 and submissionNumber 1
       Then I should receive a 403 error response 'Insufficient scope'
 
     Scenario: Support only user does not have access to update organisations

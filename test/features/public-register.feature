@@ -30,10 +30,10 @@ Feature: Public register endpoint
     When I submit the uploaded summary log
     Then the summary log submission succeeds
 
-    When I create the 'monthly' report for the year 2026 and period 1
+    When I create the 'monthly' report for the year 2026, period 1 and submissionNumber 1
     Then the report is successfully created
 
-    When I patch the 'monthly' report for the year 2026 and period 1 with
+    When I patch the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with
       | tonnageRecycled    | 100.5 |
       | tonnageNotRecycled | 20    |
       | prnRevenue         | 123.4 |
@@ -46,9 +46,9 @@ Feature: Public register endpoint
       | prn.totalRevenue                     | 123.4 |
       | prn.freeTonnage                      | 0     |
 
-    When I update the 'monthly' report for the year 2026 and period 1 with status 'ready_to_submit' and version 2
+    When I update the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with status 'ready_to_submit' and version 2
     Then the report status is successfully updated
-    When I update the 'monthly' report for the year 2026 and period 1 with status 'submitted' and version 3
+    When I update the 'monthly' report for the year 2026, period 1 and submissionNumber 1 with status 'submitted' and version 3
     Then the report status is successfully updated
 
     Given I am logged in as a service maintainer
