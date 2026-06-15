@@ -3,10 +3,10 @@ import { authClient, defraIdStub, eprBackendAPI } from '../support/hooks.js'
 import { expect } from 'chai'
 
 When(
-  'I retrieve the {string} report for the year {int} and period {int}',
-  async function (cadence, year, period) {
+  'I retrieve the {string} report for the year {int}, period {int} and submissionNumber {int}',
+  async function (cadence, year, period, submissionNumber) {
     this.response = await eprBackendAPI.get(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}`,
       defraIdStub.authHeader(this.userId)
     )
   }
@@ -42,10 +42,10 @@ Then(
 )
 
 When(
-  'I create the {string} report for the year {int} and period {int}',
-  async function (cadence, year, period) {
+  'I create the {string} report for the year {int}, period {int} and submissionNumber {int}',
+  async function (cadence, year, period, submissionNumber) {
     this.response = await eprBackendAPI.post(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}`,
       '',
       defraIdStub.authHeader(this.userId)
     )
@@ -57,8 +57,8 @@ Then('the report is successfully created', async function () {
 })
 
 When(
-  'I patch the {string} report for the year {int} and period {int} with',
-  async function (cadence, year, period, dataTable) {
+  'I patch the {string} report for the year {int}, period {int} and submissionNumber {int} with',
+  async function (cadence, year, period, submissionNumber, dataTable) {
     const fields = dataTable.rowsHash()
     const payload = {}
 
@@ -67,7 +67,7 @@ When(
     }
 
     this.response = await eprBackendAPI.patch(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}`,
       JSON.stringify(payload),
       defraIdStub.authHeader(this.userId)
     )
@@ -75,10 +75,10 @@ When(
 )
 
 When(
-  'I patch the {string} report for the year {int} and period {int} with empty body',
-  async function (cadence, year, period) {
+  'I patch the {string} report for the year {int}, period {int} and submissionNumber {int} with empty body',
+  async function (cadence, year, period, submissionNumber) {
     this.response = await eprBackendAPI.patch(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}`,
       JSON.stringify({}),
       defraIdStub.authHeader(this.userId)
     )
@@ -118,10 +118,10 @@ Then(
 )
 
 When(
-  'I update the {string} report for the year {int} and period {int} with status {string} and version {int}',
-  async function (cadence, year, period, status, version) {
+  'I update the {string} report for the year {int}, period {int} and submissionNumber {int} with status {string} and version {int}',
+  async function (cadence, year, period, submissionNumber, status, version) {
     this.response = await eprBackendAPI.post(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/status`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}/status`,
       JSON.stringify({ status, version }),
       defraIdStub.authHeader(this.userId)
     )
@@ -139,10 +139,10 @@ Then('the report is successfully unsubmitted', async function () {
 })
 
 When(
-  'I unsubmit the {string} report for the year {int} and period {int}',
-  async function (cadence, year, period) {
+  'I unsubmit the {string} report for the year {int}, period {int} and submissionNumber {int}',
+  async function (cadence, year, period, submissionNumber) {
     this.response = await eprBackendAPI.post(
-      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/unsubmit`,
+      `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}/unsubmit`,
       '',
       authClient.authHeader()
     )

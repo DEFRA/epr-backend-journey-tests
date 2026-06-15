@@ -63,10 +63,10 @@ Feature: Summary Logs - Registered Only Exporter
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
 
-    When I create the 'quarterly' report for the year 2026 and period 1
+    When I create the 'quarterly' report for the year 2026, period 1 and submissionNumber 1
     Then the report is successfully created
 
-    When I retrieve the 'quarterly' report for the year 2026 and period 1
+    When I retrieve the 'quarterly' report for the year 2026, period 1 and submissionNumber 1
     Then the report is successfully retrieved
     And the report contains the following information
       | Key                 | Value    |
