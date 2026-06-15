@@ -51,6 +51,7 @@
     "undici": "7.24.5"
   },
   "overrides": {
+    "tmp": "0.2.7",
     "uuid": "14.0.0"
   },
   "devDependencies": {
