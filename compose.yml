@@ -23,7 +23,7 @@ name: epr-backend-journey-tests
 
 services:
   mongodb:
-    image: mongo:8.3.2
+    image: mongo:8.3.3
     networks:
       - cdp-tenant
     ports:
@@ -49,7 +49,7 @@ services:
       - cdp-tenant
 
   floci-init:
-    image: amazon/aws-cli:2.34.63
+    image: amazon/aws-cli:2.35.3
     entrypoint: /bin/sh
     command: /setup/init.sh
     depends_on:
@@ -112,7 +112,7 @@ services:
       - cdp-tenant
 
   entra-stub:
-    image: defradigital/epr-re-ex-entra-stub:latest
+    image: defradigital/epr-re-ex-entra-stub:0.66.0
     ports:
       - 3010:3010
     environment:
@@ -126,7 +126,7 @@ services:
       - cdp-tenant
 
   defra-id-stub:
-    image: defradigital/cdp-defra-id-stub:${DEFRA_ID_STUB_VERSION:-latest}
+    image: defradigital/cdp-defra-id-stub:0.34.0
     ports:
       - '3200:3200'
     depends_on:
@@ -148,7 +148,7 @@ services:
 
   # Copies cognito seed files into a volume so cognito-stub has its own copies
   cognito-stub-init:
-    image: alpine:3.23.4
+    image: alpine:3.24.0
     volumes:
       - ./compose/cognito-local/clients.json:/seed/clients.json:ro
       - ./compose/cognito-local/local_4D8shcYm.json:/seed/local_4D8shcYm.json:ro
