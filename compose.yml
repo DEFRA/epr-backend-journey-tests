@@ -23,7 +23,7 @@ name: epr-backend-journey-tests
 
 services:
   mongodb:
-    image: mongo:8.3.3
+    image: mongo:8.3.4
     networks:
       - cdp-tenant
     ports:
@@ -49,7 +49,7 @@ services:
       - cdp-tenant
 
   floci-init:
-    image: amazon/aws-cli:2.35.3
+    image: amazon/aws-cli:2.35.4
     entrypoint: /bin/sh
     command: /setup/init.sh
     depends_on:
