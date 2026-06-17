@@ -127,7 +127,7 @@ Feature: Summary Logs smoke test
 
     Given I have organisation and registration details for summary log upload
     When I try to access summary logs for organisation '6507f1f77bcf86cd79943999'
-    Then I should receive a 401 error response 'Access denied: organisation mismatch'
+    Then I should receive a 403 error response 'Organisation mismatch'
 
     When I initiate the summary log upload without redirectUrl
     Then I should receive a 422 error response '"redirectUrl" is required'

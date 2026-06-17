@@ -17,19 +17,19 @@ Feature: Authentication tests
   Scenario: Auth errors are logged when user tries to access a different organisation
     Given I have organisation and registration details for summary log upload
     When I try to access summary logs for organisation '6507f1f77bcf86cd79943999'
-    Then I should receive a 401 error response 'Access denied: organisation mismatch'
+    Then I should receive a 403 error response 'Organisation mismatch'
     And the following messages appear in the log
-      | Log Level | Event Action | Message                              |
-      | warn      | auth_failed  | Access denied: organisation mismatch |
+      | Log Level | Event Action     | Message            |
+      | warn      | request_failure  | Insufficient scope |
 
   Scenario: Auth errors are logged when a different user tries to link a linked organisation
     When I register and authorise a new User with email 'test123456@testuserz.com'
 
     When the User is linked to the recently migrated organisation
-    Then I should receive a 401 error response 'user is not authorised to link organisation'
+    Then I should receive a 403 error response 'user is not authorised to link organisation'
     And the following messages appear in the log
-      | Log Level | Event Action | Message                                     |
-      | warn      | auth_failed  | user is not authorised to link organisation |
+      | Log Level | Event Action     | Message            |
+      | warn      | request_failure  | Insufficient scope |
 
   Scenario: Should not allow re-linking of linked organisation
     When the User is linked to the recently migrated organisation
@@ -40,7 +40,7 @@ Feature: Authentication tests
 
     Given I have organisation and registration details for summary log upload
     When I initiate the summary log upload
-    Then I should receive a 401 error response 'User is not linked to an organisation'
+    Then I should receive a 403 error response 'User is not linked to an organisation'
     And the following messages appear in the log
-      | Log Level | Event Action | Message                              |
-      | warn      | auth_failed  | User is not linked to an organisation |
+      | Log Level | Event Action     | Message            |
+      | warn      | request_failure  | Insufficient scope |
