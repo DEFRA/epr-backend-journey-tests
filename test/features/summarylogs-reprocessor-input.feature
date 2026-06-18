@@ -184,6 +184,17 @@ Feature: Summary Logs - Reprocessor on Input
       | openPeriodLoads.adjusted.balanceAffecting.tonnageDelta | 74.89 |
       | openPeriodLoads.adjusted.nonBalanceAffecting.count     | 1     |
       | closedPeriodLoads.added.balanceAffecting.count         | 0     |
+    # Each period bucket lists its rows with their identity, exclusion reason
+    # codes and the signed tonnage the leg moved: an included load carries no
+    # codes and its balance contribution, an excluded load carries the reason it
+    # was kept out (PRNs issued, missing field) and a zero delta.
+    And the reporting period buckets list the following rows
+      | Bucket                                       | RowId | WasteRecordType | ExclusionReasons       | TonnageDelta |
+      | openPeriodLoads.added.balanceAffecting       | 5001  | sentOn          |                        | -50          |
+      | openPeriodLoads.added.nonBalanceAffecting    | 1004  | received        | PRN_ISSUED             | 0            |
+      | openPeriodLoads.added.nonBalanceAffecting    | 1005  | received        | MISSING_REQUIRED_FIELD | 0            |
+      | openPeriodLoads.adjusted.balanceAffecting    | 1001  | received        |                        | 74.89        |
+      | openPeriodLoads.adjusted.nonBalanceAffecting | 1002  | received        | MISSING_REQUIRED_FIELD | 0            |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
