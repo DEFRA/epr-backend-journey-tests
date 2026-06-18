@@ -44,3 +44,15 @@ Then(
     )
   }
 )
+
+Then(
+  'I should receive a {int} error response which contains the message {string}',
+  async function (code, errMessage) {
+    expect(this.response.statusCode).to.equal(code)
+    const responseData = await this.response.body.json()
+    expect(responseData).to.have.property('message')
+    expect(responseData.message).to.contain(
+      interpolator.interpolate(this, errMessage)
+    )
+  }
+)
