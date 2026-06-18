@@ -147,17 +147,17 @@ When(
       this.accreditationId = data.accreditations[0].id
     }
     this.organisationId = orgId
-    //
-    // const payload = {
-    //   version: Number(data.version),
-    //   updateFragment: data
-    // }
-    //
-    // this.response = await eprBackendAPI.put(
-    //   `/v1/organisations/${orgId}`,
-    //   JSON.stringify(payload),
-    //   authClient.authHeader()
-    // )
+
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
+
+    this.response = await eprBackendAPI.put(
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
+    )
   }
 )
 
