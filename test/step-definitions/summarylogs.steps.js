@@ -519,7 +519,7 @@ Then(
           (record) =>
             record.organisationId === expectedOrgId &&
             record.registrationId === expectedRegId &&
-            record.rowId === parseInt(expectedWasteRecord.RowId) &&
+            record.rowId === expectedWasteRecord.RowId &&
             record.type === expectedWasteRecord.Type
         )
 
@@ -587,7 +587,7 @@ Then(
           (record) =>
             record.organisationId === expectedOrgId &&
             record.registrationId === expectedRegId &&
-            record.rowId === parseInt(expectedWasteRecord.RowId) &&
+            record.rowId === expectedWasteRecord.RowId &&
             record.type === expectedWasteRecord.Type
         )
 
