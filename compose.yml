@@ -190,6 +190,7 @@ services:
       DEFRA_ID_CLIENT_ID: 63983fc2-cfff-45bb-8ec2-959e21062b9a
       DEFRA_ID_OIDC_WELL_KNOWN_URL: http://defra-id-stub:3200/cdp-defra-id-stub/.well-known/openid-configuration
       ENTRA_OIDC_WELL_KNOWN_CONFIGURATION_URL: http://entra-stub:3010/.well-known/openid-configuration
+      FEATURE_FLAG_COMMITTED_ROW_STATES: ${FEATURE_FLAG_COMMITTED_ROW_STATES:-false}
       FEATURE_FLAG_DEV_ENDPOINTS: true
       GOVUK_NOTIFY_API_KEY: /run/secrets/govuk_notify_api_key
       LOG_FORMAT: ecs
