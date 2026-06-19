@@ -23,7 +23,7 @@ When(
     const updateDataRows = dataTable.hashes()
     const currentYear = new Date().getFullYear()
 
-    let data = this.responseData
+    const data = this.responseData
 
     let accreditationIndex = 0
     this.registrationIds = new Map()
@@ -148,11 +148,15 @@ When(
     }
     this.organisationId = orgId
 
-    data = { organisation: data }
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
 
     this.response = await eprBackendAPI.put(
-      `/v1/dev/organisations/${orgId}`,
-      JSON.stringify(data)
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
     )
   }
 )
@@ -268,10 +272,15 @@ When(
       }
     ]
 
-    const payload = { organisation: data }
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
+
     this.response = await eprBackendAPI.put(
-      `/v1/dev/organisations/${orgId}`,
-      JSON.stringify(payload)
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
     )
   }
 )
@@ -298,10 +307,15 @@ When(
       }
     ]
 
-    const payload = { organisation: data }
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
+
     this.response = await eprBackendAPI.put(
-      `/v1/dev/organisations/${orgId}`,
-      JSON.stringify(payload)
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
     )
   }
 )
