@@ -275,7 +275,7 @@ export async function updateOrganisationData(
     `/v1/organisations/${referenceNumber}`
   )
 
-  let data = await getOrgResponse.body.json()
+  const data = await getOrgResponse.body.json()
   const currentYear = new Date().getFullYear()
 
   // Apply updates to registrations and accreditations
@@ -360,15 +360,20 @@ export async function updateOrganisationData(
       updatedAt: data.registrations[0].validFrom
     }
   ]
-  data = { organisation: data }
+
+  const payload = {
+    version: Number(data.version),
+    updateFragment: data
+  }
 
   const patchResponse = await context.baseAPI.put(
-    `/v1/dev/organisations/${referenceNumber}`,
-    JSON.stringify(data)
+    `/v1/organisations/${referenceNumber}`,
+    JSON.stringify(payload),
+    context.authClient.authHeader()
   )
   await assertSuccessResponse(
     patchResponse,
-    `/v1/dev/organisations/${referenceNumber}`
+    `/v1/organisations/${referenceNumber}`
   )
 
   return replacementEmail
