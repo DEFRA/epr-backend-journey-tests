@@ -23,7 +23,7 @@ When(
     const updateDataRows = dataTable.hashes()
     const currentYear = new Date().getFullYear()
 
-    let data = this.responseData
+    const data = this.responseData
 
     let accreditationIndex = 0
     this.registrationIds = new Map()
@@ -148,11 +148,104 @@ When(
     }
     this.organisationId = orgId
 
-    data = { organisation: data }
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
 
     this.response = await eprBackendAPI.put(
-      `/v1/dev/organisations/${orgId}`,
-      JSON.stringify(data)
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
+    )
+  }
+)
+
+When(
+  'I update the recently migrated organisations registration data to point to the same accreditationId',
+  async function () {
+    const orgId = this.orgResponseData?.referenceNumber
+
+    this.response = await eprBackendAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+    this.responseData = await this.response.body.json()
+    const data = this.responseData
+
+    const registrations = data.registrations
+
+    for (let i = 0; i < registrations.length; i++) {
+      data.registrations[i].accreditationId = data.accreditations[0].id
+    }
+
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
+
+    this.response = await eprBackendAPI.put(
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
+    )
+  }
+)
+
+When(
+  'I update the recently migrated organisations first registration data to point to accreditationId {string}',
+  async function (accId) {
+    const orgId = this.orgResponseData?.referenceNumber
+
+    this.response = await eprBackendAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+    this.responseData = await this.response.body.json()
+    const data = this.responseData
+
+    data.registrations[0].accreditationId = accId
+
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
+
+    this.response = await eprBackendAPI.put(
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
+    )
+  }
+)
+
+When(
+  'I update the recently migrated organisations first two registration data and swap the accreditationIds',
+  async function () {
+    const orgId = this.orgResponseData?.referenceNumber
+
+    this.response = await eprBackendAPI.get(
+      `/v1/organisations/${orgId}`,
+      authClient.authHeader()
+    )
+    this.responseData = await this.response.body.json()
+    const data = this.responseData
+
+    const firstAccId = data.registrations[0].accreditationId
+
+    data.registrations[0].accreditationId =
+      data.registrations[1].accreditationId
+    data.registrations[1].accreditationId = firstAccId
+
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
+
+    this.response = await eprBackendAPI.put(
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
     )
   }
 )
@@ -179,10 +272,15 @@ When(
       }
     ]
 
-    const payload = { organisation: data }
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
+
     this.response = await eprBackendAPI.put(
-      `/v1/dev/organisations/${orgId}`,
-      JSON.stringify(payload)
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
     )
   }
 )
@@ -209,10 +307,15 @@ When(
       }
     ]
 
-    const payload = { organisation: data }
+    const payload = {
+      version: Number(data.version),
+      updateFragment: data
+    }
+
     this.response = await eprBackendAPI.put(
-      `/v1/dev/organisations/${orgId}`,
-      JSON.stringify(payload)
+      `/v1/organisations/${orgId}`,
+      JSON.stringify(payload),
+      authClient.authHeader()
     )
   }
 )

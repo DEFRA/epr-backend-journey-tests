@@ -158,7 +158,7 @@ Feature: Packaging Recycling Notes transitions for Exporter
     When an external API retrieves the PRN with status 'cancelled'
     Then the external API call to retrieve the PRN is successful and contains the PRN with PRN Number '{{prnNumber}}'
 
-    When I update the accreditation status to 'suspended' at '2026-03-02'
+    When I update the accreditation status to 'suspended'
     Then the organisations data update succeeds
 
     # We create another PRN after the accreditation is suspended

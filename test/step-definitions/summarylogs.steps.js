@@ -265,6 +265,44 @@ Then(
   }
 )
 
+Then(
+  'the reporting period buckets list the following rows',
+  async function (dataTable) {
+    const expectedRows = dataTable.hashes()
+    const loadsByReportingPeriod = this.responseData.loadsByReportingPeriod
+
+    for (const expected of expectedRows) {
+      const bucket = expected.Bucket.split('.').reduce(
+        (acc, key) => acc?.[key],
+        loadsByReportingPeriod
+      )
+
+      const actualRow = bucket?.rows?.find(
+        (row) => row.rowId === expected.RowId
+      )
+
+      if (!actualRow) {
+        expect.fail(
+          `Expected row ${expected.RowId} in bucket ${expected.Bucket} but found rows: ${JSON.stringify(bucket?.rows)}`
+        )
+      }
+
+      expect(actualRow.wasteRecordType).to.equal(
+        expected.WasteRecordType,
+        `Failed wasteRecordType at ${expected.Bucket} row ${expected.RowId}`
+      )
+      expect(actualRow.exclusionReasons.join(',')).to.equal(
+        expected.ExclusionReasons,
+        `Failed exclusionReasons at ${expected.Bucket} row ${expected.RowId}`
+      )
+      expect(actualRow.tonnageDelta).to.equal(
+        Number(expected.TonnageDelta),
+        `Failed tonnageDelta at ${expected.Bucket} row ${expected.RowId}`
+      )
+    }
+  }
+)
+
 Then('the summary log has the following loads', async function (dataTable) {
   const expectedLoads = dataTable.hashes()
 

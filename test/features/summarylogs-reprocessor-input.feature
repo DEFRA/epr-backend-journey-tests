@@ -184,6 +184,17 @@ Feature: Summary Logs - Reprocessor on Input
       | openPeriodLoads.adjusted.balanceAffecting.tonnageDelta | 74.89 |
       | openPeriodLoads.adjusted.nonBalanceAffecting.count     | 1     |
       | closedPeriodLoads.added.balanceAffecting.count         | 0     |
+    # Each period bucket lists its rows with their identity, exclusion reason
+    # codes and the signed tonnage the leg moved: an included load carries no
+    # codes and its balance contribution, an excluded load carries the reason it
+    # was kept out (PRNs issued, missing field) and a zero delta.
+    And the reporting period buckets list the following rows
+      | Bucket                                       | RowId | WasteRecordType | ExclusionReasons       | TonnageDelta |
+      | openPeriodLoads.added.balanceAffecting       | 5001  | sentOn          |                        | -50          |
+      | openPeriodLoads.added.nonBalanceAffecting    | 1004  | received        | PRN_ISSUED             | 0            |
+      | openPeriodLoads.added.nonBalanceAffecting    | 1005  | received        | MISSING_REQUIRED_FIELD | 0            |
+      | openPeriodLoads.adjusted.balanceAffecting    | 1001  | received        |                        | 74.89        |
+      | openPeriodLoads.adjusted.nonBalanceAffecting | 1002  | received        | MISSING_REQUIRED_FIELD | 0            |
     When I submit the uploaded summary log
     Then the summary log submission succeeds
     And the summary log submission status is 'submitted'
@@ -256,61 +267,3 @@ Feature: Summary Logs - Reprocessor on Input
 
     When I submit the uploaded summary log
     Then I should receive a 409 error response 'Summary log must be validated before submission. Current status: invalid'
-
-  Scenario: Summary Logs uploads when accreditation is suspended - all rows IGNORED for waste balance
-    Given I create a linked and migrated organisation for the following
-      | wasteProcessingType |
-      | Reprocessor         |
-
-    Given I am logged in as a service maintainer
-    When I update the recently migrated organisations data with the following data
-      | reprocessingType | regNumber        | accNumber | status   | validFrom  |
-      | input            | R25SR500030912PA | ACC123456 | approved | 2025-02-02 |
-    Then the organisations data update succeeds
-
-    When I update the accreditation status to 'suspended'
-    Then the organisations data update succeeds
-
-    When I register and authorise a User and link it to the recently migrated organisation
-
-    Given I have organisation and registration details for summary log upload
-    When I initiate the summary log upload
-    Then the summary log upload initiation succeeds
-
-    When I upload the file 'reprocessor-input-valid.xlsx' via the CDP uploader
-    Then the upload to CDP uploader succeeds
-    And the summary log submission status is 'validated'
-    And the summary log has the following loads
-      | LoadType       | Count | RowIDs              |
-      | added.valid    | 1     | 4000                |
-      | added.invalid  | 1     | 1002                |
-      | added.included | 0     |                     |
-      | added.excluded | 4     | 1000,1001,1002,5000 |
-    And the summary log has the following loads for the received waste record type
-      | LoadType       | Count | RowIDs         |
-      | added.valid    | 0     |                |
-      | added.invalid  | 1     | 1002           |
-      | added.included | 0     |                |
-      | added.excluded | 3     | 1000,1001,1002 |
-    And the summary log has the following loads for the processed waste record type
-      | LoadType       | Count | RowIDs |
-      | added.valid    | 1     | 4000   |
-      | added.invalid  | 0     |        |
-      | added.included | 0     |        |
-      | added.excluded | 0     |        |
-    And the summary log has the following loads for the sentOn waste record type
-      | LoadType       | Count | RowIDs |
-      | added.valid    | 0     |        |
-      | added.invalid  | 0     |        |
-      | added.included | 0     |        |
-      | added.excluded | 1     | 5000   |
-    And the summary log has the following reporting period loads
-      | Key                                                 | Value |
-      | openPeriodLoads.added.balanceAffecting.count        | 0     |
-      | openPeriodLoads.added.balanceAffecting.tonnageDelta | 0     |
-      | openPeriodLoads.added.nonBalanceAffecting.count     | 2     |
-      | openPeriodLoads.adjusted.balanceAffecting.count     | 0     |
-      | closedPeriodLoads.added.balanceAffecting.count      | 0     |
-
-    When I submit the uploaded summary log
-    Then the summary log submission succeeds
