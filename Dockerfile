@@ -1,4 +1,4 @@
-FROM node:24.16.0-alpine3.22
+FROM node:24.17-alpine3.24
 
 ENV TZ="Europe/London"
 
