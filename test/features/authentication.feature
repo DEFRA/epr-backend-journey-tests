@@ -26,14 +26,14 @@ Feature: Authentication tests
     When I register and authorise a new User with email 'test123456@testuserz.com'
 
     When the User is linked to the recently migrated organisation
-    Then I should receive a 401 error response 'user is not authorised to link organisation'
+    Then I should receive a 409 error response 'Organisation is not in a linkable state'
     And the following messages appear in the log
       | Log Level | Event Action | Message                                     |
-      | warn      | auth_failed  | user is not authorised to link organisation |
+      | warn      | request_failure  | Organisation is not in a linkable state |
 
   Scenario: Should not allow re-linking of linked organisation
     When the User is linked to the recently migrated organisation
-    Then I should receive a 409 error response 'Organisation is already linked'
+    Then I should receive a 409 error response 'Organisation is not in a linkable state'
 
   Scenario: Auth errors are logged when a different user tries to access a recently linked organisation
     When I register and authorise a new User with email 'anothertest123456@testuserz.com'
