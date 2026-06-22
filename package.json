@@ -41,8 +41,8 @@
     "test": "cucumber-js --tags \"not @smoketest and not @localonly\" ; npm run report"
   },
   "dependencies": {
-    "allure-commandline": "2.38.1",
-    "allure-js-commons": "3.6.0",
+    "allure-commandline": "2.43.0",
+    "allure-js-commons": "3.10.0",
     "csv-parse": "7.0.0",
     "esm-module-alias": "2.2.1",
     "exceljs": "4.4.0",
