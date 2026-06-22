@@ -120,9 +120,13 @@ Then(
 When(
   'I update the {string} report for the year {int}, period {int} and submissionNumber {int} with status {string} and version {int}',
   async function (cadence, year, period, submissionNumber, status, version) {
+    const payload = { status, version }
+    if (status === 'submitted') {
+      payload.submissionDeclaredBy = 'Test User'
+    }
     this.response = await eprBackendAPI.post(
       `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/${year}/${cadence}/${period}/submissions/${submissionNumber}/status`,
-      JSON.stringify({ status, version }),
+      JSON.stringify(payload),
       defraIdStub.authHeader(this.userId)
     )
   }
