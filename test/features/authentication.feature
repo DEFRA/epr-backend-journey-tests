@@ -29,7 +29,7 @@ Feature: Authentication tests
     Then I should receive a 409 error response 'Organisation is not in a linkable state'
     And the following messages appear in the log
       | Log Level | Event Action | Message                                     |
-      | warn      | auth_failed  | Organisation is not in a linkable state |
+      | warn      | request_failure  | Organisation is not in a linkable state |
 
   Scenario: Should not allow re-linking of linked organisation
     When the User is linked to the recently migrated organisation
