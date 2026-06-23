@@ -49,7 +49,7 @@ services:
       - cdp-tenant
 
   floci-init:
-    image: amazon/aws-cli:2.35.4
+    image: amazon/aws-cli:2.35.8
     entrypoint: /bin/sh
     command: /setup/init.sh
     depends_on:
@@ -126,7 +126,7 @@ services:
       - cdp-tenant
 
   defra-id-stub:
-    image: defradigital/cdp-defra-id-stub:0.34.0
+    image: defradigital/cdp-defra-id-stub:0.36.0
     ports:
       - '3200:3200'
     depends_on:
@@ -148,7 +148,7 @@ services:
 
   # Copies cognito seed files into a volume so cognito-stub has its own copies
   cognito-stub-init:
-    image: alpine:3.24.0
+    image: alpine:3.24.1
     volumes:
       - ./compose/cognito-local/clients.json:/seed/clients.json:ro
       - ./compose/cognito-local/local_4D8shcYm.json:/seed/local_4D8shcYm.json:ro
