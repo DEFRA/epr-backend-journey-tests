@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.29.0",
-    "@babel/eslint-parser": "7.28.6",
+    "@babel/eslint-parser": "8.0.1",
     "@babel/preset-env": "7.29.2",
     "@cucumber/cucumber": "13.0.0",
     "@cucumber/messages": "33.0.3",
