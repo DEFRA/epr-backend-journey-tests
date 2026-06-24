@@ -59,7 +59,7 @@
     "@babel/eslint-parser": "7.28.6",
     "@babel/preset-env": "7.29.2",
     "@cucumber/cucumber": "13.0.0",
-    "@cucumber/messages": "33.0.2",
+    "@cucumber/messages": "33.0.3",
     "@faker-js/faker": "10.5.0",
     "@types/node": "26.0.0",
     "allure-cucumberjs": "3.10.0",
