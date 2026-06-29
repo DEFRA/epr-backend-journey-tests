@@ -23,7 +23,7 @@ name: epr-backend-journey-tests
 
 services:
   mongodb:
-    image: mongo:8.3.4
+    image: mongo:8.3.4@sha256:48a009d2d8007e92d6d7e8baa31713cd11c48c06e827e856240e5a1d319b49d9
     networks:
       - cdp-tenant
     ports:
@@ -37,7 +37,7 @@ services:
       retries: 3
 
   floci:
-    image: hectorvent/floci:1.5.5
+    image: hectorvent/floci:1.5.5@sha256:c969cb48fcfae0eff3f4a4647b7772cd975e633cae7468e45abaf2d2eae18558
     environment:
       FLOCI_HOSTNAME: floci
       FLOCI_DEFAULT_REGION: eu-west-2
@@ -49,7 +49,7 @@ services:
       - cdp-tenant
 
   floci-init:
-    image: amazon/aws-cli:2.35.11
+    image: amazon/aws-cli:2.35.11@sha256:749bfaf91d690b9a1768083822d620f96c19defdf9ca2dc227eb3695281fda5b
     entrypoint: /bin/sh
     command: /setup/init.sh
     depends_on:
@@ -67,7 +67,7 @@ services:
       - cdp-tenant
 
   redis:
-    image: redis:8.0.6-alpine3.21
+    image: redis:8.0.6-alpine3.21@sha256:5f61955be8ab2ccee9372b84ae4d4da2e2b156f87281e3f218544055e7ee04d4
     ports:
       - '6379:6379'
     restart: always
@@ -80,7 +80,7 @@ services:
       - cdp-tenant
 
   cdp-uploader:
-    image: defradigital/cdp-uploader:1.16.0
+    image: defradigital/cdp-uploader:1.16.0@sha256:eb1627b60690ec24d41a17ed82e80c28d009aaaeb19dc179c6a3887da7e6a5bd
     ports:
       - '7337:7337'
     depends_on:
@@ -112,7 +112,7 @@ services:
       - cdp-tenant
 
   entra-stub:
-    image: defradigital/epr-re-ex-entra-stub:0.66.0
+    image: defradigital/epr-re-ex-entra-stub:0.66.0@sha256:7f5020aadf2b681bc52f689f89e92026e1a600bc4a6b8cb300656c46684463aa
     ports:
       - 3010:3010
     environment:
@@ -126,7 +126,7 @@ services:
       - cdp-tenant
 
   defra-id-stub:
-    image: defradigital/cdp-defra-id-stub:0.36.0
+    image: defradigital/cdp-defra-id-stub:0.36.0@sha256:ad65e553ffd03f1f9ef6bc6a82d665a1643f7efa2daeb00775d6c20b0132dfa3
     ports:
       - '3200:3200'
     depends_on:
@@ -148,7 +148,7 @@ services:
 
   # Copies cognito seed files into a volume so cognito-stub has its own copies
   cognito-stub-init:
-    image: alpine:3.24.1
+    image: alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
     volumes:
       - ./compose/cognito-local/clients.json:/seed/clients.json:ro
       - ./compose/cognito-local/local_4D8shcYm.json:/seed/local_4D8shcYm.json:ro
@@ -158,7 +158,7 @@ services:
       - cdp-tenant
 
   cognito-stub:
-    image: jagregory/cognito-local:5.3.0
+    image: jagregory/cognito-local:5.3.0@sha256:a5ad30d01da5016a38535a717f6e1642d1b37f886a7b17e90b67f6e5ad134831
     ports:
       - '9229:9229'
     volumes:
