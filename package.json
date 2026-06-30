@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "allure-commandline": "2.43.0",
-    "allure-js-commons": "3.10.1",
+    "allure-js-commons": "3.10.2",
     "csv-parse": "7.0.0",
     "esm-module-alias": "2.2.1",
     "exceljs": "4.4.0",
