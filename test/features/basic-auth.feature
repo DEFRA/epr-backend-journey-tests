@@ -5,6 +5,7 @@ Feature: Basic auth tests for endpoints exposed to basic auth clients
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
       | Reprocessor         |
+    And I use the default basic auth credentials
     When I request the recently migrated organisation via basic auth
     Then I should receive a valid organisations response for the recently migrated organisation
 
