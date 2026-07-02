@@ -473,7 +473,7 @@ When(
   'I request the overseas sites for organisation {string}, registration {string} and accreditation {string} via basic auth',
   async function (organisationId, registrationId, accreditationId) {
     this.response = await eprBackendAPI.get(
-      `/v1/organisations/{organisationId}/registrations/{registrationId}/accreditations/{accreditationId}/overseas-sites`,
+      `/v1/organisations/${organisationId}/registrations/${registrationId}/accreditations/${accreditationId}/overseas-sites`,
       basicAuth.authHeader()
     )
   }
