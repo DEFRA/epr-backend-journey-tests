@@ -469,19 +469,11 @@ When('I request the admin overseas sites list', async function () {
   )
 })
 
-When('I request the overseas sites list via basic auth', async function () {
-  this.adminOverseasSitesListBody = undefined
-  this.response = await eprBackendAPI.get(
-    '/v1/overseas-sites',
-    basicAuth.authHeader()
-  )
-})
-
 When(
-  'I request the overseas sites by id {string} via basic auth',
-  async function (id) {
+  'I request the overseas sites for organisation {string}, registration {string} and accreditation {string} via basic auth',
+  async function (organisationId, registrationId, accreditationId) {
     this.response = await eprBackendAPI.get(
-      `/v1/overseas-sites/${id}`,
+      `/v1/organisations/{organisationId}/registrations/{registrationId}/accreditations/{accreditationId}/overseas-sites`,
       basicAuth.authHeader()
     )
   }
