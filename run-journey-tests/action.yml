@@ -11,7 +11,7 @@ inputs:
     description: is this action being called from a pr in this repo?
     default: 'false'
   waste-record-states:
-    description: value for FEATURE_FLAG_WASTE_RECORD_STATES in the backend under test
+    description: value for the summary-log row states feature flag in the backend under test
     default: 'false'
   artifact-suffix:
     description: suffix appended to uploaded artifact names to keep concurrent runs distinct
@@ -85,6 +85,7 @@ runs:
       shell: bash
       run: |
         EPR_BACKEND=${{ steps.docker-branch.outputs.image }} \
+        FEATURE_FLAG_SUMMARY_LOG_ROW_STATES=${{ inputs.waste-record-states }} \
         FEATURE_FLAG_WASTE_RECORD_STATES=${{ inputs.waste-record-states }} \
         docker compose up --wait-timeout 300 -d --quiet-pull
 
@@ -93,6 +94,7 @@ runs:
       shell: bash
       run: |
         EPR_BACKEND=${{ inputs.epr-backend }} \
+        FEATURE_FLAG_SUMMARY_LOG_ROW_STATES=${{ inputs.waste-record-states }} \
         FEATURE_FLAG_WASTE_RECORD_STATES=${{ inputs.waste-record-states }} \
         docker compose up --wait-timeout 300 -d --quiet-pull
 
