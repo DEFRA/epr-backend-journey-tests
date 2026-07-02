@@ -11,7 +11,7 @@ Feature: Basic auth tests for endpoints exposed to basic auth clients
   Scenario: Ensure that overseas site (By ID) endpoint returns a response (Not rejection) when using basic auth
     Given I use the default basic auth credentials
     When I request the overseas sites for organisation 'unknownOrgId', registration 'someRegId' and accreditation 'someAccId' via basic auth
-    Then I should receive a 404 error response 'Organisation with id unknownOrgId not found'
+    Then I should receive a 422 error response 'Invalid organisation ID'
 
   Scenario: Ensure that organisations (By ID) endpoint returns a rejection response when using incorrect credentials for basic auth
     Given I create a linked and migrated organisation for the following
