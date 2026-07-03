@@ -561,6 +561,33 @@ Then(
 )
 
 Then(
+  'no waste records exist in the database for the summary log registration',
+  async function () {
+    if (!process.env.ENVIRONMENT) {
+      const wasteRecordsCollection = dbClient.collection('waste-records')
+      const wasteRecords = await wasteRecordsCollection
+        .find({
+          organisationId: this.summaryLog.orgId,
+          registrationId: this.summaryLog.regId
+        })
+        .toArray()
+      expect(wasteRecords.length).to.equal(
+        0,
+        `Expected no waste records for the registration after a blocked submit, but found ${wasteRecords.length}: ${JSON.stringify(wasteRecords)}`
+      )
+    } else {
+      logger.warn(
+        {
+          step_definition:
+            'Then no waste records exist in the database for the summary log registration'
+        },
+        'Skipping waste record database checks'
+      )
+    }
+  }
+)
+
+Then(
   'I should see that waste records are updated in the database with the following values',
   async function (dataTable) {
     if (!process.env.ENVIRONMENT) {
