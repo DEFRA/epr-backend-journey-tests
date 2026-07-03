@@ -8,6 +8,9 @@ Feature: Resubmission drafts for restated closed periods
   # drafted for that period. Requires FEATURE_FLAG_CLOSED_PERIOD_ADJUSTMENTS
   # to be on in the backend under test (defaulted on in compose.yml).
 
+  # The year and period below (August 2025) are fixed: the summary-log upload
+  # step accepts loads only within its compliance window, so this scenario will
+  # need its dates advancing once 2025 falls outside that window.
   Background:
     Given I create a linked and migrated organisation for the following
       | wasteProcessingType |
@@ -76,7 +79,8 @@ Feature: Resubmission drafts for restated closed periods
     # The flagged period yields two calendar items: the submitted report stays
     # visible and a pre-draft resubmission slot prompts the correction.
     When I retrieve the reports calendar
-    Then the reports calendar contains the following items for the year 2025 and period 8
+    Then the reports calendar is successfully retrieved
+    And the reports calendar contains the following items for the year 2025 and period 8
       | SubmissionNumber | PeriodStatus          | ReportStatus |
       | 1                | submitted             | submitted    |
       | 2                | requires_resubmission | none         |
@@ -89,7 +93,8 @@ Feature: Resubmission drafts for restated closed periods
     # The resubmission slot now carries the in-flight draft; the original
     # submitted item is unchanged and the period has not collapsed.
     When I retrieve the reports calendar
-    Then the reports calendar contains the following items for the year 2025 and period 8
+    Then the reports calendar is successfully retrieved
+    And the reports calendar contains the following items for the year 2025 and period 8
       | SubmissionNumber | PeriodStatus          | ReportStatus |
       | 1                | submitted             | submitted    |
       | 2                | requires_resubmission | in_progress  |
@@ -108,6 +113,7 @@ Feature: Resubmission drafts for restated closed periods
     Then the report status is successfully updated
 
     When I retrieve the reports calendar
-    Then the reports calendar contains the following items for the year 2025 and period 8
+    Then the reports calendar is successfully retrieved
+    And the reports calendar contains the following items for the year 2025 and period 8
       | SubmissionNumber | PeriodStatus | ReportStatus |
       | 2                | submitted    | submitted    |

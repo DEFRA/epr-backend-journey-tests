@@ -147,6 +147,9 @@ When('I retrieve the reports calendar', async function () {
     `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/calendar`,
     defraIdStub.authHeader(this.userId)
   )
+})
+
+Then('the reports calendar is successfully retrieved', async function () {
   expect(this.response.statusCode).to.equal(200)
   this.reportsCalendar = await this.response.body.json()
 })
@@ -161,20 +164,26 @@ Then(
 
     expect(items).to.have.lengthOf(expected.length)
 
-    expected.forEach((expectation, index) => {
-      const item = items[index]
-      expect(item.submissionNumber).to.equal(
-        Number(expectation.SubmissionNumber)
+    // Match each expected row to its item by submissionNumber rather than by
+    // array position: the two items a resubmitting period yields share a year
+    // and period, and the test should not depend on the order the backend
+    // happens to emit them in.
+    expected.forEach((expectation) => {
+      const submissionNumber = Number(expectation.SubmissionNumber)
+      const item = items.find(
+        (candidate) => candidate.submissionNumber === submissionNumber
       )
+      expect(
+        item,
+        `no calendar item for submission ${submissionNumber}`
+      ).to.not.equal(undefined)
       expect(item.periodStatus).to.equal(expectation.PeriodStatus)
 
       if (expectation.ReportStatus === 'none') {
         expect(item.report).to.equal(null)
       } else {
         expect(item.report.status).to.equal(expectation.ReportStatus)
-        expect(item.report.submissionNumber).to.equal(
-          Number(expectation.SubmissionNumber)
-        )
+        expect(item.report.submissionNumber).to.equal(submissionNumber)
       }
     })
   }
