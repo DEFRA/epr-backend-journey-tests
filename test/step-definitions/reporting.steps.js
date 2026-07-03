@@ -142,6 +142,44 @@ Then('the report is successfully unsubmitted', async function () {
   expect(responseData.status).to.equal('ready_to_submit')
 })
 
+When('I retrieve the reports calendar', async function () {
+  this.response = await eprBackendAPI.get(
+    `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/calendar`,
+    defraIdStub.authHeader(this.userId)
+  )
+  expect(this.response.statusCode).to.equal(200)
+  this.reportsCalendar = await this.response.body.json()
+})
+
+Then(
+  'the reports calendar contains the following items for the year {int} and period {int}',
+  function (year, period, dataTable) {
+    const items = this.reportsCalendar.reportingPeriods.filter(
+      (item) => item.year === year && item.period === period
+    )
+    const expected = dataTable.hashes()
+
+    expect(items).to.have.lengthOf(expected.length)
+
+    expected.forEach((expectation, index) => {
+      const item = items[index]
+      expect(item.submissionNumber).to.equal(
+        Number(expectation.SubmissionNumber)
+      )
+      expect(item.periodStatus).to.equal(expectation.PeriodStatus)
+
+      if (expectation.ReportStatus === 'none') {
+        expect(item.report).to.equal(null)
+      } else {
+        expect(item.report.status).to.equal(expectation.ReportStatus)
+        expect(item.report.submissionNumber).to.equal(
+          Number(expectation.SubmissionNumber)
+        )
+      }
+    })
+  }
+)
+
 When(
   'I unsubmit the {string} report for the year {int}, period {int} and submissionNumber {int}',
   async function (cadence, year, period, submissionNumber) {
