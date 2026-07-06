@@ -339,18 +339,6 @@ When(
   }
 )
 
-When(
-  'I request the organisations with the following parameters via basic auth',
-  async function (dataTable) {
-    const [row] = dataTable.hashes()
-    const params = new URLSearchParams(row).toString()
-    this.response = await eprBackendAPI.get(
-      '/v1/organisations?' + params,
-      basicAuth.authHeader()
-    )
-  }
-)
-
 When('I request the recently migrated organisation', async function () {
   const orgId = this.orgResponseData?.referenceNumber
   this.response = await eprBackendAPI.get(

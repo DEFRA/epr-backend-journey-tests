@@ -142,6 +142,53 @@ Then('the report is successfully unsubmitted', async function () {
   expect(responseData.status).to.equal('ready_to_submit')
 })
 
+When('I retrieve the reports calendar', async function () {
+  this.response = await eprBackendAPI.get(
+    `/v1/organisations/${this.organisationId}/registrations/${this.registrationId}/reports/calendar`,
+    defraIdStub.authHeader(this.userId)
+  )
+})
+
+Then('the reports calendar is successfully retrieved', async function () {
+  expect(this.response.statusCode).to.equal(200)
+  this.reportsCalendar = await this.response.body.json()
+})
+
+Then(
+  'the reports calendar contains the following items for the year {int} and period {int}',
+  function (year, period, dataTable) {
+    const items = this.reportsCalendar.reportingPeriods.filter(
+      (item) => item.year === year && item.period === period
+    )
+    const expected = dataTable.hashes()
+
+    expect(items).to.have.lengthOf(expected.length)
+
+    // Match each expected row to its item by submissionNumber rather than by
+    // array position: the two items a resubmitting period yields share a year
+    // and period, and the test should not depend on the order the backend
+    // happens to emit them in.
+    expected.forEach((expectation) => {
+      const submissionNumber = Number(expectation.SubmissionNumber)
+      const item = items.find(
+        (candidate) => candidate.submissionNumber === submissionNumber
+      )
+      expect(
+        item,
+        `no calendar item for submission ${submissionNumber}`
+      ).to.not.equal(undefined)
+      expect(item.periodStatus).to.equal(expectation.PeriodStatus)
+
+      if (expectation.ReportStatus === 'none') {
+        expect(item.report).to.equal(null)
+      } else {
+        expect(item.report.status).to.equal(expectation.ReportStatus)
+        expect(item.report.submissionNumber).to.equal(submissionNumber)
+      }
+    })
+  }
+)
+
 When(
   'I unsubmit the {string} report for the year {int}, period {int} and submissionNumber {int}',
   async function (cadence, year, period, submissionNumber) {
