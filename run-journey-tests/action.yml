@@ -12,7 +12,7 @@ inputs:
     default: 'false'
   waste-record-states:
     description: value for the summary-log row states feature flag in the backend under test
-    default: 'false'
+    default: 'true'
   artifact-suffix:
     description: suffix appended to uploaded artifact names to keep concurrent runs distinct
     default: ''
