@@ -161,18 +161,11 @@ Feature: Packaging Recycling Notes transitions for Exporter
     When I update the accreditation status to 'suspended'
     Then the organisations data update succeeds
 
-    # We create another PRN after the accreditation is suspended
+    # Creating a PRN is not allowed while the accreditation is suspended
     When I create a PRN with the following details
       | organisationId | testId                |
       | name           | Test Organisation Ltd |
       | tradingName    | Trading Name          |
       | issuerNotes    | Testing               |
       | tonnage        | 5                     |
-    Then the PRN is successfully created
-
-    When I update the PRN status to 'awaiting_authorisation'
-    Then the PRN status is updated successfully
-
-    # Should not be allowed to issue PRN
-    When I update the PRN status to 'awaiting_acceptance'
-    Then I should receive a 403 error response 'Cannot issue a PRN on a suspended accreditation'
+    Then I should receive a 403 error response 'PRN actions require an approved accreditation (current status: suspended)'
