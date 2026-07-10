@@ -49,7 +49,7 @@ services:
       - cdp-tenant
 
   floci-init:
-    image: amazon/aws-cli:2.35.15@sha256:177c3f33d8b4b3d531a857b54289e8b101790ea9016c78431c417d8e681e7b2e
+    image: amazon/aws-cli:2.35.16@sha256:6614ba94b6ca40af5eb5cd7b97229950c171e38ad8d30f4fd764ef17cd9e39b7
     entrypoint: /bin/sh
     command: /setup/init.sh
     depends_on:
@@ -112,7 +112,7 @@ services:
       - cdp-tenant
 
   entra-stub:
-    image: defradigital/epr-re-ex-entra-stub:0.66.0@sha256:7f5020aadf2b681bc52f689f89e92026e1a600bc4a6b8cb300656c46684463aa
+    image: defradigital/epr-re-ex-entra-stub:0.80.0@sha256:72a4eda643e43ebd3fbc5e014ea60ec48745adea7a10f3a455bf6056e3926e60
     ports:
       - 3010:3010
     environment:
