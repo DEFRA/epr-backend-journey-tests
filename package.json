@@ -61,7 +61,7 @@
     "@cucumber/cucumber": "13.0.0",
     "@cucumber/messages": "34.0.1",
     "@faker-js/faker": "10.5.0",
-    "@types/node": "26.1.0",
+    "@types/node": "26.1.1",
     "allure-cucumberjs": "3.10.2",
     "chai": "6.2.2",
     "eslint": "9.39.4",
@@ -69,9 +69,9 @@
     "eslint-plugin-prettier": "5.5.6",
     "husky": "9.1.7",
     "lint-staged": "17.0.8",
-    "mongodb": "7.4.0",
+    "mongodb": "7.5.0",
     "neostandard": "0.13.0",
-    "prettier": "3.9.4",
+    "prettier": "3.9.5",
     "typescript": "6.0.3"
   }
 }
