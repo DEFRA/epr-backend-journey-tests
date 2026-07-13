@@ -38,7 +38,7 @@
     "setup:husky": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module",
     "test:smoketest": "cucumber-js --tags \"@smoketest\" ; npm run report",
     "test:tagged": "cucumber-js --tags",
-    "test": "cucumber-js --tags \"not @smoketest and not @localonly\" ; npm run report"
+    "test": "cucumber-js --parallel 4 --tags \"not @smoketest and not @localonly and not @overseas_sites\" ; cucumber-js --tags \"@overseas_sites and not @smoketest and not @localonly\" ; npm run report"
   },
   "dependencies": {
     "allure-commandline": "2.43.0",
