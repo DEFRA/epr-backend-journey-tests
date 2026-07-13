@@ -49,7 +49,7 @@ services:
       - cdp-tenant
 
   floci-init:
-    image: amazon/aws-cli:2.35.16@sha256:6614ba94b6ca40af5eb5cd7b97229950c171e38ad8d30f4fd764ef17cd9e39b7
+    image: amazon/aws-cli:2.35.20@sha256:386057cca84505a3420558c22c2598f254de4684492d705a3d64d86208fdbfc5
     entrypoint: /bin/sh
     command: /setup/init.sh
     depends_on:
