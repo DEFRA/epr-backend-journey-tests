@@ -64,7 +64,7 @@
     "@types/node": "26.1.1",
     "allure-cucumberjs": "3.10.2",
     "chai": "6.2.2",
-    "eslint": "9.39.4",
+    "eslint": "9.39.5",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.6",
     "husky": "9.1.7",
