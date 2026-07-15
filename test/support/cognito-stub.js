@@ -28,7 +28,10 @@ class CognitoStub {
       dispatcher: config.undiciAgent
     })
 
-    const data = await body.json()
+    const data =
+      /** @type {{ AuthenticationResult: { AccessToken: string } }} */ (
+        await body.json()
+      )
 
     if (statusCode !== 200) {
       throw new Error(

@@ -26,7 +26,7 @@ class CognitoAuth {
       dispatcher: config.undiciAgent
     })
 
-    const data = await body.json()
+    const data = /** @type {{ access_token: string }} */ (await body.json())
 
     if (statusCode !== 200) {
       throw new Error(
