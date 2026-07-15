@@ -192,3 +192,15 @@ Feature: Packaging Recycling Notes transitions for Exporter
       | issuerNotes    | Testing               |
       | tonnage        | 5                     |
     Then I should receive a 403 error response 'Cannot create a PRN on a cancelled accreditation'
+
+    # We now allow transition from cancelled to approved
+    When I update the accreditation status to 'approved'
+    Then the organisations data update succeeds
+
+    When I create a PRN with the following details
+      | organisationId | testId                |
+      | name           | Test Organisation Ltd |
+      | tradingName    | Trading Name          |
+      | issuerNotes    | Testing               |
+      | tonnage        | 5                     |
+    Then the PRN is successfully created
