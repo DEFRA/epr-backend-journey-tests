@@ -25,6 +25,7 @@ export default [
   ...ns,
   {
     rules: {
+      curly: ['error', 'all'],
       camelcase: [
         'error',
         {

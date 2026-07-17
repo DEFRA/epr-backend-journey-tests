@@ -23,7 +23,9 @@ Then(
     const reportData = await this.response.body.json()
 
     function normalise(value) {
-      if (typeof value !== 'number') return value
+      if (typeof value !== 'number') {
+        return value
+      }
       return Number.isInteger(value) ? value : value.toFixed(2)
     }
 
