@@ -386,7 +386,9 @@ Then(
           ]
 
           return checks.every(([expectedKey, actual]) => {
-            if (expectedResult[expectedKey] === undefined) return true
+            if (expectedResult[expectedKey] === undefined) {
+              return true
+            }
 
             const actualValue = actual.includes('.')
               ? actual.split('.').reduce((obj, key) => obj?.[key], failure)
@@ -436,7 +438,9 @@ Then(
         ]
 
         return checks.every(([expectedKey, actual]) => {
-          if (expectedResult[expectedKey] === undefined) return true
+          if (expectedResult[expectedKey] === undefined) {
+            return true
+          }
 
           const actualValue = actual.includes('.')
             ? actual.split('.').reduce((obj, key) => obj?.[key], issue)
@@ -531,7 +535,9 @@ Then(
 
         const groupedByType = wasteRecords.reduce((acc, rec) => {
           const type = rec.type
-          if (!acc[type]) acc[type] = []
+          if (!acc[type]) {
+            acc[type] = []
+          }
           acc[type].push(rec)
           return acc
         }, {})
