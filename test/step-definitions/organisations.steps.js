@@ -442,7 +442,7 @@ Then(
   validateOrganisationsAmount
 )
 /**
- * @this {import('@cucumber/cucumber').IWorld & { response: any, responseData: any }}
+ * @this {typeof import('@cucumber/cucumber').world & { response: any, responseData: any }}
  */
 async function validateOrganisationsAmount(orgAmount) {
   this.responseData = await this.response.body.json()
