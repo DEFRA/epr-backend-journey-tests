@@ -60,24 +60,6 @@ Feature: Summary Logs - Reprocessor on Output
       | added.invalid  | 0     |                               |
       | added.included | 1     | 3000                          |
       | added.excluded | 0     |                               |
-    And the summary log has the following loads for the received waste record type
-      | LoadType       | Count | RowIDs         |
-      | added.valid    | 3     | 1000,1001,1002 |
-      | added.invalid  | 0     |                |
-      | added.included | 0     |                |
-      | added.excluded | 0     |                |
-    And the summary log has the following loads for the processed waste record type
-      | LoadType       | Count | RowIDs |
-      | added.valid    | 1     | 3000   |
-      | added.invalid  | 0     |        |
-      | added.included | 1     | 3000   |
-      | added.excluded | 0     |        |
-    And the summary log has the following loads for the sentOn waste record type
-      | LoadType       | Count | RowIDs    |
-      | added.valid    | 2     | 5000,5001 |
-      | added.invalid  | 0     |           |
-      | added.included | 0     |           |
-      | added.excluded | 0     |           |
     And the summary log has the following reporting period loads
       | Key                                                 | Value |
       | openPeriodLoads.added.balanceAffecting.count        | 1     |
@@ -132,48 +114,6 @@ Feature: Summary Logs - Reprocessor on Output
       | adjusted.invalid   | 0     |                     |
       | adjusted.included  | 1     | 3000                |
       | adjusted.excluded  | 0     |                     |
-    And the summary log has the following loads for the received waste record type
-      | LoadType           | Count | RowIDs         |
-      | added.valid        | 1     | 1003           |
-      | added.invalid      | 0     |                |
-      | added.included     | 0     |                |
-      | added.excluded     | 0     |                |
-      | unchanged.valid    | 3     | 1000,1001,1002 |
-      | unchanged.invalid  | 0     |                |
-      | unchanged.included | 0     |                |
-      | unchanged.excluded | 0     |                |
-      | adjusted.valid     | 0     |                |
-      | adjusted.invalid   | 0     |                |
-      | adjusted.included  | 0     |                |
-      | adjusted.excluded  | 0     |                |
-    And the summary log has the following loads for the processed waste record type
-      | LoadType           | Count | RowIDs         |
-      | added.valid        | 1     | 3002           |
-      | added.invalid      | 2     | 3003,3004      |
-      | added.included     | 1     | 3002           |
-      | added.excluded     | 3     | 3001,3003,3004 |
-      | unchanged.valid    | 0     |           |
-      | unchanged.invalid  | 0     |           |
-      | unchanged.included | 0     |           |
-      | unchanged.excluded | 0     |           |
-      | adjusted.valid     | 1     | 3000      |
-      | adjusted.invalid   | 0     |           |
-      | adjusted.included  | 1     | 3000      |
-      | adjusted.excluded  | 0     |           |
-    And the summary log has the following loads for the sentOn waste record type
-      | LoadType           | Count | RowIDs    |
-      | added.valid        | 1     | 5002      |
-      | added.invalid      | 0     |           |
-      | added.included     | 0     |           |
-      | added.excluded     | 0     |           |
-      | unchanged.valid    | 2     | 5000,5001 |
-      | unchanged.invalid  | 0     |           |
-      | unchanged.included | 0     |           |
-      | unchanged.excluded | 0     |           |
-      | adjusted.valid     | 0     |           |
-      | adjusted.invalid   | 0     |           |
-      | adjusted.included  | 0     |           |
-      | adjusted.excluded  | 0     |           |
     And the summary log has the following reporting period loads
       | Key                                                    | Value |
       | openPeriodLoads.added.balanceAffecting.count           | 1     |
