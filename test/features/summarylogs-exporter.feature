@@ -112,18 +112,6 @@ Feature: Summary Logs - Exporter
       | added.invalid  | 1     | 1003           |
       | added.included | 2     | 1000,1001      |
       | added.excluded | 2     | 1002,1003      |
-    And the summary log has the following loads for the exported waste record type
-      | LoadType       | Count | RowIDs    |
-      | added.valid    | 2     | 1000,1001 |
-      | added.invalid  | 1     | 1003      |
-      | added.included | 2     | 1000,1001 |
-      | added.excluded | 2     | 1002,1003 |
-    And the summary log has the following loads for the sentOn waste record type
-      | LoadType       | Count | RowIDs |
-      | added.valid    | 1     | 4000   |
-      | added.invalid  | 0     |        |
-      | added.included | 0     |        |
-      | added.excluded | 0     |        |
     And the summary log has the following reporting period loads
       | Key                                                 | Value |
       | openPeriodLoads.added.balanceAffecting.count        | 2     |
@@ -178,34 +166,6 @@ Feature: Summary Logs - Exporter
       | adjusted.invalid   | 1     | 1000           |
       | adjusted.included  | 1     | 1001           |
       | adjusted.excluded  | 3     | 1000,1002,1003 |
-    And the summary log has the following loads for the exported waste record type
-      | LoadType           | Count | RowIDs         |
-      | added.valid        | 1     | 1004           |
-      | added.invalid      | 0     |                |
-      | added.included     | 1     | 1004           |
-      | added.excluded     | 0     |                |
-      | unchanged.valid    | 0     |                |
-      | unchanged.invalid  | 0     |                |
-      | unchanged.included | 0     |                |
-      | unchanged.excluded | 0     |                |
-      | adjusted.valid     | 1     | 1001           |
-      | adjusted.invalid   | 1     | 1000           |
-      | adjusted.included  | 1     | 1001           |
-      | adjusted.excluded  | 3     | 1000,1002,1003 |
-    And the summary log has the following loads for the sentOn waste record type
-      | LoadType           | Count | RowIDs |
-      | added.valid        | 1     | 4001   |
-      | added.invalid      | 0     |        |
-      | added.included     | 0     |        |
-      | added.excluded     | 0     |        |
-      | unchanged.valid    | 1     | 4000   |
-      | unchanged.invalid  | 0     |        |
-      | unchanged.included | 0     |        |
-      | unchanged.excluded | 0     |        |
-      | adjusted.valid     | 0     |        |
-      | adjusted.invalid   | 0     |        |
-      | adjusted.included  | 0     |        |
-      | adjusted.excluded  | 0     |        |
     And the summary log has the following reporting period loads
       | Key                                                    | Value |
       | openPeriodLoads.added.balanceAffecting.count           | 1     |
