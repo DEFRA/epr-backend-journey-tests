@@ -23,7 +23,7 @@ name: epr-backend-journey-tests
 
 services:
   mongodb:
-    image: mongo:8.3.4@sha256:309d760ba3f7962e14d54ac6123c7fe72ed2d465196b4d0eaf8abcea7dd39450
+    image: mongo:8.3.7@sha256:a7f5aa200005611166adcec0192c2f11d0acc3bfd9d5eb68e1a998a990412e41
     networks:
       - cdp-tenant
     ports:
@@ -49,7 +49,7 @@ services:
       - cdp-tenant
 
   floci-init:
-    image: amazon/aws-cli:2.36.2@sha256:964336bffb17b82d2e84a2526b0672e70a2c881544e1a281acaca1d9aa41b536
+    image: amazon/aws-cli:2.36.8@sha256:7e1b11a3c93bc5af81f496de0662f666b2352a4a6666e8ebae904fe102b131b6
     entrypoint: /bin/sh
     command: /setup/init.sh
     depends_on:
@@ -112,7 +112,7 @@ services:
       - cdp-tenant
 
   entra-stub:
-    image: defradigital/epr-re-ex-entra-stub:0.81.0@sha256:96bb564c6241423f79879c4e92464306616bc95815898a32af5bdf6cf5d47a4d
+    image: defradigital/epr-re-ex-entra-stub:0.92.0@sha256:8b39a2dbaefbe1320c6f28836487d8aa19348dae8f271307fb687a47b1051221
     ports:
       - 3010:3010
     environment:
